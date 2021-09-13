@@ -53,10 +53,7 @@ private:
     sf::Sound unSlowMoSound;
     sf::Sound fullHealthSound;
     sf::Sound fullAbilitySound;
-
-
-    Point4D oldVelocity;
-
+    
     std::string _name = "im";
 
     std::vector<std::shared_ptr<Weapon>> _weapons;

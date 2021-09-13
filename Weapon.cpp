@@ -32,7 +32,7 @@ std::map<std::string, double> Weapon::fire(const std::shared_ptr<World>& world, 
             noAmmoSound.play();
     }
 
-    if(_clipAmmo <= 0 || abs(Time::time() - _lastFireTime) < _fireDelay || abs(Time::time() - _lastReloadTime) < _reloadTime)
+    if(_clipAmmo <= 0 || std::abs(Time::time() - _lastFireTime) < _fireDelay || std::abs(Time::time() - _lastReloadTime) < _reloadTime)
         return std::map<std::string, double>();
 
     _lastFireTime = Time::time();
@@ -45,7 +45,7 @@ std::map<std::string, double> Weapon::fire(const std::shared_ptr<World>& world, 
 }
 
 void Weapon::reload() {
-    if (_stockAmmo == 0 || abs(Time::time() - _lastReloadTime) < _reloadTime)
+    if (_stockAmmo == 0 || std::abs(Time::time() - _lastReloadTime) < _reloadTime)
         return;
     if(_clipCapacity - _clipAmmo <= _stockAmmo) {
         _stockAmmo -= _clipCapacity - _clipAmmo;

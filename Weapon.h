@@ -27,8 +27,6 @@ protected:
 
     double _spreading = 2.0;
 
-    [[maybe_unused]] double _firePower = M_PI/100;
-
     std::string _name = "Weapon_name";
     std::map<std::string, std::shared_ptr<Mesh>> _objects;
 

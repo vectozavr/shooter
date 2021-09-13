@@ -164,8 +164,6 @@ void Player::update() {
             }
         }
     }
-
-    oldVelocity = velocity();
 }
 
 void Player::rotateWeaponsRelativePoint(const Point4D& point4D, const Point4D& v, double val) {

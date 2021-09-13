@@ -155,7 +155,7 @@ void Server::generateBonuses() {
 
 void Server::updateInfo() {
     for(auto& bonus : _bonuses) {
-        if(!bonus.second.onTheMap && abs(Time::time() - bonus.second.lastTake) > _bonusRechargeTime) {
+        if(!bonus.second.onTheMap && std::abs(Time::time() - bonus.second.lastTake) > _bonusRechargeTime) {
             sf::Packet sendPacket;
             sendPacket << MsgType::AddBonus << bonus.first << bonus.second.position.x() << bonus.second.position.y() << bonus.second.position.z();
             for (const auto& player : _players)

@@ -89,7 +89,7 @@ add_executable(shooter
         engine/animation/AFunction.h
         )
 
-if(${APPLE})
+if(APPLE OR UNIX)
     include_directories(/usr/local/include)
 else()
     set(SFML_DIR "C:/Libraries/SFML/lib/cmake/SFML")
