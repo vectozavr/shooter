@@ -49,47 +49,10 @@ Mesh Mesh::Obj(const std::string& filename) {
     return Mesh(filename);
 }
 
-Mesh Mesh::Cube(double size) {
-    Mesh cube{};
-    cube.tris = {
-            { Point4D{0.0, 0.0, 0.0, 1.0},    Point4D{0.0, 1.0, 0.0, 1.0},    Point4D{1.0, 1.0, 0.0, 1.0} },
-            { Point4D{0.0, 0.0, 0.0, 1.0},    Point4D{1.0, 1.0, 0.0, 1.0},    Point4D{1.0, 0.0, 0.0, 1.0} },
-            { Point4D{1.0, 0.0, 0.0, 1.0},    Point4D{1.0, 1.0, 0.0, 1.0},    Point4D{1.0, 1.0, 1.0, 1.0} },
-            { Point4D{1.0, 0.0, 0.0, 1.0},    Point4D{1.0, 1.0, 1.0, 1.0},    Point4D{1.0, 0.0, 1.0, 1.0} },
-            { Point4D{1.0, 0.0, 1.0, 1.0},    Point4D{1.0, 1.0, 1.0, 1.0},    Point4D{0.0, 1.0, 1.0, 1.0} },
-            { Point4D{1.0, 0.0, 1.0, 1.0},    Point4D{0.0, 1.0, 1.0, 1.0},    Point4D{0.0, 0.0, 1.0, 1.0} },
-            { Point4D{0.0, 0.0, 1.0, 1.0},    Point4D{0.0, 1.0, 1.0, 1.0},    Point4D{0.0, 1.0, 0.0, 1.0} },
-            { Point4D{0.0, 0.0, 1.0, 1.0},    Point4D{0.0, 1.0, 0.0, 1.0},    Point4D{0.0, 0.0, 0.0, 1.0} },
-            { Point4D{0.0, 1.0, 0.0, 1.0},    Point4D{0.0, 1.0, 1.0, 1.0},    Point4D{1.0, 1.0, 1.0, 1.0} },
-            { Point4D{0.0, 1.0, 0.0, 1.0},    Point4D{1.0, 1.0, 1.0, 1.0},    Point4D{1.0, 1.0, 0.0, 1.0} },
-            { Point4D{1.0, 0.0, 1.0, 1.0},    Point4D{0.0, 0.0, 1.0, 1.0},    Point4D{0.0, 0.0, 0.0, 1.0} },
-            { Point4D{1.0, 0.0, 1.0, 1.0},    Point4D{0.0, 0.0, 0.0, 1.0},    Point4D{1.0, 0.0, 0.0, 1.0} },
-
-            };
-
-    return cube *= Matrix4x4::Scale(size, size, size);
-}
-
-void Mesh::translate(double dx, double dy, double dz) {
-    p_position += Point4D(dx, dy, dz);
-
-    if(v_attached.empty())
-        return;
-    for(auto attached : v_attached)
-        attached->translate(Point4D{dx, dy, dz});
-}
-
-void Mesh::rotate(double rx, double ry, double rz) {
-    p_angle += Point4D{rx, ry, rz};
-    *this *= Matrix4x4::Rotation(rx, ry, rz);
-}
-
 void Mesh::rotate(const Point4D &r) {
-    p_angle += r;
+    p_angle = p_angle + r;
     *this *= Matrix4x4::Rotation(r);
 
-    if(v_attached.empty())
-        return;
     for(auto attached : v_attached)
         attached->rotateRelativePoint(position(), r);
 }
@@ -97,22 +60,21 @@ void Mesh::rotate(const Point4D &r) {
 void Mesh::rotate(const Point4D &v, double r) {
     *this *= Matrix4x4::Rotation(v, r);
 
-    if(v_attached.empty())
-        return;
     for(auto attached : v_attached)
         attached->rotateRelativePoint(position(), v, r);
 }
 
-void Mesh::scale(double sx, double sy, double sz) {
-    *this *= Matrix4x4::Scale(sx, sy, sz);
-}
-
 void Mesh::scale(const Point4D &s) {
-    *this *= Matrix4x4::Scale(s.x(), s.y(), s.z());
+    *this *= Matrix4x4::Scale(s);
+
+    // TODO: scale attached objects
 }
 
 void Mesh::translate(const Point4D &t) {
-    translate(t.x(), t.y(), t.z());
+    p_position = p_position + t;
+
+    for(auto attached : v_attached)
+        attached->translate(t);
 }
 
 Mesh &Mesh::operator=(const Mesh &mesh) {
@@ -122,15 +84,15 @@ Mesh &Mesh::operator=(const Mesh &mesh) {
     return *this;
 }
 
-void Mesh::rotateRelativePoint(const Point4D &s, double rx, double ry, double rz) {
-    p_angle += Point4D{rx, ry, rz};
+void Mesh::rotateRelativePoint(const Point4D &s, const Point4D &r) {
+    p_angle = p_angle + r;
 
     // Translate XYZ by vector r1
     Point4D r1 = p_position - s;
     *this *= Matrix4x4::Translation(r1);
 
     // In translated coordinate system we rotate mesh and position
-    Matrix4x4 rotationMatrix = Matrix4x4::Rotation(rx, ry, rz);
+    Matrix4x4 rotationMatrix = Matrix4x4::Rotation(r);
     Point4D r2 = rotationMatrix*r1;
     *this *= rotationMatrix;
 
@@ -141,12 +103,7 @@ void Mesh::rotateRelativePoint(const Point4D &s, double rx, double ry, double rz
     if(v_attached.empty())
         return;
     for(auto attached : v_attached)
-        attached->rotateRelativePoint(s, Point4D{rx, ry, rz});
-}
-
-void Mesh::rotateRelativePoint(const Point4D &s, const Point4D &r) {
-    p_angle += r;
-    rotateRelativePoint(s, r.x(), r.y(), r.z());
+        attached->rotateRelativePoint(s, r);
 }
 
 void Mesh::rotateRelativePoint(const Point4D &s, const Point4D &v, double r) {
@@ -163,8 +120,6 @@ void Mesh::rotateRelativePoint(const Point4D &s, const Point4D &v, double r) {
     *this *= Matrix4x4::Translation(-r2);
     p_position = s + r2;
 
-    if(v_attached.empty())
-        return;
     for(auto attached : v_attached)
         attached->rotateRelativePoint(s, v, r);
 }

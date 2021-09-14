@@ -24,11 +24,6 @@ protected:
     Point4D p_velocity;
     Point4D p_acceleration;
 
-    Point4D p_angularVelocity;
-    Point4D p_angularAcceleration;
-
-    double _mass = 1.0;
-
     bool _collision = false;
     bool _isCollider = true;
 
@@ -36,7 +31,7 @@ protected:
     Point4D _collisionNormal;
 
     Point4D _findFurthestPoint(const Point4D& direction);
-    Point4D _support(const std::shared_ptr<RigidBody>& obj, const Point4D& direction);
+    Point4D _support(std::shared_ptr<RigidBody> obj, const Point4D& direction);
 
     static bool _nextSimplex(Simplex& points, Point4D& direction);
     static bool _line(Simplex& points, Point4D& direction);
@@ -50,13 +45,12 @@ public:
     RigidBody() = default;
     virtual ~RigidBody() = default;
 
-    std::pair<bool, Simplex> checkGJKCollision(const std::shared_ptr<RigidBody>& obj);
-    CollisionPoint EPA(const Simplex& simplex, const std::shared_ptr<RigidBody>& obj);
+    std::pair<bool, Simplex> checkGJKCollision(std::shared_ptr<RigidBody> obj);
+    CollisionPoint EPA(const Simplex& simplex, std::shared_ptr<RigidBody> obj);
 
     [[nodiscard]] bool isCollision() const { return _collision; }
     [[nodiscard]] bool inCollision() const {return _inCollision; }
     [[nodiscard]] bool isCollider() const {return _isCollider; }
-    [[nodiscard]] Point4D collisionNormal() const {return _collisionNormal; }
     void setInCollision(bool c) { _inCollision = c; }
     void setCollisionNormal(const Point4D& c) { _collisionNormal = c; }
     void setCollision(bool c) { _collision= c; }
@@ -71,17 +65,10 @@ public:
     void updatePhysicsState();
 
     void setVelocity(const Point4D& velocity);
-    void setAngularVelocity(const Point4D& angularVelocity);
-
     void addVelocity(const Point4D& velocity);
-
     void setAcceleration(const Point4D& acceleration);
-    void setAngularAcceleration(const Point4D& angularAcceleration);
 
     [[nodiscard]] Point4D velocity() const { return p_velocity; }
-
-    [[nodiscard]] double mass() const { return _mass; }
-    void setMass(double val) { _mass = val; }
 };
 
 

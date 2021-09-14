@@ -9,7 +9,6 @@
 #include "World.h"
 #include "Camera.h"
 #include "utils/Log.h"
-#include "CameraController.h"
 
 class Engine {
 protected:

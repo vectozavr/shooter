@@ -61,15 +61,10 @@ public:
     [[nodiscard]] Point4D lookAt() const { return p_lookAt; }
 
     void translate(const Point4D& dv) override {
-        p_position += dv;
+        p_position = p_position + dv;
 
-        if(v_attached.empty())
-            return;
-        for(const auto& attached : v_attached)
+        for(auto attached : v_attached)
             attached->translate(dv);
-    }
-    void translate(double dx, double dy, double dz) {
-        translate(Point4D{dx, dy, dz});
     }
 
     void translateToPoint(const Point4D& point);
@@ -77,7 +72,6 @@ public:
     void rotateX(double rx);
     void rotateY(double ry);
     void rotateZ(double rz);
-    void rotate(double rx, double ry, double rz);
     void rotate(const Point4D& r) override;
 
     void rotate(const Point4D& v, double rv) override;
@@ -86,8 +80,6 @@ public:
     void rotateUp(double ru);
     void rotateLookAt(double rlAt);
 
-    // Rotate mesh around XYZ by (rx, ry, rz) radians relative val 'point4D'
-    void rotateRelativePoint(const Point4D& s, double rl, double ru, double rlAt);
     // Rotate mesh around XYZ by (r.x, r.y, r.z) radians relative val 'point4D'
     void rotateRelativePoint(const Point4D& s, const Point4D& r) override;
     // Rotate mesh around normalised vector 'v' by 'r' radians relative val 'point4D'

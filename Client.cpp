@@ -12,6 +12,32 @@ void Client::updatePacket() {
     _socket.send(packet, _socket.serverId());
 }
 
+void Client::spawnPlayer(sf::Uint16 id) {
+    std::string name = "Player_" + std::to_string(id);
+    _players.insert({ id, std::make_shared<Player>() });
+    (*_world).addMesh(_players[id], name);
+    _players[id]->setVisible(true);
+    _players[id]->setAcceleration(Point4D{0, 0, 0});
+
+    // add head and other stuff:
+    _world->loadObj(name + "_head", "../obj/cube.obj", "",Point4D{0.7, 0.7, 0.7});
+    (*_world)[name + "_head"]->translate(Point4D{0, 2, 0});
+    (*_world)[name + "_head"]->setCollider(false);
+    _players[id]->attach((*_world)[name + "_head"]);
+
+    _world->loadObj(name + "_eye1", "../obj/cube.obj", "",Point4D{0.2, 0.2, 0.05});
+    (*_world)[name + "_eye1"]->translate(Point4D{0.3, 2.1, 0.7});
+    (*_world)[name + "_eye1"]->setCollider(false);
+    (*_world)[name + "_eye1"]->setColor({147, 159, 255});
+    (*_world)[name + "_head"]->attach((*_world)[name + "_eye1"]);
+
+    _world->loadObj(name + "_eye2", "../obj/cube.obj", "",Point4D{0.2, 0.2, 0.05});
+    (*_world)[name + "_eye2"]->translate(Point4D{-0.3, 2.1, 0.7});
+    (*_world)[name + "_eye2"]->setCollider(false);
+    (*_world)[name + "_eye2"]->setColor({147, 159, 255});
+    (*_world)[name + "_head"]->attach((*_world)[name + "_eye2"]);
+}
+
 void Client::processInit(sf::Packet& packet) {
     sf::Uint16 targetId;
     double buf[4];
@@ -19,29 +45,7 @@ void Client::processInit(sf::Packet& packet) {
     while (packet >> targetId >> buf[0] >> buf[1] >> buf[2] >> buf[3])
     {
         if(targetId != _socket.ownId()) {
-            std::string name = "Player_" + std::to_string(targetId);
-            _players.insert({ targetId, std::make_shared<Player>() });
-            (*_world).addMesh(_players[targetId], name);
-            _players[targetId]->setVisible(true);
-            _players[targetId]->setAcceleration(Point4D{0, 0, 0});
-
-            // add head and other stuff:
-            _world->loadObj(name + "_head", "../obj/cube.obj", "",Point4D{0.7, 0.7, 0.7});
-            (*_world)[name + "_head"]->translate(Point4D{0, 2, 0});
-            (*_world)[name + "_head"]->setCollider(false);
-            _players[targetId]->attach((*_world)[name + "_head"]);
-
-            _world->loadObj(name + "_eye1", "../obj/cube.obj", "",Point4D{0.2, 0.2, 0.05});
-            (*_world)[name + "_eye1"]->translate(Point4D{0.3, 2.1, 0.7});
-            (*_world)[name + "_eye1"]->setCollider(false);
-            (*_world)[name + "_eye1"]->setColor({147, 159, 255});
-            (*_world)[name + "_head"]->attach((*_world)[name + "_eye1"]);
-
-            _world->loadObj(name + "_eye2", "../obj/cube.obj", "",Point4D{0.2, 0.2, 0.05});
-            (*_world)[name + "_eye2"]->translate(Point4D{-0.3, 2.1, 0.7});
-            (*_world)[name + "_eye2"]->setCollider(false);
-            (*_world)[name + "_eye2"]->setColor({147, 159, 255});
-            (*_world)[name + "_head"]->attach((*_world)[name + "_eye2"]);
+            spawnPlayer(targetId);
 
             _players[targetId]->translateToPoint(Point4D{ buf[0], buf[1], buf[2]});
             _players[targetId]->setHealth(buf[3]);
@@ -59,7 +63,7 @@ void Client::processUpdate(sf::Packet& packet) {
             _players[targetId]->translateToPoint(Point4D{buf[0], buf[1], buf[2]});
             _players[targetId]->setHealth(buf[3]);
             _players[targetId]->rotateToAngle(Point4D{0, buf[4], 0});
-            //(*_world)[name + "_head"]->rotateToAngle({buf[5], 2*buf[4], 0});
+
             (*_world)[name + "_head"]->rotate(Matrix4x4::RotationY(buf[4]) * Point4D{1, 0, 0},
                                               buf[5] - _players[targetId]->headAngle());
             _players[targetId]->setHeadAngle(buf[5]);
@@ -74,29 +78,7 @@ void Client::processNewClient(sf::Packet& packet) {
 
     packet >> targetId;
 
-    std::string name = "Player_" + std::to_string(targetId);
-    _players.insert({ targetId, std::make_shared<Player>() });
-    _world->addMesh(_players[targetId], name);
-    _players[targetId]->setVisible(true);
-    _players[targetId]->setAcceleration(Point4D{0, 0, 0});
-
-    // add head and other stuff:
-    _world->loadObj(name + "_head", "../obj/cube.obj","",Point4D{0.7, 0.7, 0.7});
-    (*_world)[name + "_head"]->translate(Point4D{0, 2, 0});
-    (*_world)[name + "_head"]->setCollider(false);
-    _players[targetId]->attach((*_world)[name + "_head"]);
-
-    _world->loadObj(name + "_eye1", "../obj/cube.obj","",Point4D{0.2, 0.2, 0.05});
-    (*_world)[name + "_eye1"]->translate(Point4D{0.3, 2.1, 0.7});
-    (*_world)[name + "_eye1"]->setCollider(false);
-    (*_world)[name + "_eye1"]->setColor({147, 159, 255});
-    (*_world)[name + "_head"]->attach((*_world)[name + "_eye1"]);
-
-    _world->loadObj(name + "_eye2", "../obj/cube.obj", "",Point4D{0.2, 0.2, 0.05});
-    (*_world)[name + "_eye2"]->translate(Point4D{-0.3, 2.1, 0.7});
-    (*_world)[name + "_eye2"]->setCollider(false);
-    (*_world)[name + "_eye2"]->setColor({147, 159, 255});
-    (*_world)[name + "_head"]->attach((*_world)[name + "_eye2"]);
+    spawnPlayer(targetId);
 }
 
 void Client::processDisconnect(sf::Uint16 targetId) {
@@ -204,7 +186,7 @@ void Client::addTrace(const Point4D& from, const Point4D& to) {
     _socket.send(packet, _socket.serverId());
 }
 
-void Client::deleteTrace(const std::shared_ptr<World> &world, const std::string &traceName) {
+void Client::deleteTrace(std::shared_ptr<World> world, const std::string &traceName) {
     world->removeMesh(traceName);
 }
 
@@ -214,4 +196,3 @@ void Client::takeBonus(const std::string& bonusName) {
     packet << MsgType::RemoveBonus << bonusName;
     _socket.send(packet, _socket.serverId());
 }
-

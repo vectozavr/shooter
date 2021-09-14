@@ -27,8 +27,8 @@ public:
     [[nodiscard]] Point4D position() const { return p_position; }
     [[nodiscard]] Point4D angle() const { return p_angle; }
 
-    void attach(const std::shared_ptr<Object>& object) {
-        v_attached.push_back(object);
+    void attach(std::shared_ptr<Object> object) {
+        v_attached.push_back(std::move(object));
     }
 };
 

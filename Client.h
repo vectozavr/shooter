@@ -18,6 +18,8 @@ private:
     std::map<sf::Uint16, std::shared_ptr<Player>> _players{};
 
     int fireTraces = 0;
+
+    void spawnPlayer(sf::Uint16 id);
 public:
     Client(std::shared_ptr<Player>  player, std::shared_ptr<World>  world) : _player(std::move(player)), _world(std::move(world)) {};
 
@@ -38,7 +40,7 @@ public:
 
     void addTrace(const Point4D& from, const Point4D& to);
 
-    void deleteTrace(const std::shared_ptr<World> &world, const std::string& traceName);
+    void deleteTrace(std::shared_ptr<World> world, const std::string& traceName);
 };
 
 

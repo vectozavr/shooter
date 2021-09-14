@@ -20,7 +20,7 @@ public:
 
     [[nodiscard]] std::map<std::string, std::shared_ptr<Mesh>>& objects() { return _objects; }
 
-    void addMesh(const std::shared_ptr<Mesh>& mesh, const std::string& name = "");
+    void addMesh(std::shared_ptr<Mesh> mesh, const std::string& name = "");
     void removeMesh(const std::string& name);
     void removeMeshInstantly(const std::string& name);
     void garbageCollector();

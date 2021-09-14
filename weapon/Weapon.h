@@ -37,7 +37,7 @@ protected:
     sf::Sound reloadSound;
     sf::Sound noAmmoSound;
 
-    static void deleteTrace(const std::shared_ptr<World> &world, const std::string& traceName);
+    static void deleteTrace(std::shared_ptr<World> world, const std::string& traceName);
 
     int fireTraces = 0;
 
@@ -46,11 +46,11 @@ protected:
 public:
     Weapon(const std::string& weaponName, const std::string& objFileName, const std::string& matFileName, const Point4D& scale, const Point4D& translate, const Point4D& rotate);
 
-    std::map<std::string, double> fire(const std::shared_ptr<World>& world, const std::shared_ptr<Camera>& camera);
+    std::map<std::string, double> fire(std::shared_ptr<World> world, std::shared_ptr<Camera> camera);
     void reload();
 
-    void addToWorld(const std::shared_ptr<World>& world);
-    void removeFromWorld(const std::shared_ptr<World>& world);
+    void addToWorld(std::shared_ptr<World> world);
+    void removeFromWorld(std::shared_ptr<World> world);
 
     void attachToPlayer(Mesh& player);
 
@@ -69,7 +69,7 @@ public:
 
     void addAmmo(int ammoAdd) { _stockAmmo += ammoAdd; }
 
-    virtual std::map<std::string, double> processFire(const std::shared_ptr<World>& world, const std::shared_ptr<Camera>& camera);
+    virtual std::map<std::string, double> processFire(std::shared_ptr<World> world, std::shared_ptr<Camera> camera);
 
     [[nodiscard]] int initialPack() const {return _initialPack; }
 };

@@ -25,7 +25,7 @@ Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, co
     noAmmoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/weapons/no_ammo.ogg"));
 }
 
-std::map<std::string, double> Weapon::fire(const std::shared_ptr<World>& world, const std::shared_ptr<Camera>& camera) {
+std::map<std::string, double> Weapon::fire(std::shared_ptr<World> world, std::shared_ptr<Camera> camera) {
     if(_clipAmmo == 0) {
         reload();
         if(_clipAmmo == 0)
@@ -60,13 +60,13 @@ void Weapon::reload() {
     _lastReloadTime = Time::time();
 }
 
-void Weapon::addToWorld(const shared_ptr<World> &world) {
+void Weapon::addToWorld(shared_ptr<World> world) {
     for(auto& obj : _objects) {
         world->addMesh(obj.second, obj.first);
     }
 }
 
-void Weapon::removeFromWorld(const shared_ptr<World> &world) {
+void Weapon::removeFromWorld(shared_ptr<World> world) {
     for(auto& obj : _objects) {
         world->removeMeshInstantly(obj.first);
     }
@@ -89,7 +89,7 @@ void Weapon::translate(const Point4D &point4D) {
         mesh.second->translate(point4D);
 }
 
-void Weapon::deleteTrace(const shared_ptr<World> &world, const std::string& traceName) {
+void Weapon::deleteTrace(shared_ptr<World> world, const std::string& traceName) {
     world->removeMesh(traceName);
 }
 
@@ -98,7 +98,7 @@ void Weapon::rotateRelativePoint(const Point4D &point4D, const Point4D &v, doubl
         mesh.second->rotateRelativePoint(point4D, v, val);
 }
 
-std::map<std::string, double> Weapon::processFire(const shared_ptr<World> &world, const shared_ptr<Camera> &camera) {
+std::map<std::string, double> Weapon::processFire(shared_ptr<World> world, shared_ptr<Camera> camera) {
     std::map<std::string, double> damagedPlayers;
 
     //generate random vector

@@ -23,7 +23,7 @@ std::vector<Triangle> &Camera::project(Mesh& mesh, Screen::ViewMode mode) {
     std::vector<Triangle> clippedTriangles, tempBuffer;
     for(auto& t : mesh.triangles()) {
 
-        double dot = t.norm().dot((mesh.position() + t[0] - p_position).normalize());
+        double dot = t.norm().dot((mesh.position() + t[0] - p_position).normalized());
 
         if(dot > 0)
             continue;
@@ -63,9 +63,9 @@ std::vector<Triangle> &Camera::project(Mesh& mesh, Screen::ViewMode mode) {
             // and transform it's coordinate to screen space (in pixels):
             clippedTriangle *= SP;
 
-            clippedTriangle[0] /= clippedTriangle[0].w();
-            clippedTriangle[1] /= clippedTriangle[1].w();
-            clippedTriangle[2] /= clippedTriangle[2].w();
+            clippedTriangle[0] = clippedTriangle[0] / clippedTriangle[0].w();
+            clippedTriangle[1] = clippedTriangle[1] / clippedTriangle[1].w();
+            clippedTriangle[2] = clippedTriangle[2] / clippedTriangle[2].w();
 
             triangles.emplace_back(clippedTriangle);
         }
@@ -112,12 +112,8 @@ std::vector<Triangle> &Camera::sorted() {
         std::sort(v_z1.begin(), v_z1.end());
         std::sort(v_z2.begin(), v_z2.end());
 
-        double a = 1;
-        double b = 1;
-        double c = 1;
-
-        double z1 = (a*v_z1[0] + b*v_z1[1] + c*v_z1[2]);
-        double z2 = (a*v_z2[0] + b*v_z2[1] + c*v_z2[2]);
+        double z1 = v_z1[0] + v_z1[1] + v_z1[2];
+        double z2 = v_z2[0] + v_z2[1] + v_z2[2];
 
         return z1 > z2;
     });
@@ -138,6 +134,9 @@ void Camera::rotateX(double rx) {
     p_left = Matrix4x4::RotationX(rx) * p_left;
     p_up = Matrix4x4::RotationX(rx) * p_up;
     p_lookAt = Matrix4x4::RotationX(rx) * p_lookAt;
+
+    for(auto attached : v_attached)
+        attached->rotateRelativePoint(position(), Point4D{rx, 0, 0});
 }
 
 void Camera::rotateY(double ry) {
@@ -145,6 +144,9 @@ void Camera::rotateY(double ry) {
     p_left = Matrix4x4::RotationY(ry) * p_left;
     p_up = Matrix4x4::RotationY(ry) * p_up;
     p_lookAt = Matrix4x4::RotationY(ry) * p_lookAt;
+
+    for(auto attached : v_attached)
+        attached->rotateRelativePoint(position(), Point4D{0, ry, 0});
 }
 
 void Camera::rotateZ(double rz) {
@@ -152,22 +154,15 @@ void Camera::rotateZ(double rz) {
     p_left = Matrix4x4::RotationZ(rz) * p_left;
     p_up = Matrix4x4::RotationZ(rz) * p_up;
     p_lookAt = Matrix4x4::RotationZ(rz) * p_lookAt;
-}
 
-void Camera::rotate(double rx, double ry, double rz) {
-    rotateX(rx);
-    rotateY(ry);
-    rotateZ(rz);
-
-    if(v_attached.empty())
-        return;
-    for(auto& attached : v_attached)
-        attached->rotateRelativePoint(position(), Point4D{rx, ry, rz});
-
+    for(auto attached : v_attached)
+        attached->rotateRelativePoint(position(), Point4D{0, 0, rz});
 }
 
 void Camera::rotate(const Point4D& r) {
-    rotate(r.x(), r.y(), r.z());
+    rotateX(r.x());
+    rotateY(r.y());
+    rotateZ(r.z());
 }
 
 
@@ -176,9 +171,7 @@ void Camera::rotate(const Point4D& v, double rv) {
     p_up = Matrix4x4::Rotation(v, rv) * p_up;
     p_lookAt = Matrix4x4::Rotation(v, rv) * p_lookAt;
 
-    if(v_attached.empty())
-        return;
-    for(auto& attached : v_attached)
+    for(auto attached : v_attached)
         attached->rotateRelativePoint(position(), v, rv);
 }
 
@@ -187,9 +180,7 @@ void Camera::rotateLeft(double rl) {
 
     rotate(p_left, rl);
 
-    if(v_attached.empty())
-        return;
-    for(auto& attached : v_attached)
+    for(auto attached : v_attached)
         attached->rotateRelativePoint(position(), p_left, rl);
 }
 
@@ -197,9 +188,7 @@ void Camera::rotateUp(double ru) {
     p_angleLeftUpLookAt = Point4D{p_angleLeftUpLookAt.x(), p_angleLeftUpLookAt.y() + ru, p_angleLeftUpLookAt.z()};
     rotate(p_up, ru);
 
-    if(v_attached.empty())
-        return;
-    for(auto& attached : v_attached)
+    for(auto attached : v_attached)
         attached->rotateRelativePoint(position(), p_up, ru);
 }
 
@@ -207,32 +196,24 @@ void Camera::rotateLookAt(double rlAt) {
     p_angleLeftUpLookAt = Point4D{p_angleLeftUpLookAt.x(), p_angleLeftUpLookAt.y(), p_angleLeftUpLookAt.z() + rlAt};
     rotate(p_lookAt, rlAt);
 
-    if(v_attached.empty())
-        return;
-    for(auto& attached : v_attached)
+    for(auto attached : v_attached)
         attached->rotateRelativePoint(position(), p_lookAt, rlAt);
 }
 
-void Camera::rotateRelativePoint(const Point4D &s, double rx, double ry, double rz) {
-    p_angle += Point4D{rx, ry, rz};
+void Camera::rotateRelativePoint(const Point4D &s, const Point4D &r) {
+    p_angle = p_angle + r;
 
     // Translate XYZ by vector r1
     Point4D r1 = p_position - s;
     // In translated coordinate system we rotate camera and position
-    Point4D r2 = Matrix4x4::Rotation(rx, ry, rz)*r1;
-    rotate(rx, ry, rz);
+    Point4D r2 = Matrix4x4::Rotation(r)*r1;
+    rotate(r);
 
     // After rotation we translate XYZ by vector -r2 and recalculate position
     p_position = s + r2;
 
-    if(v_attached.empty())
-        return;
-    for(auto& attached : v_attached)
-        attached->rotateRelativePoint(s, Point4D{rx, ry, rz});
-}
-
-void Camera::rotateRelativePoint(const Point4D &s, const Point4D &r) {
-    rotateRelativePoint(s, r.x(), r.y(), r.z());
+    for(auto attached : v_attached)
+        attached->rotateRelativePoint(s, r);
 }
 
 void Camera::rotateRelativePoint(const Point4D &s, const Point4D &v, double r) {
@@ -245,9 +226,7 @@ void Camera::rotateRelativePoint(const Point4D &s, const Point4D &v, double r) {
     // After rotation we translate XYZ by vector -r2 and recalculate position
     p_position = s + r2;
 
-    if(v_attached.empty())
-        return;
-    for(auto& attached : v_attached)
+    for(auto attached : v_attached)
         attached->rotateRelativePoint(s, v, r);
 }
 

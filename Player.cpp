@@ -9,8 +9,9 @@
 
 void Player::update() {
 
+    // friction
     if(inCollision())
-        p_velocity -= p_velocity*Time::deltaTime()*2;
+        p_velocity = p_velocity - p_velocity*Time::deltaTime()*2;
 
     if(isInSlowMo) {
         if(_ability > 0)
@@ -159,7 +160,6 @@ void Player::update() {
             if ((position() - rayToFloor.first).abs() < 2) {
                 int soundNum = round((double) rand() / RAND_MAX * 5) + 1;
                 walkSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/stonestep" + std::to_string(soundNum) + ".ogg"));
-                //walkSound.setVolume(30);
                 walkSound.play();
             }
         }
@@ -276,7 +276,7 @@ void Player::playKill() {
     killSound.play();
 }
 
-void Player::collisionWithObject(const std::string &objName, const std::shared_ptr<Mesh> &obj) {
+void Player::collisionWithObject(const std::string &objName, std::shared_ptr<Mesh> obj) {
     if(objName.find("Bonus_gun") != std::string::npos)
         addWeapon(std::make_shared<Gun>());
 
@@ -304,7 +304,7 @@ void Player::collisionWithObject(const std::string &objName, const std::shared_p
     }
 }
 
-void Player::addWeapon(const std::shared_ptr<Weapon> &weapon) {
+void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     changeWeaponSound.play();
 
     if(!_weapons.empty()) {

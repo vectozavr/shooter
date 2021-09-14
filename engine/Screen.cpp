@@ -34,37 +34,11 @@ void Screen::display() {
     std::string title = name + " (" + std::to_string(Time::fps()) + " fps)";
     window.setTitle(title);
 
-    if(renderVideo || makeScreenShoot)
-    {
-        sf::Texture copyTexture;
-        copyTexture.create(window.getSize().x, window.getSize().y);
-        copyTexture.update(window);
-        if(makeScreenShoot)
-            copyTexture.copyToImage().saveToFile("../img/screen.png");
-        else
-            copyTexture.copyToImage().saveToFile("../film/png/" + std::to_string(frame++) + ".png");
-        makeScreenShoot = false;
-    }
-
-
     window.display();
 }
 
 void Screen::clear() {
     window.clear(background);
-}
-
-void Screen::line(const Point4D& p1, const Point4D& p2, sf::Color color)
-{
-    if (!window.isOpen())
-        return;
-
-    sf::Vertex line[] =
-    {
-        sf::Vertex(sf::Vector2f(p1.x(), p1.y()), color),
-        sf::Vertex(sf::Vector2f(p2.x(), p2.y()), color)
-    };
-    window.draw(line, 2, sf::Lines);
 }
 
 void Screen::triangle(const Triangle& triangle)
@@ -192,14 +166,4 @@ void Screen::debugText(const std::string& text) {
     t.setPosition(10, 10);
 
     window.draw(t);
-}
-
-void Screen::setRender(bool r) {
-    if(renderVideo && !r) {
-        std::string c = "ffmpeg -stats -r 60 -i ../film/png/%d.png -vcodec libx264 -crf 1 -pix_fmt yuv420p -frames " + std::to_string(frame) + " ../film/mp4/" + std::to_string(scene) + "_" + name + ".mp4";
-        popen(c.c_str(), "w");
-        frame = 0;
-        scene++;
-    }
-    renderVideo = r;
 }

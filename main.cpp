@@ -16,7 +16,7 @@ using namespace std;
 
 // Read server/client settings and start both.
 // If client doesn't connect to the localhost - server doesn't start.
-void InitNetwork(const shared_ptr<Server>& server, const shared_ptr<Client>& client)
+void InitNetwork(shared_ptr<Server> server, shared_ptr<Client> client)
 {
     std::string clientIp;
     sf::Uint16 clientPort;

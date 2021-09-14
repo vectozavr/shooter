@@ -23,7 +23,7 @@ Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, "
 }
 
 std::map<std::string, double>
-Shotgun::processFire(const std::shared_ptr<World> &world, const std::shared_ptr<Camera> &camera) {
+Shotgun::processFire(std::shared_ptr<World> world, std::shared_ptr<Camera> camera) {
     std::map<std::string, double> damagedPlayers;
 
     for(int i = 0; i < 15; i++) {

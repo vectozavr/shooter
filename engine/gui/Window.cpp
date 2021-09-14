@@ -14,7 +14,7 @@ void Window::addButton(int x, int y, int w, int h, std::function<void()> click, 
     buttons.back().init();
 }
 
-void Window::update(const std::shared_ptr<Screen>& screen) {
+void Window::update(std::shared_ptr<Screen> screen) {
 
     screen->title(s_name);
     screen->window.draw(back);

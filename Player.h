@@ -11,11 +11,11 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "World.h"
-#include "Ak47.h"
-#include "Shotgun.h"
-#include "Gun.h"
-#include "Gold_Ak47.h"
-#include "Rifle.h"
+#include "weapon/Ak47.h"
+#include "weapon/Shotgun.h"
+#include "weapon/Gun.h"
+#include "weapon/Gold_Ak47.h"
+#include "weapon/Rifle.h"
 
 class Player : public Mesh{
 private:
@@ -53,7 +53,7 @@ private:
     sf::Sound unSlowMoSound;
     sf::Sound fullHealthSound;
     sf::Sound fullAbilitySound;
-    
+
     std::string _name = "im";
 
     std::vector<std::shared_ptr<Weapon>> _weapons;
@@ -75,16 +75,16 @@ public:
 
     void update();
 
-    void attachCamera(std::shared_ptr<Camera>& camera, std::shared_ptr<Screen> screen) {
-        _camera = camera;
+    void attachCamera(std::shared_ptr<Camera> camera, std::shared_ptr<Screen> screen) {
+        _camera = std::move(camera);
         _screen = std::move(screen);
 
-        camera->translateToPoint(position() + Point4D{0, 1.8, 0});
-        this->attach(camera);
+        _camera->translateToPoint(position() + Point4D{0, 1.8, 0});
+        this->attach(_camera);
     }
 
-    void attachWorld(const std::shared_ptr<World>& world, const Point4D& pos = Point4D{0, 30, 0}) {
-        _world = world;
+    void attachWorld(std::shared_ptr<World> world, const Point4D& pos = Point4D{0, 30, 0}) {
+        _world = std::move(world);
 
         translate(pos);
 
@@ -98,7 +98,7 @@ public:
         fullHealthSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/fullHealth.ogg"));
         fullAbilitySound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/fullAbility.ogg"));
 
-        setCollisionCallBack([this](const std::string& objName, const std::shared_ptr<Mesh>& obj) {collisionWithObject(objName, obj);});
+        setCollisionCallBack([this](const std::string& objName, std::shared_ptr<Mesh> obj) {collisionWithObject(objName, std::move(obj));});
     }
 
     void setHealth(double h) {
@@ -151,9 +151,9 @@ public:
     void playDeath();
     void playKill();
 
-    void collisionWithObject(const std::string& objName, const std::shared_ptr<Mesh>& obj);
+    void collisionWithObject(const std::string& objName, std::shared_ptr<Mesh> obj);
 
-    void addWeapon(const std::shared_ptr<Weapon>& weapon);
+    void addWeapon(std::shared_ptr<Weapon> weapon);
 
     void initWeapons();
 };

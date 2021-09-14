@@ -15,7 +15,7 @@ Point4D RigidBody::_findFurthestPoint(const Point4D& direction) {
     for(auto& tri : triangles()){
         for(auto point : tri.p){
 
-            point += position();
+            point = point + position();
 
             double distance = point.dot(direction);
             if(distance > maxDistance) {
@@ -27,7 +27,7 @@ Point4D RigidBody::_findFurthestPoint(const Point4D& direction) {
     return maxPoint;
 }
 
-Point4D RigidBody::_support(const std::shared_ptr<RigidBody>& obj, const Point4D& direction) {
+Point4D RigidBody::_support(std::shared_ptr<RigidBody> obj, const Point4D& direction) {
     Point4D p1 = _findFurthestPoint(direction);
     Point4D p2 = obj->_findFurthestPoint(-direction);
 
@@ -132,10 +132,10 @@ bool RigidBody::_tetrahedron(Simplex &points, Point4D &direction) {
     return true;
 }
 
-std::pair<bool, Simplex> RigidBody::checkGJKCollision(const std::shared_ptr<RigidBody>& obj) {
+std::pair<bool, Simplex> RigidBody::checkGJKCollision(std::shared_ptr<RigidBody> obj) {
 
     // Get initial support point in any direction
-    Point4D support = _support(obj, Point4D::unit_x());
+    Point4D support = _support(obj, Point4D{1, 0, 0});
 
     // Simplex is an array of points, max count is 4
     Simplex points;
@@ -146,7 +146,7 @@ std::pair<bool, Simplex> RigidBody::checkGJKCollision(const std::shared_ptr<Rigi
 
     int iterations = 0;
 
-    while (true && iterations < 50) {
+    while (iterations < 50) {
         support = _support(obj, direction);
 
         if (support.dot(direction) <= 0)
@@ -166,7 +166,7 @@ std::pair<bool, Simplex> RigidBody::checkGJKCollision(const std::shared_ptr<Rigi
     return std::make_pair(false, points); // no collision
 }
 
-CollisionPoint RigidBody::EPA(const Simplex& simplex, const std::shared_ptr<RigidBody>& obj) {
+CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody> obj) {
 
     std::vector<Point4D> polytope(simplex.begin(), simplex.end());
     std::vector<size_t>  faces = {
@@ -185,7 +185,7 @@ CollisionPoint RigidBody::EPA(const Simplex& simplex, const std::shared_ptr<Rigi
     int iterations = 0;
 
     while ((minDistance == INFINITY) && (iterations < 50)) {
-        minNormal   = normals[minFace];
+        minNormal   = Point4D{normals[minFace].x(), normals[minFace].y(), normals[minFace].z()};
         minDistance = normals[minFace].w();
 
         Point4D support = _support(obj, minNormal);
@@ -243,15 +243,15 @@ CollisionPoint RigidBody::EPA(const Simplex& simplex, const std::shared_ptr<Rigi
         }
         iterations++;
     }
-    CollisionPoint points;
+    CollisionPoint point;
 
-    points.normal = minNormal;
-    points.depth = minDistance + 0.0001;
-    points.hasCollision = minDistance < INFINITY;
+    point.normal = minNormal;
+    point.depth = minDistance + 0.0001;
+    point.hasCollision = minDistance < INFINITY;
 
     _collisionNormal = minNormal;
 
-    return points;
+    return point;
 }
 
 std::pair<std::vector<Point4D>, size_t> RigidBody::GetFaceNormals(const std::vector<Point4D>& polytope, const std::vector<size_t>&  faces) {
@@ -264,11 +264,11 @@ std::pair<std::vector<Point4D>, size_t> RigidBody::GetFaceNormals(const std::vec
         Point4D b = polytope[faces[i + 1]];
         Point4D c = polytope[faces[i + 2]];
 
-        Point4D normal = (b - a).cross3D(c - a).normalize();
+        Point4D normal = (b - a).cross3D(c - a).normalized();
         double distance = normal.dot(a);
 
         if (distance < 0) {
-            normal   *= -1;
+            normal = -normal;
             distance *= -1;
         }
 
@@ -303,10 +303,7 @@ void RigidBody::AddIfUniqueEdge(std::vector<std::pair<size_t, size_t>>& edges, c
 
 void RigidBody::updatePhysicsState() {
     translate(p_velocity * Time::deltaTime());
-    p_velocity += p_acceleration * Time::deltaTime();
-
-    rotate(p_angularVelocity * Time::deltaTime());
-    p_angularVelocity += p_angularAcceleration * Time::deltaTime();
+    p_velocity = p_velocity + p_acceleration * Time::deltaTime();
 }
 
 void RigidBody::setVelocity(const Point4D& velocity) {
@@ -314,17 +311,9 @@ void RigidBody::setVelocity(const Point4D& velocity) {
 }
 
 void RigidBody::addVelocity(const Point4D &velocity) {
-    p_velocity += velocity;
-}
-
-void RigidBody::setAngularVelocity(const Point4D& angularVelocity) {
-    p_angularVelocity = angularVelocity;
+    p_velocity = p_velocity + velocity;
 }
 
 void RigidBody::setAcceleration(const Point4D& acceleration) {
     p_acceleration = acceleration;
-}
-
-void RigidBody::setAngularAcceleration(const Point4D& angularAcceleration) {
-    p_angularAcceleration = angularAcceleration;
 }

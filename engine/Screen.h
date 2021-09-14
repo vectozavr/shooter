@@ -38,11 +38,9 @@ private:
 
     std::string font = "../engine/fonts/Roboto-Thin.ttf";
 
-    bool renderVideo = false; // performance heavy. I use this to make sequence of .jpg files of screen and then convert this to .mp4 file
     int frame = 0;
     int scene = 0; // the number of scene
 
-    bool makeScreenShoot = false;
 public:
     sf::RenderWindow window;
 
@@ -51,7 +49,6 @@ public:
     void display();
     void clear();
 
-    void line(const Point4D& p1, const Point4D& p2, sf::Color color = {0, 0, 0});
     void triangle(const Triangle& triangle );
 
     void title(const std::string& title);
@@ -81,11 +78,6 @@ public:
     void keyboardControl();
 
     void debugText(const std::string& text);
-
-    void setRender(bool r);
-    bool isRender() const { return renderVideo; }
-
-    void makeScreen() { makeScreenShoot = true; }
 };
 
 

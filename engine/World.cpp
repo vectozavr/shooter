@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void World::addMesh(const std::shared_ptr<Mesh>& mesh, const string &name) {
+void World::addMesh(std::shared_ptr<Mesh> mesh, const string &name) {
     _objects.emplace(name, mesh);
     Log::log("World::addMesh(): inserted mesh '" + name + "' with " + std::to_string(_objects[name]->triangles().size()) + " tris.");
 

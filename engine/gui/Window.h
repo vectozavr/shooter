@@ -34,7 +34,7 @@ public:
 
     void setBackgroundTexture(const std::string& texture, double sx = 1, double sy = 1, int w = 1920, int h = 1080);
 
-    void update(const std::shared_ptr<Screen>& screen);
+    void update(std::shared_ptr<Screen> screen);
 };
 
 

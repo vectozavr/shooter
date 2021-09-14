@@ -97,8 +97,6 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
 void Engine::exit() {
     if(screen->isOpen()) {
         screen->close();
-        if(screen->isRender())
-            screen->setRender(false);
     }
     ResourceManager::unloadAllResources();
     Log::log("Engine::exit(): exit engine (" + std::to_string(screen->width()) + " x " + std::to_string(screen->height()) + ") with name '" + screen->title() + "'.");

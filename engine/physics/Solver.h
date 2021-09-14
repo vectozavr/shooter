@@ -9,7 +9,7 @@
 
 class Solver {
 public:
-    static void solveCollision(const std::shared_ptr<RigidBody>& obj1, const std::shared_ptr<RigidBody>& obj2, const CollisionPoint& collision);
+    static void solveCollision(std::shared_ptr<RigidBody> obj1, std::shared_ptr<RigidBody> obj2, const CollisionPoint& collision);
 };
 
 

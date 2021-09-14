@@ -14,19 +14,19 @@ add_executable(shooter
         Client.h
         Server.cpp
         Server.h
-        Weapon.cpp
-        Weapon.h
-        Ak47.cpp
-        Ak47.h
-        Shotgun.cpp
-        Shotgun.h
-        Gun.cpp
-        Gun.h
+        weapon/Weapon.cpp
+        weapon/Weapon.h
+        weapon/Ak47.cpp
+        weapon/Ak47.h
+        weapon/Shotgun.cpp
+        weapon/Shotgun.h
+        weapon/Gun.cpp
+        weapon/Gun.h
         Bonus.cpp
         Bonus.h
-        Gold_Ak47.h
-        Rifle.cpp
-        Rifle.h
+        weapon/Gold_Ak47.h
+        weapon/Rifle.cpp
+        weapon/Rifle.h
         # 3d engine:
         engine/utils/Time.h
         engine/utils/Time.cpp
@@ -52,8 +52,6 @@ add_executable(shooter
         engine/Engine.cpp
         engine/Plane.h
         engine/Plane.cpp
-        engine/CameraController.h
-        engine/CameraController.cpp
         engine/animation/Animatable.h
         engine/animation/Animation.h
         engine/animation/Interpolation.h

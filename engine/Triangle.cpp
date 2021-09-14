@@ -33,7 +33,7 @@ Point4D Triangle::norm() const {
     Point4D v1 = p[1] - p[0];
     Point4D v2 = p[2] - p[0];
 
-    return v1.cross3D(v2).normalize();
+    return v1.cross3D(v2).normalized();
 }
 
 Point4D Triangle::operator[](int i) const {
