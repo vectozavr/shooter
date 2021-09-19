@@ -25,7 +25,6 @@ private:
 
     sf::Sound _slowMoSound;
     sf::Sound _unSlowMoSound;
-    sf::Sound _changeWeaponSound;
     sf::Sound _walkSound;
 
     double _jumpHeight = 3;

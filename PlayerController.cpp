@@ -10,7 +10,6 @@ PlayerController::PlayerController(std::shared_ptr<Player> player,
                                    std::shared_ptr<Mouse> mouse) : _player(player), _world(world), _keyboard(keyboard), _mouse(mouse) {
     _slowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/slow_mo.ogg"));
     _unSlowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/unslow_mo.ogg"));
-    _changeWeaponSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/weapons/change_weapon.ogg"));
 }
 
 void PlayerController::update() {

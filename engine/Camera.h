@@ -38,7 +38,6 @@ public:
     Camera() = default;
     Camera(const Camera& camera) = delete;
 
-
     void init(int width, int height, double fov = 110.0, double ZNear = 0.1, double ZFar = 5000.0);
 
     std::vector<Triangle>& project(std::shared_ptr<Mesh> mesh);

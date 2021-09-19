@@ -18,7 +18,6 @@ private:
     bool _visible = true;
 
     Mesh& operator*=(const Matrix4x4& matrix4X4);
-
 public:
     Mesh() = default;
     Mesh(const Mesh& mesh);
