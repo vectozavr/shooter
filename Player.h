@@ -24,8 +24,6 @@ private:
     double _abilityMax = 10;
     double _ability = _abilityMax;
 
-    double _jumpHeight = 3;
-    double _walkSpeed = 10;
     double _headAngle = 0;
 
     unsigned _kills = 0;
