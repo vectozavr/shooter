@@ -11,53 +11,46 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 #include "utils/Time.h"
+#include "Mouse.h"
 
 class Screen {
 private:
     int _w = 1920;
     int _h = 1080;
 
-    std::string _name;
+    std::string _title;
 
     sf::Color _background;
 
-    std::map<sf::Keyboard::Key, double> _tappedKeys;
-    std::map<sf::Mouse::Button, double> _tappedButtons;
-
     std::string _font = "../engine/fonts/Roboto-Thin.ttf";
 
+    std::shared_ptr<sf::RenderWindow> _window;
 public:
-    sf::RenderWindow window;
-
     void open(int screenWidth = 1920, int screenHeight = 1080, const std::string& name = "engine", bool verticalSync = true, sf::Color background = sf::Color(255, 255, 255), sf::Uint32 style = sf::Style::Default);
 
     void display();
     void clear();
+    bool hasFocus() const { return _window->hasFocus(); }
 
     void drawTriangle(const Triangle& triangle);
+    void drawTetragon(const Point4D& p1, const Point4D& p2, const Point4D& p3, const Point4D& p4, sf::Color color);
+    void drawText(const std::string& string, const Point4D& position, int size, sf::Color color);
+    void drawText(const sf::Text& text);
+    void drawSprite(const sf::Sprite& sprite);
 
-    void setName(const std::string& title);
-    std::string name() const { return _name; };
+    void setTitle(const std::string& title);
+    [[nodiscard]] std::string title() const { return _title; };
 
     bool isOpen();
 
-    int width() const {return window.getSize().x;}
-    int height() const {return window.getSize().y;}
+    [[nodiscard]] int width() const {return _window->getSize().x;}
+    [[nodiscard]] int height() const {return _window->getSize().y;}
 
     void close();
 
-    static bool isKeyPressed(sf::Keyboard::Key key); // returns true if this key is pressed
-    bool isKeyTapped(sf::Keyboard::Key key); // returns true if this key is tapped and 1/5 sec passed (button bouncing problem solved)
-
-    static bool isButtonPressed(sf::Mouse::Button button); // returns true if this button is pressed
-    bool isButtonTapped(sf::Mouse::Button button); // returns true if this button is tapped and 1/5 sec passed (button bouncing problem solved)
-
-    Point4D getMousePosition() const;
-    Point4D getMouseDisplacement() const;
-    void setMouseInCenter() const;
-    void setMouseCursorVisible(bool visible);
-
     void debugText(const std::string& text);
+
+    void attachMouse(std::shared_ptr<Mouse> mouse);
 };
 
 

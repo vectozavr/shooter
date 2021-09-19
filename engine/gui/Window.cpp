@@ -14,15 +14,15 @@ void Window::addButton(int x, int y, int w, int h, std::function<void()> click, 
     buttons.back().init();
 }
 
-void Window::update(std::shared_ptr<Screen> screen) {
+void Window::update() {
 
-    screen->setName(s_name);
-    screen->window.draw(back);
+    _screen->setTitle(s_name);
+    _screen->drawSprite(back);
 
-    Point4D mousePos = screen->getMousePosition();
+    Point4D mousePos = _mouse->getMousePosition();
     Point4D dMousePos = mousePos - prevMousePosition;
     back.setPosition(back.getPosition() - sf::Vector2f(dMousePos.x()/30, dMousePos.y()/30));
-    bool isPressed = screen->isButtonTapped(sf::Mouse::Left);
+    bool isPressed = _mouse->isButtonTapped(sf::Mouse::Left);
 
     for(auto& button : buttons) {
         if( mousePos.x() > button.x - button.w*button.sx/2 && mousePos.y() > button.y - button.h*button.sy/2 &&
@@ -34,9 +34,9 @@ void Window::update(std::shared_ptr<Screen> screen) {
             button.unSelect();
         }
 
-        if(screen->isOpen()) {
-            screen->window.draw(button.button);
-            screen->window.draw(button.text);
+        if(_screen->isOpen()) {
+            _screen->drawSprite(button.button);
+            _screen->drawText(button.text);
         }
     }
 

@@ -29,7 +29,7 @@ public:
 
     // rayCast returns pair of Point4D and std::string:
     // 1) Point4D is point of collision (the last coordinate is -1 if there are no collisions)
-    // 2) std::string - name of the object
+    // 2) std::string - title of the object
     std::pair<Point4D, std::string> rayCast(const Point4D& from, const Point4D& to);
 
     void loadMap(const std::string& filename, const std::string& name = "", const Point4D& scale = Point4D{1, 1, 1}, const std::string &materials = "../maps/materials.txt");

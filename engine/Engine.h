@@ -6,6 +6,9 @@
 #define ENGINE_ENGINE_H
 
 #include "Screen.h"
+#include "Keyboard.h"
+#include "Mouse.h"
+
 #include "World.h"
 #include "Camera.h"
 #include "utils/Log.h"
@@ -21,6 +24,9 @@ private:
 
 protected:
     std::shared_ptr<Screen> screen;
+    std::shared_ptr<Keyboard> keyboard;
+    std::shared_ptr<Mouse> mouse;
+
     std::shared_ptr<World> world;
     std::shared_ptr<Camera> camera;
 

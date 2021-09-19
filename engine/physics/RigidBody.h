@@ -52,6 +52,8 @@ public:
     std::pair<bool, Simplex> checkGJKCollision(std::shared_ptr<RigidBody> obj);
     CollisionPoint EPA(const Simplex& simplex, std::shared_ptr<RigidBody> obj);
 
+    [[nodiscard]] Point4D collisionNormal() const { return _collisionNormal; }
+
     [[nodiscard]] bool isCollision() const { return _collision; }
     [[nodiscard]] bool inCollision() const {return _inCollision; }
     [[nodiscard]] bool isCollider() const {return _isCollider; }
@@ -67,6 +69,7 @@ public:
     void setAcceleration(const Point4D& acceleration);
 
     [[nodiscard]] Point4D velocity() const { return _velocity; }
+    [[nodiscard]] Point4D acceleration() const { return _acceleration; }
 
     [[nodiscard]] const std::function<void(const std::string&, std::shared_ptr<RigidBody>)>& collisionCallBack() const { return _collisionCallBack; }
     void setCollisionCallBack(const std::function<void(const std::string&, std::shared_ptr<RigidBody>)>& f) { _collisionCallBack = f; }

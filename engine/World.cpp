@@ -16,7 +16,7 @@ void World::addBody(std::shared_ptr<RigidBody> body, const string &name) {
 
 void World::loadBody(const string &name, const string &filename, const std::string &materials, const Point4D& scale) {
     _objects.emplace(name, std::make_shared<RigidBody>(Mesh(filename, materials, scale)));
-    Log::log("World::loadBody(): inserted body from " + filename + " with name '" + name + "' with " + std::to_string(_objects[name]->triangles().size()) + " _tris.");
+    Log::log("World::loadBody(): inserted body from " + filename + " with title '" + name + "' with " + std::to_string(_objects[name]->triangles().size()) + " _tris.");
 }
 
 void World::removeBody(const string &name) {

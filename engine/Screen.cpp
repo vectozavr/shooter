@@ -11,7 +11,7 @@
 
 
 void Screen::open(int screenWidth, int screenHeight, const std::string &name, bool verticalSync, sf::Color background, sf::Uint32 style) {
-    _name = name;
+    _title = name;
     _w = screenWidth;
     _h = screenHeight;
     _background = background;
@@ -19,26 +19,27 @@ void Screen::open(int screenWidth, int screenHeight, const std::string &name, bo
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
 
-    window.create(sf::VideoMode(_w, _h), name, style, settings);
-    window.setVerticalSyncEnabled(verticalSync);
+    _window = std::make_shared<sf::RenderWindow>();
+    _window->create(sf::VideoMode(_w, _h), name, style, settings);
+    _window->setVerticalSyncEnabled(verticalSync);
 }
 
 void Screen::display() {
     sf::Event event{};
-    while (window.pollEvent(event)) {
+    while (_window->pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
-            window.close();
+            _window->close();
         }
     }
 
-    std::string title = _name + " (" + std::to_string(Time::fps()) + " fps)";
-    window.setTitle(title);
+    std::string title = _title + " (" + std::to_string(Time::fps()) + " fps)";
+    _window->setTitle(title);
 
-    window.display();
+    _window->display();
 }
 
 void Screen::clear() {
-    window.clear(_background);
+    _window->clear(_background);
 }
 
 void Screen::drawTriangle(const Triangle& triangle)
@@ -49,74 +50,19 @@ void Screen::drawTriangle(const Triangle& triangle)
                     sf::Vertex(sf::Vector2f(triangle[1].x(), triangle[1].y()), triangle.color()),
                     sf::Vertex(sf::Vector2f(triangle[2].x(), triangle[2].y()), triangle.color())
             };
-    window.draw(tris, 3, sf::Triangles);
+    _window->draw(tris, 3, sf::Triangles);
 }
 
-void Screen::setName(const std::string& title) {
-    _name = title;
+void Screen::setTitle(const std::string& title) {
+    _title = title;
 }
 
 bool Screen::isOpen() {
-    return window.isOpen();
+    return _window->isOpen();
 }
 
 void Screen::close() {
-    window.close();
-}
-
-bool Screen::isKeyPressed(sf::Keyboard::Key key) {
-    return sf::Keyboard::isKeyPressed(key);
-}
-
-Point4D Screen::getMousePosition() const {
-    sf::Vector2<int> pos = sf::Mouse::getPosition(window);
-    return Point4D(pos.x, pos.y, 0, 0);
-}
-
-Point4D Screen::getMouseDisplacement() const {
-    sf::Vector2<int> disp = sf::Mouse::getPosition(window) - sf::Vector2<int>(_w/2, _h/2);
-    setMouseInCenter();
-    return Point4D(disp.x, disp.y, 0, 0);
-}
-
-void Screen::setMouseInCenter() const {
-    sf::Mouse::setPosition({ _w / 2, _h / 2 }, window);
-}
-
-void Screen::setMouseCursorVisible(bool visible) {
-    window.setMouseCursorVisible(visible);
-}
-
-bool Screen::isKeyTapped(sf::Keyboard::Key key) {
-    if (!Screen::isKeyPressed(key))
-        return false;
-
-    if(_tappedKeys.count(key) == 0) {
-        _tappedKeys.emplace(key, Time::time());
-        return true;
-    } else if((Time::time() - _tappedKeys[key]) > 0.2) {
-        _tappedKeys[key] = Time::time();
-        return true;
-    }
-    return false;
-}
-
-bool Screen::isButtonPressed(sf::Mouse::Button button) {
-    return sf::Mouse::isButtonPressed(button);
-}
-
-bool Screen::isButtonTapped(sf::Mouse::Button button) {
-    if (!Screen::isButtonPressed(button))
-        return false;
-
-    if(_tappedButtons.count(button) == 0) {
-        _tappedButtons.emplace(button, Time::time());
-        return true;
-    } else if((Time::time() - _tappedButtons[button]) > 0.2) {
-        _tappedButtons[button] = Time::time();
-        return true;
-    }
-    return false;
+    _window->close();
 }
 
 
@@ -129,5 +75,42 @@ void Screen::debugText(const std::string& text) {
     t.setFillColor(sf::Color::Black);
     t.setPosition(10, 10);
 
-    window.draw(t);
+    _window->draw(t);
+}
+
+void Screen::drawTetragon(const Point4D &p1, const Point4D &p2, const Point4D &p3, const Point4D &p4, sf::Color color) {
+    sf::ConvexShape polygon;
+    polygon.setPointCount(4);
+    polygon.setPoint(0, sf::Vector2f((float)p1.x(), (float)p1.y()));
+    polygon.setPoint(1, sf::Vector2f((float)p2.x(), (float)p2.y()));
+    polygon.setPoint(2, sf::Vector2f((float)p3.x(), (float)p3.y()));
+    polygon.setPoint(3, sf::Vector2f((float)p4.x(), (float)p4.y()));
+    polygon.setFillColor(color);
+    _window->draw(polygon);
+}
+
+void Screen::drawText(const std::string& string, const Point4D &position, int size, sf::Color color) {
+    sf::Text text;
+
+    text.setFont(*ResourceManager::loadFont("../engine/fonts/Roboto-Medium.ttf"));
+
+    text.setCharacterSize(size);
+    text.setFillColor(color);
+    text.setStyle(sf::Text::Italic);
+    text.setPosition((float)position.x(), (float)position.y());
+
+    text.setString(string);
+    _window->draw(text);
+}
+
+void Screen::drawSprite(const sf::Sprite &sprite) {
+    _window->draw(sprite);
+}
+
+void Screen::drawText(const sf::Text &text) {
+    _window->draw(text);
+}
+
+void Screen::attachMouse(std::shared_ptr<Mouse> mouse) {
+    mouse->setWindow(_window);
 }

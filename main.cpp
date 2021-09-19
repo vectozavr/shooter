@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "ResourceManager.h"
 #include "gui/Window.h"
+#include "PlayerController.h"
 
 #include "Client.h"
 #include "Server.h"
@@ -61,6 +62,7 @@ void InitNetwork(shared_ptr<Server> server, shared_ptr<Client> client)
 class Shooter : public Engine {
 private:
     shared_ptr<Player> player;
+    shared_ptr<PlayerController> playerController;
 
     sf::Sound backgroundNoise;
 
@@ -72,7 +74,7 @@ private:
     bool inGame = false;
 
 public:
-    Shooter() = default;
+    Shooter() : mainMenu(screen, mouse) {};
 
     void start() override;
     void update() override;
@@ -86,11 +88,13 @@ void Shooter::start() {
     // This code executed once in the beginning:
     setDebugText(false);
 
-    screen->setMouseCursorVisible(true);
+    mouse->setMouseCursorVisible(true);
 
     world->loadMap("../maps/map1.obj", "map", Point4D{5, 5, 5});
 
     player = std::make_shared<Player>();
+    playerController = std::make_shared<PlayerController>(player, world, keyboard, mouse);
+
     client = std::make_shared<Client>(player, world);
     server = std::make_shared<Server>();
 
@@ -139,21 +143,22 @@ void Shooter::update() {
     client->update();
 
     // Check all input after this condition please
-    if (!screen->window.hasFocus())
+    if (!screen->hasFocus())
         return;
 
-    if(screen->isKeyTapped(sf::Keyboard::Escape)) {
+    if(keyboard->isKeyTapped(sf::Keyboard::Escape)) {
         inGame = !inGame;
-        screen->setMouseCursorVisible(!inGame);
+        mouse->setMouseCursorVisible(!inGame);
     }
 
     if(inGame) {
-        screen->setName("Shooter");
+        screen->setTitle("Shooter");
         player->update();
+        playerController->update();
+        mouse->setMouseInCenter();
     } else {
-        mainMenu.update(screen);
+        mainMenu.update();
     }
-
 
     setUpdateWorld(inGame);
 
@@ -172,7 +177,7 @@ void Shooter::gui() {
     sprite.scale(3, 3);
     sprite.setPosition(screen->width() / 2.0 - 27.0/2.0, screen->height() / 2 - 27.0/2.0);
     sprite.setColor(sf::Color(0,0,0, 200));
-    screen->window.draw(sprite);
+    screen->drawSprite(sprite);
 
     // health player stats
     player->drawStats();
@@ -181,10 +186,10 @@ void Shooter::gui() {
 void Shooter::play() {
     inGame = true;
 
-    screen->setMouseCursorVisible(!inGame);
+    mouse->setMouseCursorVisible(!inGame);
 }
 
-int main(int argc, char* argv[]) {
+int main() {
     Shooter game;
 
     //game.create(1280, 720, "Shooter");

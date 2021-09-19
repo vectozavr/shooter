@@ -128,7 +128,7 @@ void Client::processCustomPacket(MsgType type, sf::Packet& packet) {
             p2 = Point4D(dbuff[3], dbuff[4], dbuff[5]);
 
             tmp = "Client_fireTraces_" + std::to_string(fireTraces++);
-            _world->addBody(std::make_shared<RigidBody>(RigidBody(Mesh::LineTo(p1, p2, 0.05))), tmp);
+            _world->addBody(std::make_shared<RigidBody>(Mesh::LineTo(p1, p2, 0.05)), tmp);
             _world->body(tmp)->setCollider(false);
 
             _world->body(tmp)->a_color(tmp + "_fadeOut", {255, 255, 255, 0}, 1, Animation::None, Animation::linear);

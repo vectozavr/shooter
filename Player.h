@@ -33,23 +33,15 @@ private:
 
     double _g = 35;
 
-    double _slowMoCoefficient = 5;
-    bool _isInSlowMo = false;
-
     std::shared_ptr<Camera> _camera;
     std::shared_ptr<Screen> _screen;
 
     std::shared_ptr<World> _world;
 
-    bool _inRunning = false;
-
     // sounds
     sf::Sound _killSound;
     sf::Sound _deathSound;
-    sf::Sound _walkSound;
     sf::Sound _changeWeaponSound;
-    sf::Sound _slowMoSound;
-    sf::Sound _unSlowMoSound;
     sf::Sound _fullHealthSound;
     sf::Sound _fullAbilitySound;
 
@@ -62,7 +54,6 @@ private:
     std::function<void(const Point4D&, const Point4D&)> _addTraceCallBack;
     std::function<void(const std::string&)> _takeBonusCallBack;
 
-
 public:
     Player() {
         loadObj("../obj/cube.obj", "", Point4D{0.5, 1.9, 0.5});
@@ -72,9 +63,6 @@ public:
         setColor({240, 168, 168});
 
         _changeWeaponSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/weapons/change_weapon.ogg"));
-
-        _slowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/slow_mo.ogg"));
-        _unSlowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/unslow_mo.ogg"));
 
         _fullHealthSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/fullHealth.ogg"));
         _fullAbilitySound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/fullAbility.ogg"));
@@ -106,6 +94,13 @@ public:
     void setAbility(double a) {
         _ability = a;
     }
+
+    void nextWeapon();
+    void previousWeapon();
+    void fire();
+    void reload();
+
+    [[nodiscard]] double ability() const { return _ability; }
 
     void setFullHealth() {
         _health = _healthMax;
@@ -140,7 +135,6 @@ public:
     [[nodiscard]] double headAngle() const { return _headAngle; };
 
     void rotateWeaponsRelativePoint(const Point4D& point4D, const Point4D& v, double val);
-
 
     void drawStats();
 

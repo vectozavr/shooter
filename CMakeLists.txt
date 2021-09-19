@@ -85,7 +85,7 @@ add_executable(shooter
         engine/network/UDPSocket.h
         engine/network/config.h
         engine/animation/AFunction.h
-        )
+        PlayerController.cpp PlayerController.h engine/Keyboard.cpp engine/Keyboard.h engine/Mouse.cpp engine/Mouse.h)
 
 if(APPLE OR UNIX)
     include_directories(/usr/local/include)

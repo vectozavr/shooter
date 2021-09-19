@@ -10,6 +10,9 @@
 
 Engine::Engine() {
     screen = std::make_shared<Screen>();
+    keyboard = std::make_shared<Keyboard>();
+    mouse = std::make_shared<Mouse>();
+
     world = std::make_shared<World>();
     camera = std::make_shared<Camera>();
 }
@@ -18,13 +21,14 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
     _name = name;
 
     screen->open(screenWidth, screenHeight, name, verticalSync, background, style);
+    screen->attachMouse(mouse);
 
-    Log::log("Engine::create(): started engine (" + std::to_string(screenWidth) + " x " + std::to_string(screenHeight) + ") with name '" + name + "'.");
+    Log::log("Engine::create(): started engine (" + std::to_string(screenWidth) + " x " + std::to_string(screenHeight) + ") with title '" + name + "'.");
     Time::update();
 
     start();
     camera->init(screenWidth, screenHeight);
-    screen->getMouseDisplacement(); // We do it to set mouse position in the center (see how getMouseDisplacement() works)
+    mouse->setMouseInCenter();
 
     while (screen->isOpen()) {
         screen->clear();
@@ -69,7 +73,8 @@ void Engine::exit() {
         screen->close();
     }
     ResourceManager::unloadAllResources();
-    Log::log("Engine::exit(): exit engine (" + std::to_string(screen->width()) + " x " + std::to_string(screen->height()) + ") with name '" + screen->name() + "'.");
+    Log::log("Engine::exit(): exit engine (" + std::to_string(screen->width()) + " x " + std::to_string(screen->height()) + ") with title '" +
+                     screen->title() + "'.");
 }
 
 void Engine::printDebugText() const {
