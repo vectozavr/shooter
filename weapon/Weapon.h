@@ -28,7 +28,7 @@ protected:
     double _spreading = 2.0;
 
     std::string _name = "Weapon_name";
-    std::map<std::string, std::shared_ptr<Mesh>> _objects;
+    std::map<std::string, std::shared_ptr<RigidBody>> _objects;
 
     double _lastFireTime = -INFINITY;
     double _lastReloadTime = -INFINITY;

@@ -6,25 +6,26 @@
 #define ENGINE_WORLD_H
 
 #include <map>
-#include "Mesh.h"
+#include "Camera.h"
+#include "physics/RigidBody.h"
 
 class World {
 private:
-    std::map<std::string, std::shared_ptr<Mesh>> _objects;
-
+    std::map<std::string, std::shared_ptr<RigidBody>> _objects;
     std::vector<std::string> _objToRemove;
 public:
     World() = default;
 
-    [[nodiscard]] std::shared_ptr<Mesh> operator[] (const std::string& name);
+    void checkCollision(const std::string& body);
+    void update();
+    void projectObjectsInCamera(std::shared_ptr<Camera> camera);
 
-    [[nodiscard]] std::map<std::string, std::shared_ptr<Mesh>>& objects() { return _objects; }
-
-    void addMesh(std::shared_ptr<Mesh> mesh, const std::string& name = "");
-    void removeMesh(const std::string& name);
-    void removeMeshInstantly(const std::string& name);
+    void addBody(std::shared_ptr<RigidBody> mesh, const std::string& name = "");
+    std::shared_ptr<RigidBody> body(const std::string& name);
+    void removeBody(const std::string& name);
+    void removeBodyInstantly(const std::string& name);
     void garbageCollector();
-    void loadObj(const std::string &name, const std::string &filename,const std::string &materials = "", const Point4D& scale = Point4D{1, 1, 1});
+    void loadBody(const std::string &name, const std::string &filename, const std::string &materials = "", const Point4D& scale = Point4D{1, 1, 1});
 
     // rayCast returns pair of Point4D and std::string:
     // 1) Point4D is point of collision (the last coordinate is -1 if there are no collisions)

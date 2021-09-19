@@ -21,7 +21,7 @@ private:
 
     void spawnPlayer(sf::Uint16 id);
 public:
-    Client(std::shared_ptr<Player>  player, std::shared_ptr<World>  world) : _player(std::move(player)), _world(std::move(world)) {};
+    Client(std::shared_ptr<Player>  player, std::shared_ptr<World>  world) : _player(player), _world(world) {};
 
     void updatePacket() override;
 

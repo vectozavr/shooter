@@ -5,7 +5,7 @@
 #include "ResourceManager.h"
 #include <map>
 #include <memory>
-#include <iostream>
+
 namespace ResourceManager
 {
 	namespace
@@ -13,7 +13,6 @@ namespace ResourceManager
 		std::map<std::string, std::shared_ptr<sf::Texture>> _textures;
         std::map<std::string, std::shared_ptr<sf::Font>> _fonts;
 		std::map<std::string, std::shared_ptr<sf::SoundBuffer>> _soundBuffers;
-        std::map<std::string, std::shared_ptr<sf::Shader>> _shaders;
 	}
 
 	void unloadTextures()
@@ -36,18 +35,11 @@ namespace ResourceManager
         _fonts.clear();
 	}
 
-    void unloadShaders() {
-	    for (auto& shader : _shaders)
-	        shader.second.reset();
-	    _shaders.clear();
-	}
-
 	void unloadAllResources()
 	{
 		unloadTextures();
 		unloadSoundBuffers();
         unloadFonts();
-        unloadShaders();
 	}
 
 	std::shared_ptr<sf::Texture> loadTexture(const std::string& filename)
@@ -102,22 +94,5 @@ namespace ResourceManager
         _fonts.emplace(filename, font);
 
         return font;
-	}
-
-    std::shared_ptr<sf::Shader> loadShader(const std::string& filename, sf::Shader::Type type) {
-        // If Shader is already loaded - return pointer to it
-        auto it = _shaders.find(filename);
-        if (it != _shaders.end())
-            return it->second;
-
-        // Otherwise - try to load it. If failure - return zero
-        std::shared_ptr<sf::Shader> shader(new sf::Shader);
-        if (!shader->loadFromFile(filename, type))
-            return nullptr;
-
-        // If success - remember and return texture pointer
-        _shaders.emplace(filename, shader);
-
-        return shader;
 	}
 }

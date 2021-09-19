@@ -11,24 +11,24 @@
 class Plane {
 private:
     // You can define plane by defining the points in 3D space
-    Triangle triangle;
+    Triangle _triangle;
     // Or by defining normal vector and one val laying on the plane
-    Point4D n = Point4D{0, 0, 1, 0};
-    Point4D p{};
+    Point4D _n = Point4D{0, 0, 1, 0};
+    Point4D _p{};
 public:
-    // A plain with normal vector 'n' and val 'p' lays on the plane
+    // A plain with normal vector '_n' and val '_p' lays on the plane
     Plane() = default;
     Plane(const Point4D& N, const Point4D& P);
     Plane(const Plane& plane);
     explicit Plane(const Triangle& tri);
 
     [[nodiscard]] double distance(const Point4D& point4D) const;
-    // Point4D in space where line ('start' to 'end') intersects plain with normal vector 'n' and val 'p' lays on the plane
-    std::pair<Point4D, double> intersection(const Point4D& start, const Point4D& end);
-    int clip(Triangle& tri, Triangle& additional_tri);
+    // Point4D in space where line ('start' to 'end') intersects plain with normal vector '_n' and val '_p' lays on the plane
+    [[nodiscard]] std::pair<Point4D, double> intersection(const Point4D& start, const Point4D& end) const;
+    int clip(Triangle& tri, Triangle& additional_tri) const;
 
-    [[nodiscard]] Point4D N() const { return n; }
-    [[nodiscard]] Point4D P() const { return p; }
+    [[nodiscard]] Point4D N() const { return _n; }
+    [[nodiscard]] Point4D P() const { return _p; }
 };
 
 

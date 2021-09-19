@@ -10,34 +10,25 @@
 #include <SFML/Graphics.hpp>
 
 class Triangle {
+private:
+    sf::Color _color;
+    Point4D _p[3];
+
 public:
-    // This is for clipping debug: you can distinguish how this triangle was clipped
-    enum ClipMode {
-        None = 0,
-        Cropped,
-        Doubled,
-        Skipped
-    };
-    ClipMode clip = None;
-    sf::Color color;
-    Point4D p[3];
 
     Triangle ();
     Triangle (const Triangle& triangle);
-    Triangle (const Point4D& p1, const Point4D& p2, const Point4D& p3, double w = 1);
-    Triangle& operator=(const Triangle& triangle);
+    Triangle (const Point4D& p1, const Point4D& p2, const Point4D& p3, sf::Color color = {0, 0, 0});
 
     [[nodiscard]] Point4D operator[] (int i) const;
-    [[nodiscard]] Point4D& operator[] (int i);
-
     [[nodiscard]] Point4D norm() const;
 
     // Operations with Matrix4x4
     [[nodiscard]] Triangle operator*(const Matrix4x4& matrix4X4) const;
-    Triangle& operator*=(const Matrix4x4& matrix4X4);
-    [[nodiscard]] Point4D pos() const;
 
     [[nodiscard]] bool isPointInside(const Point4D& point) const;
+
+    [[nodiscard]] sf::Color color() const { return _color; }
 };
 
 

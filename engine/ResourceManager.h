@@ -25,7 +25,6 @@ namespace ResourceManager
     std::shared_ptr<sf::Texture> loadTexture(const std::string& filename);
     std::shared_ptr<sf::Font> loadFont(const std::string& filename);
     std::shared_ptr<sf::SoundBuffer> loadSoundBuffer(const std::string& filename);
-    std::shared_ptr<sf::Shader> loadShader(const std::string& filename, sf::Shader::Type type);
 };
 
 

@@ -8,7 +8,7 @@
 #include "World.h"
 #include "Player.h"
 
-class Bonus : public Mesh {
+class Bonus : public RigidBody {
 protected:
     std::string _name;
 public:

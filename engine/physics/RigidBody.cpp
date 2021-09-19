@@ -13,7 +13,8 @@ Point4D RigidBody::_findFurthestPoint(const Point4D& direction) {
     Point4D maxPoint = {};
     auto maxDistance = (double)-INFINITY;
     for(auto& tri : triangles()){
-        for(auto point : tri.p){
+        for(int i = 0; i < 3; i++){
+            Point4D point = tri[i];
 
             point = point + position();
 
@@ -302,18 +303,22 @@ void RigidBody::AddIfUniqueEdge(std::vector<std::pair<size_t, size_t>>& edges, c
 }
 
 void RigidBody::updatePhysicsState() {
-    translate(p_velocity * Time::deltaTime());
-    p_velocity = p_velocity + p_acceleration * Time::deltaTime();
+    translate(_velocity * Time::deltaTime());
+    _velocity = _velocity + _acceleration * Time::deltaTime();
 }
 
 void RigidBody::setVelocity(const Point4D& velocity) {
-    p_velocity = velocity;
+    _velocity = velocity;
 }
 
 void RigidBody::addVelocity(const Point4D &velocity) {
-    p_velocity = p_velocity + velocity;
+    _velocity = _velocity + velocity;
 }
 
 void RigidBody::setAcceleration(const Point4D& acceleration) {
-    p_acceleration = acceleration;
+    _acceleration = acceleration;
+}
+
+RigidBody::RigidBody(const Mesh &mesh) : Mesh(mesh) {
+
 }

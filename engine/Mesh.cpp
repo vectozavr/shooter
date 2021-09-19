@@ -11,13 +11,9 @@
 
 using namespace std;
 
-Mesh Mesh::operator*(const Matrix4x4 &matrix4X4) const {
-    return Mesh(*this) *= matrix4X4;
-}
-
 Mesh &Mesh::operator*=(const Matrix4x4 &matrix4X4) {
-    for (auto& t : tris)
-        t *= matrix4X4;
+    for (auto& t : _tris)
+        t = t * matrix4X4;
 
     return *this;
 }
@@ -27,7 +23,7 @@ Mesh &Mesh::loadObj(const std::string& filename, const std::string &materials, c
     auto objects = Mesh::LoadObjects(filename, materials, scale);
     for(auto& obj : objects) {
         for (auto &tri : obj->triangles()) {
-            tris.push_back(tri);
+            _tris.push_back(tri);
         }
     }
     return *this;
@@ -38,10 +34,10 @@ Mesh::Mesh(const std::string& filename, const std::string &materials, const Poin
 }
 
 Mesh::Mesh(const vector<Triangle> &tries){
-    tris = tries;
+    _tris = tries;
 }
 
-Mesh::Mesh(const Mesh& mesh) : Animatable(mesh) {
+Mesh::Mesh(const Mesh& mesh) {
     *this = mesh;
 }
 
@@ -50,17 +46,17 @@ Mesh Mesh::Obj(const std::string& filename) {
 }
 
 void Mesh::rotate(const Point4D &r) {
-    p_angle = p_angle + r;
+    _angle = _angle + r;
     *this *= Matrix4x4::Rotation(r);
 
-    for(auto attached : v_attached)
+    for(auto attached : _attachedObjects)
         attached->rotateRelativePoint(position(), r);
 }
 
 void Mesh::rotate(const Point4D &v, double r) {
     *this *= Matrix4x4::Rotation(v, r);
 
-    for(auto attached : v_attached)
+    for(auto attached : _attachedObjects)
         attached->rotateRelativePoint(position(), v, r);
 }
 
@@ -71,72 +67,71 @@ void Mesh::scale(const Point4D &s) {
 }
 
 void Mesh::translate(const Point4D &t) {
-    p_position = p_position + t;
+    _position = _position + t;
 
-    for(auto attached : v_attached)
+    for(auto attached : _attachedObjects)
         attached->translate(t);
 }
 
 Mesh &Mesh::operator=(const Mesh &mesh) {
-    tris = mesh.tris;
-    p_position = mesh.p_position;
-    c_color = mesh.c_color;
+    _tris = mesh._tris;
+    _position = mesh._position;
+    _color = mesh._color;
     return *this;
 }
 
 void Mesh::rotateRelativePoint(const Point4D &s, const Point4D &r) {
-    p_angle = p_angle + r;
+    _angle = _angle + r;
 
     // Translate XYZ by vector r1
-    Point4D r1 = p_position - s;
+    Point4D r1 = _position - s;
     *this *= Matrix4x4::Translation(r1);
 
-    // In translated coordinate system we rotate mesh and position
+    // In translated coordinate system we rotate body and position
     Matrix4x4 rotationMatrix = Matrix4x4::Rotation(r);
     Point4D r2 = rotationMatrix*r1;
     *this *= rotationMatrix;
 
     // After rotation we translate XYZ by vector -r2 and recalculate position
     *this *= Matrix4x4::Translation(-r2);
-    p_position = s + r2;
+    _position = s + r2;
 
-    if(v_attached.empty())
+    if(_attachedObjects.empty())
         return;
-    for(auto attached : v_attached)
+    for(auto attached : _attachedObjects)
         attached->rotateRelativePoint(s, r);
 }
 
 void Mesh::rotateRelativePoint(const Point4D &s, const Point4D &v, double r) {
     // Translate XYZ by vector r1
-    Point4D r1 = p_position - s;
+    Point4D r1 = _position - s;
     *this *= Matrix4x4::Translation(r1);
 
-    // In translated coordinate system we rotate mesh and position
+    // In translated coordinate system we rotate body and position
     Matrix4x4 rotationMatrix = Matrix4x4::Rotation(v, r);
     Point4D r2 = rotationMatrix*r1;
     *this *= rotationMatrix;
 
     // After rotation we translate XYZ by vector -r2 and recalculate position
     *this *= Matrix4x4::Translation(-r2);
-    p_position = s + r2;
+    _position = s + r2;
 
-    for(auto attached : v_attached)
+    for(auto attached : _attachedObjects)
         attached->rotateRelativePoint(s, v, r);
 }
 
 
 void Mesh::translateToPoint(const Point4D &point) {
-    translate(point - p_position);
+    translate(point - _position);
 }
 
 void Mesh::setColor(sf::Color c) {
-    c_color = c;
-    for (auto& t : tris)
-        t.color = c_color;
+    _color = c;
+    for (auto& t : _tris)
+        t = Triangle(t[0], t[1], t[2], _color);
 }
 
-std::vector<std::shared_ptr<Mesh>>
-Mesh::LoadObjects(const string &filename, const string &materials, const Point4D &scale) {
+std::vector<std::shared_ptr<Mesh>> Mesh::LoadObjects(const string &filename, const string &materials, const Point4D &scale) {
     std::vector<std::shared_ptr<Mesh>> objects;
     map<string, sf::Color> maters;
 
@@ -209,8 +204,7 @@ Mesh::LoadObjects(const string &filename, const string &materials, const Point4D
         {
             int f[3];
             s >> junk >> f[0] >> f[1] >> f[2];
-            tris.emplace_back(verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1] );
-            tris.back().color = currentColor;
+            tris.emplace_back(verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1], currentColor);
         }
     }
 
@@ -225,6 +219,7 @@ Mesh::LoadObjects(const string &filename, const string &materials, const Point4D
 }
 
 Mesh Mesh::LineTo(const Point4D& from, const Point4D& to, double line_width, sf::Color color) {
+
     Mesh line;
 
     Point4D v1 = (to - from).normalized();
@@ -242,7 +237,7 @@ Mesh Mesh::LineTo(const Point4D& from, const Point4D& to, double line_width, sf:
     Point4D p7 = to + v2 * line_width/2.0 + v3 * line_width/2.0;
     Point4D p8 = to + v2 * line_width/2.0 - v3 * line_width/2.0;
 
-    line.tris = {
+    line._tris = {
             { p2, p4, p1 },
             { p2, p3, p4 },
             { p1, p6, p2 },
@@ -258,6 +253,11 @@ Mesh Mesh::LineTo(const Point4D& from, const Point4D& to, double line_width, sf:
     };
 
     line.setColor(color);
+
+    for(auto& triangle : line._tris)
+        triangle = Triangle(Point4D{triangle[0].x(), triangle[0].y(), triangle[0].z(), 1},
+                            Point4D{triangle[1].x(), triangle[1].y(), triangle[1].z(), 1},
+                            Point4D{triangle[2].x(), triangle[2].y(), triangle[2].z(), 1}, line.color());
 
     return line;
 }

@@ -16,7 +16,7 @@ void Window::addButton(int x, int y, int w, int h, std::function<void()> click, 
 
 void Window::update(std::shared_ptr<Screen> screen) {
 
-    screen->title(s_name);
+    screen->setName(s_name);
     screen->window.draw(back);
 
     Point4D mousePos = screen->getMousePosition();

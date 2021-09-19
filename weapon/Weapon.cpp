@@ -14,13 +14,16 @@ Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, co
     auto objs = Mesh::LoadObjects(objFileName, matFileName, scale);
     for(int i = 0; i < objs.size(); i++) {
         string meshName = _name + "_" + to_string(i);
-        objs[i]->setCollider(false);
+
+        RigidBody obj(*objs[i]);
+
+        obj.setCollider(false);
 
         //transforms
-        objs[i]->rotate(rotate);
-        objs[i]->translate(translate);
+        obj.rotate(rotate);
+        obj.translate(translate);
 
-        _objects.insert({meshName, objs[i]});
+        _objects.insert({meshName, std::make_shared<RigidBody>(obj)});
     }
     noAmmoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/weapons/no_ammo.ogg"));
 }
@@ -62,13 +65,13 @@ void Weapon::reload() {
 
 void Weapon::addToWorld(shared_ptr<World> world) {
     for(auto& obj : _objects) {
-        world->addMesh(obj.second, obj.first);
+        world->addBody(obj.second, obj.first);
     }
 }
 
 void Weapon::removeFromWorld(shared_ptr<World> world) {
     for(auto& obj : _objects) {
-        world->removeMeshInstantly(obj.first);
+        world->removeBodyInstantly(obj.first);
     }
 }
 
@@ -90,7 +93,7 @@ void Weapon::translate(const Point4D &point4D) {
 }
 
 void Weapon::deleteTrace(shared_ptr<World> world, const std::string& traceName) {
-    world->removeMesh(traceName);
+    world->removeBody(traceName);
 }
 
 void Weapon::rotateRelativePoint(const Point4D &point4D, const Point4D &v, double val) {
@@ -114,12 +117,12 @@ std::map<std::string, double> Weapon::processFire(shared_ptr<World> world, share
     Point4D to = rayCast.first.w() == -1 ? camera->position() + camera->lookAt() * 1000 + randV: rayCast.first;
     string traceName = _name + "_trace_nr_" + std::to_string(fireTraces++);
     Point4D from = _objects[_name + "_" + to_string(_objects.size()-1)]->position() + _objects[_name + "_" + to_string(_objects.size()-1)]->triangles()[0][0];
-    world->addMesh(make_shared<Mesh>(Mesh::LineTo(from, to, 0.05)), traceName);
-    (*world)[traceName]->setCollider(false);
+    world->addBody(make_shared<RigidBody>(Mesh::LineTo(from, to, 0.05)), traceName);
+    world->body(traceName)->setCollider(false);
 
     // remove trace line after some time
-    (*world)[traceName]->a_color("color_trace", {255, 255, 255, 0}, 1, Animation::None, Animation::linear);
-    (*world)["Player_im"]->a_function(traceName + "delete", [world, traceName](){deleteTrace(world, traceName); }, 1, 2);
+    world->body(traceName)->a_color("color_trace", {255, 255, 255, 0}, 1, Animation::None, Animation::linear);
+    world->body("Player_im")->a_function(traceName + "delete", [world, traceName](){deleteTrace(world, traceName); }, 1, 2);
 
     addTraceCallBack(from, to);
 

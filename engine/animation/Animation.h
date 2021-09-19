@@ -34,7 +34,7 @@ protected:
     double _duration = 0;
     bool _started = false;
     LoopOut _looped = None;
-    // p - animation progress
+    // _p - animation progress
     double _p = 0;
     double _dp = 0;
 

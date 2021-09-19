@@ -11,10 +11,10 @@
 
 class Object {
 protected:
-    std::vector<std::shared_ptr<Object>> v_attached;
+    std::vector<std::shared_ptr<Object>> _attachedObjects;
 
-    Point4D p_position;
-    Point4D p_angle;
+    Point4D _position;
+    Point4D _angle;
 public:
     Object() = default;
 
@@ -24,11 +24,11 @@ public:
     virtual void rotate(const Point4D& v, double rv) {}
     virtual void rotateRelativePoint(const Point4D& s, const Point4D& v, double r) {}
 
-    [[nodiscard]] Point4D position() const { return p_position; }
-    [[nodiscard]] Point4D angle() const { return p_angle; }
+    [[nodiscard]] Point4D position() const { return _position; }
+    [[nodiscard]] Point4D angle() const { return _angle; }
 
     void attach(std::shared_ptr<Object> object) {
-        v_attached.push_back(std::move(object));
+        _attachedObjects.push_back(object);
     }
 };
 

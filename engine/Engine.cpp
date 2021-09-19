@@ -15,6 +15,8 @@ Engine::Engine() {
 }
 
 void Engine::create(int screenWidth, int screenHeight, const std::string &name, bool verticalSync, sf::Color background, sf::Uint32 style) {
+    _name = name;
+
     screen->open(screenWidth, screenHeight, name, verticalSync, background, style);
 
     Log::log("Engine::create(): started engine (" + std::to_string(screenWidth) + " x " + std::to_string(screenHeight) + ") with name '" + name + "'.");
@@ -28,67 +30,35 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
         screen->clear();
 
         Time::update();
-        screen->keyboardControl();
-        update(Time::deltaTime());
+        update();
 
         world->garbageCollector();
         /* Project all mesh
-         * Here we project all tris for each mesh from world._objects.
+         * Here we project all _tris for each body from world._objects.
          * When we call camera.project(m.second),
          */
 
         // sometimes we dont need to update physics world
         // (for example in menu or while pause)
-        // hence we can set 'b_updateWorld' equal to false in setUpdateWorld(bool):
-        if(b_updateWorld) {
-            camera->record();
-            for (auto &m : world->objects()) {
-                m.second->a_update();
-                camera->project(*m.second, screen->mode());
-
-                m.second->updatePhysicsState();
-                // isCollision detection:
-                if (m.second->isCollision()) {
-                    m.second->setInCollision(false);
-                    m.second->setCollisionNormal(Point4D{0, 0, 0});
-                    for (auto &obj : world->objects()) {
-                        if(obj.first != m.first) {
-                            std::pair<bool, Simplex> gjk = m.second->checkGJKCollision(obj.second);
-                            if (gjk.first) {
-                                if (obj.second->isCollider()) {
-                                    CollisionPoint epa = m.second->EPA(gjk.second, obj.second);
-                                    Solver::solveCollision(m.second, obj.second, epa);
-                                }
-                                if (m.second->collisionCallBack() != nullptr)
-                                    m.second->collisionCallBack()(obj.first, obj.second);
-                            }
-                        }
-                    }
-                }
-
-            }
-
-            // draw projected mesh
-            for (auto &t : camera->sorted())
-                screen->triangle(t);
+        // hence we can set '_updateWorld' equal to false in setUpdateWorld(bool):
+        if(_updateWorld) {
 
             camera->a_update();
+            camera->clear();
 
-            triPerSec = camera->buffSize() * Time::fps();
+            world->update();
+            world->projectObjectsInCamera(camera);
 
-            if (b_debugText) {
-                screen->debugText(name + "\n\n X: " +
-                                 std::to_string((camera->eye().x())) + "\n Y: " +
-                                 std::to_string((camera->eye().y())) + "\n Z: " +
-                                 std::to_string((camera->eye().z())) + "\n\n" +
-                                 std::to_string(screen->width()) + "x" +
-                                 std::to_string(screen->height()) + "\n" +
-                                 std::to_string(Time::fps()) +
-                                 " fps \n" + std::to_string((int) triPerSec) + " tris/s");
-            }
+            // draw projected body
+            for (auto &t : camera->sorted())
+                screen->drawTriangle(t);
+
+            _triPerSec = camera->buffSize() * Time::fps();
+
+            printDebugText();
+            gui();
         }
 
-        gui();
         screen->display();
     }
     exit();
@@ -99,5 +69,18 @@ void Engine::exit() {
         screen->close();
     }
     ResourceManager::unloadAllResources();
-    Log::log("Engine::exit(): exit engine (" + std::to_string(screen->width()) + " x " + std::to_string(screen->height()) + ") with name '" + screen->title() + "'.");
+    Log::log("Engine::exit(): exit engine (" + std::to_string(screen->width()) + " x " + std::to_string(screen->height()) + ") with name '" + screen->name() + "'.");
+}
+
+void Engine::printDebugText() const {
+    if (_debugText) {
+        screen->debugText(_name + "\n\n X: " +
+                          std::to_string((camera->eye().x())) + "\n Y: " +
+                          std::to_string((camera->eye().y())) + "\n Z: " +
+                          std::to_string((camera->eye().z())) + "\n\n" +
+                          std::to_string(screen->width()) + "x" +
+                          std::to_string(screen->height()) + "\n" +
+                          std::to_string(Time::fps()) +
+                          " fps \n" + std::to_string((int) _triPerSec) + " _tris/s");
+    }
 }

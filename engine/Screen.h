@@ -13,33 +13,18 @@
 #include "utils/Time.h"
 
 class Screen {
-public:
-    enum ViewMode {
-        Default = 0,
-        Frame,
-        Borders,
-        Xray,
-        Clipped,
-        Transparency,
-        Normals
-    };
 private:
-    int w = 1920;
-    int h = 1080;
+    int _w = 1920;
+    int _h = 1080;
 
-    std::string name;
+    std::string _name;
 
-    sf::Color background;
+    sf::Color _background;
 
-    Screen::ViewMode vm = Screen::ViewMode::Default;
+    std::map<sf::Keyboard::Key, double> _tappedKeys;
+    std::map<sf::Mouse::Button, double> _tappedButtons;
 
-    std::map<sf::Keyboard::Key, double> tappedKeys;
-    std::map<sf::Mouse::Button, double> tappedButtons;
-
-    std::string font = "../engine/fonts/Roboto-Thin.ttf";
-
-    int frame = 0;
-    int scene = 0; // the number of scene
+    std::string _font = "../engine/fonts/Roboto-Thin.ttf";
 
 public:
     sf::RenderWindow window;
@@ -49,10 +34,10 @@ public:
     void display();
     void clear();
 
-    void triangle(const Triangle& triangle );
+    void drawTriangle(const Triangle& triangle);
 
-    void title(const std::string& title);
-    std::string title() const { return name; };
+    void setName(const std::string& title);
+    std::string name() const { return _name; };
 
     bool isOpen();
 
@@ -71,11 +56,6 @@ public:
     Point4D getMouseDisplacement() const;
     void setMouseInCenter() const;
     void setMouseCursorVisible(bool visible);
-
-    void setMode(ViewMode mode) { vm = mode; }
-    [[nodiscard]] ViewMode mode() const { return vm; }
-
-    void keyboardControl();
 
     void debugText(const std::string& text);
 };

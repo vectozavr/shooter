@@ -11,28 +11,28 @@ void Player::update() {
 
     // friction
     if(inCollision())
-        p_velocity = p_velocity - p_velocity*Time::deltaTime()*2;
+        _velocity = _velocity - _velocity * Time::deltaTime() * 2;
 
-    if(isInSlowMo) {
+    if(_isInSlowMo) {
         if(_ability > 0)
             _ability -= Time::deltaTime();
         else {
             _ability = 0;
-            isInSlowMo = false;
-            setVelocity(velocity()*slowMoCoefficient);
-            setAcceleration(p_acceleration*slowMoCoefficient*slowMoCoefficient);
-            slowMoSound.stop();
-            unSlowMoSound.play();
+            _isInSlowMo = false;
+            setVelocity(velocity() * _slowMoCoefficient);
+            setAcceleration(_acceleration * _slowMoCoefficient * _slowMoCoefficient);
+            _slowMoSound.stop();
+            _unSlowMoSound.play();
         }
     }
 
-    double coeff = isInSlowMo ? 1.0/slowMoCoefficient : 1.0;
+    double coeff = _isInSlowMo ? 1.0 / _slowMoCoefficient : 1.0;
 
-    bool inRunning_old = inRunning;
-    inRunning = _screen != nullptr && (Screen::isKeyPressed(sf::Keyboard::A) || Screen::isKeyPressed(sf::Keyboard::D) ||Screen::isKeyPressed(sf::Keyboard::W) || Screen::isKeyPressed(sf::Keyboard::S));
+    bool inRunning_old = _inRunning;
+    _inRunning = _screen != nullptr && (Screen::isKeyPressed(sf::Keyboard::A) || Screen::isKeyPressed(sf::Keyboard::D) || Screen::isKeyPressed(sf::Keyboard::W) || Screen::isKeyPressed(sf::Keyboard::S));
 
     // in case when the camera is attached we make some animation during running
-    if(_camera != nullptr && inRunning && !_camera->isInAnim()) {
+    if(_camera != nullptr && _inRunning && !_camera->isInAnim()) {
         _camera->a_translate("hor_oscil", -_camera->left()/12, 0.3/coeff, Animation::LoopOut::None, Animation::cos);
         _camera->a_wait("hor_oscil", 0);
         _camera->a_translate("hor_oscil", _camera->left()/12, 0.3/coeff, Animation::LoopOut::None, Animation::cos);
@@ -47,7 +47,7 @@ void Player::update() {
 
         _camera->a_translateToPoint("init", position() + Point4D{0, 1.8, 0}, 0.3/coeff, Animation::None, Animation::cos);
 
-    } else if(_camera != nullptr && inRunning_old && !inRunning) {
+    } else if(_camera != nullptr && inRunning_old && !_inRunning) {
         _camera->a_stopAllAnimations();
 
         _camera->a_translateToPoint("init", position() + Point4D{0, 1.8, 0}, 0.15/coeff, Animation::None, Animation::cos);
@@ -58,55 +58,55 @@ void Player::update() {
     if(_world != nullptr && _screen != nullptr && _camera != nullptr) {
         // Left and right
         if (Screen::isKeyPressed(sf::Keyboard::A)) {
-            translate(_camera->left() * Time::deltaTime() * walkSpeed * coeff);
+            translate(_camera->left() * Time::deltaTime() * _walkSpeed * coeff);
             if(inCollision())
                 setVelocity(Point4D{0,0,0});
         }
         if (Screen::isKeyPressed(sf::Keyboard::D)) {
-            translate(-_camera->left() * Time::deltaTime() * walkSpeed * coeff);
+            translate(-_camera->left() * Time::deltaTime() * _walkSpeed * coeff);
             if(inCollision())
                 setVelocity(Point4D{0,0,0});
         }
 
         // Forward and backward
         if (Screen::isKeyPressed(sf::Keyboard::W)) {
-            translate(_camera->left().cross3D(Point4D{0, 1, 0}) * Time::deltaTime() * walkSpeed * coeff);
+            translate(_camera->left().cross3D(Point4D{0, 1, 0}) * Time::deltaTime() * _walkSpeed * coeff);
             if(inCollision())
                 setVelocity(Point4D{0,0,0});
         }
 
         if (Screen::isKeyPressed(sf::Keyboard::S)) {
-            translate(-_camera->left().cross3D(Point4D{0, 1, 0}) * Time::deltaTime() * walkSpeed * coeff);
+            translate(-_camera->left().cross3D(Point4D{0, 1, 0}) * Time::deltaTime() * _walkSpeed * coeff);
 
             if(inCollision())
                 setVelocity(Point4D{0,0,0});
         }
 
-        if (_ability > 0 && !isInSlowMo && Screen::isKeyPressed(sf::Keyboard::LShift)) {
+        if (_ability > 0 && !_isInSlowMo && Screen::isKeyPressed(sf::Keyboard::LShift)) {
             // slow mo
-            isInSlowMo = true;
-            setVelocity(velocity()/slowMoCoefficient);
-            setAcceleration(p_acceleration/(slowMoCoefficient*slowMoCoefficient));
-            unSlowMoSound.stop();
-            slowMoSound.play();
-        } else if (isInSlowMo && !Screen::isKeyPressed(sf::Keyboard::LShift)) {
-            isInSlowMo = false;
-            setVelocity(velocity()*slowMoCoefficient);
-            setAcceleration(p_acceleration*slowMoCoefficient*slowMoCoefficient);
-            slowMoSound.stop();
-            unSlowMoSound.play();
+            _isInSlowMo = true;
+            setVelocity(velocity() / _slowMoCoefficient);
+            setAcceleration(_acceleration / (_slowMoCoefficient * _slowMoCoefficient));
+            _unSlowMoSound.stop();
+            _slowMoSound.play();
+        } else if (_isInSlowMo && !Screen::isKeyPressed(sf::Keyboard::LShift)) {
+            _isInSlowMo = false;
+            setVelocity(velocity() * _slowMoCoefficient);
+            setAcceleration(_acceleration * _slowMoCoefficient * _slowMoCoefficient);
+            _slowMoSound.stop();
+            _unSlowMoSound.play();
         }
 
         if (Screen::isKeyPressed(sf::Keyboard::Space) && inCollision()) {
-            addVelocity(Point4D{0, std::abs(_collisionNormal.y())*sqrt(2 * g * jumpHeight)*coeff, 0});
-            translate(Point4D{0, Time::deltaTime() * walkSpeed * 2 * coeff, 0});
+            addVelocity(Point4D{0, std::abs(_collisionNormal.y()) * sqrt(2 * _g * _jumpHeight) * coeff, 0});
+            translate(Point4D{0, Time::deltaTime() * _walkSpeed * 2 * coeff, 0});
         }
 
         // Mouse movement
         Point4D disp = _screen->getMouseDisplacement();
 
         rotate(Point4D{0, -disp.x() / 1000.0, 0});
-        p_velocity = Matrix4x4::RotationY(-disp.x() / 1000.0)*p_velocity;
+        _velocity = Matrix4x4::RotationY(-disp.x() / 1000.0) * _velocity;
 
         double rotationLeft = disp.y() / 1000.0;
 
@@ -126,7 +126,7 @@ void Player::update() {
                 _selectedWeapon = (_selectedWeapon + 1) % _weapons.size();
                 _weapons[_selectedWeapon]->addToWorld(_world);
                 Log::log("selected _selectedWeapon " + std::to_string(_selectedWeapon));
-                changeWeaponSound.play();
+                _changeWeaponSound.play();
             }
         }
 
@@ -140,7 +140,7 @@ void Player::update() {
                     _selectedWeapon = _weapons.size() - 1;
                 _weapons[_selectedWeapon]->addToWorld(_world);
                 Log::log("selected _selectedWeapon " + std::to_string(_selectedWeapon));
-                changeWeaponSound.play();
+                _changeWeaponSound.play();
             }
         }
 
@@ -148,7 +148,7 @@ void Player::update() {
             auto damagedPlayers = _weapons[_selectedWeapon]->fire(_world, _camera);
             for(auto& damagedPlayer : damagedPlayers) {
                 sf::Uint16 targetId = std::stoi(damagedPlayer.first.substr(7));
-                damagePlayerCallBack(targetId, damagedPlayer.second);
+                _damagePlayerCallBack(targetId, damagedPlayer.second);
             }
         }
 
@@ -156,11 +156,11 @@ void Player::update() {
             _weapons[_selectedWeapon]->reload();
         }
 
-        if (inRunning && inCollision() && walkSound.getStatus() != sf::Sound::Status::Playing) {
+        if (_inRunning && inCollision() && _walkSound.getStatus() != sf::Sound::Status::Playing) {
             if ((position() - rayToFloor.first).abs() < 2) {
                 int soundNum = round((double) rand() / RAND_MAX * 5) + 1;
-                walkSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/stonestep" + std::to_string(soundNum) + ".ogg"));
-                walkSound.play();
+                _walkSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/stonestep" + std::to_string(soundNum) + ".ogg"));
+                _walkSound.play();
             }
         }
     }
@@ -248,7 +248,7 @@ void Player::drawStats() {
     text_ammo2.setFillColor(sf::Color(0, 0, 0, 70));
     _screen->window.draw(text_ammo2);
 
-    // text killSound/deathSound stats
+    // text _killSound/_deathSound stats
     sf::Text text_kills(text_health);
     text_kills.setStyle(sf::Text::Bold);
     text_kills.setString("KILLS: " + std::to_string((int)_kills) + " | " + "DEATHS: " + std::to_string((int)_deaths));
@@ -267,16 +267,16 @@ void Player::drawStats() {
 }
 
 void Player::playDeath() {
-    deathSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/classic_hurt.ogg"));
-    deathSound.play();
+    _deathSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/classic_hurt.ogg"));
+    _deathSound.play();
 }
 
 void Player::playKill() {
-    killSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/kill.ogg"));
-    killSound.play();
+    _killSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/kill.ogg"));
+    _killSound.play();
 }
 
-void Player::collisionWithObject(const std::string &objName, std::shared_ptr<Mesh> obj) {
+void Player::collisionWithObject(const std::string &objName, std::shared_ptr<RigidBody> obj) {
     if(objName.find("Bonus_gun") != std::string::npos)
         addWeapon(std::make_shared<Gun>());
 
@@ -299,13 +299,13 @@ void Player::collisionWithObject(const std::string &objName, std::shared_ptr<Mes
         setFullAbility();
 
     if(objName.find("Bonus") != std::string::npos) {
-        _world->removeMesh(objName);
-        takeBonusCallBack(objName);
+        _world->removeBody(objName);
+        _takeBonusCallBack(objName);
     }
 }
 
 void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
-    changeWeaponSound.play();
+    _changeWeaponSound.play();
 
     if(!_weapons.empty()) {
         for(auto& w : _weapons) {
@@ -320,11 +320,11 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     _weapons.back()->attachToPlayer(*this);
 
     _weapons.back()->translate(position());
-    _weapons.back()->rotateRelativePoint(position() + Point4D{0, 1.8, 0}, Point4D{0, 1, 0}, p_angle.y());
+    _weapons.back()->rotateRelativePoint(position() + Point4D{0, 1.8, 0}, Point4D{0, 1, 0}, _angle.y());
     _weapons.back()->rotateRelativePoint(position() + Point4D{0, 1.8, 0}, _camera->left(), _camera->angleLeftUpLookAt().x());
 
-    _weapons.back()->setAddTraceCallBack(addTraceCallBack);
-    changeWeaponSound.play();
+    _weapons.back()->setAddTraceCallBack(_addTraceCallBack);
+    _changeWeaponSound.play();
 }
 
 void Player::initWeapons() {

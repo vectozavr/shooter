@@ -11,15 +11,15 @@
 
 
 void Screen::open(int screenWidth, int screenHeight, const std::string &name, bool verticalSync, sf::Color background, sf::Uint32 style) {
-    this->name = name;
-    w = screenWidth;
-    h = screenHeight;
-    this->background = background;
+    _name = name;
+    _w = screenWidth;
+    _h = screenHeight;
+    _background = background;
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
 
-    window.create(sf::VideoMode(w, h), name, style, settings);
+    window.create(sf::VideoMode(_w, _h), name, style, settings);
     window.setVerticalSyncEnabled(verticalSync);
 }
 
@@ -31,44 +31,29 @@ void Screen::display() {
         }
     }
 
-    std::string title = name + " (" + std::to_string(Time::fps()) + " fps)";
+    std::string title = _name + " (" + std::to_string(Time::fps()) + " fps)";
     window.setTitle(title);
 
     window.display();
 }
 
 void Screen::clear() {
-    window.clear(background);
+    window.clear(_background);
 }
 
-void Screen::triangle(const Triangle& triangle)
+void Screen::drawTriangle(const Triangle& triangle)
 {
-    if(vm == Frame || vm == Borders || vm == Xray || vm == Clipped || vm == Transparency || vm == Normals) {
-        sf::Vertex lines[4] =
-                {
-                        sf::Vertex(sf::Vector2f(triangle[0].x(), triangle[0].y()), sf::Color(0, 0, 0, 255)),
-                        sf::Vertex(sf::Vector2f(triangle[1].x(), triangle[1].y()), sf::Color(0, 0, 0, 255)),
-                        sf::Vertex(sf::Vector2f(triangle[2].x(), triangle[2].y()), sf::Color(0, 0, 0, 255)),
-                        sf::Vertex(sf::Vector2f(triangle[0].x(), triangle[0].y()), sf::Color(0, 0, 0, 255))
-                };
-
-        window.draw(lines, 4, sf::LineStrip);
-    }
-    if(vm == Frame || vm == Xray)
-        return; // no texture when we turn on Frame or Xray mode
-
     sf::Vertex tris[3] =
             {
-                    sf::Vertex(sf::Vector2f(triangle[0].x(), triangle[0].y()), triangle.color),
-                    sf::Vertex(sf::Vector2f(triangle[1].x(), triangle[1].y()), triangle.color),
-                    sf::Vertex(sf::Vector2f(triangle[2].x(), triangle[2].y()), triangle.color)
+                    sf::Vertex(sf::Vector2f(triangle[0].x(), triangle[0].y()), triangle.color()),
+                    sf::Vertex(sf::Vector2f(triangle[1].x(), triangle[1].y()), triangle.color()),
+                    sf::Vertex(sf::Vector2f(triangle[2].x(), triangle[2].y()), triangle.color())
             };
     window.draw(tris, 3, sf::Triangles);
 }
 
-void Screen::title(const std::string& title)
-{
-    name = title;
+void Screen::setName(const std::string& title) {
+    _name = title;
 }
 
 bool Screen::isOpen() {
@@ -89,49 +74,28 @@ Point4D Screen::getMousePosition() const {
 }
 
 Point4D Screen::getMouseDisplacement() const {
-    sf::Vector2<int> disp = sf::Mouse::getPosition(window) - sf::Vector2<int>(w/2, h/2);
+    sf::Vector2<int> disp = sf::Mouse::getPosition(window) - sf::Vector2<int>(_w/2, _h/2);
     setMouseInCenter();
     return Point4D(disp.x, disp.y, 0, 0);
 }
 
 void Screen::setMouseInCenter() const {
-    sf::Mouse::setPosition({ w / 2, h / 2 }, window);
+    sf::Mouse::setPosition({ _w / 2, _h / 2 }, window);
 }
 
 void Screen::setMouseCursorVisible(bool visible) {
     window.setMouseCursorVisible(visible);
 }
 
-void Screen::keyboardControl() {
-    // Check all input after this condition please
-    if (!window.hasFocus())
-        return;
-
-    if(isKeyTapped(sf::Keyboard::Num1))
-        setMode(ViewMode::Default);
-    if(isKeyTapped(sf::Keyboard::Num2))
-        setMode(ViewMode::Borders);
-    if(isKeyTapped(sf::Keyboard::Num3))
-        setMode(ViewMode::Transparency);
-    if(isKeyTapped(sf::Keyboard::Num4))
-        setMode(ViewMode::Frame);
-    if(isKeyTapped(sf::Keyboard::Num5))
-        setMode(ViewMode::Xray);
-    if(isKeyTapped(sf::Keyboard::Num6))
-        setMode(ViewMode::Clipped);
-    if(isKeyTapped(sf::Keyboard::Num7))
-        setMode(ViewMode::Normals);
-}
-
 bool Screen::isKeyTapped(sf::Keyboard::Key key) {
     if (!Screen::isKeyPressed(key))
         return false;
 
-    if(tappedKeys.count(key) == 0) {
-        tappedKeys.emplace(key, Time::time());
+    if(_tappedKeys.count(key) == 0) {
+        _tappedKeys.emplace(key, Time::time());
         return true;
-    } else if((Time::time() - tappedKeys[key]) > 0.2) {
-        tappedKeys[key] = Time::time();
+    } else if((Time::time() - _tappedKeys[key]) > 0.2) {
+        _tappedKeys[key] = Time::time();
         return true;
     }
     return false;
@@ -145,11 +109,11 @@ bool Screen::isButtonTapped(sf::Mouse::Button button) {
     if (!Screen::isButtonPressed(button))
         return false;
 
-    if(tappedButtons.count(button) == 0) {
-        tappedButtons.emplace(button, Time::time());
+    if(_tappedButtons.count(button) == 0) {
+        _tappedButtons.emplace(button, Time::time());
         return true;
-    } else if((Time::time() - tappedButtons[button]) > 0.2) {
-        tappedButtons[button] = Time::time();
+    } else if((Time::time() - _tappedButtons[button]) > 0.2) {
+        _tappedButtons[button] = Time::time();
         return true;
     }
     return false;
@@ -159,7 +123,7 @@ bool Screen::isButtonTapped(sf::Mouse::Button button) {
 void Screen::debugText(const std::string& text) {
     sf::Text t;
 
-    t.setFont(*ResourceManager::loadFont(font));
+    t.setFont(*ResourceManager::loadFont(_font));
     t.setString(text);
     t.setCharacterSize(30);
     t.setFillColor(sf::Color::Black);

@@ -5,25 +5,25 @@
 #include "Camera.h"
 #include "utils/Log.h"
 
-std::vector<Triangle> &Camera::project(Mesh& mesh, Screen::ViewMode mode) {
+std::vector<Triangle> &Camera::project(std::shared_ptr<Mesh> mesh) {
 
-    if(!ready) {
-        Log::log("Camera::project(): cannot project tris without camera initialization ( Camera::init() ) ");
-        return this->triangles;
+    if(!_ready) {
+        Log::log("Camera::project(): cannot project _tris without camera initialization ( Camera::init() ) ");
+        return this->_triangles;
     }
 
-    if(!mesh.isVisible())
-        return this->triangles;
+    if(!mesh->isVisible())
+        return this->_triangles;
 
-    // Model transform matrix: translate tris in the origin of mesh.
-    Matrix4x4 M = Matrix4x4::Translation(mesh.position());
-    VM = V * M;
+    // Model transform matrix: translate _tris in the origin of body.
+    Matrix4x4 M = Matrix4x4::Translation(mesh->position());
+    Matrix4x4 VM = _V * M;
 
     // We don't want to waste time re-allocating memory every time
     std::vector<Triangle> clippedTriangles, tempBuffer;
-    for(auto& t : mesh.triangles()) {
+    for(auto& t : mesh->triangles()) {
 
-        double dot = t.norm().dot((mesh.position() + t[0] - p_position).normalized());
+        double dot = t.norm().dot((mesh->position() + t[0] - _position).normalized());
 
         if(dot > 0)
             continue;
@@ -32,10 +32,10 @@ std::vector<Triangle> &Camera::project(Mesh& mesh, Screen::ViewMode mode) {
         // It needs to be cleared because it's reused through iterations. Usually it doesn't free memory.
         clippedTriangles.clear();
 
-        // In the beginning we need to to translate triangle from world coordinate to our camera system:
-        // After that we apply clipping for all planes from clipPlanes
+        // In the beginning we need to to translate drawTriangle from world coordinate to our camera system:
+        // After that we apply clipping for all planes from _clipPlanes
         clippedTriangles.emplace_back(t * VM);
-        for(auto& plane : clipPlanes)
+        for(auto& plane : _clipPlanes)
         {
             while(!clippedTriangles.empty())
             {
@@ -51,60 +51,59 @@ std::vector<Triangle> &Camera::project(Mesh& mesh, Screen::ViewMode mode) {
         }
 
         for(auto& clippedTriangle : clippedTriangles) {
-            if(mode != Screen::ViewMode::Clipped) {
-                clippedTriangle.color = sf::Color(clippedTriangle.color.r * (0.3 * std::abs(dot) + 0.7),
-                                                  clippedTriangle.color.g * (0.3 * std::abs(dot) + 0.7),
-                                                  clippedTriangle.color.b * (0.3 * std::abs(dot) + 0.7),
-                                                  (mode == Screen::ViewMode::Transparency ||
-                                                   mode == Screen::ViewMode::Normals) ? 100 : clippedTriangle.color.a);
-            }
+            sf::Color color = clippedTriangle.color();
+            sf::Color ambientColor = sf::Color(color.r * (0.3 * std::abs(dot) + 0.7),
+                                               color.g * (0.3 * std::abs(dot) + 0.7),
+                                               color.b * (0.3 * std::abs(dot) + 0.7),
+                                               color.a);
 
-            // Finally its time to project our clipped colored triangle from 3D -> 2D
+            // Finally its time to project our clipped colored drawTriangle from 3D -> 2D
             // and transform it's coordinate to screen space (in pixels):
-            clippedTriangle *= SP;
+            clippedTriangle = clippedTriangle * _SP;
 
-            clippedTriangle[0] = clippedTriangle[0] / clippedTriangle[0].w();
-            clippedTriangle[1] = clippedTriangle[1] / clippedTriangle[1].w();
-            clippedTriangle[2] = clippedTriangle[2] / clippedTriangle[2].w();
+            clippedTriangle = Triangle(clippedTriangle[0] / clippedTriangle[0].w(),
+                                       clippedTriangle[1] / clippedTriangle[1].w(),
+                                       clippedTriangle[2] / clippedTriangle[2].w(),
+                                       ambientColor);
 
-            triangles.emplace_back(clippedTriangle);
+            _triangles.emplace_back(clippedTriangle);
         }
     }
 
-    return this->triangles;
+    return this->_triangles;
 }
 
 void Camera::init(int width, int height, double fov, double ZNear, double ZFar) {
     // We need to init camera only after creation or changing width, height, fov, ZNear or ZFar.
     // Because here we calculate matrix that does not change during the motion of _objects or camera
-    w = width; h = height;
-    aspect = (double)width / (double)height;
-    P = Matrix4x4::Projection(fov, aspect, ZNear, ZFar);
-    S = Matrix4x4::ScreenSpace(width, height);
+    _w = width; _h = height;
+    _aspect = (double)width / (double)height;
+    _P = Matrix4x4::Projection(fov, _aspect, ZNear, ZFar);
+    _S = Matrix4x4::ScreenSpace(width, height);
 
-    SP = S * P; // screen-space-projections matrix
+    _SP = _S * _P; // screen-space-projections matrix
 
-    // This is planes for clipping tris.
-    // Motivation: we are not interest in tris that we cannot see.
-    clipPlanes.emplace_back(Plane(Point4D{0, 0, 1}, Point4D{0, 0, ZNear})); // near plane
-    clipPlanes.emplace_back(Plane(Point4D{0, 0, -1}, Point4D{0, 0, ZFar})); // far plane
+    // This is planes for clipping _tris.
+    // Motivation: we are not interest in _tris that we cannot see.
+    _clipPlanes.emplace_back(Plane(Point4D{0, 0, 1}, Point4D{0, 0, ZNear})); // near plane
+    _clipPlanes.emplace_back(Plane(Point4D{0, 0, -1}, Point4D{0, 0, ZFar})); // far plane
 
     double thetta1 = M_PI*fov*0.5/180.0;
-    double thetta2 = atan(aspect*tan(thetta1));
-    clipPlanes.emplace_back(Plane(Point4D{-cos(thetta2), 0, sin(thetta2)}, Point4D{0, 0, 0})); // left plane
-    clipPlanes.emplace_back(Plane(Point4D{cos(thetta2), 0, sin(thetta2)}, Point4D{0, 0, 0})); // right plane
-    clipPlanes.emplace_back(Plane(Point4D{0, cos(thetta1), sin(thetta1)}, Point4D{0, 0, 0})); // down plane
-    clipPlanes.emplace_back(Plane(Point4D{0, -cos(thetta1), sin(thetta1)},Point4D{0, 0, 0})); // up plane
+    double thetta2 = atan(_aspect * tan(thetta1));
+    _clipPlanes.emplace_back(Plane(Point4D{-cos(thetta2), 0, sin(thetta2)}, Point4D{0, 0, 0})); // left plane
+    _clipPlanes.emplace_back(Plane(Point4D{cos(thetta2), 0, sin(thetta2)}, Point4D{0, 0, 0})); // right plane
+    _clipPlanes.emplace_back(Plane(Point4D{0, cos(thetta1), sin(thetta1)}, Point4D{0, 0, 0})); // down plane
+    _clipPlanes.emplace_back(Plane(Point4D{0, -cos(thetta1), sin(thetta1)}, Point4D{0, 0, 0})); // up plane
 
-    ready = true;
+    _ready = true;
     Log::log("Camera::init(): camera successfully initialized.");
 }
 
 std::vector<Triangle> &Camera::sorted() {
 
-    // Sort tris from back to front
+    // Sort _tris from back to front
     // This is some replacement for Z-buffer
-    std::sort(triangles.begin(), triangles.end(), [](Triangle &t1, Triangle &t2)
+    std::sort(_triangles.begin(), _triangles.end(), [](Triangle &t1, Triangle &t2)
     {
         std::vector<double> v_z1({t1[0].z(), t1[1].z(), t1[2].z()});
         std::vector<double> v_z2({t2[0].z(), t2[1].z(), t2[2].z()});
@@ -118,44 +117,44 @@ std::vector<Triangle> &Camera::sorted() {
         return z1 > z2;
     });
 
-    return triangles;
+    return _triangles;
 }
 
-void Camera::record() {
-    // Cleaning all tris and recalculation of View matrix
+void Camera::clear() {
+    // Cleaning all _tris and recalculation of View matrix
     // That is like preparation for new camera shot: we need to set
     // the position of camera and insert new cartridge for photo.
-    triangles.clear();
-    V = Matrix4x4::View(p_left, p_up, p_lookAt, p_position);
+    _triangles.clear();
+    _V = Matrix4x4::View(_left, _up, _lookAt, _position);
 }
 
 void Camera::rotateX(double rx) {
-    p_angle = Point4D{p_angle.x() + rx, p_angle.y(), p_angle.z()};
-    p_left = Matrix4x4::RotationX(rx) * p_left;
-    p_up = Matrix4x4::RotationX(rx) * p_up;
-    p_lookAt = Matrix4x4::RotationX(rx) * p_lookAt;
+    _angle = Point4D{_angle.x() + rx, _angle.y(), _angle.z()};
+    _left = Matrix4x4::RotationX(rx) * _left;
+    _up = Matrix4x4::RotationX(rx) * _up;
+    _lookAt = Matrix4x4::RotationX(rx) * _lookAt;
 
-    for(auto attached : v_attached)
+    for(auto attached : _attachedObjects)
         attached->rotateRelativePoint(position(), Point4D{rx, 0, 0});
 }
 
 void Camera::rotateY(double ry) {
-    p_angle = Point4D{p_angle.x(), p_angle.y() + ry, p_angle.z()};
-    p_left = Matrix4x4::RotationY(ry) * p_left;
-    p_up = Matrix4x4::RotationY(ry) * p_up;
-    p_lookAt = Matrix4x4::RotationY(ry) * p_lookAt;
+    _angle = Point4D{_angle.x(), _angle.y() + ry, _angle.z()};
+    _left = Matrix4x4::RotationY(ry) * _left;
+    _up = Matrix4x4::RotationY(ry) * _up;
+    _lookAt = Matrix4x4::RotationY(ry) * _lookAt;
 
-    for(auto attached : v_attached)
+    for(auto attached : _attachedObjects)
         attached->rotateRelativePoint(position(), Point4D{0, ry, 0});
 }
 
 void Camera::rotateZ(double rz) {
-    p_angle = Point4D{p_angle.x(), p_angle.y(), p_angle.z() + rz};
-    p_left = Matrix4x4::RotationZ(rz) * p_left;
-    p_up = Matrix4x4::RotationZ(rz) * p_up;
-    p_lookAt = Matrix4x4::RotationZ(rz) * p_lookAt;
+    _angle = Point4D{_angle.x(), _angle.y(), _angle.z() + rz};
+    _left = Matrix4x4::RotationZ(rz) * _left;
+    _up = Matrix4x4::RotationZ(rz) * _up;
+    _lookAt = Matrix4x4::RotationZ(rz) * _lookAt;
 
-    for(auto attached : v_attached)
+    for(auto attached : _attachedObjects)
         attached->rotateRelativePoint(position(), Point4D{0, 0, rz});
 }
 
@@ -167,69 +166,69 @@ void Camera::rotate(const Point4D& r) {
 
 
 void Camera::rotate(const Point4D& v, double rv) {
-    p_left = Matrix4x4::Rotation(v, rv) * p_left;
-    p_up = Matrix4x4::Rotation(v, rv) * p_up;
-    p_lookAt = Matrix4x4::Rotation(v, rv) * p_lookAt;
+    _left = Matrix4x4::Rotation(v, rv) * _left;
+    _up = Matrix4x4::Rotation(v, rv) * _up;
+    _lookAt = Matrix4x4::Rotation(v, rv) * _lookAt;
 
-    for(auto attached : v_attached)
+    for(auto attached : _attachedObjects)
         attached->rotateRelativePoint(position(), v, rv);
 }
 
 void Camera::rotateLeft(double rl) {
-    p_angleLeftUpLookAt = Point4D{p_angleLeftUpLookAt.x() + rl, p_angleLeftUpLookAt.y(), p_angleLeftUpLookAt.z()};
+    _angleLeftUpLookAt = Point4D{_angleLeftUpLookAt.x() + rl, _angleLeftUpLookAt.y(), _angleLeftUpLookAt.z()};
 
-    rotate(p_left, rl);
+    rotate(_left, rl);
 
-    for(auto attached : v_attached)
-        attached->rotateRelativePoint(position(), p_left, rl);
+    for(auto attached : _attachedObjects)
+        attached->rotateRelativePoint(position(), _left, rl);
 }
 
 void Camera::rotateUp(double ru) {
-    p_angleLeftUpLookAt = Point4D{p_angleLeftUpLookAt.x(), p_angleLeftUpLookAt.y() + ru, p_angleLeftUpLookAt.z()};
-    rotate(p_up, ru);
+    _angleLeftUpLookAt = Point4D{_angleLeftUpLookAt.x(), _angleLeftUpLookAt.y() + ru, _angleLeftUpLookAt.z()};
+    rotate(_up, ru);
 
-    for(auto attached : v_attached)
-        attached->rotateRelativePoint(position(), p_up, ru);
+    for(auto attached : _attachedObjects)
+        attached->rotateRelativePoint(position(), _up, ru);
 }
 
 void Camera::rotateLookAt(double rlAt) {
-    p_angleLeftUpLookAt = Point4D{p_angleLeftUpLookAt.x(), p_angleLeftUpLookAt.y(), p_angleLeftUpLookAt.z() + rlAt};
-    rotate(p_lookAt, rlAt);
+    _angleLeftUpLookAt = Point4D{_angleLeftUpLookAt.x(), _angleLeftUpLookAt.y(), _angleLeftUpLookAt.z() + rlAt};
+    rotate(_lookAt, rlAt);
 
-    for(auto attached : v_attached)
-        attached->rotateRelativePoint(position(), p_lookAt, rlAt);
+    for(auto attached : _attachedObjects)
+        attached->rotateRelativePoint(position(), _lookAt, rlAt);
 }
 
 void Camera::rotateRelativePoint(const Point4D &s, const Point4D &r) {
-    p_angle = p_angle + r;
+    _angle = _angle + r;
 
     // Translate XYZ by vector r1
-    Point4D r1 = p_position - s;
+    Point4D r1 = _position - s;
     // In translated coordinate system we rotate camera and position
     Point4D r2 = Matrix4x4::Rotation(r)*r1;
     rotate(r);
 
     // After rotation we translate XYZ by vector -r2 and recalculate position
-    p_position = s + r2;
+    _position = s + r2;
 
-    for(auto attached : v_attached)
+    for(auto attached : _attachedObjects)
         attached->rotateRelativePoint(s, r);
 }
 
 void Camera::rotateRelativePoint(const Point4D &s, const Point4D &v, double r) {
     // Translate XYZ by vector r1
-    Point4D r1 = p_position - s;
+    Point4D r1 = _position - s;
     // In translated coordinate system we rotate camera and position
     Point4D r2 = Matrix4x4::Rotation(v, r)*r1;
     rotate(v, r);
 
     // After rotation we translate XYZ by vector -r2 and recalculate position
-    p_position = s + r2;
+    _position = s + r2;
 
-    for(auto attached : v_attached)
+    for(auto attached : _attachedObjects)
         attached->rotateRelativePoint(s, v, r);
 }
 
 void Camera::translateToPoint(const Point4D &point) {
-    translate(point - p_position);
+    translate(point - _position);
 }

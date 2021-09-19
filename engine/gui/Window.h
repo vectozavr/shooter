@@ -21,7 +21,7 @@ private:
 
     Point4D prevMousePosition;
 public:
-    explicit Window(std::string name = "Menu", std::string  backTexture = "") : s_name(std::move(name)), s_backTexture(std::move(backTexture)){}
+    explicit Window(std::string  name = "Menu", std::string  backTexture = "") : s_name(std::move(name)), s_backTexture(std::move(backTexture)){}
 
     void addButton(int x, int y, int w, int h,
                    std::function<void()> click,

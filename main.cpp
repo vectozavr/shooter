@@ -75,7 +75,7 @@ public:
     Shooter() = default;
 
     void start() override;
-    void update(double elapsedTime) override;
+    void update() override;
 
     void gui() override;
 
@@ -84,7 +84,7 @@ public:
 
 void Shooter::start() {
     // This code executed once in the beginning:
-    debugText(false);
+    setDebugText(false);
 
     screen->setMouseCursorVisible(true);
 
@@ -100,7 +100,7 @@ void Shooter::start() {
 
     setUpdateWorld(false);
 
-    world->addMesh(player, player->name());
+    world->addBody(player, player->name());
 
     player->setDamagePlayerCallBack([this] (sf::Uint16 targetId, double damage) { client->damagePlayer(targetId, damage); });
     player->setTakeBonusCallBack([this] (const string& bonusName) { client->takeBonus(bonusName); });
@@ -132,7 +132,7 @@ void Shooter::start() {
     }
 }
 
-void Shooter::update(double elapsedTime) {
+void Shooter::update() {
     // This code executed every time step:
 
     server->update();
@@ -148,7 +148,7 @@ void Shooter::update(double elapsedTime) {
     }
 
     if(inGame) {
-        screen->title("Shooter");
+        screen->setName("Shooter");
         player->update();
     } else {
         mainMenu.update(screen);
@@ -166,19 +166,16 @@ void Shooter::update(double elapsedTime) {
 
 void Shooter::gui() {
 
-    if(inGame) {
-        // aim
-        sf::Sprite sprite;
-        sprite.setTexture(*ResourceManager::loadTexture("../textures/gui.png"));
-        sprite.setTextureRect(sf::IntRect(243, 3, 9, 9));
-        sprite.scale(3, 3);
-        sprite.setPosition(screen->width() / 2.0 - 27.0/2.0, screen->height() / 2 - 27.0/2.0);
-        sprite.setColor(sf::Color(0,0,0, 200));
-        screen->window.draw(sprite);
+    sf::Sprite sprite;
+    sprite.setTexture(*ResourceManager::loadTexture("../textures/gui.png"));
+    sprite.setTextureRect(sf::IntRect(243, 3, 9, 9));
+    sprite.scale(3, 3);
+    sprite.setPosition(screen->width() / 2.0 - 27.0/2.0, screen->height() / 2 - 27.0/2.0);
+    sprite.setColor(sf::Color(0,0,0, 200));
+    screen->window.draw(sprite);
 
-        // health player stats
-        player->drawStats();
-    }
+    // health player stats
+    player->drawStats();
 }
 
 void Shooter::play() {

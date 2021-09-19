@@ -46,7 +46,7 @@ Point4D Point4D::operator-(const Point4D& point4D) const {
 
 double Point4D::dot(const Point4D& point4D) const
 {
-    return point4D.x() * x() + point4D.y() * y() + point4D.z() * z() + point4D.w() * w();
+    return point4D.x() * x() + point4D.y() * y() + point4D.z() * z();
 }
 [[nodiscard]] Point4D Point4D::cross3D(const Point4D& point4D) const {
     return Point4D {y() * point4D.z() - point4D.y() * z(),

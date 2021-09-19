@@ -8,7 +8,6 @@
 #include <SFML/Audio/Sound.hpp>
 #include <utility>
 #include <ResourceManager.h>
-#include "Mesh.h"
 #include "Camera.h"
 #include "World.h"
 #include "weapon/Ak47.h"
@@ -17,7 +16,7 @@
 #include "weapon/Gold_Ak47.h"
 #include "weapon/Rifle.h"
 
-class Player : public Mesh{
+class Player : public RigidBody{
 private:
     double _healthMax = 100;
     double _health = _healthMax;
@@ -25,80 +24,80 @@ private:
     double _abilityMax = 10;
     double _ability = _abilityMax;
 
-    double jumpHeight = 3;
-    double walkSpeed = 10;
+    double _jumpHeight = 3;
+    double _walkSpeed = 10;
     double _headAngle = 0;
 
     unsigned _kills = 0;
     unsigned _deaths = 0;
 
-    double g = 35;
+    double _g = 35;
 
-    double slowMoCoefficient = 5;
-    bool isInSlowMo = false;
+    double _slowMoCoefficient = 5;
+    bool _isInSlowMo = false;
 
     std::shared_ptr<Camera> _camera;
     std::shared_ptr<Screen> _screen;
 
     std::shared_ptr<World> _world;
 
-    bool inRunning = false;
+    bool _inRunning = false;
 
     // sounds
-    sf::Sound killSound;
-    sf::Sound deathSound;
-    sf::Sound walkSound;
-    sf::Sound changeWeaponSound;
-    sf::Sound slowMoSound;
-    sf::Sound unSlowMoSound;
-    sf::Sound fullHealthSound;
-    sf::Sound fullAbilitySound;
+    sf::Sound _killSound;
+    sf::Sound _deathSound;
+    sf::Sound _walkSound;
+    sf::Sound _changeWeaponSound;
+    sf::Sound _slowMoSound;
+    sf::Sound _unSlowMoSound;
+    sf::Sound _fullHealthSound;
+    sf::Sound _fullAbilitySound;
 
     std::string _name = "im";
 
     std::vector<std::shared_ptr<Weapon>> _weapons;
     uint8_t _selectedWeapon = 0;
 
-    std::function<void(sf::Uint16 targetId, double)> damagePlayerCallBack;
-    std::function<void(const Point4D&, const Point4D&)> addTraceCallBack;
-    std::function<void(const std::string&)> takeBonusCallBack;
+    std::function<void(sf::Uint16 targetId, double)> _damagePlayerCallBack;
+    std::function<void(const Point4D&, const Point4D&)> _addTraceCallBack;
+    std::function<void(const std::string&)> _takeBonusCallBack;
 
 
 public:
     Player() {
         loadObj("../obj/cube.obj", "", Point4D{0.5, 1.9, 0.5});
-        setAcceleration(Point4D{0, -g, 0});
+        setAcceleration(Point4D{0, -_g, 0});
         setCollision(true);
         setVisible(false);
         setColor({240, 168, 168});
+
+        _changeWeaponSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/weapons/change_weapon.ogg"));
+
+        _slowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/slow_mo.ogg"));
+        _unSlowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/unslow_mo.ogg"));
+
+        _fullHealthSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/fullHealth.ogg"));
+        _fullAbilitySound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/fullAbility.ogg"));
+
+        setCollisionCallBack([this](const std::string& objName, std::shared_ptr<RigidBody> obj) {collisionWithObject(objName, obj);});
     };
 
     void update();
 
     void attachCamera(std::shared_ptr<Camera> camera, std::shared_ptr<Screen> screen) {
-        _camera = std::move(camera);
-        _screen = std::move(screen);
+        _camera = camera;
+        _screen = screen;
 
         _camera->translateToPoint(position() + Point4D{0, 1.8, 0});
         this->attach(_camera);
     }
 
     void attachWorld(std::shared_ptr<World> world, const Point4D& pos = Point4D{0, 30, 0}) {
-        _world = std::move(world);
+        _world = world;
 
         translate(pos);
 
         initWeapons();
-
-        changeWeaponSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/weapons/change_weapon.ogg"));
-
-        slowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/slow_mo.ogg"));
-        unSlowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/unslow_mo.ogg"));
-
-        fullHealthSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/fullHealth.ogg"));
-        fullAbilitySound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/fullAbility.ogg"));
-
-        setCollisionCallBack([this](const std::string& objName, std::shared_ptr<Mesh> obj) {collisionWithObject(objName, std::move(obj));});
     }
 
     void setHealth(double h) {
@@ -110,24 +109,24 @@ public:
 
     void setFullHealth() {
         _health = _healthMax;
-        fullHealthSound.play();
+        _fullHealthSound.play();
     }
     void setFullAbility() {
         _ability = _abilityMax;
-        fullAbilitySound.play();
+        _fullAbilitySound.play();
     }
 
 
     void setDamagePlayerCallBack(std::function<void(sf::Uint16 targetId, double)> hit) {
-        damagePlayerCallBack = std::move(hit);
+        _damagePlayerCallBack = std::move(hit);
     }
 
     void setAddTraceCallBack(std::function<void(const Point4D&, const Point4D&)> add) {
-        addTraceCallBack = std::move(add);
+        _addTraceCallBack = std::move(add);
     }
 
     void setTakeBonusCallBack(std::function<void(const std::string&)> take) {
-        takeBonusCallBack = std::move(take);
+        _takeBonusCallBack = std::move(take);
     }
 
     [[nodiscard]] double health() const { return _health; }
@@ -151,7 +150,7 @@ public:
     void playDeath();
     void playKill();
 
-    void collisionWithObject(const std::string& objName, std::shared_ptr<Mesh> obj);
+    void collisionWithObject(const std::string& objName, std::shared_ptr<RigidBody> obj);
 
     void addWeapon(std::shared_ptr<Weapon> weapon);
 

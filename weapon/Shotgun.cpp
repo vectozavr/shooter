@@ -41,13 +41,13 @@ Shotgun::processFire(std::shared_ptr<World> world, std::shared_ptr<Camera> camer
         string traceName = _name + "_trace_nr_" + std::to_string(fireTraces++);
         Point4D from = _objects[_name + "_" + to_string(9)]->position() +
                        _objects[_name + "_" + to_string(9)]->triangles()[0][0];
-        world->addMesh(make_shared<Mesh>(Mesh::LineTo(from, to, 0.05)), traceName);
-        (*world)[traceName]->setCollider(false);
+        world->addBody(make_shared<RigidBody>(Mesh::LineTo(from, to, 0.05)), traceName);
+        world->body(traceName)->setCollider(false);
 
         // remove trace line after some time
-        (*world)[traceName]->a_color("color_trace", {255, 255, 255, 0}, 1, Animation::None, Animation::linear);
-        (*world)["map_0"]->a_function(traceName + "delete", [world, traceName]() { deleteTrace(world, traceName); },
-                                          1, 2);
+        world->body(traceName)->a_color("color_trace", {255, 255, 255, 0}, 1, Animation::None, Animation::linear);
+        world->body("map_0")->a_function(traceName + "delete", [world, traceName]() { deleteTrace(world, traceName); },
+                                         1, 2);
         addTraceCallBack(from, to);
     }
 
