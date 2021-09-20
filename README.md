@@ -33,6 +33,9 @@ Player control is standard.
 
 <h4>Research source code:</h4>
 
+Structure:
+![Project demonstration](img/structure.png)
+
 1) Download and install OpenAL library for SFML sound support (in current version you can't setup this engine without OpenAL)
    
     openal: https://openal.org/downloads/

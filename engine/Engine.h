@@ -16,12 +16,12 @@
 class Engine {
 private:
     std::string _name;
+
     double _triPerSec = 0;
     bool _debugText = true;
     bool _updateWorld = true;
 
     void printDebugText() const;
-
 protected:
     std::shared_ptr<Screen> screen;
     std::shared_ptr<Keyboard> keyboard;

@@ -11,6 +11,7 @@
 class Matrix4x4 {
 private:
     std::array<std::array<double, 4>, 4> _arr{};
+
 public:
     Matrix4x4 () = default;
     Matrix4x4& operator=(const Matrix4x4& matrix4X4) = default;

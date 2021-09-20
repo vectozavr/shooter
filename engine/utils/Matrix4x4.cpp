@@ -152,8 +152,6 @@ Matrix4x4 Matrix4x4::Rotation(Point4D v, double rv) {
     return Rv;
 }
 
-
-
 Matrix4x4 Matrix4x4::Projection(double fov, double aspect, double ZNear, double ZFar) {
     Matrix4x4 p{};
 

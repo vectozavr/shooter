@@ -67,7 +67,7 @@ Point4D Point4D::operator/(double number) const {
 // Other useful methods
 double Point4D::sqrAbs() const
 {
-    return x()*x() + y()*y() + z()*z() + w()*w();
+    return x()*x() + y()*y() + z()*z();
 }
 double Point4D::abs() const {
     return sqrt(sqrAbs());

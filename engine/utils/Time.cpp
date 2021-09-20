@@ -15,7 +15,7 @@ namespace Time
     {
         // High precision time
         high_resolution_clock::time_point _start = high_resolution_clock::now();
-        high_resolution_clock::time_point _last;
+        high_resolution_clock::time_point _last = _start;
 
         // FPS counter
         high_resolution_clock::time_point _fpsStart;
