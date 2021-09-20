@@ -25,7 +25,7 @@ sf::Uint16 UDPConnection::port() const
 
 bool UDPConnection::timeout() const
 {
-    return Time::time() - lastMsg > TIMEOUT_SECONDS;
+    return Time::time() - lastMsg > Network::TIMEOUT;
 }
 
 bool UDPConnection::same(sf::IpAddress& ip, sf::Uint16 port) const

@@ -27,7 +27,7 @@ bool ClientUDP::isWorking() const
 void ClientUDP::connect(sf::IpAddress ip, sf::Uint16 port)
 {
     sf::Packet packet;
-    packet << MsgType::Connect << NETWORK_VERSION;
+    packet << MsgType::Connect << Network::VERSION;
     _working = _socket.bind(0);
     _socket.addConnection(_socket.serverId(), ip, port);
     _socket.sendRely(packet, _socket.serverId());
@@ -43,7 +43,7 @@ void ClientUDP::update()
     while (isWorking() && process());
 
     // Send new client information to server
-    if (Time::time() - _lastBroadcast > 1.0 / WORLD_UPDATE_RATE && connected()) {
+    if (Time::time() - _lastBroadcast > 1.0 / Network::WORLD_UPDATE_RATE && connected()) {
         updatePacket();
         _lastBroadcast = Time::time();
     }

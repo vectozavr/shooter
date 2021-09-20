@@ -40,7 +40,7 @@ void ServerUDP::update()
     while (process());
 
     // World state broadcast
-    if (Time::time() - _lastBroadcast > 1.0 / WORLD_UPDATE_RATE) {
+    if (Time::time() - _lastBroadcast > 1.0 / Network::WORLD_UPDATE_RATE) {
         broadcast();
         _lastBroadcast = Time::time();
     }

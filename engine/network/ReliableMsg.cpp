@@ -12,9 +12,9 @@ ReliableMsg::ReliableMsg(const ReliableMsg& msg) : packet(msg.packet), address(m
 
 bool ReliableMsg::trySend(sf::UdpSocket& socket)
 {
-    if (Time::time() - firstTry > TIMEOUT_SECONDS)
+    if (Time::time() - firstTry > Network::TIMEOUT)
         return false;
-    if (Time::time() - lastTry > RELIABLE_RETRY_TIME)
+    if (Time::time() - lastTry > Network::RELIABLE_RETRY_TIME)
     {
         lastTry = Time::time();
         socket.send(packet, address, port);

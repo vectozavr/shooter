@@ -123,7 +123,7 @@ void UDPSocket::update()
 
     for (auto it = _confirmTimes.begin(); it != _confirmTimes.end();)
     {
-        if (Time::time() - it->second > TIMEOUT_SECONDS)
+        if (Time::time() - it->second > Network::TIMEOUT)
             _confirmTimes.erase(it++);
         else
             ++it;
@@ -160,7 +160,7 @@ MsgType UDPSocket::receive(sf::Packet& packet, sf::Uint16& senderId)
     if (type == MsgType::Connect)
     {
         sf::Uint32 version = 0;
-        if (!(packet >> version) || version != NETWORK_VERSION)
+        if (!(packet >> version) || version != Network::VERSION)
             return MsgType::Error;
         sf::Uint16 tmp;
         for (tmp = 64; tmp >= 1; tmp--)
