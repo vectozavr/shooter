@@ -13,7 +13,7 @@
 #include "Mesh.h"
 #include "utils/Time.h"
 
-class Weapon {
+class Weapon : public RigidBody {
 protected:
     int _initialPack = 100; // how much ammo do you have when you find the weapon
 
@@ -28,7 +28,6 @@ protected:
     double _spreading = 2.0;
 
     std::string _name = "Weapon_name";
-    std::map<std::string, std::shared_ptr<RigidBody>> _objects;
 
     double _lastFireTime = -INFINITY;
     double _lastReloadTime = -INFINITY;
@@ -37,39 +36,27 @@ protected:
     sf::Sound reloadSound;
     sf::Sound noAmmoSound;
 
-    static void deleteTrace(std::shared_ptr<World> world, const std::string& traceName);
-
     int fireTraces = 0;
 
-    std::function<void(const Point4D&, const Point4D&)> addTraceCallBack;
+    std::function<void(const Point4D&, const Point4D&)> _addTraceCallBack;
+
+    virtual std::map<std::string, double> processFire(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction, const Point4D& position, const Point4D& direction);
 
 public:
     Weapon(const std::string& weaponName, const std::string& objFileName, const std::string& matFileName, const Point4D& scale, const Point4D& translate, const Point4D& rotate);
 
-    std::map<std::string, double> fire(std::shared_ptr<World> world, std::shared_ptr<Camera> camera);
+    std::map<std::string, double> fire(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction, const Point4D& position, const Point4D& direction);
     void reload();
-
-    void addToWorld(std::shared_ptr<World> world);
-    void removeFromWorld(std::shared_ptr<World> world);
-
-    void attachToPlayer(Mesh& player);
 
     [[nodiscard]] std::pair<double, double> balance() const{ return std::make_pair(_clipAmmo, _stockAmmo); }
 
-    void rotateRelativePoint(const Point4D& point4D, const Point4D& v, double val);
-
-    void rotate(const Point4D& point4D, double val);
-    void translate(const Point4D& point4D);
-
     void setAddTraceCallBack(std::function<void(Point4D, Point4D)> add) {
-        addTraceCallBack = std::move(add);
+        _addTraceCallBack = std::move(add);
     }
 
     [[nodiscard]] std::string name() const { return _name; }
 
     void addAmmo(int ammoAdd) { _stockAmmo += ammoAdd; }
-
-    virtual std::map<std::string, double> processFire(std::shared_ptr<World> world, std::shared_ptr<Camera> camera);
 
     [[nodiscard]] int initialPack() const {return _initialPack; }
 };

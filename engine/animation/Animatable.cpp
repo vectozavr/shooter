@@ -14,6 +14,7 @@
 #include "AFunction.h"
 #include "AColor.h"
 
+/*
 void Animatable::a_translate(const std::string& listName,
                              const Point4D &t,
                              double duration,
@@ -30,7 +31,7 @@ void Animatable::a_translateToPoint(const std::string& listName,
     animations[listName].emplace_back(new ATranslateToPoint(point, duration, looped, interpolationType));
 }
 
-void Animatable::a_rotate(const std::string& listName,
+void Animatable::a_rotate(c
                           const Point4D &r,
                           double duration,
                           Animation::LoopOut looped,
@@ -63,8 +64,9 @@ void Animatable::a_function(const std::string &listName,
                             Animation::InterpolationType interpolationType) {
     animations[listName].emplace_back(new AFunction(std::move(function), calls, duration, looped, interpolationType));
 }
+*/
 
-void Animatable::a_update() {
+void Animatable::update_animations() {
 
     for (auto& [listName, animationList] : animations) {
 
@@ -74,18 +76,21 @@ void Animatable::a_update() {
         // If it the front animation is 'a_wait()' we should wait until waiting time is over
 
         if (it.operator*()->waitFor()) {
-            if (!it.operator*()->update(*this))
+            if (!it.operator*()->update())
                 animationList.erase(it);
             continue;
         }
 
-
         // Otherwise we iterate over all animation until we meet animations.end() or wait animation
         while (!animationList.empty() && (it != animationList.end()) && (!it.operator*()->waitFor())) {
-            if (!it.operator*()->update(*this))
+            if (!it.operator*()->update())
                 animationList.erase(it++);
             else
                 it++;
         }
     }
+}
+
+void Animatable::animate(const std::string &listName, Animation* anim) {
+    animations[listName].emplace_back(anim);
 }

@@ -7,12 +7,16 @@
 
 #include "Animatable.h"
 #include "Animation.h"
+#include "Object.h"
 
 class ARotate : public Animation {
 private:
+    std::shared_ptr<Object> _object;
+
     Point4D value;
 public:
-    ARotate(const Point4D& r, double duration, LoopOut looped, InterpolationType interpolationType) {
+    ARotate(std::shared_ptr<Object> object, const Point4D& r, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) {
+        _object = object;
         _duration = duration;
         _looped = looped;
         _intType = interpolationType;
@@ -20,8 +24,8 @@ public:
         value = r;
     }
 
-    bool update(Animatable& obj) override {
-        obj.rotate(value * _dp);
+    bool update() override {
+        _object->rotate(value * _dp);
         return updateState();
     }
 };

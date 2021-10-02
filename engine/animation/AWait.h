@@ -9,21 +9,15 @@
 #include "Animation.h"
 
 class AWait : public Animation {
-private:
-    Point4D value;
 public:
-    explicit AWait(double duration) {
+    explicit AWait(double duration = 1) {
         _duration = duration;
         _intType = linear;
         _waitFor = true;
     }
 
-    bool update(Animatable& obj) override {
+    bool update() override {
         return updateState();
-    }
-
-    [[nodiscard]] int type() const override {
-        return 1;
     }
 };
 

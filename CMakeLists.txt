@@ -66,6 +66,7 @@ add_executable(shooter
         engine/physics/Simplex.h
         engine/physics/Solver.cpp
         engine/physics/Solver.h
+        engine/Object.cpp
         engine/Object.h
         engine/gui/Button.cpp
         engine/gui/Button.h
@@ -85,7 +86,7 @@ add_executable(shooter
         engine/network/UDPSocket.h
         engine/network/config.h
         engine/animation/AFunction.h
-        PlayerController.cpp PlayerController.h engine/Keyboard.cpp engine/Keyboard.h engine/Mouse.cpp engine/Mouse.h)
+        PlayerController.cpp PlayerController.h engine/Keyboard.cpp engine/Keyboard.h engine/Mouse.cpp engine/Mouse.h Shooter.cpp Shooter.h)
 
 if(APPLE OR UNIX)
     include_directories(/usr/local/include)

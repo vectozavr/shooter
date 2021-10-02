@@ -3,15 +3,21 @@
 //
 
 #include <sstream>
+#include <utility>
 #include "Weapon.h"
 #include "ResourceManager.h"
 #include "utils/Log.h"
+#include "animation/AColor.h"
+#include "animation/AFunction.h"
 
 using namespace std;
 
-Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, const std::string& matFileName, const Point4D& scale, const Point4D& translate, const Point4D& rotate) {
+Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, const std::string& matFileName, const Point4D& scale, const Point4D& t, const Point4D& r) {
     _name = weaponName;
+
+    /*
     auto objs = Mesh::LoadObjects(objFileName, matFileName, scale);
+
     for(int i = 0; i < objs.size(); i++) {
         string meshName = _name + "_" + to_string(i);
 
@@ -25,10 +31,16 @@ Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, co
 
         _objects.insert({meshName, std::make_shared<RigidBody>(obj)});
     }
+     */
+    loadObj(objFileName, matFileName, scale);
+    setCollider(false);
+    rotate(r);
+    translate(t);
+
     noAmmoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/weapons/no_ammo.ogg"));
 }
 
-std::map<std::string, double> Weapon::fire(std::shared_ptr<World> world, std::shared_ptr<Camera> camera) {
+std::map<std::string, double> Weapon::fire(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction, const Point4D& position, const Point4D& direction) {
     if(_clipAmmo == 0) {
         reload();
         if(_clipAmmo == 0)
@@ -44,7 +56,7 @@ std::map<std::string, double> Weapon::fire(std::shared_ptr<World> world, std::sh
     fireSound.play();
     Log::log("Weapon::fire (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
 
-    return processFire(world, camera);
+    return processFire(std::move(rayCastFunction), position, direction);
 }
 
 void Weapon::reload() {
@@ -63,68 +75,22 @@ void Weapon::reload() {
     _lastReloadTime = Time::time();
 }
 
-void Weapon::addToWorld(shared_ptr<World> world) {
-    for(auto& obj : _objects) {
-        world->addBody(obj.second, obj.first);
-    }
-}
-
-void Weapon::removeFromWorld(shared_ptr<World> world) {
-    for(auto& obj : _objects) {
-        world->removeBodyInstantly(obj.first);
-    }
-}
-
-
-void Weapon::attachToPlayer(Mesh &player) {
-    for(auto& obj : _objects) {
-        player.attach(obj.second);
-    }
-}
-
-void Weapon::rotate(const Point4D& point4D, double val) {
-    for(auto& mesh : _objects)
-        mesh.second->rotate(point4D, val);
-}
-
-void Weapon::translate(const Point4D &point4D) {
-    for(auto& mesh : _objects)
-        mesh.second->translate(point4D);
-}
-
-void Weapon::deleteTrace(shared_ptr<World> world, const std::string& traceName) {
-    world->removeBody(traceName);
-}
-
-void Weapon::rotateRelativePoint(const Point4D &point4D, const Point4D &v, double val) {
-    for(auto& mesh : _objects)
-        mesh.second->rotateRelativePoint(point4D, v, val);
-}
-
-std::map<std::string, double> Weapon::processFire(shared_ptr<World> world, shared_ptr<Camera> camera) {
+std::map<std::string, double> Weapon::processFire(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction, const Point4D& pos, const Point4D& direction) {
     std::map<std::string, double> damagedPlayers;
 
     //generate random vector
     Point4D randV(10.0*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10.0*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10.0*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX));
 
     // damage player
-    auto rayCast = world->rayCast(camera->position(), camera->position() + camera->lookAt() * 1000 + randV);
+    auto rayCast = rayCastFunction(pos, pos + direction * 1000 + randV);
     if(rayCast.second.find("Player") != std::string::npos) {
-        damagedPlayers[rayCast.second] += _damage/(1.0 + (camera->position() - rayCast.first).abs());
+        damagedPlayers[rayCast.second] += _damage/(1.0 + (pos - rayCast.first).abs());
     }
 
     // add trace line
-    Point4D to = rayCast.first.w() == -1 ? camera->position() + camera->lookAt() * 1000 + randV: rayCast.first;
-    string traceName = _name + "_trace_nr_" + std::to_string(fireTraces++);
-    Point4D from = _objects[_name + "_" + to_string(_objects.size()-1)]->position() + _objects[_name + "_" + to_string(_objects.size()-1)]->triangles()[0][0];
-    world->addBody(make_shared<RigidBody>(Mesh::LineTo(from, to, 0.05)), traceName);
-    world->body(traceName)->setCollider(false);
-
-    // remove trace line after some time
-    world->body(traceName)->a_color("color_trace", {255, 255, 255, 0}, 1, Animation::None, Animation::linear);
-    world->body("Player_im")->a_function(traceName + "delete", [world, traceName](){deleteTrace(world, traceName); }, 1, 2);
-
-    addTraceCallBack(from, to);
+    Point4D to = rayCast.first.w() == -1 ? pos + direction * 1000 + randV: rayCast.first;
+    Point4D from = position() + triangles().back()[0];
+    _addTraceCallBack(from, to);
 
     return damagedPlayers;
 }

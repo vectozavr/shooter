@@ -7,13 +7,17 @@
 
 #include "Animatable.h"
 #include "Animation.h"
+#include "Object.h"
 
 class ATranslateToPoint : public Animation {
 private:
+    std::shared_ptr<Object> _object;
+
     Point4D point;
     Point4D value;
 public:
-    ATranslateToPoint(const Point4D& p, double duration, LoopOut looped, InterpolationType interpolationType) {
+    ATranslateToPoint(std::shared_ptr<Object> object, const Point4D& p, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) {
+        _object = object;
         _duration = duration;
         _looped = looped;
         _intType = interpolationType;
@@ -21,11 +25,11 @@ public:
         point = p;
     }
 
-    bool update(Animatable& obj) override {
+    bool update() override {
         if(!_started) {
-            value = point - obj.position();
+            value = point - _object->position();
         }
-        obj.translate(value * _dp);
+        _object->translate(value * _dp);
 
         return updateState();
     }

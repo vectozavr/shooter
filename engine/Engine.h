@@ -30,21 +30,20 @@ protected:
     std::shared_ptr<World> world;
     std::shared_ptr<Camera> camera;
 
+    virtual void start() {};
+    virtual void update() {};
+
+    void setDebugText(bool value) { _debugText = value; }
+    void setUpdateWorld(bool value) { _updateWorld = value; }
+
+    virtual void gui(){}
 public:
     Engine();
 
     virtual ~Engine() = default;
 
     void create(int screenWidth = 1920, int screenHeight = 1080, const std::string& name = "engine", bool verticalSync = true, sf::Color background = sf::Color(255, 255, 255), sf::Uint32 style = sf::Style::Default);
-
-    virtual void start() {};
-    virtual void update() {};
     void exit();
-
-    void setDebugText(bool value) { _debugText = value; }
-    void setUpdateWorld(bool value) { _updateWorld = value; }
-
-    virtual void gui(){}
 };
 
 

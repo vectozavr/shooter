@@ -76,7 +76,6 @@ std::vector<Triangle> &Camera::project(std::shared_ptr<Mesh> mesh) {
 void Camera::init(int width, int height, double fov, double ZNear, double ZFar) {
     // We need to init camera only after creation or changing width, height, fov, ZNear or ZFar.
     // Because here we calculate matrix that does not change during the motion of _objects or camera
-    _w = width; _h = height;
     _aspect = (double)width / (double)height;
     _P = Matrix4x4::Projection(fov, _aspect, ZNear, ZFar);
     _S = Matrix4x4::ScreenSpace(width, height);
@@ -126,109 +125,4 @@ void Camera::clear() {
     // the position of camera and insert new cartridge for photo.
     _triangles.clear();
     _V = Matrix4x4::View(_left, _up, _lookAt, _position);
-}
-
-void Camera::rotateX(double rx) {
-    _angle = Point4D{_angle.x() + rx, _angle.y(), _angle.z()};
-    _left = Matrix4x4::RotationX(rx) * _left;
-    _up = Matrix4x4::RotationX(rx) * _up;
-    _lookAt = Matrix4x4::RotationX(rx) * _lookAt;
-
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(position(), Point4D{rx, 0, 0});
-}
-
-void Camera::rotateY(double ry) {
-    _angle = Point4D{_angle.x(), _angle.y() + ry, _angle.z()};
-    _left = Matrix4x4::RotationY(ry) * _left;
-    _up = Matrix4x4::RotationY(ry) * _up;
-    _lookAt = Matrix4x4::RotationY(ry) * _lookAt;
-
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(position(), Point4D{0, ry, 0});
-}
-
-void Camera::rotateZ(double rz) {
-    _angle = Point4D{_angle.x(), _angle.y(), _angle.z() + rz};
-    _left = Matrix4x4::RotationZ(rz) * _left;
-    _up = Matrix4x4::RotationZ(rz) * _up;
-    _lookAt = Matrix4x4::RotationZ(rz) * _lookAt;
-
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(position(), Point4D{0, 0, rz});
-}
-
-void Camera::rotate(const Point4D& r) {
-    rotateX(r.x());
-    rotateY(r.y());
-    rotateZ(r.z());
-}
-
-
-void Camera::rotate(const Point4D& v, double rv) {
-    _left = Matrix4x4::Rotation(v, rv) * _left;
-    _up = Matrix4x4::Rotation(v, rv) * _up;
-    _lookAt = Matrix4x4::Rotation(v, rv) * _lookAt;
-
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(position(), v, rv);
-}
-
-void Camera::rotateLeft(double rl) {
-    _angleLeftUpLookAt = Point4D{_angleLeftUpLookAt.x() + rl, _angleLeftUpLookAt.y(), _angleLeftUpLookAt.z()};
-
-    rotate(_left, rl);
-
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(position(), _left, rl);
-}
-
-void Camera::rotateUp(double ru) {
-    _angleLeftUpLookAt = Point4D{_angleLeftUpLookAt.x(), _angleLeftUpLookAt.y() + ru, _angleLeftUpLookAt.z()};
-    rotate(_up, ru);
-
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(position(), _up, ru);
-}
-
-void Camera::rotateLookAt(double rlAt) {
-    _angleLeftUpLookAt = Point4D{_angleLeftUpLookAt.x(), _angleLeftUpLookAt.y(), _angleLeftUpLookAt.z() + rlAt};
-    rotate(_lookAt, rlAt);
-
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(position(), _lookAt, rlAt);
-}
-
-void Camera::rotateRelativePoint(const Point4D &s, const Point4D &r) {
-    _angle = _angle + r;
-
-    // Translate XYZ by vector r1
-    Point4D r1 = _position - s;
-    // In translated coordinate system we rotate camera and position
-    Point4D r2 = Matrix4x4::Rotation(r)*r1;
-    rotate(r);
-
-    // After rotation we translate XYZ by vector -r2 and recalculate position
-    _position = s + r2;
-
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(s, r);
-}
-
-void Camera::rotateRelativePoint(const Point4D &s, const Point4D &v, double r) {
-    // Translate XYZ by vector r1
-    Point4D r1 = _position - s;
-    // In translated coordinate system we rotate camera and position
-    Point4D r2 = Matrix4x4::Rotation(v, r)*r1;
-    rotate(v, r);
-
-    // After rotation we translate XYZ by vector -r2 and recalculate position
-    _position = s + r2;
-
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(s, v, r);
-}
-
-void Camera::translateToPoint(const Point4D &point) {
-    translate(point - _position);
 }

@@ -10,7 +10,7 @@
 class Shotgun : public Weapon {
 public:
     explicit Shotgun(int ammo = 15, const std::string& weaponName = "shotgun");
-    std::map<std::string, double> processFire(std::shared_ptr<World> world, std::shared_ptr<Camera> camera) override;
+    std::map<std::string, double> processFire(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction, const Point4D& position, const Point4D& direction) override;
 };
 
 

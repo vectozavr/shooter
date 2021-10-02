@@ -8,6 +8,4 @@ Bonus::Bonus(const std::string &bonusName, const std::string &filename, const st
     _name = bonusName;
     loadObj(filename, materials, scale);
     setCollider(false);
-
-    a_rotate("a_rotation", Point4D{0, 2*M_PI, 0}, 4, Animation::Continue, Animation::linear);
 }

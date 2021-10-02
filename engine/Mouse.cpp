@@ -14,9 +14,9 @@ Point4D Mouse::getMouseDisplacement() const {
     sf::Vector2<int> mousePos = sf::Mouse::getPosition(*_window);
     sf::Vector2<int> center = sf::Vector2<int>(_window->getSize().x/2, _window->getSize().y/2);
 
-    sf::Vector2<int> disp = mousePos - center;
+    sf::Vector2<int> displacement = mousePos - center;
     //setMouseInCenter();
-    return Point4D(disp.x, disp.y, 0, 0);
+    return Point4D(displacement.x, displacement.y, 0, 0);
 }
 
 void Mouse::setMouseInCenter() const {

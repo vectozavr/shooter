@@ -16,7 +16,7 @@ private:
     std::function<void()> _callBack;
 
 public:
-    AFunction(std::function<void()> function, int calls, double duration, LoopOut looped, InterpolationType interpolationType) {
+    explicit AFunction(std::function<void()> function, int calls = 1, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::linear) {
         _callBack = std::move(function);
         _allCalls = calls;
         _duration = duration;
@@ -24,7 +24,7 @@ public:
         _intType = interpolationType;
     }
 
-    bool update(Animatable& obj) override {
+    bool update() override {
         if(_allCalls != 0 && _p >= (double)(_calls+1) / (_allCalls+1)) {
             _calls++;
             _callBack();

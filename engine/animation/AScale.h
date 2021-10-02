@@ -7,14 +7,17 @@
 
 #include "Animatable.h"
 #include "Animation.h"
+#include "Mesh.h"
 
 class AScale : public Animation {
 private:
-    Point4D value;
+    std::shared_ptr<Mesh> _mesh;
 
-    std::vector<Triangle> triangles;
+    Point4D value;
+    std::vector<Triangle> triangles{};
 public:
-    AScale(const Point4D &s, double duration, LoopOut looped, InterpolationType interpolationType) {
+    AScale(std::shared_ptr<Mesh> mesh, const Point4D &s, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) {
+        _mesh = mesh;
         _duration = duration;
         _looped = looped;
         _intType = interpolationType;
@@ -23,15 +26,15 @@ public:
         value = s;
     }
 
-    bool update(Animatable& obj) override {
+    bool update() override {
         if(!_started)
-            triangles = obj.triangles();
+            triangles = _mesh->triangles();
 
         std::vector<Triangle> newTriangles;
         for(auto &t : triangles) {
             newTriangles.emplace_back(t * Matrix4x4::Scale(Point4D{1, 1, 1} + (value - Point4D{1, 1, 1}) * _p));
         }
-        obj.setTriangles(newTriangles);
+        _mesh->setTriangles(newTriangles);
         return updateState();
     }
 };

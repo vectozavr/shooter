@@ -4,6 +4,8 @@
 
 #include <ResourceManager.h>
 #include "Shotgun.h"
+#include "animation/AColor.h"
+#include "animation/AFunction.h"
 
 using namespace std;
 
@@ -23,7 +25,7 @@ Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, "
 }
 
 std::map<std::string, double>
-Shotgun::processFire(std::shared_ptr<World> world, std::shared_ptr<Camera> camera) {
+Shotgun::processFire(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction, const Point4D& pos, const Point4D& direction) {
     std::map<std::string, double> damagedPlayers;
 
     for(int i = 0; i < 15; i++) {
@@ -31,24 +33,14 @@ Shotgun::processFire(std::shared_ptr<World> world, std::shared_ptr<Camera> camer
         Point4D randV(10*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX));
 
         // damage player
-        auto rayCast = world->rayCast(camera->position(), camera->position() + camera->lookAt() * 1000 + randV);
+        auto rayCast = rayCastFunction(pos, pos + direction * 1000 + randV);
         if (rayCast.second.find("Player") != std::string::npos) {
-            damagedPlayers[rayCast.second] += _damage / (1.0 + (camera->position() - rayCast.first).abs());
+            damagedPlayers[rayCast.second] += _damage / (1.0 + (pos - rayCast.first).abs());
         }
 
-        // add trace line
-        Point4D to = rayCast.first.w() == -1 ? camera->position() + camera->lookAt() * 1000 + randV: rayCast.first;
-        string traceName = _name + "_trace_nr_" + std::to_string(fireTraces++);
-        Point4D from = _objects[_name + "_" + to_string(9)]->position() +
-                       _objects[_name + "_" + to_string(9)]->triangles()[0][0];
-        world->addBody(make_shared<RigidBody>(Mesh::LineTo(from, to, 0.05)), traceName);
-        world->body(traceName)->setCollider(false);
-
-        // remove trace line after some time
-        world->body(traceName)->a_color("color_trace", {255, 255, 255, 0}, 1, Animation::None, Animation::linear);
-        world->body("map_0")->a_function(traceName + "delete", [world, traceName]() { deleteTrace(world, traceName); },
-                                         1, 2);
-        addTraceCallBack(from, to);
+        Point4D to = rayCast.first.w() == -1 ? pos + direction * 1000 + randV: rayCast.first;
+        Point4D from = position() + triangles().back()[0];
+        _addTraceCallBack(from, to);
     }
 
 

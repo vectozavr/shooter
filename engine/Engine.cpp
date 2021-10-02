@@ -47,7 +47,7 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
         // hence we can set '_updateWorld' equal to false in setUpdateWorld(bool):
         if(_updateWorld) {
 
-            camera->a_update();
+            camera->update_animations();
             camera->clear();
 
             world->update();
@@ -80,9 +80,9 @@ void Engine::exit() {
 void Engine::printDebugText() const {
     if (_debugText) {
         screen->debugText(_name + "\n\n X: " +
-                          std::to_string((camera->eye().x())) + "\n Y: " +
-                          std::to_string((camera->eye().y())) + "\n Z: " +
-                          std::to_string((camera->eye().z())) + "\n\n" +
+                          std::to_string((camera->position().x())) + "\n Y: " +
+                          std::to_string((camera->position().y())) + "\n Z: " +
+                          std::to_string((camera->position().z())) + "\n\n" +
                           std::to_string(screen->width()) + "x" +
                           std::to_string(screen->height()) + "\n" +
                           std::to_string(Time::fps()) +

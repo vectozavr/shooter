@@ -12,18 +12,26 @@
 
 class Client : public ClientUDP {
 private:
-    std::shared_ptr<Player> _player;
-    std::shared_ptr<World> _world;
-
     std::map<sf::Uint16, std::shared_ptr<Player>> _players{};
-
-    int fireTraces = 0;
+    std::shared_ptr<Player> _player;
 
     void spawnPlayer(sf::Uint16 id);
+
+    std::function<void(sf::Uint16)> _spawnPlayerCallBack;
+    std::function<void(sf::Uint16)> _removePlayerCallBack;
+    std::function<void(const Point4D&, const Point4D&)> _addFireTraceCallBack;
+    std::function<void(const std::string&, const Point4D&)> _addBonusCallBack;
+    std::function<void(const std::string&)> _removeBonusCallBack;
 public:
-    Client(std::shared_ptr<Player>  player, std::shared_ptr<World>  world) : _player(player), _world(world) {};
+    Client(std::shared_ptr<Player>  player) : _player(player){};
 
     void updatePacket() override;
+
+    void setSpawnPlayerCallBack(std::function<void(sf::Uint16)> spawn);
+    void setRemovePlayerCallBack(std::function<void(sf::Uint16)> remove);
+    void setAddFireTraceCallBack(std::function<void(const Point4D&, const Point4D&)> addTrace);
+    void setAddBonusCallBack(std::function<void(const std::string&, const Point4D&)> addBonus);
+    void setRemoveBonusCallBack(std::function<void(const std::string&)> removeBonus);
 
     void processInit(sf::Packet& packet) override;
     void processUpdate(sf::Packet& packet) override;
@@ -40,7 +48,7 @@ public:
 
     void addTrace(const Point4D& from, const Point4D& to);
 
-    void deleteTrace(std::shared_ptr<World> world, const std::string& traceName);
+    void addPlayer(sf::Uint16 id, std::shared_ptr<Player> player);
 };
 
 

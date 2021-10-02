@@ -26,15 +26,10 @@ private:
 
     double _headAngle = 0;
 
-    unsigned _kills = 0;
-    unsigned _deaths = 0;
+    int _kills = 0;
+    int _deaths = 0;
 
     double _g = 35;
-
-    std::shared_ptr<Camera> _camera;
-    std::shared_ptr<Screen> _screen;
-
-    std::shared_ptr<World> _world;
 
     // sounds
     sf::Sound _killSound;
@@ -51,7 +46,12 @@ private:
     std::function<void(sf::Uint16 targetId, double)> _damagePlayerCallBack;
     std::function<void(const Point4D&, const Point4D&)> _addTraceCallBack;
     std::function<void(const std::string&)> _takeBonusCallBack;
+    std::function<void(const std::string&)> _fireCallBack;
 
+    std::function<void(std::shared_ptr<Weapon>)> _addWeaponCallBack;
+    std::function<void(std::shared_ptr<Weapon>)> _removeWeaponCallBack;
+
+    std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> _rayCastFunction;
 public:
     Player() {
         loadObj("../obj/cube.obj", "", Point4D{0.5, 1.9, 0.5});
@@ -68,23 +68,7 @@ public:
         setCollisionCallBack([this](const std::string& objName, std::shared_ptr<RigidBody> obj) {collisionWithObject(objName, obj);});
     };
 
-    void update();
-
-    void attachCamera(std::shared_ptr<Camera> camera, std::shared_ptr<Screen> screen) {
-        _camera = camera;
-        _screen = screen;
-
-        _camera->translateToPoint(position() + Point4D{0, 1.8, 0});
-        this->attach(_camera);
-    }
-
-    void attachWorld(std::shared_ptr<World> world, const Point4D& pos = Point4D{0, 30, 0}) {
-        _world = world;
-
-        translate(pos);
-
-        initWeapons();
-    }
+    [[nodiscard]] std::string name() const { return "Player_" + _name; }
 
     void setHealth(double h) {
         _health = h;
@@ -93,12 +77,11 @@ public:
         _ability = a;
     }
 
-    void nextWeapon();
-    void previousWeapon();
-    void fire();
-    void reload();
-
+    [[nodiscard]] double health() const { return _health; }
     [[nodiscard]] double ability() const { return _ability; }
+
+    [[nodiscard]] double maxHealth() const { return _healthMax; }
+    [[nodiscard]] double maxAbility() const { return _abilityMax; }
 
     void setFullHealth() {
         _health = _healthMax;
@@ -109,32 +92,19 @@ public:
         _fullAbilitySound.play();
     }
 
+    void initWeapons();
+    void addWeapon(std::shared_ptr<Weapon> weapon);
+    [[nodiscard]] std::pair<double, double> balance() const{ return _weapons[_selectedWeapon]->balance();}
 
-    void setDamagePlayerCallBack(std::function<void(sf::Uint16 targetId, double)> hit) {
-        _damagePlayerCallBack = std::move(hit);
-    }
-
-    void setAddTraceCallBack(std::function<void(const Point4D&, const Point4D&)> add) {
-        _addTraceCallBack = std::move(add);
-    }
-
-    void setTakeBonusCallBack(std::function<void(const std::string&)> take) {
-        _takeBonusCallBack = std::move(take);
-    }
-
-    [[nodiscard]] double health() const { return _health; }
-    [[nodiscard]] std::string name() const { return "Player_" + _name; }
-
-
-    std::shared_ptr<Camera> camera() { return _camera; }
-
-    // This is for situation when you want to store the position of the head but you dont have attached camera
-    void setHeadAngle(double a) { _headAngle = a; }
-    [[nodiscard]] double headAngle() const { return _headAngle; };
+    void nextWeapon();
+    void previousWeapon();
+    void fire();
+    void reload();
 
     void rotateWeaponsRelativePoint(const Point4D& point4D, const Point4D& v, double val);
 
-    void drawStats();
+    [[nodiscard]] int kills() const {return _kills;}
+    [[nodiscard]] int deaths() const {return _deaths;}
 
     void addKill() { _kills++; }
     void addDeath() { _deaths++; }
@@ -142,11 +112,30 @@ public:
     void playDeath();
     void playKill();
 
+    void setDamagePlayerCallBack(std::function<void(sf::Uint16 targetId, double)> hit) {
+        _damagePlayerCallBack = std::move(hit);
+    }
+    void setAddTraceCallBack(std::function<void(const Point4D&, const Point4D&)> add) {
+        _addTraceCallBack = std::move(add);
+    }
+    void setTakeBonusCallBack(std::function<void(const std::string&)> take) {
+        _takeBonusCallBack = std::move(take);
+    }
+    void setAddWeaponCallBack(std::function<void(std::shared_ptr<Weapon>)> addWeapon) {
+        _addWeaponCallBack = addWeapon;
+    }
+    void setRemoveWeaponCallBack(std::function<void(std::shared_ptr<Weapon>)> removeWeapon) {
+        _removeWeaponCallBack = std::move(removeWeapon);
+    }
+    void setRayCastFunction(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction) {
+        _rayCastFunction = std::move(rayCastFunction);
+    }
+
+    // This is for situation when you want to store the position of the head but you dont have attached camera
+    void setHeadAngle(double a) { _headAngle = a; }
+    [[nodiscard]] double headAngle() const { return _headAngle; };
+
     void collisionWithObject(const std::string& objName, std::shared_ptr<RigidBody> obj);
-
-    void addWeapon(std::shared_ptr<Weapon> weapon);
-
-    void initWeapons();
 };
 
 

@@ -12,8 +12,6 @@
 class PlayerController {
 private:
     std::shared_ptr<Player> _player;
-    std::shared_ptr<World> _world;
-
     std::shared_ptr<Keyboard> _keyboard;
     std::shared_ptr<Mouse> _mouse;
 
@@ -30,7 +28,7 @@ private:
     double _jumpHeight = 3;
     double _walkSpeed = 10;
 public:
-    PlayerController(std::shared_ptr<Player> player, std::shared_ptr<World> world, std::shared_ptr<Keyboard> keyboard, std::shared_ptr<Mouse> mouse);
+    PlayerController(std::shared_ptr<Player> player, std::shared_ptr<Keyboard> keyboard, std::shared_ptr<Mouse> mouse);
     void update();
 };
 

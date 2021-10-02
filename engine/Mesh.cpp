@@ -46,31 +46,18 @@ Mesh Mesh::Obj(const std::string& filename) {
 }
 
 void Mesh::rotate(const Point4D &r) {
-    _angle = _angle + r;
+    Object::rotate(r);
     *this *= Matrix4x4::Rotation(r);
-
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(position(), r);
 }
 
 void Mesh::rotate(const Point4D &v, double r) {
+    Object::rotate(v, r);
     *this *= Matrix4x4::Rotation(v, r);
-
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(position(), v, r);
 }
 
 void Mesh::scale(const Point4D &s) {
+    Object::scale(s);
     *this *= Matrix4x4::Scale(s);
-
-    // TODO: scale attached objects
-}
-
-void Mesh::translate(const Point4D &t) {
-    _position = _position + t;
-
-    for(auto attached : _attachedObjects)
-        attached->translate(t);
 }
 
 Mesh &Mesh::operator=(const Mesh &mesh) {
@@ -81,48 +68,13 @@ Mesh &Mesh::operator=(const Mesh &mesh) {
 }
 
 void Mesh::rotateRelativePoint(const Point4D &s, const Point4D &r) {
-    _angle = _angle + r;
-
-    // Translate XYZ by vector r1
-    Point4D r1 = _position - s;
-    *this *= Matrix4x4::Translation(r1);
-
-    // In translated coordinate system we rotate body and position
-    Matrix4x4 rotationMatrix = Matrix4x4::Rotation(r);
-    Point4D r2 = rotationMatrix*r1;
-    *this *= rotationMatrix;
-
-    // After rotation we translate XYZ by vector -r2 and recalculate position
-    *this *= Matrix4x4::Translation(-r2);
-    _position = s + r2;
-
-    if(_attachedObjects.empty())
-        return;
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(s, r);
+    Object::rotateRelativePoint(s, r);
+    *this *= Matrix4x4::Rotation(r);
 }
 
 void Mesh::rotateRelativePoint(const Point4D &s, const Point4D &v, double r) {
-    // Translate XYZ by vector r1
-    Point4D r1 = _position - s;
-    *this *= Matrix4x4::Translation(r1);
-
-    // In translated coordinate system we rotate body and position
-    Matrix4x4 rotationMatrix = Matrix4x4::Rotation(v, r);
-    Point4D r2 = rotationMatrix*r1;
-    *this *= rotationMatrix;
-
-    // After rotation we translate XYZ by vector -r2 and recalculate position
-    *this *= Matrix4x4::Translation(-r2);
-    _position = s + r2;
-
-    for(auto attached : _attachedObjects)
-        attached->rotateRelativePoint(s, v, r);
-}
-
-
-void Mesh::translateToPoint(const Point4D &point) {
-    translate(point - _position);
+    Object::rotateRelativePoint(s, v, r);
+    *this *= Matrix4x4::Rotation(v, r);
 }
 
 void Mesh::setColor(sf::Color c) {
