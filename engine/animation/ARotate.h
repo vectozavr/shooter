@@ -5,7 +5,6 @@
 #ifndef ENGINE_AROTATE_H
 #define ENGINE_AROTATE_H
 
-#include "Animatable.h"
 #include "Animation.h"
 #include "Object.h"
 

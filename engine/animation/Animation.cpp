@@ -4,9 +4,6 @@
 
 #include "Animation.h"
 
-#include <utility>
-#include "../utils/Log.h"
-
 bool Animation::updateState() {
     if(!_started) {
         _startAnimationPoint = Time::time();

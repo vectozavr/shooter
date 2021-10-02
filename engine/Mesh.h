@@ -7,7 +7,6 @@
 
 #include <vector>
 #include "Triangle.h"
-#include "animation/Animatable.h"
 #include <SFML/Graphics.hpp>
 #include "Object.h"
 

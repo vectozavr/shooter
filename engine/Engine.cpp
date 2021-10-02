@@ -7,6 +7,7 @@
 #include <iostream>
 #include "ResourceManager.h"
 #include "physics/Solver.h"
+#include "animation/Timeline.h"
 
 Engine::Engine() {
     screen = std::make_shared<Screen>();
@@ -47,9 +48,9 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
         // hence we can set '_updateWorld' equal to false in setUpdateWorld(bool):
         if(_updateWorld) {
 
-            camera->update_animations();
-            camera->clear();
+            Timeline::update();
 
+            camera->clear();
             world->update();
             world->projectObjectsInCamera(camera);
 

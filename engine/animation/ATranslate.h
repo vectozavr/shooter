@@ -5,7 +5,6 @@
 #ifndef ENGINE_ATRANSLATE_H
 #define ENGINE_ATRANSLATE_H
 
-#include "Animatable.h"
 #include "Animation.h"
 #include "Object.h"
 

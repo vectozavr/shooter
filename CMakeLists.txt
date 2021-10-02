@@ -27,6 +27,10 @@ add_executable(shooter
         weapon/Gold_Ak47.h
         weapon/Rifle.cpp
         weapon/Rifle.h
+        PlayerController.cpp
+        PlayerController.h
+        Shooter.cpp
+        Shooter.h
         # 3d engine:
         engine/utils/Time.h
         engine/utils/Time.cpp
@@ -52,10 +56,14 @@ add_executable(shooter
         engine/Engine.cpp
         engine/Plane.h
         engine/Plane.cpp
-        engine/animation/Animatable.h
+        engine/Keyboard.cpp
+        engine/Keyboard.h
+        engine/Mouse.cpp
+        engine/Mouse.h
         engine/animation/Animation.h
+        engine/animation/Timeline.cpp
+        engine/animation/Timeline.h
         engine/animation/Interpolation.h
-        engine/animation/Animatable.cpp
         engine/animation/Animation.cpp
         engine/animation/ATranslate.h
         engine/animation/AScale.h
@@ -86,7 +94,7 @@ add_executable(shooter
         engine/network/UDPSocket.h
         engine/network/config.h
         engine/animation/AFunction.h
-        PlayerController.cpp PlayerController.h engine/Keyboard.cpp engine/Keyboard.h engine/Mouse.cpp engine/Mouse.h Shooter.cpp Shooter.h)
+        )
 
 if(APPLE OR UNIX)
     include_directories(/usr/local/include)

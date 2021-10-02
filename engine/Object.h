@@ -8,9 +8,8 @@
 #include <map>
 #include "utils/Point4D.h"
 #include <memory>
-#include "animation/Animatable.h"
 
-class Object : public Animatable {
+class Object {
 protected:
     Point4D _left =   Point4D{1, 0, 0, 0}; // internal X
     Point4D _up =     Point4D{0, 1, 0, 0}; // internal Y

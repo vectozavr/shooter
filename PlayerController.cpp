@@ -9,6 +9,7 @@
 #include "animation/AWait.h"
 #include "animation/ATranslate.h"
 #include "animation/ATranslateToPoint.h"
+#include "animation/Timeline.h"
 
 PlayerController::PlayerController(std::shared_ptr<Player> player,
                                    std::shared_ptr<Keyboard> keyboard,
@@ -45,24 +46,26 @@ void PlayerController::update() {
 
     std::shared_ptr<Object> camera = _player->attached("camera");
     if(_inRunning) {
-        if (!camera->isInAnim()) {
-            camera->animate("hor_oscil", new ATranslate(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::cos));
-            camera->animate("hor_oscil", new AWait(0));
-            camera->animate("hor_oscil", new ATranslate(camera, camera->left() / 6, 0.3, Animation::LoopOut::None, Animation::cos));
+        if (!Timeline::isInAnimList("camera_hor_oscil")) {
+            Timeline::animate("camera_hor_oscil", new ATranslate(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::cos));
+            Timeline::animate("camera_hor_oscil", new AWait(0));
+            Timeline::animate("camera_hor_oscil", new ATranslate(camera, camera->left() / 6, 0.3, Animation::LoopOut::None, Animation::cos));
 
-            camera->animate("vert_oscil", new ATranslate(camera, -Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::cos));
-            camera->animate("vert_oscil", new AWait(0));
-            camera->animate("vert_oscil", new ATranslate(camera, Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None,Animation::cos));
-            camera->animate("vert_oscil", new AWait(0));
-            camera->animate("vert_oscil", new ATranslate(camera, -Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::cos));
-            camera->animate("vert_oscil", new AWait(0));
-            camera->animate("vert_oscil", new ATranslate(camera, Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::cos));
+            Timeline::animate("camera_vert_oscil", new ATranslate(camera, -Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::cos));
+            Timeline::animate("camera_vert_oscil", new AWait(0));
+            Timeline::animate("camera_vert_oscil", new ATranslate(camera, Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None,Animation::cos));
+            Timeline::animate("camera_vert_oscil", new AWait(0));
+            Timeline::animate("camera_vert_oscil", new ATranslate(camera, -Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::cos));
+            Timeline::animate("camera_vert_oscil", new AWait(0));
+            Timeline::animate("camera_vert_oscil", new ATranslate(camera, Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::cos));
 
-            camera->animate("init", new ATranslateToPoint( camera, _player->position() + Point4D{0, 1.8, 0}, 0.3, Animation::None, Animation::cos));
+            Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Point4D{0, 1.8, 0}, 0.3, Animation::None, Animation::cos));
         }
     } else if(inRunning_old && !_inRunning) {
-        camera->stopAllAnimations();
-        camera->animate("init", new ATranslateToPoint( camera, _player->position() + Point4D{0, 1.8, 0}, 0.15, Animation::None, Animation::cos));
+        Timeline::deleteAnimationList("camera_hor_oscil");
+        Timeline::deleteAnimationList("camera_vert_oscil");
+        Timeline::deleteAnimationList("camera_init");
+        Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Point4D{0, 1.8, 0}, 0.15, Animation::None, Animation::cos));
     }
 
     // Left and right

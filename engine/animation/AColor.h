@@ -5,7 +5,6 @@
 #ifndef ENGINE_ACOLOR_H
 #define ENGINE_ACOLOR_H
 
-#include "Animatable.h"
 #include "Animation.h"
 #include "Mesh.h"
 

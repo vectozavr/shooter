@@ -4,6 +4,7 @@
 
 #include "Camera.h"
 #include "utils/Log.h"
+#include <cmath>
 
 std::vector<Triangle> &Camera::project(std::shared_ptr<Mesh> mesh) {
 

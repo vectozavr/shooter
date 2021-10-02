@@ -9,8 +9,6 @@
 #include "../Triangle.h"
 #include "Interpolation.h"
 
-class Animatable;
-
 class Animation {
 public:
     enum InterpolationType {

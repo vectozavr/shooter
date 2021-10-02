@@ -10,6 +10,7 @@
 #include <World.h>
 #include <Camera.h>
 #include <SFML/Audio/Sound.hpp>
+#include <cmath>
 #include "Mesh.h"
 #include "utils/Time.h"
 

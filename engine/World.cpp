@@ -95,7 +95,6 @@ void World::checkCollision(const std::string& body) {
 
 void World::update() {
     for (auto &m : _objects) {
-        m.second->update_animations();
         m.second->updatePhysicsState();
         checkCollision(m.first);
     }

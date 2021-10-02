@@ -5,7 +5,6 @@
 #ifndef ENGINE_AWAIT_H
 #define ENGINE_AWAIT_H
 
-#include "Animatable.h"
 #include "Animation.h"
 
 class AWait : public Animation {

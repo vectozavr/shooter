@@ -8,6 +8,7 @@
 #include "animation/AFunction.h"
 #include "animation/ATranslate.h"
 #include "animation/ARotate.h"
+#include "animation/Timeline.h"
 
 using namespace std;
 
@@ -241,8 +242,8 @@ void Shooter::addFireTrace(const Point4D &from, const Point4D &to) {
     world->addBody(std::make_shared<RigidBody>(Mesh::LineTo(from, to, 0.05)), traceName);
     world->body(traceName)->setCollider(false);
 
-    world->body(traceName)->animate(traceName + "_fadeOut", new AColor(world->body(traceName), {255, 255, 255, 0}));
-    world->body("Player_im")->animate(traceName + "delete", new AFunction([this, traceName](){ deleteFireTrace(traceName); }, 1, 2));
+    Timeline::animate(traceName + "_fadeOut", new AColor(world->body(traceName), {255, 255, 255, 0}));
+    Timeline::animate(traceName + "_delete", new AFunction([this, traceName](){ deleteFireTrace(traceName); }, 1, 2));
 }
 
 void Shooter::deleteFireTrace(const std::string& traceName) {
@@ -253,7 +254,7 @@ void Shooter::addBonus(const string &bonusName, const Point4D &position) {
     std::string name = bonusName.substr(6, bonusName.size()-3-5);
     world->addBody(std::make_shared<Bonus>(bonusName, "../obj/" + name + ".obj", "../obj/" + name + "_mat.txt", Point4D{3, 3, 3}), bonusName);
     world->body(bonusName)->translateToPoint(position);
-    world->body(bonusName)->animate("a_rotation", new ARotate(world->body(bonusName), Point4D{0, 2*M_PI, 0}, 4, Animation::Continue, Animation::linear));
+    Timeline::animate(bonusName + "_rotation", new ARotate(world->body(bonusName), Point4D{0, 2*M_PI, 0}, 4, Animation::Continue, Animation::linear));
 }
 
 void Shooter::removeBonus(const string &bonusName) {

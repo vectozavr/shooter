@@ -2,13 +2,12 @@
 // Created by Neirokan on 30.04.2020
 //
 
-#include <fstream>
-#include <sstream>
 #include "ServerUDP.h"
 #include "utils/Time.h"
 #include "MsgType.h"
 #include "config.h"
 #include "../utils/Log.h"
+#include <cmath>
 
 ServerUDP::ServerUDP() : _lastBroadcast(-INFINITY), _working(false)
 {
