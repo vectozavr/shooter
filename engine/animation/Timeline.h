@@ -8,7 +8,6 @@
 #include "Animation.h"
 
 namespace Timeline {
-    // TODO: replace Animation* anim on shared ptr or Animation with std::move()
     void update();
     void animate(const std::string& listName, Animation* anim);
 
