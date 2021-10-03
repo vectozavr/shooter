@@ -178,7 +178,7 @@ CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody>
     };
 
     // list: vector4(normal, distance), index: min distance
-    auto [normals, minFace] = GetFaceNormals(polytope, faces);
+    auto [normals, minFace] = _getFaceNormals(polytope, faces);
 
     Point4D minNormal;
     double minDistance = INFINITY;
@@ -200,9 +200,9 @@ CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody>
                 if (normals[i].dot(support) > 0) {
                     size_t f = i * 3;
 
-                    AddIfUniqueEdge(uniqueEdges, faces, f,     f + 1);
-                    AddIfUniqueEdge(uniqueEdges, faces, f + 1, f + 2);
-                    AddIfUniqueEdge(uniqueEdges, faces, f + 2, f    );
+                    _addIfUniqueEdge(uniqueEdges, faces, f, f + 1);
+                    _addIfUniqueEdge(uniqueEdges, faces, f + 1, f + 2);
+                    _addIfUniqueEdge(uniqueEdges, faces, f + 2, f);
 
                     faces[f + 2] = faces.back(); faces.pop_back();
                     faces[f + 1] = faces.back(); faces.pop_back();
@@ -222,7 +222,7 @@ CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody>
 
             polytope.push_back(support);
 
-            auto [newNormals, newMinFace] = GetFaceNormals(polytope, newFaces);
+            auto [newNormals, newMinFace] = _getFaceNormals(polytope, newFaces);
 
             if(newNormals.empty())
                 break;
@@ -255,7 +255,7 @@ CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody>
     return point;
 }
 
-std::pair<std::vector<Point4D>, size_t> RigidBody::GetFaceNormals(const std::vector<Point4D>& polytope, const std::vector<size_t>&  faces) {
+std::pair<std::vector<Point4D>, size_t> RigidBody::_getFaceNormals(const std::vector<Point4D>& polytope, const std::vector<size_t>&  faces) {
     std::vector<Point4D> normals;
     size_t minTriangle = 0;
     double minDistance = INFINITY;
@@ -285,7 +285,7 @@ std::pair<std::vector<Point4D>, size_t> RigidBody::GetFaceNormals(const std::vec
     return { normals, minTriangle };
 }
 
-void RigidBody::AddIfUniqueEdge(std::vector<std::pair<size_t, size_t>>& edges, const std::vector<size_t>& faces, size_t a, size_t b) {
+void RigidBody::_addIfUniqueEdge(std::vector<std::pair<size_t, size_t>>& edges, const std::vector<size_t>& faces, size_t a, size_t b) {
 
     auto reverse = std::find(                   //      0--<--3
             edges.begin(),                      //     / \ B /   A: 2-0

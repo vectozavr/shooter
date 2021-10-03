@@ -101,7 +101,7 @@ void Camera::init(int width, int height, double fov, double ZNear, double ZFar) 
 
 std::vector<Triangle> &Camera::sorted() {
 
-    // Sort _tris from back to front
+    // Sort _tris from _back to front
     // This is some replacement for Z-buffer
     std::sort(_triangles.begin(), _triangles.end(), [](Triangle &t1, Triangle &t2)
     {

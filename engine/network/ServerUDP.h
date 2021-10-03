@@ -36,7 +36,7 @@ public:
     // virtual functions
     virtual void broadcast(){};
 
-    // here you have to send Init message back to 'targetId' and send NewClient message to all '_clients'
+    // here you have to send Init message _back to 'targetId' and send NewClient message to all '_clients'
     virtual void processConnect(sf::Uint16 senderId){};
     virtual void processClientUpdate(sf::Uint16 senderId, sf::Packet& packet){};
     virtual void processDisconnect(sf::Uint16 senderId){};

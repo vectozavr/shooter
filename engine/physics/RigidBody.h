@@ -32,8 +32,8 @@ private:
     static bool _triangle(Simplex& points, Point4D& direction);
     static bool _tetrahedron(Simplex& points, Point4D& direction);
 
-    static std::pair<std::vector<Point4D>, size_t> GetFaceNormals(const std::vector<Point4D>& polytope, const std::vector<size_t>&  faces);
-    static void AddIfUniqueEdge(std::vector<std::pair<size_t, size_t>>& edges, const std::vector<size_t>& faces, size_t a, size_t b);
+    static std::pair<std::vector<Point4D>, size_t> _getFaceNormals(const std::vector<Point4D>& polytope, const std::vector<size_t>&  faces);
+    static void _addIfUniqueEdge(std::vector<std::pair<size_t, size_t>>& edges, const std::vector<size_t>& faces, size_t a, size_t b);
 
 protected:
     Point4D _velocity;
@@ -58,7 +58,6 @@ public:
     [[nodiscard]] bool inCollision() const {return _inCollision; }
     [[nodiscard]] bool isCollider() const {return _isCollider; }
     void setInCollision(bool c) { _inCollision = c; }
-    void setCollisionNormal(const Point4D& c) { _collisionNormal = c; }
     void setCollision(bool c) { _collision= c; }
     void setCollider(bool c) { _isCollider = c; }
 

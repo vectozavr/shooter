@@ -36,7 +36,7 @@ public:
     void rotate(const Point4D& r) override;
     // Rotate body around normalised vector 'v' by 'r' radians
     void rotate(const Point4D& v, double r) override;
-    // Rotate body around XYZ by (r.x, r.y, r.z) radians relative val 'point4D'
+    // Rotate body around XYZ by (r._x, r._y, r.z) radians relative val 'point4D'
     void rotateRelativePoint(const Point4D& point4D, const Point4D& r) override;
     // Rotate body around normalised vector 'v' by 'r' radians relative val 'point4D'
     void rotateRelativePoint(const Point4D& point4D, const Point4D& v, double r) override;

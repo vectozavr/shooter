@@ -65,8 +65,8 @@ Matrix4x4 Matrix4x4::Scale(const Point4D& factor) {
 Matrix4x4 Matrix4x4::Translation(const Point4D& v) {
     Matrix4x4 t{};
 /*
- * ( 1 0 0 dx )(x)   (x + dx)
- * ( 0 1 0 dy )(y) = (y + dy)
+ * ( 1 0 0 dx )(_x)   (_x + dx)
+ * ( 0 1 0 dy )(_y) = (_y + dy)
  * ( 0 0 1 dz )(z)   (z + dz)
  * ( 0 0 0 1  )(1)   (  1   )
  */

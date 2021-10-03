@@ -90,7 +90,7 @@ void Player::nextWeapon() {
         _removeWeaponCallBack(_weapons[_selectedWeapon]);
         _selectedWeapon = (_selectedWeapon + 1) % _weapons.size();
         _addWeaponCallBack(_weapons[_selectedWeapon]);
-        Log::log("selected _selectedWeapon " + std::to_string(_selectedWeapon));
+        Log::log("_selected _selectedWeapon " + std::to_string(_selectedWeapon));
         _changeWeaponSound.play();
     }
 }
@@ -104,7 +104,7 @@ void Player::previousWeapon() {
         else
             _selectedWeapon = _weapons.size() - 1;
         _addWeaponCallBack(_weapons[_selectedWeapon]);
-        Log::log("selected _selectedWeapon " + std::to_string(_selectedWeapon));
+        Log::log("_selected _selectedWeapon " + std::to_string(_selectedWeapon));
         _changeWeaponSound.play();
     }
 }

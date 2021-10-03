@@ -14,27 +14,27 @@
 
 class Window {
 private:
-    std::string s_name;
-    std::string s_backTexture;
-    std::vector<Button> buttons;
+    std::string _name;
+    std::string _backTexture;
+    std::vector<Button> _buttons;
 
-    sf::Sprite back;
+    sf::Sprite _back;
 
-    Point4D prevMousePosition;
+    Point4D _prevMousePosition;
 
     std::shared_ptr<Screen> _screen;
     std::shared_ptr<Mouse> _mouse;
 public:
-    explicit Window(std::shared_ptr<Screen> screen, std::shared_ptr<Mouse> mouse, std::string name = "Menu", std::string backTexture = "") : _screen(screen), _mouse(mouse), s_name(std::move(name)), s_backTexture(std::move(backTexture)){}
+    explicit Window(std::shared_ptr<Screen> screen, std::shared_ptr<Mouse> mouse, std::string name = "Menu", std::string backTexture = "") : _screen(screen), _mouse(mouse), _name(std::move(name)), _backTexture(std::move(backTexture)){}
 
     void addButton(int x, int y, int w, int h,
                    std::function<void()> click,
-                   const std::string& text = "button", double sx = 1, double sy = 1,
+                   const std::string& text = "_button", double sx = 1, double sy = 1,
                    const std::string& texture = "", tPos usualState = {}, tPos selectedState = {}, tPos pressedState = {},
                    const std::string& font = "../engine/fonts/Roboto-Medium.ttf", sf::Color textColor = {255, 255, 255}, const std::string& clickSound = "");
 
-    [[nodiscard]] std::string title() const { return s_name; }
-    void title(const std::string& title) { s_name = title; }
+    [[nodiscard]] std::string title() const { return _name; }
+    void title(const std::string& title) { _name = title; }
 
     void setBackgroundTexture(const std::string& texture, double sx = 1, double sy = 1, int w = 1920, int h = 1080);
 

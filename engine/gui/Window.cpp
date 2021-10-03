@@ -10,23 +10,23 @@
 void Window::addButton(int x, int y, int w, int h, std::function<void()> click, const std::string &text, double sx, double sy,
                        const std::string &texture, tPos usualState, tPos selectedState, tPos pressedState,
                        const std::string& font, sf::Color textColor, const std::string& clickSound) {
-    buttons.push_back(Button{x, y, w, h, std::move(click), text, sx, sy, texture, usualState, selectedState, pressedState, font, textColor, clickSound});
-    buttons.back().init();
+    _buttons.push_back(Button{x, y, w, h, std::move(click), text, sx, sy, texture, usualState, selectedState, pressedState, font, textColor, clickSound});
+    _buttons.back().init();
 }
 
 void Window::update() {
 
-    _screen->setTitle(s_name);
-    _screen->drawSprite(back);
+    _screen->setTitle(_name);
+    _screen->drawSprite(_back);
 
     Point4D mousePos = _mouse->getMousePosition();
-    Point4D dMousePos = mousePos - prevMousePosition;
-    back.setPosition(back.getPosition() - sf::Vector2f(dMousePos.x()/30, dMousePos.y()/30));
+    Point4D dMousePos = mousePos - _prevMousePosition;
+    _back.setPosition(_back.getPosition() - sf::Vector2f(dMousePos.x() / 30, dMousePos.y() / 30));
     bool isPressed = _mouse->isButtonTapped(sf::Mouse::Left);
 
-    for(auto& button : buttons) {
-        if( mousePos.x() > button.x - button.w*button.sx/2 && mousePos.y() > button.y - button.h*button.sy/2 &&
-            mousePos.x() < button.x + button.w*button.sx/2 && mousePos.y() < button.y + button.h*button.sy/2) {
+    for(auto& button : _buttons) {
+        if( mousePos.x() > button.x() - button.w() * button.sx() / 2 && mousePos.y() > button.y() - button.h() * button.sy() / 2 &&
+            mousePos.x() < button.x() + button.w() * button.sx() / 2 && mousePos.y() < button.y() + button.h() * button.sy() / 2) {
             button.select();
             if(isPressed)
                 button.press();
@@ -35,19 +35,19 @@ void Window::update() {
         }
 
         if(_screen->isOpen()) {
-            _screen->drawSprite(button.button);
-            _screen->drawText(button.text);
+            _screen->drawSprite(button.sprite());
+            _screen->drawText(button.text());
         }
     }
 
-    prevMousePosition = mousePos;
+    _prevMousePosition = mousePos;
 }
 
 void Window::setBackgroundTexture(const std::string &texture, double sx, double sy, int w, int h) {
-    s_backTexture = texture;
-    std::shared_ptr<sf::Texture> t = ResourceManager::loadTexture(s_backTexture);
+    _backTexture = texture;
+    std::shared_ptr<sf::Texture> t = ResourceManager::loadTexture(_backTexture);
     t->setRepeated(true);
-    back = sf::Sprite(*t, sf::IntRect(0, 0, w + w/30.0, h + h/30.0));
-    back.scale(sx, sy);
-    back.setPosition(sf::Vector2f(-w/30.0, -h/30.0));
+    _back = sf::Sprite(*t, sf::IntRect(0, 0, w + w / 30.0, h + h / 30.0));
+    _back.scale(sx, sy);
+    _back.setPosition(sf::Vector2f(-w / 30.0, -h / 30.0));
 }
