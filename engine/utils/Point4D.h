@@ -14,6 +14,7 @@ private:
 public:
     Point4D () = default;
     Point4D (const Point4D& point4D);
+    Point4D& operator=(const Point4D& point4D) { _arr_point = point4D._arr_point; return *this; };
     explicit Point4D (double x, double y = 0.0, double z = 0.0, double w = 0.0);
 
     [[nodiscard]] double x() const { return _arr_point[0]; }

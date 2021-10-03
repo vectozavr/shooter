@@ -5,6 +5,7 @@
 #ifndef SHOOTER_MOUSE_H
 #define SHOOTER_MOUSE_H
 
+#include <memory>
 #include <SFML/Graphics.hpp>
 #include "utils/Point4D.h"
 

@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <memory>
+#include <functional>
 #include "../utils/Point4D.h"
 #include "../Triangle.h"
 #include "Simplex.h"

@@ -5,8 +5,6 @@
 #ifndef SHOOTER_CLIENT_H
 #define SHOOTER_CLIENT_H
 
-#include <utility>
-
 #include "network/ClientUDP.h"
 #include "Player.h"
 
