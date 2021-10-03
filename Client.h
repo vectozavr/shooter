@@ -23,7 +23,7 @@ private:
     std::function<void(const std::string&, const Point4D&)> _addBonusCallBack;
     std::function<void(const std::string&)> _removeBonusCallBack;
 public:
-    Client(std::shared_ptr<Player>  player) : _player(player){};
+    explicit Client(std::shared_ptr<Player>  player) : _player(player){};
 
     void updatePacket() override;
 

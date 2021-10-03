@@ -46,7 +46,6 @@ private:
     std::function<void(sf::Uint16 targetId, double)> _damagePlayerCallBack;
     std::function<void(const Point4D&, const Point4D&)> _addTraceCallBack;
     std::function<void(const std::string&)> _takeBonusCallBack;
-    std::function<void(const std::string&)> _fireCallBack;
 
     std::function<void(std::shared_ptr<Weapon>)> _addWeaponCallBack;
     std::function<void(std::shared_ptr<Weapon>)> _removeWeaponCallBack;

@@ -45,14 +45,12 @@ public:
     [[nodiscard]] sf::Color color() const { return _color; }
     void setColor(sf::Color c);
 
-    Mesh static Obj(const std::string& filename);
-    Mesh static LineTo(const Point4D& from, const Point4D& to, double line_width = 0.1, sf::Color color = {150, 150, 150, 255});
-
     void setVisible(bool visibility) { _visible = visibility; }
     [[nodiscard]] bool isVisible() const { return _visible; }
 
+    Mesh static Obj(const std::string& filename);
     std::vector<std::shared_ptr<Mesh>> static LoadObjects(const std::string& filename, const std::string &materials = "", const Point4D& scale = Point4D{1, 1, 1});
+    Mesh static LineTo(const Point4D& from, const Point4D& to, double line_width = 0.1, sf::Color color = {150, 150, 150, 255});
 };
-
 
 #endif //INC_3DZAVR_MESH_H
