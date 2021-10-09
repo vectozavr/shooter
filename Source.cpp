@@ -1,5 +1,5 @@
 //
-// Created by Иван Ильин on 06.02.2021.
+// Created by Ivan Ilin on 06.02.2021.
 //
 
 #include "Shooter.h"

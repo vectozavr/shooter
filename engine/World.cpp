@@ -25,7 +25,7 @@ std::pair<Point4D, string> World::rayCast(const Point4D& from, const Point4D& to
     double minDistance = 10000;
 
     for(auto& object : _objects) {
-        if((object.first.find("im") != std::string::npos) || (object.first.find("nr") != std::string::npos))
+        if((object.first.find("Player") != std::string::npos) || (object.first.find("Bonus") != std::string::npos))
             continue;
 
         for(auto& tri : object.second->triangles()) {
@@ -63,16 +63,21 @@ void World::checkCollision(const std::string& body) {
 
         _objects[body]->setInCollision(false);
 
-        for (auto &obj : _objects) {
-            if(obj.first != body) {
-                std::pair<bool, Simplex> gjk = _objects[body]->checkGJKCollision(obj.second);
+        for (auto it = _objects.begin(); it != _objects.end();) {
+
+            auto obj = it->second;
+            std::string name = it->first;
+            it++;
+
+            if(name != body) {
+                std::pair<bool, Simplex> gjk = _objects[body]->checkGJKCollision(obj);
                 if (gjk.first) {
-                    if (obj.second->isCollider()) {
-                        CollisionPoint epa = _objects[body]->EPA(gjk.second, obj.second);
-                        Solver::solveCollision(_objects[body], obj.second, epa);
+                    if (obj->isCollider()) {
+                        CollisionPoint epa = _objects[body]->EPA(gjk.second, obj);
+                        Solver::solveCollision(_objects[body], obj, epa);
                     }
                     if (_objects[body]->collisionCallBack() != nullptr)
-                        _objects[body]->collisionCallBack()(obj.first, obj.second);
+                        _objects[body]->collisionCallBack()(name, obj);
                 }
             }
         }

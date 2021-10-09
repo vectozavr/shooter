@@ -38,8 +38,6 @@ private:
     sf::Sound _fullHealthSound;
     sf::Sound _fullAbilitySound;
 
-    std::string _name = "im";
-
     std::vector<std::shared_ptr<Weapon>> _weapons;
     size_t _selectedWeapon = 0;
 
@@ -67,13 +65,8 @@ public:
         setCollisionCallBack([this](const std::string& objName, std::shared_ptr<RigidBody> obj) {collisionWithObject(objName, obj);});
     };
 
-    [[nodiscard]] std::string name() const { return "Player_" + _name; }
-
     void setHealth(double h) {
         _health = h;
-    }
-    void setAbility(double a) {
-        _ability = a;
     }
 
     [[nodiscard]] double health() const { return _health; }

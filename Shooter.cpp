@@ -6,7 +6,6 @@
 #include <fstream>
 #include "engine/animation/AColor.h"
 #include "engine/animation/AFunction.h"
-#include "engine/animation/ATranslate.h"
 #include "engine/animation/ARotate.h"
 #include "engine/animation/Timeline.h"
 
@@ -86,7 +85,7 @@ void Shooter::start() {
     camera->translateToPoint(player->position() + Point4D{0, 1.8, 0});
     player->attach(camera, "camera");
 
-    world->addBody(player, player->name());
+    world->addBody(player, "Player");
     player->translate(Point4D{0, 10, 0});
 
     client = std::make_shared<Client>(player);
@@ -201,7 +200,7 @@ void Shooter::play() {
 }
 
 void Shooter::spawnPlayer(sf::Uint16 id) {
-    std::string name = "Player_" + std::to_string(id);
+    std::string name = "Enemy_" + std::to_string(id);
     std::shared_ptr<Player> newPlayer = std::make_shared<Player>();
     newPlayer->setCollision(false);
 
@@ -230,7 +229,7 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
 }
 
 void Shooter::removePlayer(sf::Uint16 id) {
-    std::string name = "Player_" + std::to_string(id);
+    std::string name = "Enemy_" + std::to_string(id);
     world->removeBody(name);
     world->removeBody(name + "_head");
     world->removeBody(name + "_eye1");
