@@ -5,39 +5,22 @@
 #include <sstream>
 #include <utility>
 #include "Weapon.h"
-#include "ResourceManager.h"
-#include "utils/Log.h"
-#include "animation/AColor.h"
-#include "animation/AFunction.h"
+#include "../engine/ResourceManager.h"
+#include "../engine/utils/Log.h"
+#include "../engine/animation/AColor.h"
+#include "../engine/animation/AFunction.h"
 
 using namespace std;
 
 Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, const std::string& matFileName, const Point4D& scale, const Point4D& t, const Point4D& r) {
     _name = weaponName;
 
-    /*
-    auto objs = Mesh::LoadObjects(objFileName, matFileName, scale);
-
-    for(int i = 0; i < objs.size(); i++) {
-        string meshName = _name + "_" + to_string(i);
-
-        RigidBody obj(*objs[i]);
-
-        obj.setCollider(false);
-
-        //transforms
-        obj.rotate(rotate);
-        obj.translate(translate);
-
-        _objects.insert({meshName, std::make_shared<RigidBody>(obj)});
-    }
-     */
     loadObj(objFileName, matFileName, scale);
     setCollider(false);
     rotate(r);
     translate(t);
 
-    noAmmoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/weapons/no_ammo.ogg"));
+    noAmmoSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/no_ammo.ogg"));
 }
 
 std::map<std::string, double> Weapon::fire(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction, const Point4D& position, const Point4D& direction) {

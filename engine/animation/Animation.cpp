@@ -16,7 +16,7 @@ bool Animation::updateState() {
     // linear normalized time:
     _time = (Time::time() - _startAnimationPoint)/(_endAnimationPoint - _startAnimationPoint);
 
-    if(_looped != Continue || _time < 0.5)
+    if(_looped != LoopOut::Continue || _time < 0.5)
         _dtime = _time - _timeOld;
     else {
         _time = _timeOld;
@@ -24,23 +24,23 @@ bool Animation::updateState() {
     }
 
     switch (_intType) {
-        case bezier:
+        case InterpolationType::bezier:
             _p = Interpolation::Bezier(_bezier[0], _bezier[1], _time);
             _dp = Interpolation::dBezier(_bezier[0], _bezier[1], _time, _dtime);
             break;
-        case bouncing:
+        case InterpolationType::bouncing:
             _p = Interpolation::Bouncing(_time);
             _dp = Interpolation::dBouncing(_time, _dtime);
             break;
-        case linear:
+        case InterpolationType::linear:
             _p = Interpolation::Linear(_time);
             _dp = Interpolation::dLinear(_time, _dtime);
             break;
-        case cos:
+        case InterpolationType::cos:
             _p = Interpolation::Cos(_time);
             _dp = Interpolation::dCos(_time, _dtime);
             break;
     }
 
-    return (_time < 1) || _looped == Cycle;
+    return (_time < 1) || _looped == LoopOut::Cycle;
 }

@@ -7,12 +7,13 @@
 
 
 #include <string>
-#include <World.h>
-#include <Camera.h>
+#include "../engine/World.h"
+#include "../engine/Camera.h"
 #include <SFML/Audio/Sound.hpp>
-#include <cmath>
-#include "Mesh.h"
-#include "utils/Time.h"
+#include "../engine/Mesh.h"
+#include "../engine/utils/Time.h"
+
+#include "../engine/Consts.h"
 
 class Weapon : public RigidBody {
 protected:
@@ -30,8 +31,8 @@ protected:
 
     std::string _name = "Weapon_name";
 
-    double _lastFireTime = -INFINITY;
-    double _lastReloadTime = -INFINITY;
+    double _lastFireTime = std::numeric_limits<double>::min();
+    double _lastReloadTime = std::numeric_limits<double>::min();
 
     sf::Sound fireSound;
     sf::Sound reloadSound;

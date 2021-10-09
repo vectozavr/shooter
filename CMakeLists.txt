@@ -3,11 +3,11 @@ project(shooter)
 
 set(CMAKE_CXX_STANDARD 20)
 
-include_directories(engine)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_executable(shooter
         # game:
-        main.cpp
+        Source.cpp
         Player.cpp
         Player.h
         Client.cpp
@@ -94,12 +94,12 @@ add_executable(shooter
         engine/network/UDPSocket.h
         engine/network/config.h
         engine/animation/AFunction.h
-        )
+        engine/Consts.h)
 
 if(APPLE OR UNIX)
     include_directories(/usr/local/include)
 else()
-    set(SFML_DIR "C:/Libraries/SFML/lib/cmake/SFML")
+    set(SFML_DIR "SFML/lib/cmake/SFML")
     set(SFML_STATIC_LIBRARIES TRUE)
 endif()
 

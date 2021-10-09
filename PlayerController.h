@@ -6,8 +6,8 @@
 #define SHOOTER_PLAYERCONTROLLER_H
 
 #include "Player.h"
-#include "Keyboard.h"
-#include "Mouse.h"
+#include "engine/Keyboard.h"
+#include "engine/Mouse.h"
 
 class PlayerController {
 private:
@@ -16,10 +16,9 @@ private:
     std::shared_ptr<Mouse> _mouse;
 
     bool _inRunning = false;
+    bool _isSliding = false;
     double _slowMoCoefficient = 5;
     bool _isInSlowMo = false;
-
-    double _g = 35;
 
     sf::Sound _slowMoSound;
     sf::Sound _unSlowMoSound;

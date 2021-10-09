@@ -5,7 +5,7 @@
 #ifndef SHOOTER_BONUS_H
 #define SHOOTER_BONUS_H
 
-#include "World.h"
+#include "engine/World.h"
 #include "Player.h"
 
 class Bonus : public RigidBody {

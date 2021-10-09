@@ -4,11 +4,11 @@
 
 #include "Shooter.h"
 #include <fstream>
-#include "animation/AColor.h"
-#include "animation/AFunction.h"
-#include "animation/ATranslate.h"
-#include "animation/ARotate.h"
-#include "animation/Timeline.h"
+#include "engine/animation/AColor.h"
+#include "engine/animation/AFunction.h"
+#include "engine/animation/ATranslate.h"
+#include "engine/animation/ARotate.h"
+#include "engine/animation/Timeline.h"
 
 using namespace std;
 
@@ -64,12 +64,12 @@ void Shooter::InitNetwork()
 
 void Shooter::start() {
     // This code executed once in the beginning:
-    setDebugText(false);
+    //setDebugText(false);
     setUpdateWorld(false);
 
     mouse->setMouseCursorVisible(true);
 
-    world->loadMap("../maps/map1.obj", "map", Point4D{5, 5, 5});
+    world->loadMap("maps/map1.obj", "maps/materials.txt", "map", Point4D{5, 5, 5});
 
     player = std::make_shared<Player>();
     playerController = std::make_shared<PlayerController>(player, keyboard, mouse);
@@ -94,12 +94,12 @@ void Shooter::start() {
 
     // windows init:
     mainMenu.title("Main menu");
-    mainMenu.setBackgroundTexture("../textures/back.png", 1.1, 1.1, screen->width(), screen->height());
+    mainMenu.setBackgroundTexture("textures/back.png", 1.1, 1.1, screen->width(), screen->height());
 
-    mainMenu.addButton(screen->width()/2, 200, 200, 20, [this] () { this->play(); }, "Play", 5, 5, "../textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "../engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "../sound/click.ogg");
-    mainMenu.addButton(screen->width()/2, 350, 200, 20, [this] () { this->player->translateToPoint(Point4D{0, 0, 0}); this->player->setVelocity({}); this->play(); }, "Respawn", 5, 5, "../textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "../engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "../sound/click.ogg");
+    mainMenu.addButton(screen->width()/2, 200, 200, 20, [this] () { this->play(); }, "Play", 5, 5, "textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "sound/click.ogg");
+    mainMenu.addButton(screen->width()/2, 350, 200, 20, [this] () { this->player->translateToPoint(Point4D{0, 0, 0}); this->player->setVelocity({}); this->play(); }, "Respawn", 5, 5, "textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "sound/click.ogg");
 
-    mainMenu.addButton(screen->width()/2, 500, 200, 20, [this] () { client->disconnect(); server->stop(); this->exit();}, "Exit", 5, 5, "../textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "../engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "../sound/click.ogg");
+    mainMenu.addButton(screen->width()/2, 500, 200, 20, [this] () { client->disconnect(); server->stop(); this->exit();}, "Exit", 5, 5, "textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "sound/click.ogg");
 
     // connecting to the server
     InitNetwork();
@@ -147,7 +147,7 @@ void Shooter::update() {
 
     // background sounds and music control
     if(backgroundNoise.getStatus() != sf::Sound::Status::Playing) {
-        backgroundNoise.setBuffer(*ResourceManager::loadSoundBuffer("../sound/backNoise.ogg"));
+        backgroundNoise.setBuffer(*ResourceManager::loadSoundBuffer("sound/backNoise.ogg"));
         backgroundNoise.play();
     }
 }
@@ -155,11 +155,11 @@ void Shooter::update() {
 void Shooter::gui() {
 
     sf::Sprite sprite;
-    sprite.setTexture(*ResourceManager::loadTexture("../textures/gui.png"));
+    sprite.setTexture(*ResourceManager::loadTexture("textures/gui.png"));
     sprite.setTextureRect(sf::IntRect(243, 3, 9, 9));
     sprite.scale(3, 3);
-    sprite.setPosition(screen->width() / 2.0 - 27.0/2.0, screen->height() / 2 - 27.0/2.0);
-    sprite.setColor(sf::Color(0,0,0, 200));
+    sprite.setPosition(screen->width() / 2.0f - 27.0f/2.0f, screen->height() / 2.0f - 27.0f/2.0f);
+    sprite.setColor(sf::Color(0, 0, 0, 200));
     screen->drawSprite(sprite);
 
     // health player stats
@@ -169,7 +169,7 @@ void Shooter::gui() {
 void Shooter::drawPlayerStats() {
     // health bar
     double xPos = 10;
-    double yPos = screen->height() - 10 - 10;
+    double yPos = screen->height() - 20;
 
     int width = screen->width()/2 - 20;
     int height = 10;
@@ -188,8 +188,8 @@ void Shooter::drawPlayerStats() {
 
     auto balance = player->balance();
 
-    screen->drawText(std::to_string((int)balance.first),Point4D{150, static_cast<double>(screen->height() - 50 - 100)},100, sf::Color(0, 0, 0, 100));
-    screen->drawText(std::to_string((int)balance.second),Point4D{50, static_cast<double>(screen->height() - 50 - 50)},50, sf::Color(0, 0, 0, 70));
+    screen->drawText(std::to_string((int)balance.first), Point4D{150, static_cast<double>(screen->height() - 150)}, 100, sf::Color(0, 0, 0, 100));
+    screen->drawText(std::to_string((int)balance.second), Point4D{50, static_cast<double>(screen->height() - 100)}, 50, sf::Color(0, 0, 0, 70));
 
     screen->drawText("KILLS: " + std::to_string(player->kills()) + " | " + "DEATHS: " + std::to_string(player->deaths()),
                      Point4D{10, 10},25, sf::Color(0, 0, 0, 100));
@@ -211,18 +211,18 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     newPlayer->setAcceleration(Point4D{0, 0, 0});
 
     // add head and other stuff:
-    world->loadBody(name + "_head", "../obj/cube.obj", "", Point4D{0.7, 0.7, 0.7});
+    world->loadBody(name + "_head", "obj/cube.obj", "", Point4D{0.7, 0.7, 0.7});
     world->body(name + "_head")->translate(Point4D{0, 2, 0});
     world->body(name + "_head")->setCollider(false);
     newPlayer->attach(world->body(name + "_head"), "head");
 
-    world->loadBody(name + "_eye1", "../obj/cube.obj", "", Point4D{0.2, 0.2, 0.05});
+    world->loadBody(name + "_eye1", "obj/cube.obj", "", Point4D{0.2, 0.2, 0.05});
     world->body(name + "_eye1")->translate(Point4D{0.3, 2.1, 0.7});
     world->body(name + "_eye1")->setCollider(false);
     world->body(name + "_eye1")->setColor({147, 159, 255});
     world->body(name + "_head")->attach(world->body(name + "_eye1"), "eye1");
 
-    world->loadBody(name + "_eye2", "../obj/cube.obj", "", Point4D{0.2, 0.2, 0.05});
+    world->loadBody(name + "_eye2", "obj/cube.obj", "", Point4D{0.2, 0.2, 0.05});
     world->body(name + "_eye2")->translate(Point4D{-0.3, 2.1, 0.7});
     world->body(name + "_eye2")->setCollider(false);
     world->body(name + "_eye2")->setColor({147, 159, 255});
@@ -252,9 +252,9 @@ void Shooter::deleteFireTrace(const std::string& traceName) {
 
 void Shooter::addBonus(const string &bonusName, const Point4D &position) {
     std::string name = bonusName.substr(6, bonusName.size()-3-5);
-    world->addBody(std::make_shared<Bonus>(bonusName, "../obj/" + name + ".obj", "../obj/" + name + "_mat.txt", Point4D{3, 3, 3}), bonusName);
+    world->addBody(std::make_shared<Bonus>(bonusName, "obj/" + name + ".obj", "obj/" + name + "_mat.txt", Point4D{3, 3, 3}), bonusName);
     world->body(bonusName)->translateToPoint(position);
-    Timeline::animate(bonusName + "_rotation", new ARotate(world->body(bonusName), Point4D{0, 2*M_PI, 0}, 4, Animation::Continue, Animation::linear));
+    Timeline::animate(bonusName + "_rotation", new ARotate(world->body(bonusName), Point4D{0, 2*Consts::PI, 0}, 4, Animation::LoopOut::Continue, Animation::InterpolationType::linear));
 }
 
 void Shooter::removeBonus(const string &bonusName) {
@@ -266,5 +266,5 @@ void Shooter::addWeapon(std::shared_ptr<Weapon> weapon) {
 }
 
 void Shooter::removeWeapon(std::shared_ptr<Weapon> weapon) {
-    world->removeBodyInstantly(weapon->name());
+    world->removeBody(weapon->name());
 }

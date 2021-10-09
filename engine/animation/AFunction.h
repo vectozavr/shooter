@@ -25,7 +25,7 @@ public:
     }
 
     bool update() override {
-        if(_allCalls != 0 && _p >= (double)(_calls+1) / (_allCalls+1)) {
+        if(_allCalls != 0 && _p >= (double)(_calls + 1) / (_allCalls + 1)) {
             _calls++;
             _callBack();
         }

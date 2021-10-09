@@ -3,7 +3,7 @@
 //
 
 #include "UDPConnection.h"
-#include "utils/Time.h"
+#include "../utils/Time.h"
 #include "config.h"
 
 UDPConnection::UDPConnection(sf::Uint16 id, sf::IpAddress ip, sf::Uint16 port) : _id(id), _ip(ip), _port(port), lastMsg(Time::time()) {}

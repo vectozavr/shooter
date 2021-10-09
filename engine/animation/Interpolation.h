@@ -6,7 +6,9 @@
 #define ENGINE_INTERPOLATION_H
 
 #include "../utils/Point4D.h"
+
 #include <cmath>
+#include "../Consts.h"
 
 namespace Interpolation {
     static double Linear(double t);
@@ -27,7 +29,7 @@ double Interpolation::Linear(double t) {
 }
 
 double Interpolation::Cos(double t) {
-    return 0.5*(1 - cos(M_PI*Interpolation::Linear(t)));
+    return 0.5*(1 - cos(Consts::PI*Interpolation::Linear(t)));
 }
 
 double Interpolation::Bezier(const Point4D &p1, const Point4D &p2, double t) {
@@ -72,7 +74,7 @@ double Interpolation::dLinear(double t, double dt) {
 }
 
 double Interpolation::dCos(double t, double dt) {
-    return 0.5*M_PI*sin(M_PI*t)*dt;
+    return 0.5*Consts::PI*sin(Consts::PI*t)*dt;
 }
 
 double Interpolation::dBezier(const Point4D &p1, const Point4D &p2, double t, double dt) {

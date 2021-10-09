@@ -2,16 +2,16 @@
 // Created by Иван Ильин on 02.06.2021.
 //
 
-#include <ResourceManager.h>
+#include "../engine/ResourceManager.h"
 #include "Shotgun.h"
-#include "animation/AColor.h"
-#include "animation/AFunction.h"
+#include "../engine/animation/AColor.h"
+#include "../engine/animation/AFunction.h"
 
 using namespace std;
 
-Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, "../obj/shotgun.obj", "../obj/shotgun_mat.txt", Point4D{3, 3, 3}, Point4D{-0.95, 1.3, -0.6}, Point4D{0, M_PI, 0}) {
-    fireSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/weapons/shotgun.ogg"));
-    reloadSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/weapons/reload_shotgun.ogg"));
+Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, "obj/shotgun.obj", "obj/shotgun_mat.txt", Point4D{3, 3, 3}, Point4D{-0.95, 1.3, -0.6}, Point4D{0, Consts::PI, 0}) {
+    fireSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/shotgun.ogg"));
+    reloadSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/reload_shotgun.ogg"));
 
     //reloadSound.setVolume(30);
     _initialPack = 15;

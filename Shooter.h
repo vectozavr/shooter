@@ -5,11 +5,11 @@
 #ifndef SHOOTER_SHOOTER_H
 #define SHOOTER_SHOOTER_H
 
-#include "Engine.h"
+#include "engine/Engine.h"
 #include "Player.h"
 #include "PlayerController.h"
 #include "PlayerController.h"
-#include "gui/Window.h"
+#include "engine/gui/Window.h"
 
 #include "Client.h"
 #include "Server.h"

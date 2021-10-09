@@ -5,8 +5,8 @@
 #ifndef ENGINE_SERVERUDP_H
 #define ENGINE_SERVERUDP_H
 
-#include "World.h"
-#include "Camera.h"
+#include "../World.h"
+#include "../Camera.h"
 #include "ReliableMsg.h"
 #include "UDPSocket.h"
 #include <memory>

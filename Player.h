@@ -7,9 +7,9 @@
 
 #include <SFML/Audio/Sound.hpp>
 #include <utility>
-#include <ResourceManager.h>
-#include "Camera.h"
-#include "World.h"
+#include "engine/ResourceManager.h"
+#include "engine/Camera.h"
+#include "engine/World.h"
 #include "weapon/Ak47.h"
 #include "weapon/Shotgun.h"
 #include "weapon/Gun.h"
@@ -41,7 +41,7 @@ private:
     std::string _name = "im";
 
     std::vector<std::shared_ptr<Weapon>> _weapons;
-    uint8_t _selectedWeapon = 0;
+    size_t _selectedWeapon = 0;
 
     std::function<void(sf::Uint16 targetId, double)> _damagePlayerCallBack;
     std::function<void(const Point4D&, const Point4D&)> _addTraceCallBack;
@@ -53,16 +53,16 @@ private:
     std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> _rayCastFunction;
 public:
     Player() {
-        loadObj("../obj/cube.obj", "", Point4D{0.5, 1.9, 0.5});
+        loadObj("obj/cube.obj", "", Point4D{0.5, 1.9, 0.5});
         setAcceleration(Point4D{0, -_g, 0});
         setCollision(true);
         setVisible(false);
         setColor({240, 168, 168});
 
-        _changeWeaponSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/weapons/change_weapon.ogg"));
+        _changeWeaponSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/change_weapon.ogg"));
 
-        _fullHealthSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/fullHealth.ogg"));
-        _fullAbilitySound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/fullAbility.ogg"));
+        _fullHealthSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/fullHealth.ogg"));
+        _fullAbilitySound.setBuffer(*ResourceManager::loadSoundBuffer("sound/fullAbility.ogg"));
 
         setCollisionCallBack([this](const std::string& objName, std::shared_ptr<RigidBody> obj) {collisionWithObject(objName, obj);});
     };

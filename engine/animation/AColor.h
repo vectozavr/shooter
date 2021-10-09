@@ -6,7 +6,7 @@
 #define ENGINE_ACOLOR_H
 
 #include "Animation.h"
-#include "Mesh.h"
+#include "../Mesh.h"
 
 class AColor : public Animation {
 private:

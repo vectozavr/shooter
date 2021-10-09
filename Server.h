@@ -5,14 +5,14 @@
 #ifndef SHOOTER_SERVER_H
 #define SHOOTER_SERVER_H
 
-#include "network/ServerUDP.h"
+#include "engine/network/ServerUDP.h"
 #include "Player.h"
 #include "Bonus.h"
 
 struct BonusInfo {
-    Point4D position;
-    double lastTake;
-    bool onTheMap;
+    Point4D position{};
+    double lastTake = std::numeric_limits<double>::min();
+    bool onTheMap = false;
 };
 
 class Server : public ServerUDP {

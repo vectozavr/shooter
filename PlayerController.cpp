@@ -3,19 +3,19 @@
 //
 
 #include "PlayerController.h"
-#include "utils/Log.h"
-#include "animation/AColor.h"
-#include "animation/AFunction.h"
-#include "animation/AWait.h"
-#include "animation/ATranslate.h"
-#include "animation/ATranslateToPoint.h"
-#include "animation/Timeline.h"
+#include "engine/utils/Log.h"
+#include "engine/animation/AColor.h"
+#include "engine/animation/AFunction.h"
+#include "engine/animation/AWait.h"
+#include "engine/animation/ATranslate.h"
+#include "engine/animation/ATranslateToPoint.h"
+#include "engine/animation/Timeline.h"
 
 PlayerController::PlayerController(std::shared_ptr<Player> player,
                                    std::shared_ptr<Keyboard> keyboard,
                                    std::shared_ptr<Mouse> mouse) : _player(player), _keyboard(keyboard), _mouse(mouse) {
-    _slowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/slow_mo.ogg"));
-    _unSlowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/unslow_mo.ogg"));
+    _slowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/slow_mo.ogg"));
+    _unSlowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/unslow_mo.ogg"));
 }
 
 void PlayerController::update() {
@@ -47,25 +47,25 @@ void PlayerController::update() {
     std::shared_ptr<Object> camera = _player->attached("camera");
     if(_inRunning) {
         if (!Timeline::isInAnimList("camera_hor_oscil")) {
-            Timeline::animate("camera_hor_oscil", new ATranslate(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::cos));
+            Timeline::animate("camera_hor_oscil", new ATranslate(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::InterpolationType::cos));
             Timeline::animate("camera_hor_oscil", new AWait(0));
-            Timeline::animate("camera_hor_oscil", new ATranslate(camera, camera->left() / 6, 0.3, Animation::LoopOut::None, Animation::cos));
+            Timeline::animate("camera_hor_oscil", new ATranslate(camera, camera->left() / 6, 0.3, Animation::LoopOut::None, Animation::InterpolationType::cos));
 
-            Timeline::animate("camera_vert_oscil", new ATranslate(camera, -Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::cos));
+            Timeline::animate("camera_vert_oscil", new ATranslate(camera, -Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
             Timeline::animate("camera_vert_oscil", new AWait(0));
-            Timeline::animate("camera_vert_oscil", new ATranslate(camera, Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None,Animation::cos));
+            Timeline::animate("camera_vert_oscil", new ATranslate(camera, Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
             Timeline::animate("camera_vert_oscil", new AWait(0));
-            Timeline::animate("camera_vert_oscil", new ATranslate(camera, -Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::cos));
+            Timeline::animate("camera_vert_oscil", new ATranslate(camera, -Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
             Timeline::animate("camera_vert_oscil", new AWait(0));
-            Timeline::animate("camera_vert_oscil", new ATranslate(camera, Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::cos));
+            Timeline::animate("camera_vert_oscil", new ATranslate(camera, Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
 
-            Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Point4D{0, 1.8, 0}, 0.3, Animation::None, Animation::cos));
+            Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Point4D{0, 1.8, 0}, 0.3, Animation::LoopOut::None, Animation::InterpolationType::cos));
         }
     } else if(inRunning_old && !_inRunning) {
         Timeline::deleteAnimationList("camera_hor_oscil");
         Timeline::deleteAnimationList("camera_vert_oscil");
         Timeline::deleteAnimationList("camera_init");
-        Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Point4D{0, 1.8, 0}, 0.15, Animation::None, Animation::cos));
+        Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Point4D{0, 1.8, 0}, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
     }
 
     // Left and right
@@ -111,8 +111,18 @@ void PlayerController::update() {
     }
 
     if (Keyboard::isKeyPressed(sf::Keyboard::Space) && _player->inCollision()) {
-        _player->addVelocity(Point4D{0, std::abs(_player->collisionNormal().y()) * sqrt(2 * _g * _jumpHeight) * coeff, 0});
-        _player->translate(Point4D{0, Time::deltaTime() * _walkSpeed * 2 * coeff, 0});
+
+        // if we just want to jump, we have to add particular speed
+        if (!_isSliding)
+            _player->addVelocity(Point4D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * _jumpHeight) * coeff, 0 });
+        // if we want to slide, we have to add speed * 60/fps to make it independent on frame rate
+        else
+            _player->addVelocity(Point4D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * _jumpHeight) * coeff * 60.0 / Time::fps(), 0 });
+
+        _player->translate(Point4D{ 0, Time::deltaTime() * _walkSpeed * 2 * coeff * 60.0 / Time::fps(), 0 });
+        _isSliding = true;
+    } else {
+        _isSliding = false;
     }
 
     // Mouse movement
@@ -124,10 +134,10 @@ void PlayerController::update() {
     double rotationLeft = displacement.y() / 1000.0;
 
     // You can only see in range [-90 : 90] grad
-    if (_player->headAngle() + rotationLeft > M_PI / 2)
-        rotationLeft = M_PI / 2 - _player->headAngle();
-    if (_player->headAngle() + rotationLeft < -M_PI / 2)
-        rotationLeft = -M_PI / 2 - _player->headAngle();
+    if (_player->headAngle() + rotationLeft > Consts::PI / 2)
+        rotationLeft = Consts::PI / 2 - _player->headAngle();
+    if (_player->headAngle() + rotationLeft < -Consts::PI / 2)
+        rotationLeft = -Consts::PI / 2 - _player->headAngle();
 
     _player->setHeadAngle(_player->headAngle() + rotationLeft);
     _player->rotateWeaponsRelativePoint(_player->position() + Point4D{0, 1.8, 0}, _player->left(), rotationLeft);
@@ -149,8 +159,8 @@ void PlayerController::update() {
     }
 
     if ((_inRunning || _player->velocity().sqrAbs() > 3) && _player->inCollision() && _walkSound.getStatus() != sf::Sound::Status::Playing) {
-        int soundNum = round((double) rand() / RAND_MAX * 5) + 1;
-        _walkSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/stonestep" + std::to_string(soundNum) + ".ogg"));
+        int soundNum = (int)((double) rand() / RAND_MAX * 5) + 1;
+        _walkSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/stonestep" + std::to_string(soundNum) + ".ogg"));
         _walkSound.play();
     }
 }

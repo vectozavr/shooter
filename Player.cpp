@@ -3,9 +3,9 @@
 //
 
 #include "Player.h"
-#include "Screen.h"
-#include "ResourceManager.h"
-#include "utils/Log.h"
+#include "engine/Screen.h"
+#include "engine/ResourceManager.h"
+#include "engine/utils/Log.h"
 
 void Player::rotateWeaponsRelativePoint(const Point4D& point4D, const Point4D& v, double val) {
     for(auto& weapon : _weapons)
@@ -13,12 +13,12 @@ void Player::rotateWeaponsRelativePoint(const Point4D& point4D, const Point4D& v
 }
 
 void Player::playDeath() {
-    _deathSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/classic_hurt.ogg"));
+    _deathSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/classic_hurt.ogg"));
     _deathSound.play();
 }
 
 void Player::playKill() {
-    _killSound.setBuffer(*ResourceManager::loadSoundBuffer("../sound/kill.ogg"));
+    _killSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/kill.ogg"));
     _killSound.play();
 }
 
@@ -90,7 +90,7 @@ void Player::nextWeapon() {
         _removeWeaponCallBack(_weapons[_selectedWeapon]);
         _selectedWeapon = (_selectedWeapon + 1) % _weapons.size();
         _addWeaponCallBack(_weapons[_selectedWeapon]);
-        Log::log("_selected _selectedWeapon " + std::to_string(_selectedWeapon));
+        Log::log("selectedWeapon " + std::to_string(_selectedWeapon));
         _changeWeaponSound.play();
     }
 }
@@ -104,7 +104,7 @@ void Player::previousWeapon() {
         else
             _selectedWeapon = _weapons.size() - 1;
         _addWeaponCallBack(_weapons[_selectedWeapon]);
-        Log::log("_selected _selectedWeapon " + std::to_string(_selectedWeapon));
+        Log::log("selectedWeapon " + std::to_string(_selectedWeapon));
         _changeWeaponSound.play();
     }
 }

@@ -11,13 +11,13 @@
 
 class Animation {
 public:
-    enum InterpolationType {
+    enum class InterpolationType {
         linear,
         cos,
         bezier,
         bouncing
     };
-    enum LoopOut {
+    enum class LoopOut {
         None,
         Cycle,
         Continue
@@ -31,12 +31,12 @@ protected:
     double _startAnimationPoint = 0;
     double _duration = 0;
     bool _started = false;
-    LoopOut _looped = None;
+    LoopOut _looped = LoopOut::None;
     // _p - animation progress
     double _p = 0;
     double _dp = 0;
 
-    InterpolationType _intType = bezier;
+    InterpolationType _intType = InterpolationType::bezier;
     Point4D _bezier[2] = {Point4D{0.8, 0}, Point4D{0.2, 1}};
 
     // If '_waitFor' == true then we need to finish all animation before starting this one. (for example for a_wait() or a_scale())

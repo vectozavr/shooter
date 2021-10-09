@@ -12,7 +12,6 @@
 class World {
 private:
     std::map<std::string, std::shared_ptr<RigidBody>> _objects;
-    std::vector<std::string> _objToRemove;
 public:
     World() = default;
 
@@ -22,9 +21,7 @@ public:
 
     void addBody(std::shared_ptr<RigidBody> mesh, const std::string& name = "");
     std::shared_ptr<RigidBody> body(const std::string& name);
-    void removeBody(const std::string& name);
-    void removeBodyInstantly(const std::string& name);
-    void garbageCollector();
+    void removeBody(std::string name);
     void loadBody(const std::string &name, const std::string &filename, const std::string &materials = "", const Point4D& scale = Point4D{1, 1, 1});
 
     // rayCast returns pair of Point4D and std::string:
@@ -32,7 +29,7 @@ public:
     // 2) std::string - title of the object
     std::pair<Point4D, std::string> rayCast(const Point4D& from, const Point4D& to);
 
-    void loadMap(const std::string& filename, const std::string& name = "", const Point4D& scale = Point4D{1, 1, 1}, const std::string &materials = "../maps/materials.txt");
+    void loadMap(const std::string& filename, const std::string& materials, const std::string& name = "map", const Point4D & scale = Point4D{1, 1, 1});
 };
 
 

@@ -22,7 +22,7 @@ private:
 
     sf::Color _background;
 
-    std::string _font = "../engine/fonts/Roboto-Thin.ttf";
+    std::string _font = "engine/fonts/Roboto-Thin.ttf";
 
     std::shared_ptr<sf::RenderWindow> _window;
 public:

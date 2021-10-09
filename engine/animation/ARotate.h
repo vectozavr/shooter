@@ -6,7 +6,7 @@
 #define ENGINE_AROTATE_H
 
 #include "Animation.h"
-#include "Object.h"
+#include "../Object.h"
 
 class ARotate : public Animation {
 private:

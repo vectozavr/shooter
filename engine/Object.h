@@ -8,6 +8,7 @@
 #include <map>
 #include "utils/Point4D.h"
 #include <memory>
+#include <string>
 
 class Object {
 protected:

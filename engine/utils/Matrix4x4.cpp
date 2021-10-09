@@ -4,7 +4,9 @@
 
 #include "Matrix4x4.h"
 #include <cassert>
+
 #include <cmath>
+#include "../Consts.h"
 
 Matrix4x4 Matrix4x4::operator*(const Matrix4x4 &matrix4X4) const {
     Matrix4x4 result = Matrix4x4::Zero();
@@ -155,8 +157,8 @@ Matrix4x4 Matrix4x4::Rotation(Point4D v, double rv) {
 Matrix4x4 Matrix4x4::Projection(double fov, double aspect, double ZNear, double ZFar) {
     Matrix4x4 p{};
 
-    p._arr[0][0] = 1.0/(tan(M_PI*fov*0.5/180.0)*aspect);
-    p._arr[1][1] = 1.0/tan(M_PI*fov*0.5/180.0);
+    p._arr[0][0] = 1.0/(tan(Consts::PI*fov*0.5/180.0)*aspect);
+    p._arr[1][1] = 1.0/tan(Consts::PI*fov*0.5/180.0);
     p._arr[2][2] = ZFar/(ZFar - ZNear);
     p._arr[2][3] = -ZFar*ZNear/(ZFar - ZNear);
     p._arr[3][2] = 1.0;

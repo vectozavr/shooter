@@ -4,7 +4,9 @@
 
 #include "Camera.h"
 #include "utils/Log.h"
+
 #include <cmath>
+#include "Consts.h"
 
 std::vector<Triangle> &Camera::project(std::shared_ptr<Mesh> mesh) {
 
@@ -53,10 +55,10 @@ std::vector<Triangle> &Camera::project(std::shared_ptr<Mesh> mesh) {
 
         for(auto& clippedTriangle : clippedTriangles) {
             sf::Color color = clippedTriangle.color();
-            sf::Color ambientColor = sf::Color(color.r * (0.3 * std::abs(dot) + 0.7),
-                                               color.g * (0.3 * std::abs(dot) + 0.7),
-                                               color.b * (0.3 * std::abs(dot) + 0.7),
-                                               color.a);
+            sf::Color ambientColor = sf::Color((sf::Uint8)(color.r * (0.3 * std::abs(dot) + 0.7)),
+                                               (sf::Uint8)(color.g * (0.3 * std::abs(dot) + 0.7)),
+                                               (sf::Uint8)(color.b * (0.3 * std::abs(dot) + 0.7)),
+                                               (sf::Uint8)color.a);
 
             // Finally its time to project our clipped colored drawTriangle from 3D -> 2D
             // and transform it's coordinate to screen space (in pixels):
@@ -88,7 +90,7 @@ void Camera::init(int width, int height, double fov, double ZNear, double ZFar) 
     _clipPlanes.emplace_back(Plane(Point4D{0, 0, 1}, Point4D{0, 0, ZNear})); // near plane
     _clipPlanes.emplace_back(Plane(Point4D{0, 0, -1}, Point4D{0, 0, ZFar})); // far plane
 
-    double thetta1 = M_PI*fov*0.5/180.0;
+    double thetta1 = Consts::PI*fov*0.5/180.0;
     double thetta2 = atan(_aspect * tan(thetta1));
     _clipPlanes.emplace_back(Plane(Point4D{-cos(thetta2), 0, sin(thetta2)}, Point4D{0, 0, 0})); // left plane
     _clipPlanes.emplace_back(Plane(Point4D{cos(thetta2), 0, sin(thetta2)}, Point4D{0, 0, 0})); // right plane

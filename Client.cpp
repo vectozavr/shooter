@@ -5,7 +5,7 @@
 #include "Client.h"
 
 #include <utility>
-#include "utils/Log.h"
+#include "engine/utils/Log.h"
 #include "Bonus.h"
 
 void Client::updatePacket() {
@@ -71,7 +71,6 @@ void Client::processDisconnect(sf::Uint16 targetId) {
 
 
 void Client::processCustomPacket(MsgType type, sf::Packet& packet) {
-    int buff[3];
     sf::Uint16 buffId[2];
     double dbuff[10];
     std::string tmp, tmp2;

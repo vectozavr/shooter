@@ -3,7 +3,7 @@
 //
 
 #include "Server.h"
-#include "utils/Log.h"
+#include "engine/utils/Log.h"
 
 void Server::broadcast() {
     sf::Packet updatePacket;
@@ -70,7 +70,6 @@ void Server::processDisconnect(sf::Uint16 senderId) {
 
 void Server::processCustomPacket(MsgType type, sf::Packet& packet, sf::Uint16 senderId) {
     sf::Packet sendPacket;
-    int buff[3];
     double dbuff[10];
     sf::Uint16 targetId;
     double damage;

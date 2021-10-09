@@ -5,7 +5,7 @@
 #include "Window.h"
 
 #include <utility>
-#include "ResourceManager.h"
+#include "../ResourceManager.h"
 
 void Window::addButton(int x, int y, int w, int h, std::function<void()> click, const std::string &text, double sx, double sy,
                        const std::string &texture, tPos usualState, tPos selectedState, tPos pressedState,
@@ -21,7 +21,7 @@ void Window::update() {
 
     Point4D mousePos = _mouse->getMousePosition();
     Point4D dMousePos = mousePos - _prevMousePosition;
-    _back.setPosition(_back.getPosition() - sf::Vector2f(dMousePos.x() / 30, dMousePos.y() / 30));
+    _back.setPosition(_back.getPosition() - sf::Vector2f((float)(dMousePos.x() / 30), (float)(dMousePos.y() / 30)));
     bool isPressed = _mouse->isButtonTapped(sf::Mouse::Left);
 
     for(auto& button : _buttons) {
@@ -47,7 +47,7 @@ void Window::setBackgroundTexture(const std::string &texture, double sx, double 
     _backTexture = texture;
     std::shared_ptr<sf::Texture> t = ResourceManager::loadTexture(_backTexture);
     t->setRepeated(true);
-    _back = sf::Sprite(*t, sf::IntRect(0, 0, w + w / 30.0, h + h / 30.0));
-    _back.scale(sx, sy);
-    _back.setPosition(sf::Vector2f(-w / 30.0, -h / 30.0));
+    _back = sf::Sprite(*t, sf::IntRect(0, 0, (int)(w + w / 30.0), (int)(h + h / 30.0)));
+    _back.scale((float)sx, (float)sy);
+    _back.setPosition(sf::Vector2f(-w / 30.0f, -h / 30.0f));
 }

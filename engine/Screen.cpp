@@ -46,9 +46,9 @@ void Screen::drawTriangle(const Triangle& triangle)
 {
     sf::Vertex tris[3] =
             {
-                    sf::Vertex(sf::Vector2f(triangle[0].x(), triangle[0].y()), triangle.color()),
-                    sf::Vertex(sf::Vector2f(triangle[1].x(), triangle[1].y()), triangle.color()),
-                    sf::Vertex(sf::Vector2f(triangle[2].x(), triangle[2].y()), triangle.color())
+                    sf::Vertex(sf::Vector2f((float)triangle[0].x(), (float)triangle[0].y()), triangle.color()),
+                    sf::Vertex(sf::Vector2f((float)triangle[1].x(), (float)triangle[1].y()), triangle.color()),
+                    sf::Vertex(sf::Vector2f((float)triangle[2].x(), (float)triangle[2].y()), triangle.color())
             };
     _window->draw(tris, 3, sf::Triangles);
 }
@@ -92,7 +92,7 @@ void Screen::drawTetragon(const Point4D &p1, const Point4D &p2, const Point4D &p
 void Screen::drawText(const std::string& string, const Point4D &position, int size, sf::Color color) {
     sf::Text text;
 
-    text.setFont(*ResourceManager::loadFont("../engine/fonts/Roboto-Medium.ttf"));
+    text.setFont(*ResourceManager::loadFont("engine/fonts/Roboto-Medium.ttf"));
 
     text.setCharacterSize(size);
     text.setFillColor(color);

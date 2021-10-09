@@ -11,7 +11,7 @@
 #include "../utils/Point4D.h"
 #include "../Triangle.h"
 #include "Simplex.h"
-#include "Mesh.h"
+#include "../Mesh.h"
 
 struct CollisionPoint {
     Point4D a; // Furthest point of a into b

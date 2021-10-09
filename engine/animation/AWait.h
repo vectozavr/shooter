@@ -11,7 +11,7 @@ class AWait : public Animation {
 public:
     explicit AWait(double duration = 1) {
         _duration = duration;
-        _intType = linear;
+        _intType = InterpolationType::linear;
         _waitFor = true;
     }
 

@@ -3,7 +3,7 @@
 //
 
 #include "Solver.h"
-#include "utils/Log.h"
+#include "../utils/Log.h"
 
 void Solver::solveCollision(std::shared_ptr<RigidBody> obj1, std::shared_ptr<RigidBody> obj2, const CollisionPoint& collision) {
     if(!collision.hasCollision)
