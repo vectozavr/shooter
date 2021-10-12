@@ -173,25 +173,25 @@ void Shooter::drawPlayerStats() {
     int width = screen->width()/2 - 20;
     int height = 10;
 
-    screen->drawTetragon(Point4D{xPos, yPos},
-                         Point4D{xPos + width * player->health() / player->maxHealth(), yPos},
-                         Point4D{xPos + width * player->health() / player->maxHealth(), yPos + height},
-                         Point4D{xPos, yPos + height},
+    screen->drawTetragon(Vec2D{xPos, yPos},
+                         Vec2D{xPos + width * player->health() / player->maxHealth(), yPos},
+                         Vec2D{xPos + width * player->health() / player->maxHealth(), yPos + height},
+                         Vec2D{xPos, yPos + height},
                          { static_cast<sf::Uint8>((player->maxHealth() - player->health())/player->maxHealth() * 255), static_cast<sf::Uint8>(player->health() * 255 / player->maxHealth()), 0, 100 });
 
-    screen->drawTetragon(Point4D{xPos, yPos - 15},
-                         Point4D{xPos + width * player->ability() / player->maxAbility(), yPos - 15},
-                         Point4D{xPos + width * player->ability() / player->maxAbility(), yPos - 15 + height},
-                         Point4D{xPos, yPos - 15 + height},
+    screen->drawTetragon(Vec2D{xPos, yPos - 15},
+                         Vec2D{xPos + width * player->ability() / player->maxAbility(), yPos - 15},
+                         Vec2D{xPos + width * player->ability() / player->maxAbility(), yPos - 15 + height},
+                         Vec2D{xPos, yPos - 15 + height},
                          { 255, 168, 168, 100 });
 
     auto balance = player->balance();
 
-    screen->drawText(std::to_string((int)balance.first), Point4D{150, static_cast<double>(screen->height() - 150)}, 100, sf::Color(0, 0, 0, 100));
-    screen->drawText(std::to_string((int)balance.second), Point4D{50, static_cast<double>(screen->height() - 100)}, 50, sf::Color(0, 0, 0, 70));
+    screen->drawText(std::to_string((int)balance.first), Vec2D{150, static_cast<double>(screen->height() - 150)}, 100, sf::Color(0, 0, 0, 100));
+    screen->drawText(std::to_string((int)balance.second), Vec2D{50, static_cast<double>(screen->height() - 100)}, 50, sf::Color(0, 0, 0, 70));
 
     screen->drawText("KILLS: " + std::to_string(player->kills()) + " | " + "DEATHS: " + std::to_string(player->deaths()),
-                     Point4D{10, 10},25, sf::Color(0, 0, 0, 100));
+                     Vec2D{10, 10},25, sf::Color(0, 0, 0, 100));
 }
 
 void Shooter::play() {
