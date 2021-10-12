@@ -55,7 +55,7 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
 
             // draw projected body
             for (auto &t : camera->sorted())
-                screen->drawTriangle(t);
+                screen->drawTriangle(*t);
 
             _triPerSec = camera->buffSize() * Time::fps();
 

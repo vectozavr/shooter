@@ -34,10 +34,10 @@ add_executable(shooter
         # 3d engine:
         engine/utils/Time.h
         engine/utils/Time.cpp
-        engine/utils/Point4D.h
-        engine/utils/Point4D.cpp
-        engine/utils/Matrix4x4.h
-        engine/utils/Matrix4x4.cpp
+        engine/Point4D.h
+        engine/Point4D.cpp
+        engine/Matrix4x4.h
+        engine/Matrix4x4.cpp
         engine/Triangle.h
         engine/Triangle.cpp
         engine/Mesh.h
@@ -94,7 +94,7 @@ add_executable(shooter
         engine/network/UDPSocket.h
         engine/network/config.h
         engine/animation/AFunction.h
-        engine/Consts.h)
+        engine/Consts.h engine/Vec3D.cpp engine/Vec3D.h engine/Vec2D.cpp engine/Vec2D.h ShooterConsts.h)
 
 if(APPLE OR UNIX)
     include_directories(/usr/local/include)

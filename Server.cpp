@@ -9,14 +9,12 @@ void Server::broadcast() {
     sf::Packet updatePacket;
     updatePacket << MsgType::Update;
 
-    for (auto& player : _players)
-    {
+    for (auto& player : _players) {
         //player.second->setHealth(player.second->health() + (Time::time() - _lastBroadcast)/100);
         updatePacket << player.first << player.second->position().x() << player.second->position().y() << player.second->position().z() << player.second->health() << player.second->angle().y() << player.second->headAngle();
     }
 
-    for (auto& player : _players)
-    {
+    for (auto& player : _players) {
         _socket.send(updatePacket, player.first);
     }
 }
@@ -53,8 +51,8 @@ void Server::processClientUpdate(sf::Uint16 senderId, sf::Packet& packet) {
     double buf[5];
 
     packet >> buf[0] >> buf[1] >> buf[2] >> buf[3] >> buf[4];
-    _players.at(senderId)->translateToPoint(Point4D{ buf[0], buf[1], buf[2] });
-    _players.at(senderId)->rotateToAngle(Point4D{0, buf[3], 0});
+    _players.at(senderId)->translateToPoint(Vec3D{ buf[0], buf[1], buf[2] });
+    _players.at(senderId)->rotateToAngle(Vec3D{0, buf[3], 0});
     _players.at(senderId)->setHeadAngle(buf[4]);
 }
 

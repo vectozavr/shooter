@@ -7,6 +7,7 @@
 
 #include <array>
 #include "Point4D.h"
+#include "Vec3D.h"
 
 class Matrix4x4 {
 private:
@@ -18,21 +19,22 @@ public:
 
     [[nodiscard]] Matrix4x4 operator*(const Matrix4x4& matrix4X4) const;
     [[nodiscard]] Point4D operator*(const Point4D& point4D) const;
+    [[nodiscard]] Vec3D operator*(const Vec3D& vec) const;
 
     // Any useful matrix (static methods)
     Matrix4x4 static Identity();
     Matrix4x4 static Zero();
     Matrix4x4 static Constant (double value);
 
-    Matrix4x4 static Scale(const Point4D& factor);
-    Matrix4x4 static Translation(const Point4D& v);
-    Matrix4x4 static Rotation(const Point4D& r);
+    Matrix4x4 static Scale(const Vec3D& factor);
+    Matrix4x4 static Translation(const Vec3D& v);
+    Matrix4x4 static Rotation(const Vec3D& r);
     Matrix4x4 static RotationX (double rx);
     Matrix4x4 static RotationY (double ry);
     Matrix4x4 static RotationZ (double rz);
-    Matrix4x4 static Rotation (Point4D v, double rv);
+    Matrix4x4 static Rotation (const Vec3D& v, double rv);
 
-    Matrix4x4 static View(const Point4D& left, const Point4D& up, const Point4D& lookAt, const Point4D& eye);
+    Matrix4x4 static View(const Vec3D &left, const Vec3D &up, const Vec3D &lookAt, const Vec3D &eye);
     Matrix4x4 static Projection (double fov = 90.0, double aspect = 1.0, double ZNear = 1.0, double ZFar = 10.0);
     Matrix4x4 static ScreenSpace (int width, int height);
 };

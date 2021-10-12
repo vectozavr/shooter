@@ -78,7 +78,7 @@ void Screen::debugText(const std::string& text) {
     _window->draw(t);
 }
 
-void Screen::drawTetragon(const Point4D &p1, const Point4D &p2, const Point4D &p3, const Point4D &p4, sf::Color color) {
+void Screen::drawTetragon(const Vec2D &p1, const Vec2D &p2, const Vec2D &p3, const Vec2D &p4, sf::Color color) {
     sf::ConvexShape polygon;
     polygon.setPointCount(4);
     polygon.setPoint(0, sf::Vector2f((float)p1.x(), (float)p1.y()));
@@ -89,7 +89,7 @@ void Screen::drawTetragon(const Point4D &p1, const Point4D &p2, const Point4D &p
     _window->draw(polygon);
 }
 
-void Screen::drawText(const std::string& string, const Point4D &position, int size, sf::Color color) {
+void Screen::drawText(const std::string& string, const Vec2D &position, int size, sf::Color color) {
     sf::Text text;
 
     text.setFont(*ResourceManager::loadFont("engine/fonts/Roboto-Medium.ttf"));

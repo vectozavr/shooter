@@ -6,6 +6,7 @@
 #define ENGINE_POINT4D_H
 
 #include <array>
+#include "Consts.h"
 
 class Point4D {
 private:
@@ -14,15 +15,14 @@ private:
 public:
     Point4D () = default;
     Point4D (const Point4D& point4D);
-    Point4D& operator=(const Point4D& point4D) { _arr_point = point4D._arr_point; return *this; };
     explicit Point4D (double x, double y = 0.0, double z = 0.0, double w = 0.0);
+    Point4D& operator=(const Point4D& point4D) = delete;
+
 
     [[nodiscard]] double x() const { return _arr_point[0]; }
     [[nodiscard]] double y() const { return _arr_point[1]; }
     [[nodiscard]] double z() const { return _arr_point[2]; }
     [[nodiscard]] double w() const { return _arr_point[3]; }
-
-    [[nodiscard]] double operator[] (int i) const;
 
     [[nodiscard]] Point4D operator-() const;
 
@@ -33,9 +33,6 @@ public:
     // Operations with Point4D
     [[nodiscard]] Point4D operator+(const Point4D& point4D) const;
     [[nodiscard]] Point4D operator-(const Point4D& point4D) const;
-
-    [[nodiscard]] double dot(const Point4D& point4D) const; // Returns dot product
-    [[nodiscard]] Point4D cross3D(const Point4D& point4D) const; // Returns cross product
 
     // Operations with numbers
     [[nodiscard]] Point4D operator*(double number) const;

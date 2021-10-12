@@ -5,53 +5,47 @@
 #include "Triangle.h"
 
 Triangle::Triangle () {
-    _p[0] = Point4D{0, 0, 0, 1};
-    _p[1] = Point4D{0, 0, 0, 1};
-    _p[2] = Point4D{0, 0, 0, 1};
+    _points.emplace_back(Point4D(0, 0, 0, 1));
+    _points.emplace_back(Point4D(0, 0, 0, 1));
+    _points.emplace_back(Point4D(0, 0, 0, 1));
 }
 
-Triangle::Triangle(const Point4D& p1, const Point4D& p2, const Point4D& p3, sf::Color color) {
-    _p[0] = p1;
-    _p[1] = p2;
-    _p[2] = p3;
-    _color = color;
+Triangle::Triangle(const Point4D& p1, const Point4D& p2, const Point4D& p3, sf::Color color) : _color(color) {
+    _points.emplace_back(Point4D(p1));
+    _points.emplace_back(Point4D(p2));
+    _points.emplace_back(Point4D(p3));
+}
+
+Triangle::Triangle(const Triangle &triangle) : _points(triangle._points), _color(triangle._color) {
+
 }
 
 Triangle Triangle::operator*(const Matrix4x4 &matrix4X4) const {
-    Triangle res(*this);
-
-    res._p[0] = matrix4X4 * _p[0];
-    res._p[1] = matrix4X4 * _p[1];
-    res._p[2] = matrix4X4 * _p[2];
-
-    return res;
+    return Triangle(matrix4X4 * _points[0], matrix4X4 * _points[1], matrix4X4 * _points[2], _color);
 }
 
-Point4D Triangle::norm() const {
+Vec3D Triangle::norm() const {
 
-    Point4D v1 = _p[1] - _p[0];
-    Point4D v2 = _p[2] - _p[0];
+    Vec3D v1 = Vec3D(_points[1] - _points[0]);
+    Vec3D v2 = Vec3D(_points[2] - _points[0]);
+    Vec3D crossProduct = v1.cross(v2);
 
-    return v1.cross3D(v2).normalized();
+    if(crossProduct.sqrAbs() > Consts::EPS)
+        return crossProduct.normalized();
+    else
+        return Vec3D(0);
 }
 
 Point4D Triangle::operator[](int i) const {
-    return _p[i];
+    return _points[i];
 }
 
-Triangle::Triangle(const Triangle &triangle) {
-    _color = triangle._color;
-    _p[0] = triangle[0];
-    _p[1] = triangle[1];
-    _p[2] = triangle[2];
-}
+bool Triangle::isPointInside(const Vec3D &point) const {
+    Vec3D triangleNorm = norm();
 
-bool Triangle::isPointInside(const Point4D &point) const {
-    Point4D triangleNorm = norm();
-
-    double dot1 = (point - _p[0]).cross3D(_p[1] - _p[0]).dot(triangleNorm);
-    double dot2 = (point - _p[1]).cross3D(_p[2] - _p[1]).dot(triangleNorm);
-    double dot3 = (point - _p[2]).cross3D(_p[0] - _p[2]).dot(triangleNorm);
+    double dot1 = (point - Vec3D(_points[0])).cross(Vec3D(_points[1] - _points[0])).dot(triangleNorm);
+    double dot2 = (point - Vec3D(_points[1])).cross(Vec3D(_points[2] - _points[1])).dot(triangleNorm);
+    double dot3 = (point - Vec3D(_points[2])).cross(Vec3D(_points[0] - _points[2])).dot(triangleNorm);
 
     if((dot1 >= 0 && dot2 >= 0 && dot3 >= 0) || (dot1 <= 0 && dot2 <= 0 && dot3 <= 0))
         return true;

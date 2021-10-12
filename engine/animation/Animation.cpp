@@ -25,8 +25,8 @@ bool Animation::updateState() {
 
     switch (_intType) {
         case InterpolationType::bezier:
-            _p = Interpolation::Bezier(_bezier[0], _bezier[1], _time);
-            _dp = Interpolation::dBezier(_bezier[0], _bezier[1], _time, _dtime);
+            _p = Interpolation::Bezier(*_bezier[0], *_bezier[1], _time);
+            _dp = Interpolation::dBezier(*_bezier[0], *_bezier[1], _time, _dtime);
             break;
         case InterpolationType::bouncing:
             _p = Interpolation::Bouncing(_time);

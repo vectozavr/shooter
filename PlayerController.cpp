@@ -51,21 +51,21 @@ void PlayerController::update() {
             Timeline::animate("camera_hor_oscil", new AWait(0));
             Timeline::animate("camera_hor_oscil", new ATranslate(camera, camera->left() / 6, 0.3, Animation::LoopOut::None, Animation::InterpolationType::cos));
 
-            Timeline::animate("camera_vert_oscil", new ATranslate(camera, -Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate("camera_vert_oscil", new ATranslate(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
             Timeline::animate("camera_vert_oscil", new AWait(0));
-            Timeline::animate("camera_vert_oscil", new ATranslate(camera, Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate("camera_vert_oscil", new ATranslate(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
             Timeline::animate("camera_vert_oscil", new AWait(0));
-            Timeline::animate("camera_vert_oscil", new ATranslate(camera, -Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate("camera_vert_oscil", new ATranslate(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
             Timeline::animate("camera_vert_oscil", new AWait(0));
-            Timeline::animate("camera_vert_oscil", new ATranslate(camera, Point4D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate("camera_vert_oscil", new ATranslate(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
 
-            Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Point4D{0, 1.8, 0}, 0.3, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.3, Animation::LoopOut::None, Animation::InterpolationType::cos));
         }
     } else if(inRunning_old && !_inRunning) {
         Timeline::deleteAnimationList("camera_hor_oscil");
         Timeline::deleteAnimationList("camera_vert_oscil");
         Timeline::deleteAnimationList("camera_init");
-        Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Point4D{0, 1.8, 0}, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+        Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
     }
 
     // Left and right
@@ -73,26 +73,26 @@ void PlayerController::update() {
     if (Keyboard::isKeyPressed(sf::Keyboard::A)) {
         _player->translate(_player->left() * Time::deltaTime() * _walkSpeed * coeff);
         if(_player->inCollision())
-            _player->setVelocity(Point4D{0,0,0});
+            _player->setVelocity(Vec3D{0,0,0});
     }
     if (Keyboard::isKeyPressed(sf::Keyboard::D)) {
         _player->translate(-_player->left() * Time::deltaTime() * _walkSpeed * coeff);
         if(_player->inCollision())
-            _player->setVelocity(Point4D{0,0,0});
+            _player->setVelocity(Vec3D{0,0,0});
     }
 
     // Forward and backward
     if (Keyboard::isKeyPressed(sf::Keyboard::W)) {
         _player->translate(_player->lookAt() * Time::deltaTime() * _walkSpeed * coeff);
         if(_player->inCollision())
-            _player->setVelocity(Point4D{0,0,0});
+            _player->setVelocity(Vec3D{0,0,0});
     }
 
     if (Keyboard::isKeyPressed(sf::Keyboard::S)) {
         _player->translate(-_player->lookAt() * Time::deltaTime() * _walkSpeed * coeff);
 
         if(_player->inCollision())
-            _player->setVelocity(Point4D{0,0,0});
+            _player->setVelocity(Vec3D{0,0,0});
     }
 
     if (_player->ability() > 0 && !_isInSlowMo && Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
@@ -111,24 +111,23 @@ void PlayerController::update() {
     }
 
     if (Keyboard::isKeyPressed(sf::Keyboard::Space) && _player->inCollision()) {
-
         // if we just want to jump, we have to add particular speed
         if (!_isSliding)
-            _player->addVelocity(Point4D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * _jumpHeight) * coeff, 0 });
+            _player->addVelocity(Vec3D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * _jumpHeight) * coeff, 0 });
         // if we want to slide, we have to add speed * 60/fps to make it independent on frame rate
         else
-            _player->addVelocity(Point4D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * _jumpHeight) * coeff * 60.0 / Time::fps(), 0 });
+            _player->addVelocity(Vec3D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * _jumpHeight) * coeff * 60.0 / Time::fps(), 0 });
 
-        _player->translate(Point4D{ 0, Time::deltaTime() * _walkSpeed * 2 * coeff * 60.0 / Time::fps(), 0 });
+        _player->translate(Vec3D{ 0, Time::deltaTime() * _walkSpeed * 2 * coeff * 60.0 / Time::fps(), 0 });
         _isSliding = true;
     } else {
         _isSliding = false;
     }
 
     // Mouse movement
-    Point4D displacement = _mouse->getMouseDisplacement();
+    Vec2D displacement = _mouse->getMouseDisplacement();
 
-    _player->rotate(Point4D{0, -displacement.x() / 1000.0, 0});
+    _player->rotate(Vec3D{0, -displacement.x() / 1000.0, 0});
     _player->setVelocity(Matrix4x4::RotationY(-displacement.x() / 1000.0) * _player->velocity());
 
     double rotationLeft = displacement.y() / 1000.0;
@@ -140,7 +139,7 @@ void PlayerController::update() {
         rotationLeft = -Consts::PI / 2 - _player->headAngle();
 
     _player->setHeadAngle(_player->headAngle() + rotationLeft);
-    _player->rotateWeaponsRelativePoint(_player->position() + Point4D{0, 1.8, 0}, _player->left(), rotationLeft);
+    _player->rotateWeaponsRelativePoint(_player->position() + Vec3D{0, 1.8, 0}, _player->left(), rotationLeft);
 
     if (_keyboard->isKeyTapped(sf::Keyboard::Right) || _keyboard->isKeyTapped(sf::Keyboard::E)) {
         _player->nextWeapon();

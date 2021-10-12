@@ -19,7 +19,7 @@ private:
     // To accelerate calculations we can use precalculated matrix that does not chance
     Matrix4x4 _SP; // screen-space-projections matrix
 
-    std::vector<Triangle> _triangles{};
+    std::vector<std::shared_ptr<Triangle>> _triangles{};
     std::vector<Plane> _clipPlanes{};
 
     bool _ready = false;
@@ -30,12 +30,12 @@ public:
 
     void init(int width, int height, double fov = 110.0, double ZNear = 0.1, double ZFar = 5000.0);
 
-    std::vector<Triangle>& project(std::shared_ptr<Mesh> mesh);
+    std::vector<std::shared_ptr<Triangle>> project(std::shared_ptr<Mesh> mesh);
 
     void clear();
 
     [[nodiscard]] int buffSize() const { return _triangles.size(); }
-    std::vector<Triangle>& sorted();
+    std::vector<std::shared_ptr<Triangle>> sorted();
 };
 
 

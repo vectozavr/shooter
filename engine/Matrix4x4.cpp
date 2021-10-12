@@ -6,7 +6,7 @@
 #include <cassert>
 
 #include <cmath>
-#include "../Consts.h"
+#include "Consts.h"
 
 Matrix4x4 Matrix4x4::operator*(const Matrix4x4 &matrix4X4) const {
     Matrix4x4 result = Matrix4x4::Zero();
@@ -25,6 +25,14 @@ Point4D Matrix4x4::operator*(const Point4D &point4D) const {
             _arr[2][0] * point4D.x() + _arr[2][1] * point4D.y() + _arr[2][2] * point4D.z() + _arr[2][3] * point4D.w(),
             _arr[3][0] * point4D.x() + _arr[3][1] * point4D.y() + _arr[3][2] * point4D.z() + _arr[3][3] * point4D.w()
     );
+}
+
+Vec3D Matrix4x4::operator*(const Vec3D &vec) const {
+    return Vec3D(
+            _arr[0][0] * vec.x() + _arr[0][1] * vec.y() + _arr[0][2] * vec.z(),
+            _arr[1][0] * vec.x() + _arr[1][1] * vec.y() + _arr[1][2] * vec.z(),
+            _arr[2][0] * vec.x() + _arr[2][1] * vec.y() + _arr[2][2] * vec.z()
+            );
 }
 
 Matrix4x4 Matrix4x4::Identity() {
@@ -54,7 +62,7 @@ Matrix4x4 Matrix4x4::Zero() {
     return Matrix4x4::Constant(0);
 }
 
-Matrix4x4 Matrix4x4::Scale(const Point4D& factor) {
+Matrix4x4 Matrix4x4::Scale(const Vec3D& factor) {
     Matrix4x4 s{};
     s._arr[0][0] = factor.x();
     s._arr[1][1] = factor.y();
@@ -64,14 +72,8 @@ Matrix4x4 Matrix4x4::Scale(const Point4D& factor) {
     return s;
 }
 
-Matrix4x4 Matrix4x4::Translation(const Point4D& v) {
+Matrix4x4 Matrix4x4::Translation(const Vec3D& v) {
     Matrix4x4 t{};
-/*
- * ( 1 0 0 dx )(_x)   (_x + dx)
- * ( 0 1 0 dy )(_y) = (_y + dy)
- * ( 0 0 1 dz )(z)   (z + dz)
- * ( 0 0 0 1  )(1)   (  1   )
- */
 
     t._arr[0][0] = 1.0;
     t._arr[1][1] = 1.0;
@@ -129,25 +131,25 @@ Matrix4x4 Matrix4x4::RotationZ(double rz) {
     return Rz;
 }
 
-Matrix4x4 Matrix4x4::Rotation(const Point4D& r) {
+Matrix4x4 Matrix4x4::Rotation(const Vec3D& r) {
     return RotationX(r.x()) * RotationY(r.y()) * RotationZ(r.z());
 }
 
-Matrix4x4 Matrix4x4::Rotation(Point4D v, double rv) {
+Matrix4x4 Matrix4x4::Rotation(const Vec3D& v, double rv) {
     Matrix4x4 Rv{};
-    v = v.normalized();
+    Vec3D nv(v.normalized());
 
-    Rv._arr[0][0] = cos(rv) + (1.0 - cos(rv))*v.x()*v.x();
-    Rv._arr[0][1] = (1.0 - cos(rv))*v.x()*v.y() - sin(rv)*v.z();
-    Rv._arr[0][2] = (1.0 - cos(rv))*v.x()*v.z() + sin(rv)*v.y();
+    Rv._arr[0][0] = cos(rv) + (1.0 - cos(rv))*nv.x()*nv.x();
+    Rv._arr[0][1] = (1.0 - cos(rv))*nv.x()*nv.y() - sin(rv)*nv.z();
+    Rv._arr[0][2] = (1.0 - cos(rv))*nv.x()*nv.z() + sin(rv)*nv.y();
 
-    Rv._arr[1][0] = (1.0 - cos(rv))*v.x()*v.y() + sin(rv)*v.z();
-    Rv._arr[1][1] = cos(rv) + (1.0 - cos(rv))*v.y()*v.y();
-    Rv._arr[1][2] = (1.0 - cos(rv))*v.y()*v.z() - sin(rv)*v.x();
+    Rv._arr[1][0] = (1.0 - cos(rv))*nv.x()*nv.y() + sin(rv)*nv.z();
+    Rv._arr[1][1] = cos(rv) + (1.0 - cos(rv))*nv.y()*nv.y();
+    Rv._arr[1][2] = (1.0 - cos(rv))*nv.y()*nv.z() - sin(rv)*nv.x();
 
-    Rv._arr[2][0] = (1.0 - cos(rv))*v.z()*v.x() - sin(rv)*v.y();
-    Rv._arr[2][1] = (1.0 - cos(rv))*v.z()*v.y() + sin(rv)*v.x();
-    Rv._arr[2][2] = cos(rv) + (1.0 - cos(rv))*v.z()*v.z();
+    Rv._arr[2][0] = (1.0 - cos(rv))*nv.z()*nv.x() - sin(rv)*nv.y();
+    Rv._arr[2][1] = (1.0 - cos(rv))*nv.z()*nv.y() + sin(rv)*nv.x();
+    Rv._arr[2][2] = cos(rv) + (1.0 - cos(rv))*nv.z()*nv.z();
 
     Rv._arr[3][3] = 1.0;
 
@@ -181,22 +183,22 @@ Matrix4x4 Matrix4x4::ScreenSpace(int width, int height) {
     return s;
 }
 
-Matrix4x4 Matrix4x4::View(const Point4D &left, const Point4D &up, const Point4D &lookAt, const Point4D &eye) {
+Matrix4x4 Matrix4x4::View(const Vec3D &left, const Vec3D &up, const Vec3D &lookAt, const Vec3D &eye) {
     Matrix4x4 V = Zero();
 
-    V._arr[0][0] = left[0];
-    V._arr[0][1] = left[1];
-    V._arr[0][2] = left[2];
+    V._arr[0][0] = left.x();
+    V._arr[0][1] = left.y();
+    V._arr[0][2] = left.z();
     V._arr[0][3] = -eye.dot(left);
 
-    V._arr[1][0] = up[0];
-    V._arr[1][1] = up[1];
-    V._arr[1][2] = up[2];
+    V._arr[1][0] = up.x();
+    V._arr[1][1] = up.y();
+    V._arr[1][2] = up.z();
     V._arr[1][3] = -eye.dot(up);
 
-    V._arr[2][0] = lookAt[0];
-    V._arr[2][1] = lookAt[1];
-    V._arr[2][2] = lookAt[2];
+    V._arr[2][0] = lookAt.x();
+    V._arr[2][1] = lookAt.y();
+    V._arr[2][2] = lookAt.z();
     V._arr[2][3] = -eye.dot(lookAt);
 
     V._arr[3][3] = 1.0;

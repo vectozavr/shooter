@@ -5,7 +5,7 @@
 #ifndef ENGINE_INTERPOLATION_H
 #define ENGINE_INTERPOLATION_H
 
-#include "../utils/Point4D.h"
+#include "../Vec2D.h"
 
 #include <cmath>
 #include "../Consts.h"
@@ -13,12 +13,12 @@
 namespace Interpolation {
     static double Linear(double t);
     static double Cos(double t);
-    static double Bezier(const Point4D& p1, const Point4D& p2, double t);
+    static double Bezier(const Vec2D& p1, const Vec2D& p2, double t);
     static double Bouncing(double t);
 
     static double dLinear(double t, double dt);
     static double dCos(double t, double dt);
-    static double dBezier(const Point4D& p1, const Point4D& p2, double t, double dt);
+    static double dBezier(const Vec2D& p1, const Vec2D& p2, double t, double dt);
     static double dBouncing(double t, double dt);
 };
 
@@ -32,11 +32,11 @@ double Interpolation::Cos(double t) {
     return 0.5*(1 - cos(Consts::PI*Interpolation::Linear(t)));
 }
 
-double Interpolation::Bezier(const Point4D &p1, const Point4D &p2, double t) {
+double Interpolation::Bezier(const Vec2D &p1, const Vec2D &p2, double t) {
     t = Interpolation::Linear(t);
 
-    double h = 0.000001;
-    double eps = 0.000001;
+    double h = Consts::EPS;
+    double eps = Consts::EPS;
 
     // We are trying to find 's' when px = t
     auto f = [=](double s){
@@ -77,7 +77,7 @@ double Interpolation::dCos(double t, double dt) {
     return 0.5*Consts::PI*sin(Consts::PI*t)*dt;
 }
 
-double Interpolation::dBezier(const Point4D &p1, const Point4D &p2, double t, double dt) {
+double Interpolation::dBezier(const Vec2D &p1, const Vec2D &p2, double t, double dt) {
     return Interpolation::Bezier(p1, p2, t + dt) - Interpolation::Bezier(p1, p2, t);
 }
 

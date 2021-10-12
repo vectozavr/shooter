@@ -19,38 +19,38 @@ private:
     Mesh& operator*=(const Matrix4x4& matrix4X4);
 public:
     Mesh() = default;
+    Mesh& operator=(const Mesh& mesh) = delete;
     Mesh(const Mesh& mesh);
 
     explicit Mesh(const std::vector<Triangle>& tries);
-    Mesh& operator=(const Mesh& mesh);
-    explicit Mesh(const std::string& filename, const std::string &materials = "", const Point4D& scale = Point4D{1, 1, 1});
+    explicit Mesh(const std::string& filename, const std::string &materials = "", const Vec3D& scale = Vec3D{1, 1, 1});
 
-    Mesh& loadObj(const std::string& filename, const std::string &materials = "", const Point4D& scale = Point4D{1, 1, 1});
+    Mesh& loadObj(const std::string& filename, const std::string &materials = "", const Vec3D& scale = Vec3D{1, 1, 1});
 
     [[nodiscard]] std::vector<Triangle>const &triangles() const { return _tris; }
     [[nodiscard]] std::vector<Triangle>& triangles() { return _tris; }
-    void setTriangles(const std::vector<Triangle>& t) { _tris = t; }
+    void setTriangles(const std::vector<Triangle>& t);
 
     // Translate body
     // Rotate body around XYZ axes
-    void rotate(const Point4D& r) override;
+    void rotate(const Vec3D& r) override;
     // Rotate body around normalised vector 'v' by 'r' radians
-    void rotate(const Point4D& v, double r) override;
+    void rotate(const Vec3D& v, double r) override;
     // Rotate body around XYZ by (r._x, r._y, r.z) radians relative val 'point4D'
-    void rotateRelativePoint(const Point4D& point4D, const Point4D& r) override;
+    void rotateRelativePoint(const Vec3D& point, const Vec3D& r) override;
     // Rotate body around normalised vector 'v' by 'r' radians relative val 'point4D'
-    void rotateRelativePoint(const Point4D& point4D, const Point4D& v, double r) override;
-    void scale(const Point4D& s) override;
+    void rotateRelativePoint(const Vec3D& point4D, const Vec3D& v, double r) override;
+    void scale(const Vec3D& s) override;
 
     [[nodiscard]] sf::Color color() const { return _color; }
-    void setColor(sf::Color c);
+    void setColor(const sf::Color& c);
 
     void setVisible(bool visibility) { _visible = visibility; }
     [[nodiscard]] bool isVisible() const { return _visible; }
 
     Mesh static Obj(const std::string& filename);
-    std::vector<std::shared_ptr<Mesh>> static LoadObjects(const std::string& filename, const std::string &materials = "", const Point4D& scale = Point4D{1, 1, 1});
-    Mesh static LineTo(const Point4D& from, const Point4D& to, double line_width = 0.1, sf::Color color = {150, 150, 150, 255});
+    std::vector<std::shared_ptr<Mesh>> static LoadObjects(const std::string& filename, const std::string &materials = "", const Vec3D& scale = Vec3D{1, 1, 1});
+    Mesh static LineTo(const Vec3D& from, const Vec3D& to, double line_width = 0.1, const sf::Color& color = {150, 150, 150, 255});
 };
 
 #endif //INC_3DZAVR_MESH_H

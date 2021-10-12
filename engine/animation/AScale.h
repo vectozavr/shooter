@@ -13,17 +13,15 @@ class AScale : public Animation {
 private:
     std::shared_ptr<Mesh> _mesh;
 
-    Point4D value;
+    Vec3D value;
     std::vector<Triangle> triangles{};
 public:
-    AScale(std::shared_ptr<Mesh> mesh, const Point4D &s, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) {
+    AScale(std::shared_ptr<Mesh> mesh, const Vec3D &s, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) : value(s) {
         _mesh = mesh;
         _duration = duration;
         _looped = looped;
         _intType = interpolationType;
         _waitFor = true;
-
-        value = s;
     }
 
     bool update() override {

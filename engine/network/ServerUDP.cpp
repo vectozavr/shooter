@@ -9,7 +9,7 @@
 #include "../utils/Log.h"
 #include <cmath>
 
-ServerUDP::ServerUDP() : _lastBroadcast(std::numeric_limits<double>::min()), _working(false)
+ServerUDP::ServerUDP() : _lastBroadcast(-std::numeric_limits<double>::max()), _working(false)
 {
     _socket.setTimeoutCallback(std::bind(&ServerUDP::timeout, this, std::placeholders::_1));
 }

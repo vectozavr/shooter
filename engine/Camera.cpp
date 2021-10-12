@@ -8,11 +8,11 @@
 #include <cmath>
 #include "Consts.h"
 
-std::vector<Triangle> &Camera::project(std::shared_ptr<Mesh> mesh) {
+std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mesh) {
 
     if(!_ready) {
         Log::log("Camera::project(): cannot project _tris without camera initialization ( Camera::init() ) ");
-        return this->_triangles;
+        return _triangles;
     }
 
     if(!mesh->isVisible())
@@ -24,37 +24,36 @@ std::vector<Triangle> &Camera::project(std::shared_ptr<Mesh> mesh) {
 
     // We don't want to waste time re-allocating memory every time
     std::vector<Triangle> clippedTriangles, tempBuffer;
+
     for(auto& t : mesh->triangles()) {
 
-        double dot = t.norm().dot((mesh->position() + t[0] - _position).normalized());
+
+        double dot = t.norm().dot((mesh->position() + Vec3D(t[0]) - position()).normalized());
 
         if(dot > 0)
             continue;
 
-        Triangle clipped[2];
         // It needs to be cleared because it's reused through iterations. Usually it doesn't free memory.
         clippedTriangles.clear();
+        tempBuffer.clear();
 
-        // In the beginning we need to to translate drawTriangle from world coordinate to our camera system:
+        // In the beginning we need to to translate triangle from world coordinate to our camera system:
         // After that we apply clipping for all planes from _clipPlanes
         clippedTriangles.emplace_back(t * VM);
         for(auto& plane : _clipPlanes)
         {
             while(!clippedTriangles.empty())
             {
-                clipped[0] = clippedTriangles.back();
-                clipped[1] = clipped[0];
+                std::vector<Triangle> clipResult = plane.clip(clippedTriangles.back());
                 clippedTriangles.pop_back();
-                int additional = plane.clip(clipped[0], clipped[1]);
-
-                for(int i = 0; i < additional; i++)
-                    tempBuffer.emplace_back(clipped[i]);
+                for(auto & i : clipResult)
+                    tempBuffer.emplace_back(i);
             }
             clippedTriangles.swap(tempBuffer);
         }
 
-        for(auto& clippedTriangle : clippedTriangles) {
-            sf::Color color = clippedTriangle.color();
+        for(auto& clipped : clippedTriangles) {
+            sf::Color color = clipped.color();
             sf::Color ambientColor = sf::Color((sf::Uint8)(color.r * (0.3 * std::abs(dot) + 0.7)),
                                                (sf::Uint8)(color.g * (0.3 * std::abs(dot) + 0.7)),
                                                (sf::Uint8)(color.b * (0.3 * std::abs(dot) + 0.7)),
@@ -62,14 +61,14 @@ std::vector<Triangle> &Camera::project(std::shared_ptr<Mesh> mesh) {
 
             // Finally its time to project our clipped colored drawTriangle from 3D -> 2D
             // and transform it's coordinate to screen space (in pixels):
-            clippedTriangle = clippedTriangle * _SP;
+            Triangle clippedProjected = clipped * _SP;
 
-            clippedTriangle = Triangle(clippedTriangle[0] / clippedTriangle[0].w(),
-                                       clippedTriangle[1] / clippedTriangle[1].w(),
-                                       clippedTriangle[2] / clippedTriangle[2].w(),
-                                       ambientColor);
+            Triangle clippedProjectedNormalized = Triangle(clippedProjected[0] / clippedProjected[0].w(),
+                                                         clippedProjected[1] / clippedProjected[1].w(),
+                                                         clippedProjected[2] / clippedProjected[2].w(),
+                                                         ambientColor);
 
-            _triangles.emplace_back(clippedTriangle);
+            _triangles.emplace_back(std::make_shared<Triangle>(clippedProjectedNormalized));
         }
     }
 
@@ -87,28 +86,28 @@ void Camera::init(int width, int height, double fov, double ZNear, double ZFar) 
 
     // This is planes for clipping _tris.
     // Motivation: we are not interest in _tris that we cannot see.
-    _clipPlanes.emplace_back(Plane(Point4D{0, 0, 1}, Point4D{0, 0, ZNear})); // near plane
-    _clipPlanes.emplace_back(Plane(Point4D{0, 0, -1}, Point4D{0, 0, ZFar})); // far plane
+    _clipPlanes.emplace_back(Plane(Vec3D{0, 0, 1}, Vec3D{0, 0, ZNear})); // near plane
+    _clipPlanes.emplace_back(Plane(Vec3D{0, 0, -1}, Vec3D{0, 0, ZFar})); // far plane
 
     double thetta1 = Consts::PI*fov*0.5/180.0;
     double thetta2 = atan(_aspect * tan(thetta1));
-    _clipPlanes.emplace_back(Plane(Point4D{-cos(thetta2), 0, sin(thetta2)}, Point4D{0, 0, 0})); // left plane
-    _clipPlanes.emplace_back(Plane(Point4D{cos(thetta2), 0, sin(thetta2)}, Point4D{0, 0, 0})); // right plane
-    _clipPlanes.emplace_back(Plane(Point4D{0, cos(thetta1), sin(thetta1)}, Point4D{0, 0, 0})); // down plane
-    _clipPlanes.emplace_back(Plane(Point4D{0, -cos(thetta1), sin(thetta1)}, Point4D{0, 0, 0})); // up plane
+    _clipPlanes.emplace_back(Plane(Vec3D{-cos(thetta2), 0, sin(thetta2)}, Vec3D{0, 0, 0})); // left plane
+    _clipPlanes.emplace_back(Plane(Vec3D{cos(thetta2), 0, sin(thetta2)}, Vec3D{0, 0, 0})); // right plane
+    _clipPlanes.emplace_back(Plane(Vec3D{0, cos(thetta1), sin(thetta1)}, Vec3D{0, 0, 0})); // down plane
+    _clipPlanes.emplace_back(Plane(Vec3D{0, -cos(thetta1), sin(thetta1)}, Vec3D{0, 0, 0})); // up plane
 
     _ready = true;
     Log::log("Camera::init(): camera successfully initialized.");
 }
 
-std::vector<Triangle> &Camera::sorted() {
+std::vector<std::shared_ptr<Triangle>> Camera::sorted() {
 
     // Sort _tris from _back to front
     // This is some replacement for Z-buffer
-    std::sort(_triangles.begin(), _triangles.end(), [](Triangle &t1, Triangle &t2)
+    std::sort(_triangles.begin(), _triangles.end(), [](std::shared_ptr<Triangle> &t1, std::shared_ptr<Triangle> &t2)
     {
-        std::vector<double> v_z1({t1[0].z(), t1[1].z(), t1[2].z()});
-        std::vector<double> v_z2({t2[0].z(), t2[1].z(), t2[2].z()});
+        std::vector<double> v_z1({(*t1)[0].z(), (*t1)[1].z(), (*t1)[2].z()});
+        std::vector<double> v_z2({(*t2)[0].z(), (*t2)[1].z(), (*t2)[2].z()});
 
         std::sort(v_z1.begin(), v_z1.end());
         std::sort(v_z2.begin(), v_z2.end());
@@ -127,5 +126,5 @@ void Camera::clear() {
     // That is like preparation for new camera shot: we need to set
     // the position of camera and insert new cartridge for photo.
     _triangles.clear();
-    _V = Matrix4x4::View(_left, _up, _lookAt, _position);
+    _V = Matrix4x4::View(left(), up(), lookAt(), position());
 }

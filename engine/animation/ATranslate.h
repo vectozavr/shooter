@@ -12,15 +12,13 @@ class ATranslate : public Animation {
 private:
     std::shared_ptr<Object> _object;
 
-    Point4D value;
+    Vec3D value;
 public:
-    ATranslate(std::shared_ptr<Object> object, const Point4D& t, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) {
+    ATranslate(std::shared_ptr<Object> object, const Vec3D& t, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) : value(t){
         _object = object;
         _duration = duration;
         _looped = looped;
         _intType = interpolationType;
-
-        value = t;
     }
 
     bool update() override {

@@ -28,7 +28,7 @@ void Client::processInit(sf::Packet& packet) {
         if(targetId != _socket.ownId()) {
             spawnPlayer(targetId);
 
-            _players[targetId]->translateToPoint(Point4D{ buf[0], buf[1], buf[2]});
+            _players[targetId]->translateToPoint(Vec3D{ buf[0], buf[1], buf[2]});
             _players[targetId]->setHealth(buf[3]);
         }
     }
@@ -41,11 +41,11 @@ void Client::processUpdate(sf::Packet& packet) {
     while (packet >> targetId >> buf[0] >> buf[1] >> buf[2] >> buf[3] >> buf[4] >> buf[5]) {
         if (_players.count(targetId)) {
             std::string name = "Player_" + std::to_string(targetId);
-            _players[targetId]->translateToPoint(Point4D{buf[0], buf[1], buf[2]});
+            _players[targetId]->translateToPoint(Vec3D{buf[0], buf[1], buf[2]});
             _players[targetId]->setHealth(buf[3]);
-            _players[targetId]->rotateToAngle(Point4D{0, buf[4], 0});
+            _players[targetId]->rotateToAngle(Vec3D{0, buf[4], 0});
 
-            _players[targetId]->attached("head")->rotate(Matrix4x4::RotationY(buf[4]) * Point4D{1, 0, 0}, buf[5] - _players[targetId]->headAngle());
+            _players[targetId]->attached("head")->rotate(Matrix4x4::RotationY(buf[4]) * Vec3D{1, 0, 0}, buf[5] - _players[targetId]->headAngle());
 
             _players[targetId]->setHeadAngle(buf[5]);
         } else if (targetId == _socket.ownId()) {
@@ -74,7 +74,6 @@ void Client::processCustomPacket(MsgType type, sf::Packet& packet) {
     sf::Uint16 buffId[2];
     double dbuff[10];
     std::string tmp, tmp2;
-    Point4D p1, p2;
 
     switch (type) {
         case MsgType::Kill:
@@ -82,7 +81,7 @@ void Client::processCustomPacket(MsgType type, sf::Packet& packet) {
             if(buffId[0] == _socket.ownId()) {
                 _player->addDeath();
                 // respawn
-                _player->translateToPoint(Point4D{50.0*(-1 + 2.0*(double)rand()/RAND_MAX),30.0*(double)rand()/RAND_MAX,50.0*(-1 + 2.0*(double)rand()/RAND_MAX)});
+                _player->translateToPoint(Vec3D{50.0*(-1 + 2.0*(double)rand()/RAND_MAX),30.0*(double)rand()/RAND_MAX,50.0*(-1 + 2.0*(double)rand()/RAND_MAX)});
                 _player->playDeath();
                 _player->initWeapons();
                 _player->setFullAbility();
@@ -99,23 +98,21 @@ void Client::processCustomPacket(MsgType type, sf::Packet& packet) {
         case MsgType::FireTrace:
             packet >> dbuff[0] >> dbuff[1] >> dbuff[2] >> dbuff[3] >> dbuff[4] >> dbuff[5];
 
-            p1 = Point4D(dbuff[0], dbuff[1], dbuff[2]);
-            p2 = Point4D(dbuff[3], dbuff[4], dbuff[5]);
             if(_addFireTraceCallBack != nullptr)
-                _addFireTraceCallBack(p1, p2);
+                _addFireTraceCallBack(Vec3D(dbuff[0], dbuff[1], dbuff[2]), Vec3D(dbuff[3], dbuff[4], dbuff[5]));
 
             break;
         case MsgType::InitBonuses:
             while (packet >> tmp >> dbuff[0] >> dbuff[1] >> dbuff[2]) {
                 if(_addBonusCallBack != nullptr)
-                    _addBonusCallBack(tmp, Point4D(dbuff[0], dbuff[1], dbuff[2]));
+                    _addBonusCallBack(tmp, Vec3D(dbuff[0], dbuff[1], dbuff[2]));
             }
             break;
 
         case MsgType::AddBonus:
             packet >> tmp >> dbuff[0] >> dbuff[1] >> dbuff[2];
             if(_addBonusCallBack != nullptr)
-                _addBonusCallBack(tmp, Point4D(dbuff[0], dbuff[1], dbuff[2]));
+                _addBonusCallBack(tmp, Vec3D(dbuff[0], dbuff[1], dbuff[2]));
 
             break;
         case MsgType::RemoveBonus:
@@ -141,7 +138,7 @@ void Client::damagePlayer(sf::Uint16 targetId, double damage) {
     Log::log("Client: damagePlayer " + std::to_string(targetId) + " ( -" + std::to_string(damage) + "hp )");
 }
 
-void Client::addTrace(const Point4D& from, const Point4D& to) {
+void Client::addTrace(const Vec3D& from, const Vec3D& to) {
     sf::Packet packet;
 
     packet << MsgType::FireTrace << from.x() << from.y() << from.z() << to.x() << to.y() << to.z();
@@ -170,11 +167,11 @@ void Client::setRemovePlayerCallBack(std::function<void(sf::Uint16)> remove) {
     _removePlayerCallBack = std::move(remove);
 }
 
-void Client::setAddFireTraceCallBack(std::function<void(const Point4D &, const Point4D &)> addTrace) {
+void Client::setAddFireTraceCallBack(std::function<void(const Vec3D &, const Vec3D &)> addTrace) {
     _addFireTraceCallBack = std::move(addTrace);
 }
 
-void Client::setAddBonusCallBack(std::function<void(const std::string &, const Point4D &)> addBonus) {
+void Client::setAddBonusCallBack(std::function<void(const std::string &, const Vec3D &)> addBonus) {
     _addBonusCallBack = std::move(addBonus);
 }
 

@@ -12,15 +12,13 @@ class ARotate : public Animation {
 private:
     std::shared_ptr<Object> _object;
 
-    Point4D value;
+    Vec3D value;
 public:
-    ARotate(std::shared_ptr<Object> object, const Point4D& r, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) {
+    ARotate(std::shared_ptr<Object> object, const Vec3D& r, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) : value(r) {
         _object = object;
         _duration = duration;
         _looped = looped;
         _intType = interpolationType;
-
-        value = r;
     }
 
     bool update() override {

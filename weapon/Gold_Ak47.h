@@ -9,7 +9,7 @@
 
 class Gold_Ak47 : public Weapon {
 public:
-    explicit Gold_Ak47(int ammo = 200, const std::string& weaponName = "gold_ak47") : Weapon(weaponName, "obj/ak47.obj", "obj/gold_ak47_mat.txt", Point4D{3, 3, 3}, Point4D{-0.8, 1.3, 0.3}, Point4D{0, Consts::PI, 0}) {
+    explicit Gold_Ak47(int ammo = 200, const std::string& weaponName = "gold_ak47") : Weapon(weaponName, "obj/ak47.obj", "obj/gold_ak47_mat.txt", Vec3D{3, 3, 3}, Vec3D{-0.8, 1.3, 0.3}, Vec3D{0, Consts::PI, 0}) {
         fireSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/ak47.ogg"));
         reloadSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/reload_ak47.ogg"));
 

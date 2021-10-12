@@ -7,7 +7,7 @@
 
 #include <memory>
 #include <SFML/Graphics.hpp>
-#include "utils/Point4D.h"
+#include "Vec2D.h"
 
 class Mouse {
 private:
@@ -22,8 +22,8 @@ public:
     static bool isButtonPressed(sf::Mouse::Button button); // returns true if this _button is _pressed
     bool isButtonTapped(sf::Mouse::Button button); // returns true if this _button is tapped and 1/5 sec passed (_button bouncing problem solved)
 
-    [[nodiscard]] Point4D getMousePosition() const;
-    [[nodiscard]] Point4D getMouseDisplacement() const;
+    [[nodiscard]] Vec2D getMousePosition() const;
+    [[nodiscard]] Vec2D getMouseDisplacement() const;
     void setMouseInCenter() const;
     void setMouseCursorVisible(bool visible);
 };

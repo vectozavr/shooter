@@ -20,7 +20,7 @@ private:
 
     sf::Sprite _back;
 
-    Point4D _prevMousePosition;
+    std::unique_ptr<Vec2D> _prevMousePosition = std::make_unique<Vec2D>(Vec2D{0, 0});
 
     std::shared_ptr<Screen> _screen;
     std::shared_ptr<Mouse> _mouse;

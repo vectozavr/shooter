@@ -5,7 +5,7 @@
 #include "../engine/ResourceManager.h"
 #include "Rifle.h"
 
-Rifle::Rifle(int ammo, const std::string &weaponName) : Weapon(weaponName, "obj/rifle.obj", "obj/rifle_mat.txt", Point4D{3, 3, 3}, Point4D{-1.2, 1, 0.3}, Point4D{0, Consts::PI, 0}) {
+Rifle::Rifle(int ammo, const std::string &weaponName) : Weapon(weaponName, "obj/rifle.obj", "obj/rifle_mat.txt", Vec3D{3, 3, 3}, Vec3D{-1.2, 1, 0.3}, Vec3D{0, Consts::PI, 0}) {
     fireSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/shotgun.ogg"));
     reloadSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/reload_ak47.ogg"));
 

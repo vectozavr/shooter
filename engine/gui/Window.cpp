@@ -19,8 +19,8 @@ void Window::update() {
     _screen->setTitle(_name);
     _screen->drawSprite(_back);
 
-    Point4D mousePos = _mouse->getMousePosition();
-    Point4D dMousePos = mousePos - _prevMousePosition;
+    Vec2D mousePos = _mouse->getMousePosition();
+    Vec2D dMousePos = mousePos - *_prevMousePosition;
     _back.setPosition(_back.getPosition() - sf::Vector2f((float)(dMousePos.x() / 30), (float)(dMousePos.y() / 30)));
     bool isPressed = _mouse->isButtonTapped(sf::Mouse::Left);
 
@@ -40,7 +40,7 @@ void Window::update() {
         }
     }
 
-    _prevMousePosition = mousePos;
+    _prevMousePosition = std::make_unique<Vec2D>(mousePos);
 }
 
 void Window::setBackgroundTexture(const std::string &texture, double sx, double sy, int w, int h) {

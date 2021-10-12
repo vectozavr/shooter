@@ -8,6 +8,7 @@
 #include "../utils/Time.h"
 #include "../Triangle.h"
 #include "Interpolation.h"
+#include "../Vec2D.h"
 
 class Animation {
 public:
@@ -37,7 +38,8 @@ protected:
     double _dp = 0;
 
     InterpolationType _intType = InterpolationType::bezier;
-    Point4D _bezier[2] = {Point4D{0.8, 0}, Point4D{0.2, 1}};
+    std::unique_ptr<Vec2D> _bezier[2] = {std::make_unique<Vec2D>(Vec2D{0.8, 0}),
+                                         std::make_unique<Vec2D>(Vec2D{0.2, 1})};
 
     // If '_waitFor' == true then we need to finish all animation before starting this one. (for example for a_wait() or a_scale())
     bool _waitFor = false;
@@ -47,7 +49,10 @@ public:
     Animation() = default;
     virtual ~Animation() = default;
 
-    void setBezierParams(const Point4D& p1, const Point4D& p2) { _bezier[0] = p1; _bezier[1] = p2; }
+    void setBezierPoints(const Vec2D& p1, const Vec2D& p2) {
+        _bezier[0] = std::make_unique<Vec2D>(p1);
+        _bezier[1] = std::make_unique<Vec2D>(p2);
+    }
     [[nodiscard]] bool waitFor() const { return _waitFor; }
 
 

@@ -40,19 +40,19 @@ protected:
 
     int fireTraces = 0;
 
-    std::function<void(const Point4D&, const Point4D&)> _addTraceCallBack;
+    std::function<void(const Vec3D&, const Vec3D&)> _addTraceCallBack;
 
-    virtual std::map<std::string, double> processFire(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction, const Point4D& position, const Point4D& direction);
+    virtual std::map<std::string, double> processFire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
 
 public:
-    Weapon(const std::string& weaponName, const std::string& objFileName, const std::string& matFileName, const Point4D& scale, const Point4D& translate, const Point4D& rotate);
+    Weapon(const std::string& weaponName, const std::string& objFileName, const std::string& matFileName, const Vec3D& scale, const Vec3D& translate, const Vec3D& rotate);
 
-    std::map<std::string, double> fire(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction, const Point4D& position, const Point4D& direction);
+    std::map<std::string, double> fire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
     void reload();
 
     [[nodiscard]] std::pair<double, double> balance() const{ return std::make_pair(_clipAmmo, _stockAmmo); }
 
-    void setAddTraceCallBack(std::function<void(Point4D, Point4D)> add) {
+    void setAddTraceCallBack(std::function<void(Vec3D, Vec3D)> add) {
         _addTraceCallBack = std::move(add);
     }
 

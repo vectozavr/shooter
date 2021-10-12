@@ -56,8 +56,8 @@ void Shooter::InitNetwork()
 
     client->setSpawnPlayerCallBack([this](sf::Uint16 id){ spawnPlayer(id); });
     client->setRemovePlayerCallBack([this](sf::Uint16 id){ removePlayer(id); });
-    client->setAddFireTraceCallBack([this](const Point4D& from, const Point4D& to){ addFireTrace(from, to); });
-    client->setAddBonusCallBack([this](const std::string& bonusName, const Point4D& position){ addBonus(bonusName, position); });
+    client->setAddFireTraceCallBack([this](const Vec3D& from, const Vec3D& to){ addFireTrace(from, to); });
+    client->setAddBonusCallBack([this](const std::string& bonusName, const Vec3D& position){ addBonus(bonusName, position); });
     client->setRemoveBonusCallBack([this](const std::string& bonusName){ removeBonus(bonusName); });
 }
 
@@ -68,25 +68,25 @@ void Shooter::start() {
 
     mouse->setMouseCursorVisible(true);
 
-    world->loadMap("maps/map1.obj", "maps/materials.txt", "map", Point4D{5, 5, 5});
+    world->loadMap("maps/map1.obj", "maps/materials.txt", "map", Vec3D{5, 5, 5});
 
     player = std::make_shared<Player>();
     playerController = std::make_shared<PlayerController>(player, keyboard, mouse);
 
-    player->setAddTraceCallBack([this](const Point4D& from, const Point4D& to){ client->addTrace(from, to); addFireTrace(from, to); });
+    player->setAddTraceCallBack([this](const Vec3D& from, const Vec3D& to){ client->addTrace(from, to); addFireTrace(from, to); });
     player->setDamagePlayerCallBack([this] (sf::Uint16 targetId, double damage) { client->damagePlayer(targetId, damage); });
-    player->setRayCastFunction([this](const Point4D& from, const Point4D& to) { return world->rayCast(from, to); });
+    player->setRayCastFunction([this](const Vec3D& from, const Vec3D& to) { return world->rayCast(from, to); });
     player->setTakeBonusCallBack([this] (const string& bonusName) { client->takeBonus(bonusName); });
-
     player->setAddWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ addWeapon(weapon); });
     player->setRemoveWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ removeWeapon(weapon); });
+
     player->initWeapons();
 
-    camera->translateToPoint(player->position() + Point4D{0, 1.8, 0});
+    camera->translateToPoint(player->position() + Vec3D{0, 1.8, 0});
     player->attach(camera, "camera");
 
     world->addBody(player, "Player");
-    player->translate(Point4D{0, 10, 0});
+    player->translate(Vec3D{0, 10, 0});
 
     client = std::make_shared<Client>(player);
     server = std::make_shared<Server>();
@@ -96,7 +96,7 @@ void Shooter::start() {
     mainMenu.setBackgroundTexture("textures/back.png", 1.1, 1.1, screen->width(), screen->height());
 
     mainMenu.addButton(screen->width()/2, 200, 200, 20, [this] () { this->play(); }, "Play", 5, 5, "textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "sound/click.ogg");
-    mainMenu.addButton(screen->width()/2, 350, 200, 20, [this] () { this->player->translateToPoint(Point4D{0, 0, 0}); this->player->setVelocity({}); this->play(); }, "Respawn", 5, 5, "textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "sound/click.ogg");
+    mainMenu.addButton(screen->width()/2, 350, 200, 20, [this] () { this->player->translateToPoint(Vec3D{0, 0, 0}); this->player->setVelocity({}); this->play(); }, "Respawn", 5, 5, "textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "sound/click.ogg");
 
     mainMenu.addButton(screen->width()/2, 500, 200, 20, [this] () { client->disconnect(); server->stop(); this->exit();}, "Exit", 5, 5, "textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "sound/click.ogg");
 
@@ -207,22 +207,22 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     client->addPlayer(id, newPlayer);
     world->addBody(newPlayer, name);
     newPlayer->setVisible(true);
-    newPlayer->setAcceleration(Point4D{0, 0, 0});
+    newPlayer->setAcceleration(Vec3D{0, 0, 0});
 
     // add head and other stuff:
-    world->loadBody(name + "_head", "obj/cube.obj", "", Point4D{0.7, 0.7, 0.7});
-    world->body(name + "_head")->translate(Point4D{0, 2, 0});
+    world->loadBody(name + "_head", "obj/cube.obj", "", Vec3D{0.7, 0.7, 0.7});
+    world->body(name + "_head")->translate(Vec3D{0, 2, 0});
     world->body(name + "_head")->setCollider(false);
     newPlayer->attach(world->body(name + "_head"), "head");
 
-    world->loadBody(name + "_eye1", "obj/cube.obj", "", Point4D{0.2, 0.2, 0.05});
-    world->body(name + "_eye1")->translate(Point4D{0.3, 2.1, 0.7});
+    world->loadBody(name + "_eye1", "obj/cube.obj", "", Vec3D{0.2, 0.2, 0.05});
+    world->body(name + "_eye1")->translate(Vec3D{0.3, 2.1, 0.7});
     world->body(name + "_eye1")->setCollider(false);
     world->body(name + "_eye1")->setColor({147, 159, 255});
     world->body(name + "_head")->attach(world->body(name + "_eye1"), "eye1");
 
-    world->loadBody(name + "_eye2", "obj/cube.obj", "", Point4D{0.2, 0.2, 0.05});
-    world->body(name + "_eye2")->translate(Point4D{-0.3, 2.1, 0.7});
+    world->loadBody(name + "_eye2", "obj/cube.obj", "", Vec3D{0.2, 0.2, 0.05});
+    world->body(name + "_eye2")->translate(Vec3D{-0.3, 2.1, 0.7});
     world->body(name + "_eye2")->setCollider(false);
     world->body(name + "_eye2")->setColor({147, 159, 255});
     world->body(name + "_head")->attach(world->body(name + "_eye2"), "eye2");
@@ -236,7 +236,7 @@ void Shooter::removePlayer(sf::Uint16 id) {
     world->removeBody(name + "_eye2");
 }
 
-void Shooter::addFireTrace(const Point4D &from, const Point4D &to) {
+void Shooter::addFireTrace(const Vec3D &from, const Vec3D &to) {
     std::string traceName = "Client_fireTraces_" + std::to_string(fireTraces++);
     world->addBody(std::make_shared<RigidBody>(Mesh::LineTo(from, to, 0.05)), traceName);
     world->body(traceName)->setCollider(false);
@@ -249,11 +249,11 @@ void Shooter::deleteFireTrace(const std::string& traceName) {
     world->removeBody(traceName);
 }
 
-void Shooter::addBonus(const string &bonusName, const Point4D &position) {
+void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
     std::string name = bonusName.substr(6, bonusName.size()-3-5);
-    world->addBody(std::make_shared<Bonus>(bonusName, "obj/" + name + ".obj", "obj/" + name + "_mat.txt", Point4D{3, 3, 3}), bonusName);
+    world->addBody(std::make_shared<Bonus>(bonusName, "obj/" + name + ".obj", "obj/" + name + "_mat.txt", Vec3D{3, 3, 3}), bonusName);
     world->body(bonusName)->translateToPoint(position);
-    Timeline::animate(bonusName + "_rotation", new ARotate(world->body(bonusName), Point4D{0, 2*Consts::PI, 0}, 4, Animation::LoopOut::Continue, Animation::InterpolationType::linear));
+    Timeline::animate(bonusName + "_rotation", new ARotate(world->body(bonusName), Vec3D{0, 2*Consts::PI, 0}, 4, Animation::LoopOut::Continue, Animation::InterpolationType::linear));
 }
 
 void Shooter::removeBonus(const string &bonusName) {

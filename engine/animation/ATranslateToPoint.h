@@ -12,23 +12,21 @@ class ATranslateToPoint : public Animation {
 private:
     std::shared_ptr<Object> _object;
 
-    Point4D point;
-    Point4D value;
+    Vec3D point;
+    std::unique_ptr<Vec3D> value;
 public:
-    ATranslateToPoint(std::shared_ptr<Object> object, const Point4D& p, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) {
+    ATranslateToPoint(std::shared_ptr<Object> object, const Vec3D& p, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) : point(p) {
         _object = object;
         _duration = duration;
         _looped = looped;
         _intType = interpolationType;
-
-        point = p;
     }
 
     bool update() override {
         if(!_started) {
-            value = point - _object->position();
+            value = std::make_unique<Vec3D>(point - _object->position());
         }
-        _object->translate(value * _dp);
+        _object->translate(*value * _dp);
 
         return updateState();
     }

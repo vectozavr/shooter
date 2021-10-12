@@ -14,36 +14,39 @@ void World::addBody(std::shared_ptr<RigidBody> body, const string &name) {
     Log::log("World::addBody(): inserted body '" + name + "' with " + std::to_string(_objects[name]->triangles().size()) + " tris.");
 }
 
-void World::loadBody(const string &name, const string &filename, const std::string &materials, const Point4D& scale) {
+void World::loadBody(const string &name, const string &filename, const std::string &materials, const Vec3D& scale) {
     _objects.emplace(name, std::make_shared<RigidBody>(Mesh(filename, materials, scale)));
     Log::log("World::loadBody(): inserted body from " + filename + " with title '" + name + "' with " + std::to_string(_objects[name]->triangles().size()) + " tris.");
 }
 
-std::pair<Point4D, string> World::rayCast(const Point4D& from, const Point4D& to) {
+std::pair<Vec3D, string> World::rayCast(const Vec3D& from, const Vec3D& to) {
 
-    std::pair<Point4D, string> result{Point4D{0, 0,0, -1}, ""};
-    double minDistance = 10000;
+    std::pair<Vec3D, string> result;
+    std::unique_ptr<Vec3D> point = std::make_unique<Vec3D>();
+    std::string name;
+    double minDistance = Consts::RAY_CAST_MAX_DISTANCE;
 
     for(auto& object : _objects) {
         if((object.first.find("Player") != std::string::npos) || (object.first.find("Bonus") != std::string::npos))
             continue;
 
         for(auto& tri : object.second->triangles()) {
-            Triangle tri_translated(tri[0] + object.second->position(), tri[1] + object.second->position(), tri[2] + object.second->position());
+            Triangle tri_translated(tri[0] + object.second->position().makePoint4D(), tri[1] + object.second->position().makePoint4D(), tri[2] + object.second->position().makePoint4D());
 
             Plane plane(tri_translated);
             auto intersection = plane.intersection(from, to);
             double distance = (intersection.first - from).sqrAbs();
             if(intersection.second > 0 && distance < minDistance && tri_translated.isPointInside(intersection.first)) {
                 minDistance = distance;
-                result = {intersection.first, object.first};
+                point = std::make_unique<Vec3D>(intersection.first);
+                name = object.first;
             }
         }
     }
-    return result;
+    return {*point, name};
 }
 
-void World::loadMap(const std::string& filename, const std::string& materials, const std::string& name, const Point4D& scale) {
+void World::loadMap(const std::string& filename, const std::string& materials, const std::string& name, const Vec3D& scale) {
     auto objs = Mesh::LoadObjects(filename, materials, scale);
     for(unsigned i = 0; i < objs.size(); i++) {
         string meshName = name + "_" + to_string(i);

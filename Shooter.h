@@ -43,9 +43,9 @@ private:
 
     void spawnPlayer(sf::Uint16 id);
     void removePlayer(sf::Uint16 id);
-    void addFireTrace(const Point4D& from, const Point4D& to);
+    void addFireTrace(const Vec3D& from, const Vec3D& to);
     void deleteFireTrace(const std::string& traceName);
-    void addBonus(const std::string& bonusName, const Point4D& position);
+    void addBonus(const std::string& bonusName, const Vec3D& position);
     void removeBonus(const std::string& bonusName);
     void addWeapon(std::shared_ptr<Weapon> weapon);
     void removeWeapon(std::shared_ptr<Weapon> weapon);

@@ -12,7 +12,7 @@
 
 using namespace std;
 
-Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, const std::string& matFileName, const Point4D& scale, const Point4D& t, const Point4D& r) {
+Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, const std::string& matFileName, const Vec3D& scale, const Vec3D& t, const Vec3D& r) {
     _name = weaponName;
 
     loadObj(objFileName, matFileName, scale);
@@ -23,7 +23,7 @@ Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, co
     noAmmoSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/no_ammo.ogg"));
 }
 
-std::map<std::string, double> Weapon::fire(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction, const Point4D& position, const Point4D& direction) {
+std::map<std::string, double> Weapon::fire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) {
     if(_clipAmmo == 0) {
         reload();
         if(_clipAmmo == 0)
@@ -58,11 +58,11 @@ void Weapon::reload() {
     _lastReloadTime = Time::time();
 }
 
-std::map<std::string, double> Weapon::processFire(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction, const Point4D& pos, const Point4D& direction) {
+std::map<std::string, double> Weapon::processFire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& pos, const Vec3D& direction) {
     std::map<std::string, double> damagedPlayers;
 
     //generate random vector
-    Point4D randV(10.0*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10.0*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10.0*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX));
+    Vec3D randV(10.0*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10.0*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10.0*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX));
 
     // damage player
     auto rayCast = rayCastFunction(pos, pos + direction * 1000 + randV);
@@ -71,8 +71,8 @@ std::map<std::string, double> Weapon::processFire(std::function<std::pair<Point4
     }
 
     // add trace line
-    Point4D to = rayCast.first.w() == -1 ? pos + direction * 1000 + randV: rayCast.first;
-    Point4D from = position() + triangles().back()[0];
+    Vec3D to = rayCast.first == Vec3D(0) ? pos + direction * 1000 + randV: rayCast.first;
+    Vec3D from = position() + Vec3D(triangles().back()[0]);
     _addTraceCallBack(from, to);
 
     return damagedPlayers;

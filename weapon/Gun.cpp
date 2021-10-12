@@ -7,7 +7,7 @@
 
 using namespace std;
 
-Gun::Gun(int ammo, const std::string& weaponName) : Weapon(weaponName, "obj/gun.obj", "obj/gun_mat.txt", Point4D{3, 3, 3}, Point4D{-0.8, 1.3, 0.3}, Point4D{0, Consts::PI, 0}) {
+Gun::Gun(int ammo, const std::string& weaponName) : Weapon(weaponName, "obj/gun.obj", "obj/gun_mat.txt", Vec3D{3, 3, 3}, Vec3D{-0.8, 1.3, 0.3}, Vec3D{0, Consts::PI, 0}) {
     fireSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/gun.ogg"));
     reloadSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/reload_gun.ogg"));
 

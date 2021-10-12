@@ -42,17 +42,17 @@ private:
     size_t _selectedWeapon = 0;
 
     std::function<void(sf::Uint16 targetId, double)> _damagePlayerCallBack;
-    std::function<void(const Point4D&, const Point4D&)> _addTraceCallBack;
+    std::function<void(const Vec3D&, const Vec3D&)> _addTraceCallBack;
     std::function<void(const std::string&)> _takeBonusCallBack;
 
     std::function<void(std::shared_ptr<Weapon>)> _addWeaponCallBack;
     std::function<void(std::shared_ptr<Weapon>)> _removeWeaponCallBack;
 
-    std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> _rayCastFunction;
+    std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> _rayCastFunction;
 public:
     Player() {
-        loadObj("obj/cube.obj", "", Point4D{0.5, 1.9, 0.5});
-        setAcceleration(Point4D{0, -_g, 0});
+        loadObj("obj/cube.obj", "", Vec3D{0.5, 1.9, 0.5});
+        setAcceleration(Vec3D{0, -_g, 0});
         setCollision(true);
         setVisible(false);
         setColor({240, 168, 168});
@@ -67,6 +67,9 @@ public:
 
     void setHealth(double h) {
         _health = h;
+    }
+    void setAbility(double a) {
+        _ability = a;
     }
 
     [[nodiscard]] double health() const { return _health; }
@@ -93,7 +96,7 @@ public:
     void fire();
     void reload();
 
-    void rotateWeaponsRelativePoint(const Point4D& point4D, const Point4D& v, double val);
+    void rotateWeaponsRelativePoint(const Vec3D& point, const Vec3D& v, double val);
 
     [[nodiscard]] int kills() const {return _kills;}
     [[nodiscard]] int deaths() const {return _deaths;}
@@ -107,7 +110,7 @@ public:
     void setDamagePlayerCallBack(std::function<void(sf::Uint16 targetId, double)> hit) {
         _damagePlayerCallBack = std::move(hit);
     }
-    void setAddTraceCallBack(std::function<void(const Point4D&, const Point4D&)> add) {
+    void setAddTraceCallBack(std::function<void(const Vec3D&, const Vec3D&)> add) {
         _addTraceCallBack = std::move(add);
     }
     void setTakeBonusCallBack(std::function<void(const std::string&)> take) {
@@ -119,7 +122,7 @@ public:
     void setRemoveWeaponCallBack(std::function<void(std::shared_ptr<Weapon>)> removeWeapon) {
         _removeWeaponCallBack = std::move(removeWeapon);
     }
-    void setRayCastFunction(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction) {
+    void setRayCastFunction(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction) {
         _rayCastFunction = std::move(rayCastFunction);
     }
 

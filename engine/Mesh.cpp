@@ -12,13 +12,16 @@
 using namespace std;
 
 Mesh &Mesh::operator*=(const Matrix4x4 &matrix4X4) {
-    for (auto& t : _tris)
-        t = t * matrix4X4;
+    std::vector<Triangle> newTriangles;
+    for(auto &t : _tris) {
+        newTriangles.emplace_back(t * matrix4X4);
+    }
+    setTriangles(newTriangles);
 
     return *this;
 }
 
-Mesh &Mesh::loadObj(const std::string& filename, const std::string &materials, const Point4D& scale) {
+Mesh &Mesh::loadObj(const std::string& filename, const std::string &materials, const Vec3D& scale) {
 
     auto objects = Mesh::LoadObjects(filename, materials, scale);
     for(auto& obj : objects) {
@@ -29,61 +32,54 @@ Mesh &Mesh::loadObj(const std::string& filename, const std::string &materials, c
     return *this;
 }
 
-Mesh::Mesh(const std::string& filename, const std::string &materials, const Point4D& scale){
+Mesh::Mesh(const std::string& filename, const std::string &materials, const Vec3D& scale){
     loadObj(filename, materials, scale);
 }
 
-Mesh::Mesh(const vector<Triangle> &tries){
-    _tris = tries;
-}
-
-Mesh::Mesh(const Mesh& mesh) {
-    *this = mesh;
+Mesh::Mesh(const vector<Triangle> &tries) : _tris(tries) {
 }
 
 Mesh Mesh::Obj(const std::string& filename) {
     return Mesh(filename);
 }
 
-void Mesh::rotate(const Point4D &r) {
+void Mesh::rotate(const Vec3D &r) {
     Object::rotate(r);
     *this *= Matrix4x4::Rotation(r);
 }
 
-void Mesh::rotate(const Point4D &v, double r) {
+void Mesh::rotate(const Vec3D &v, double r) {
     Object::rotate(v, r);
     *this *= Matrix4x4::Rotation(v, r);
 }
 
-void Mesh::scale(const Point4D &s) {
+void Mesh::scale(const Vec3D &s) {
     Object::scale(s);
     *this *= Matrix4x4::Scale(s);
 }
 
-Mesh &Mesh::operator=(const Mesh &mesh) {
-    _tris = mesh._tris;
-    _position = mesh._position;
-    _color = mesh._color;
-    return *this;
-}
-
-void Mesh::rotateRelativePoint(const Point4D &s, const Point4D &r) {
+void Mesh::rotateRelativePoint(const Vec3D &s, const Vec3D &r) {
     Object::rotateRelativePoint(s, r);
     *this *= Matrix4x4::Rotation(r);
 }
 
-void Mesh::rotateRelativePoint(const Point4D &s, const Point4D &v, double r) {
+void Mesh::rotateRelativePoint(const Vec3D &s, const Vec3D &v, double r) {
     Object::rotateRelativePoint(s, v, r);
     *this *= Matrix4x4::Rotation(v, r);
 }
 
-void Mesh::setColor(sf::Color c) {
+void Mesh::setColor(const sf::Color& c) {
     _color = c;
-    for (auto& t : _tris)
-        t = Triangle(t[0], t[1], t[2], _color);
+
+    // change color of all mesh triangles:
+    std::vector<Triangle> newTriangles;
+    for(auto &t : _tris) {
+        newTriangles.emplace_back(Triangle(t[0], t[1], t[2], c));
+    }
+    setTriangles(newTriangles);
 }
 
-std::vector<std::shared_ptr<Mesh>> Mesh::LoadObjects(const string &filename, const string &materials, const Point4D &scale) {
+std::vector<std::shared_ptr<Mesh>> Mesh::LoadObjects(const string &filename, const string &materials, const Vec3D &scale) {
     std::vector<std::shared_ptr<Mesh>> objects;
     map<string, sf::Color> maters;
 
@@ -170,26 +166,27 @@ std::vector<std::shared_ptr<Mesh>> Mesh::LoadObjects(const string &filename, con
     return objects;
 }
 
-Mesh Mesh::LineTo(const Point4D& from, const Point4D& to, double line_width, sf::Color color) {
+Mesh Mesh::LineTo(const Vec3D& from, const Vec3D& to, double line_width, const sf::Color& color) {
 
     Mesh line;
 
-    Point4D v1 = (to - from).normalized();
-    Point4D v2 = from.cross3D(from + Point4D{1, 0, 0}).normalized();
-    Point4D v3 = v1.cross3D(v2).normalized();
+    Vec3D v1 = (to - from).normalized();
+    Vec3D v2 = from.cross(from + Vec3D{1, 0, 0}).normalized();
+    Vec3D v3 = v1.cross(v2).normalized();
 
     // from plane
-    Point4D p1 = from - v2 * line_width/2.0 - v3 * line_width/2.0;
-    Point4D p2 = from - v2 * line_width/2.0 + v3 * line_width/2.0;
-    Point4D p3 = from + v2 * line_width/2.0 + v3 * line_width/2.0;
-    Point4D p4 = from + v2 * line_width/2.0 - v3 * line_width/2.0;
+    Point4D p1 = (from - v2 * line_width/2.0 - v3 * line_width/2.0).makePoint4D();
+    Point4D p2 = (from - v2 * line_width/2.0 + v3 * line_width/2.0).makePoint4D();
+    Point4D p3 = (from + v2 * line_width/2.0 + v3 * line_width/2.0).makePoint4D();
+    Point4D p4 = (from + v2 * line_width/2.0 - v3 * line_width/2.0).makePoint4D();
     // to plane
-    Point4D p5 = to - v2 * line_width/2.0 - v3 * line_width/2.0;
-    Point4D p6 = to - v2 * line_width/2.0 + v3 * line_width/2.0;
-    Point4D p7 = to + v2 * line_width/2.0 + v3 * line_width/2.0;
-    Point4D p8 = to + v2 * line_width/2.0 - v3 * line_width/2.0;
+    Point4D p5 = (to - v2 * line_width/2.0 - v3 * line_width/2.0).makePoint4D();
+    Point4D p6 = (to - v2 * line_width/2.0 + v3 * line_width/2.0).makePoint4D();
+    Point4D p7 = (to + v2 * line_width/2.0 + v3 * line_width/2.0).makePoint4D();
+    Point4D p8 = (to + v2 * line_width/2.0 - v3 * line_width/2.0).makePoint4D();
 
-    line._tris = {
+
+    line._tris = std::move(std::vector<Triangle>{
             { p2, p4, p1 },
             { p2, p3, p4 },
             { p1, p6, p2 },
@@ -202,14 +199,19 @@ Mesh Mesh::LineTo(const Point4D& from, const Point4D& to, double line_width, sf:
             { p4, p7, p8 },
             { p1, p8, p5 },
             { p1, p4, p8 }
-    };
-
+    });
     line.setColor(color);
 
-    for(auto& triangle : line._tris)
-        triangle = Triangle(Point4D{triangle[0].x(), triangle[0].y(), triangle[0].z(), 1},
-                            Point4D{triangle[1].x(), triangle[1].y(), triangle[1].z(), 1},
-                            Point4D{triangle[2].x(), triangle[2].y(), triangle[2].z(), 1}, line.color());
-
     return line;
+}
+
+Mesh::Mesh(const Mesh &mesh) : _tris(mesh._tris), _color(mesh._color), _visible(mesh._visible) {
+
+}
+
+void Mesh::setTriangles(const vector<Triangle> &t) {
+    _tris.clear();
+    for (auto & tri : t) {
+        _tris.push_back(tri);
+    }
 }

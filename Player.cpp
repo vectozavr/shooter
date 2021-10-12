@@ -7,7 +7,7 @@
 #include "engine/ResourceManager.h"
 #include "engine/utils/Log.h"
 
-void Player::rotateWeaponsRelativePoint(const Point4D& point4D, const Point4D& v, double val) {
+void Player::rotateWeaponsRelativePoint(const Vec3D& point4D, const Vec3D& v, double val) {
     for(auto& weapon : _weapons)
         weapon->rotateRelativePoint(point4D, v, val);
 }
@@ -63,8 +63,8 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     attach(weapon, weapon->name());
 
     _weapons.back()->translate(position());
-    _weapons.back()->rotateRelativePoint(position() + Point4D{0, 1.8, 0}, Point4D{0, 1, 0}, _angle.y());
-    _weapons.back()->rotateRelativePoint(position() + Point4D{0, 1.8, 0}, left(), headAngle());
+    _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, Vec3D{0, 1, 0}, _angle->y());
+    _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, left(), headAngle());
 
     _weapons.back()->setAddTraceCallBack(_addTraceCallBack);
 }

@@ -9,7 +9,7 @@
 
 using namespace std;
 
-Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, "obj/shotgun.obj", "obj/shotgun_mat.txt", Point4D{3, 3, 3}, Point4D{-0.95, 1.3, -0.6}, Point4D{0, Consts::PI, 0}) {
+Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, "obj/shotgun.obj", "obj/shotgun_mat.txt", Vec3D{3, 3, 3}, Vec3D{-0.95, 1.3, -0.6}, Vec3D{0, Consts::PI, 0}) {
     fireSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/shotgun.ogg"));
     reloadSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/reload_shotgun.ogg"));
 
@@ -25,12 +25,12 @@ Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, "
 }
 
 std::map<std::string, double>
-Shotgun::processFire(std::function<std::pair<Point4D, std::string>(const Point4D&, const Point4D&)> rayCastFunction, const Point4D& pos, const Point4D& direction) {
+Shotgun::processFire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& pos, const Vec3D& direction) {
     std::map<std::string, double> damagedPlayers;
 
     for(int i = 0; i < 15; i++) {
         //generate random vector
-        Point4D randV(10*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX));
+        Vec3D randV(10*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX));
 
         // damage player
         auto rayCast = rayCastFunction(pos, pos + direction * 1000 + randV);
@@ -38,8 +38,8 @@ Shotgun::processFire(std::function<std::pair<Point4D, std::string>(const Point4D
             damagedPlayers[rayCast.second] += _damage / (1.0 + (pos - rayCast.first).abs());
         }
 
-        Point4D to = rayCast.first.w() == -1 ? pos + direction * 1000 + randV: rayCast.first;
-        Point4D from = position() + triangles().back()[0];
+        Vec3D to = rayCast.first == Vec3D(0) ? pos + direction * 1000 + randV: rayCast.first;
+        Vec3D from = position() + Vec3D(triangles().back()[0]);
         _addTraceCallBack(from, to);
     }
 
