@@ -9,7 +9,7 @@
 #ifndef ENGINE_AFUNCTION_H
 #define ENGINE_AFUNCTION_H
 
-class AFunction : public Animation {
+class AFunction final : public Animation {
 private:
     int _calls = 0;
     int _allCalls = 1;

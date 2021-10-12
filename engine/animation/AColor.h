@@ -8,7 +8,7 @@
 #include "Animation.h"
 #include "../Mesh.h"
 
-class AColor : public Animation {
+class AColor final : public Animation {
 private:
     std::shared_ptr<Mesh> _mesh;
 

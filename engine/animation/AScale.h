@@ -9,7 +9,7 @@
 #include "Animation.h"
 #include "Mesh.h"
 
-class AScale : public Animation {
+class AScale final : public Animation {
 private:
     std::shared_ptr<Mesh> _mesh;
 

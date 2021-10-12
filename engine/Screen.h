@@ -13,7 +13,7 @@
 #include "utils/Time.h"
 #include "Mouse.h"
 
-class Screen {
+class Screen final {
 private:
     int _w = 1920;
     int _h = 1080;

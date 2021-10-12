@@ -16,7 +16,7 @@
 #include "weapon/Gold_Ak47.h"
 #include "weapon/Rifle.h"
 
-class Player : public RigidBody{
+class Player final : public RigidBody{
 private:
     double _healthMax = 100;
     double _health = _healthMax;

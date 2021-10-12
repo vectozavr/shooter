@@ -9,14 +9,14 @@
 #include <array>
 #include "Point4D.h"
 
-class Vec2D {
+class Vec2D final {
 private:
     std::array<double, 2> _arr_point{};
 
 public:
     Vec2D () = default;
     Vec2D (const Vec2D& vec);
-    Vec2D (const Point4D& point4D);
+    explicit Vec2D (const Point4D& point4D);
     explicit Vec2D (double x, double y = 0.0);
     Vec2D& operator=(const Vec2D&) = delete;
 

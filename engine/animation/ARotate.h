@@ -8,7 +8,7 @@
 #include "Animation.h"
 #include "../Object.h"
 
-class ARotate : public Animation {
+class ARotate final : public Animation {
 private:
     std::shared_ptr<Object> _object;
 

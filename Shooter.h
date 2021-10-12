@@ -15,7 +15,7 @@
 #include "Server.h"
 
 
-class Shooter : public Engine {
+class Shooter final : public Engine {
 private:
     std::shared_ptr<Player> player;
     std::shared_ptr<PlayerController> playerController;

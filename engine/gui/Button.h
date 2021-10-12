@@ -14,7 +14,7 @@ struct tPos {
     int ty;
 };
 
-class Button {
+class Button final {
 private:
     int _x{};
     int _y{};

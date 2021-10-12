@@ -7,7 +7,7 @@
 
 #include <SFML/Network.hpp>
 
-class ReliableMsg
+class ReliableMsg final
 {
 private:
     sf::Packet packet;

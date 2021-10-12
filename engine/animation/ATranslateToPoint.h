@@ -8,7 +8,7 @@
 #include "Animation.h"
 #include "../Object.h"
 
-class ATranslateToPoint : public Animation {
+class ATranslateToPoint final : public Animation {
 private:
     std::shared_ptr<Object> _object;
 

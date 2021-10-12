@@ -9,7 +9,7 @@
 #include "Point4D.h"
 #include "Vec3D.h"
 
-class Matrix4x4 {
+class Matrix4x4 final {
 private:
     std::array<std::array<double, 4>, 4> _arr{};
 

@@ -9,7 +9,7 @@
 #include "Camera.h"
 #include "physics/RigidBody.h"
 
-class World {
+class World final {
 private:
     std::map<std::string, std::shared_ptr<RigidBody>> _objects;
 public:

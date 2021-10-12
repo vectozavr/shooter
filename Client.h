@@ -8,7 +8,7 @@
 #include "engine/network/ClientUDP.h"
 #include "Player.h"
 
-class Client : public ClientUDP {
+class Client final : public ClientUDP {
 private:
     std::map<sf::Uint16, std::shared_ptr<Player>> _players{};
     std::shared_ptr<Player> _player;

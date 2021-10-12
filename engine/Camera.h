@@ -10,7 +10,7 @@
 #include "Plane.h"
 #include "Mesh.h"
 
-class Camera : public Object{
+class Camera final : public Object{
 private:
     Matrix4x4 _S; // screen space matrix
     Matrix4x4 _P; // projections matrix

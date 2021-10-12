@@ -10,12 +10,11 @@
 #include "Matrix4x4.h"
 #include <SFML/Graphics.hpp>
 
-class Triangle {
+class Triangle final {
 private:
     sf::Color _color;
     std::vector<Point4D> _points;
 public:
-
     Triangle ();
     Triangle (const Triangle& triangle);
     Triangle (const Point4D& p1, const Point4D& p2, const Point4D& p3, sf::Color color = {0, 0, 0});

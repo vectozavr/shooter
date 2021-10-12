@@ -9,7 +9,7 @@
 #include <SFML/Graphics.hpp>
 #include "Vec2D.h"
 
-class Mouse {
+class Mouse final {
 private:
     std::shared_ptr<sf::RenderWindow> _window;
 

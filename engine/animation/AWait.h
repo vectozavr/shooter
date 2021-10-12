@@ -7,7 +7,7 @@
 
 #include "Animation.h"
 
-class AWait : public Animation {
+class AWait final : public Animation {
 public:
     explicit AWait(double duration = 1) {
         _duration = duration;

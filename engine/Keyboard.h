@@ -7,7 +7,7 @@
 
 #include <SFML/Graphics.hpp>
 
-class Keyboard {
+class Keyboard final {
 private:
     std::map<sf::Keyboard::Key, double> _tappedKeys;
 public:

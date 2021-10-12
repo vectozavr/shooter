@@ -8,7 +8,7 @@
 #include "engine/World.h"
 #include "Player.h"
 
-class Bonus : public RigidBody {
+class Bonus final : public RigidBody {
 protected:
     std::string _name;
 public:

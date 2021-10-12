@@ -7,7 +7,7 @@
 
 #include "RigidBody.h"
 
-class Solver {
+class Solver final {
 public:
     static void solveCollision(std::shared_ptr<RigidBody> obj1, std::shared_ptr<RigidBody> obj2, const CollisionPoint& collision);
 };

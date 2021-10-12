@@ -15,7 +15,7 @@ struct BonusInfo {
     bool onTheMap = false;
 };
 
-class Server : public ServerUDP {
+class Server final : public ServerUDP {
 private:
     std::map<sf::Uint16, std::shared_ptr<Player>> _players{};
     std::map<std::string, BonusInfo> _bonuses{};

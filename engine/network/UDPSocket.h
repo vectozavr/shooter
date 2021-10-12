@@ -12,8 +12,7 @@
 #include "UDPConnection.h"
 #include "MsgType.h"
 
-class UDPSocket
-{
+class UDPSocket final {
 private:
     sf::UdpSocket _socket;
     sf::Uint16 _nextRelyMsgId;

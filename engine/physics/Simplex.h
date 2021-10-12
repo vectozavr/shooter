@@ -16,7 +16,7 @@ enum class SimplexType {
     Tetrahedron
 };
 
-struct Simplex {
+struct Simplex final {
 private:
     std::deque<Vec3D> _points{};
 

@@ -9,7 +9,7 @@
 #include "engine/Keyboard.h"
 #include "engine/Mouse.h"
 
-class PlayerController {
+class PlayerController final {
 private:
     std::shared_ptr<Player> _player;
     std::shared_ptr<Keyboard> _keyboard;

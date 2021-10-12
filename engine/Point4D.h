@@ -8,7 +8,7 @@
 #include <array>
 #include "Consts.h"
 
-class Point4D {
+class Point4D final {
 private:
     std::array<double, 4> _arr_point{};
 

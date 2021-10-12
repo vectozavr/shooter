@@ -7,8 +7,7 @@
 
 #include <SFML/Network.hpp>
 
-class UDPConnection
-{
+class UDPConnection final {
 private:
     sf::Uint16 _id;
     sf::IpAddress _ip;

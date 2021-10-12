@@ -8,7 +8,7 @@
 #include <array>
 #include "Point4D.h"
 
-class Vec3D {
+class Vec3D final {
 private:
     std::array<double, 3> _arr_point{};
 

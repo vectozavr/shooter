@@ -8,7 +8,7 @@
 #include "Point4D.h"
 #include "Triangle.h"
 
-class Plane {
+class Plane final {
 private:
     // You can define plane by defining the points in 3D space
     Triangle _triangle;

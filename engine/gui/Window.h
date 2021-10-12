@@ -12,7 +12,7 @@
 #include "../Screen.h"
 #include "../Mouse.h"
 
-class Window {
+class Window final {
 private:
     std::string _name;
     std::string _backTexture;

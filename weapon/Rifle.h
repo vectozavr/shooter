@@ -7,7 +7,7 @@
 
 #include "Weapon.h"
 
-class Rifle : public Weapon {
+class Rifle final : public Weapon {
 public:
     explicit Rifle(int ammo = 5, const std::string& weaponName = "rifle");
 };
