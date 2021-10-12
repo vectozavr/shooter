@@ -6,22 +6,16 @@
 
 bool Animation::updateState() {
     if(!_started) {
-        _startAnimationPoint = Time::time();
-        _endAnimationPoint = _startAnimationPoint + _duration;
         _started = true;
         return _duration != 0;
     }
 
-    _timeOld = _time;
     // linear normalized time:
-    _time = (Time::time() - _startAnimationPoint)/(_endAnimationPoint - _startAnimationPoint);
+    _dtime = Time::deltaTime()/_duration;
+    _time += _dtime;
 
-    if(_looped != LoopOut::Continue || _time < 0.5)
-        _dtime = _time - _timeOld;
-    else {
-        _time = _timeOld;
-        //_intType = linear;
-    }
+    if(_looped == LoopOut::Continue && _time > 0.5)
+        _time = 0.5;
 
     switch (_intType) {
         case InterpolationType::bezier:

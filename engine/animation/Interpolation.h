@@ -22,6 +22,8 @@ namespace Interpolation {
     static double dBouncing(double t, double dt);
 };
 
+
+
 double Interpolation::Linear(double t) {
     if(t < 0)
         t = -t;

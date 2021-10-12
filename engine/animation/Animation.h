@@ -26,10 +26,7 @@ public:
 protected:
     double _time = 0; // normalized time (from 0 to 1)
     double _dtime = 0;
-    double _timeOld = 0;
 
-    double _endAnimationPoint = 0;
-    double _startAnimationPoint = 0;
     double _duration = 0;
     bool _started = false;
     LoopOut _looped = LoopOut::None;
