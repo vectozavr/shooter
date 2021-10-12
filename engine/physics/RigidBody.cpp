@@ -144,9 +144,7 @@ std::pair<bool, Simplex> RigidBody::checkGJKCollision(std::shared_ptr<RigidBody>
     // New direction is towards the origin
     std::unique_ptr<Vec3D> direction = std::make_unique<Vec3D>(-*support);
 
-    int iterations = 0;
-
-    while (iterations < Consts::GJK_MAX_ITERATIONS) {
+    while (true) {
         support = std::make_unique<Vec3D>(_support(obj, *direction));
 
         if (support->dot(*direction) <= 0)
@@ -164,11 +162,7 @@ std::pair<bool, Simplex> RigidBody::checkGJKCollision(std::shared_ptr<RigidBody>
                 _inCollision = true;
             return std::make_pair(true, *points);
         }
-
-        iterations++;
     }
-
-    return std::make_pair(false, *points); // no collision
 }
 
 CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody> obj) {
@@ -187,9 +181,7 @@ CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody>
     std::shared_ptr<Vec3D> minNormal{};
     double minDistance = std::numeric_limits<double>::max();
 
-    int iterations = 0;
-
-    while ((minDistance == std::numeric_limits<double>::max()) && (iterations < Consts::GJK_MAX_ITERATIONS)) {
+    while (minDistance == std::numeric_limits<double>::max()) {
         minNormal = std::make_shared<Vec3D>(normals[minFace]->normal);
         minDistance = normals[minFace]->distance;
 
@@ -244,7 +236,6 @@ CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody>
             faces  .insert(faces  .end(), newFaces  .begin(), newFaces  .end());
             normals.insert(normals.end(), newNormals.begin(), newNormals.end());
         }
-        iterations++;
     }
 
     _collisionNormal = minNormal;
