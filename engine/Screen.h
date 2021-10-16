@@ -12,21 +12,20 @@
 #include <map>
 #include "utils/Time.h"
 #include "Mouse.h"
+#include "Consts.h"
 
 class Screen final {
 private:
-    int _w = 1920;
-    int _h = 1080;
+    int _w;
+    int _h;
 
     std::string _title;
 
     sf::Color _background;
 
-    std::string _font = "engine/fonts/Roboto-Thin.ttf";
-
     std::shared_ptr<sf::RenderWindow> _window;
 public:
-    void open(int screenWidth = 1920, int screenHeight = 1080, const std::string& name = "engine", bool verticalSync = true, sf::Color background = sf::Color(255, 255, 255), sf::Uint32 style = sf::Style::Default);
+    void open(int screenWidth = Consts::STANDARD_SCREEN_WIDTH, int screenHeight = Consts::STANDARD_SCREEN_HEIGHT, const std::string& name = Consts::PROJECT_NAME, bool verticalSync = true, sf::Color background = Consts::BACKGROUND_COLOR, sf::Uint32 style = sf::Style::Default);
 
     void display();
     void clear();

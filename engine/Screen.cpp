@@ -7,8 +7,6 @@
 #include <utility>
 #include "utils/Log.h"
 #include "ResourceManager.h"
-#include <cstdio>
-
 
 void Screen::open(int screenWidth, int screenHeight, const std::string &name, bool verticalSync, sf::Color background, sf::Uint32 style) {
     _title = name;
@@ -69,7 +67,7 @@ void Screen::close() {
 void Screen::debugText(const std::string& text) {
     sf::Text t;
 
-    t.setFont(*ResourceManager::loadFont(_font));
+    t.setFont(*ResourceManager::loadFont(Consts::THIN_FONT));
     t.setString(text);
     t.setCharacterSize(30);
     t.setFillColor(sf::Color::Black);
@@ -92,7 +90,7 @@ void Screen::drawTetragon(const Vec2D &p1, const Vec2D &p2, const Vec2D &p3, con
 void Screen::drawText(const std::string& string, const Vec2D &position, int size, sf::Color color) {
     sf::Text text;
 
-    text.setFont(*ResourceManager::loadFont("engine/fonts/Roboto-Medium.ttf"));
+    text.setFont(*ResourceManager::loadFont(Consts::MEDIUM_FONT));
 
     text.setCharacterSize(size);
     text.setFillColor(color);

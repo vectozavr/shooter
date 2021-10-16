@@ -123,8 +123,8 @@ void Server::processCustomPacket(MsgType type, sf::Packet& packet, sf::Uint16 se
 }
 
 void Server::processStop() {
-    for (auto it = _players.begin(); it != _players.end();)
-        _players.erase(it++);
+    _players.clear();
+    _bonuses.clear();
 }
 
 void Server::generateBonuses() {
@@ -160,4 +160,8 @@ void Server::updateInfo() {
             bonus.second.onTheMap = true;
         }
     }
+}
+
+Server::~Server() {
+    processStop();
 }

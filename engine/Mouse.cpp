@@ -34,7 +34,7 @@ bool Mouse::isButtonTapped(sf::Mouse::Button button) {
     if(_tappedButtons.count(button) == 0) {
         _tappedButtons.emplace(button, Time::time());
         return true;
-    } else if((Time::time() - _tappedButtons[button]) > 0.2) {
+    } else if((Time::time() - _tappedButtons[button]) > Consts::TAP_DELAY) {
         _tappedButtons[button] = Time::time();
         return true;
     }

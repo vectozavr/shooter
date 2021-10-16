@@ -4,18 +4,18 @@
 
 #include "PlayerController.h"
 #include "engine/utils/Log.h"
-#include "engine/animation/AColor.h"
 #include "engine/animation/AFunction.h"
 #include "engine/animation/AWait.h"
 #include "engine/animation/ATranslate.h"
 #include "engine/animation/ATranslateToPoint.h"
 #include "engine/animation/Timeline.h"
+#include "ShooterConsts.h"
 
 PlayerController::PlayerController(std::shared_ptr<Player> player,
                                    std::shared_ptr<Keyboard> keyboard,
                                    std::shared_ptr<Mouse> mouse) : _player(player), _keyboard(keyboard), _mouse(mouse) {
-    _slowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/slow_mo.ogg"));
-    _unSlowMoSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/unslow_mo.ogg"));
+    _slowMoSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::SLOW_MO_SOUND));
+    _unSlowMoSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::UN_SLOW_MO_SOUND));
 }
 
 void PlayerController::update() {
@@ -29,14 +29,14 @@ void PlayerController::update() {
         else {
             _player->setAbility(0);
             _isInSlowMo = false;
-            _player->setVelocity(_player->velocity() * _slowMoCoefficient);
-            _player->setAcceleration(_player->acceleration() * _slowMoCoefficient * _slowMoCoefficient);
+            _player->setVelocity(_player->velocity() * ShooterConsts::SLOW_MO_COEFFICIENT);
+            _player->setAcceleration(_player->acceleration() * ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT);
             _slowMoSound.stop();
             _unSlowMoSound.play();
         }
     }
 
-    double coeff = _isInSlowMo ? 1.0 / _slowMoCoefficient : 1.0;
+    double coeff = _isInSlowMo ? 1.0 / ShooterConsts::SLOW_MO_COEFFICIENT : 1.0;
 
     bool inRunning_old = _inRunning;
     _inRunning = (  Keyboard::isKeyPressed(sf::Keyboard::A) ||
@@ -71,25 +71,25 @@ void PlayerController::update() {
     // Left and right
 
     if (Keyboard::isKeyPressed(sf::Keyboard::A)) {
-        _player->translate(_player->left() * Time::deltaTime() * _walkSpeed * coeff);
+        _player->translate(_player->left() * Time::deltaTime() * ShooterConsts::WALK_SPEED * coeff);
         if(_player->inCollision())
             _player->setVelocity(Vec3D{0,0,0});
     }
     if (Keyboard::isKeyPressed(sf::Keyboard::D)) {
-        _player->translate(-_player->left() * Time::deltaTime() * _walkSpeed * coeff);
+        _player->translate(-_player->left() * Time::deltaTime() * ShooterConsts::WALK_SPEED * coeff);
         if(_player->inCollision())
             _player->setVelocity(Vec3D{0,0,0});
     }
 
     // Forward and backward
     if (Keyboard::isKeyPressed(sf::Keyboard::W)) {
-        _player->translate(_player->lookAt() * Time::deltaTime() * _walkSpeed * coeff);
+        _player->translate(_player->lookAt() * Time::deltaTime() * ShooterConsts::WALK_SPEED * coeff);
         if(_player->inCollision())
             _player->setVelocity(Vec3D{0,0,0});
     }
 
     if (Keyboard::isKeyPressed(sf::Keyboard::S)) {
-        _player->translate(-_player->lookAt() * Time::deltaTime() * _walkSpeed * coeff);
+        _player->translate(-_player->lookAt() * Time::deltaTime() * ShooterConsts::WALK_SPEED * coeff);
 
         if(_player->inCollision())
             _player->setVelocity(Vec3D{0,0,0});
@@ -98,14 +98,14 @@ void PlayerController::update() {
     if (_player->ability() > 0 && !_isInSlowMo && Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
         // slow mo
         _isInSlowMo = true;
-        _player->setVelocity(_player->velocity() / _slowMoCoefficient);
-        _player->setAcceleration(_player->acceleration() / (_slowMoCoefficient * _slowMoCoefficient));
+        _player->setVelocity(_player->velocity() / ShooterConsts::SLOW_MO_COEFFICIENT);
+        _player->setAcceleration(_player->acceleration() / (ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT));
         _unSlowMoSound.stop();
         _slowMoSound.play();
     } else if (_isInSlowMo && !Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
         _isInSlowMo = false;
-        _player->setVelocity(_player->velocity() * _slowMoCoefficient);
-        _player->setAcceleration(_player->acceleration() * _slowMoCoefficient * _slowMoCoefficient);
+        _player->setVelocity(_player->velocity() * ShooterConsts::SLOW_MO_COEFFICIENT);
+        _player->setAcceleration(Vec3D(0, -ShooterConsts::GRAVITY * ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT, 0));
         _slowMoSound.stop();
         _unSlowMoSound.play();
     }
@@ -113,12 +113,12 @@ void PlayerController::update() {
     if (Keyboard::isKeyPressed(sf::Keyboard::Space) && _player->inCollision()) {
         // if we just want to jump, we have to add particular speed
         if (!_isSliding)
-            _player->addVelocity(Vec3D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * _jumpHeight) * coeff, 0 });
+            _player->addVelocity(Vec3D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * ShooterConsts::JUMP_HEIGHT) * coeff, 0 });
         // if we want to slide, we have to add speed * 60/fps to make it independent on frame rate
         else
-            _player->addVelocity(Vec3D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * _jumpHeight) * coeff * 60.0 / Time::fps(), 0 });
+            _player->addVelocity(Vec3D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * ShooterConsts::JUMP_HEIGHT) * coeff * 60.0 / Time::fps(), 0 });
 
-        _player->translate(Vec3D{ 0, Time::deltaTime() * _walkSpeed * 2 * coeff * 60.0 / Time::fps(), 0 });
+        _player->translate(Vec3D{ 0, Time::deltaTime() * ShooterConsts::WALK_SPEED * 2 * coeff * 60.0 / Time::fps(), 0 });
         _isSliding = true;
     } else {
         _isSliding = false;
@@ -127,10 +127,10 @@ void PlayerController::update() {
     // Mouse movement
     Vec2D displacement = _mouse->getMouseDisplacement();
 
-    _player->rotate(Vec3D{0, -displacement.x() / 1000.0, 0});
-    _player->setVelocity(Matrix4x4::RotationY(-displacement.x() / 1000.0) * _player->velocity());
+    _player->rotate(Vec3D{0, -displacement.x() * ShooterConsts::MOUSE_SENSITIVITY, 0});
+    _player->setVelocity(Matrix4x4::RotationY(-displacement.x() * ShooterConsts::MOUSE_SENSITIVITY) * _player->velocity());
 
-    double rotationLeft = displacement.y() / 1000.0;
+    double rotationLeft = displacement.y() * ShooterConsts::MOUSE_SENSITIVITY;
 
     // You can only see in range [-90 : 90] grad
     if (_player->headAngle() + rotationLeft > Consts::PI / 2)

@@ -15,21 +15,17 @@
 #include "weapon/Gun.h"
 #include "weapon/Gold_Ak47.h"
 #include "weapon/Rifle.h"
+#include "ShooterConsts.h"
 
 class Player final : public RigidBody{
 private:
-    double _healthMax = 100;
-    double _health = _healthMax;
-
-    double _abilityMax = 10;
-    double _ability = _abilityMax;
+    double _health = ShooterConsts::HEALTH_MAX;
+    double _ability = ShooterConsts::ABILITY_MAX;
 
     double _headAngle = 0;
 
     int _kills = 0;
     int _deaths = 0;
-
-    double _g = 35;
 
     // sounds
     sf::Sound _killSound;
@@ -50,20 +46,7 @@ private:
 
     std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> _rayCastFunction;
 public:
-    Player() {
-        loadObj("obj/cube.obj", "", Vec3D{0.5, 1.9, 0.5});
-        setAcceleration(Vec3D{0, -_g, 0});
-        setCollision(true);
-        //setVisible(false);
-        setColor({240, 168, 168});
-
-        _changeWeaponSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/change_weapon.ogg"));
-
-        _fullHealthSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/fullHealth.ogg"));
-        _fullAbilitySound.setBuffer(*ResourceManager::loadSoundBuffer("sound/fullAbility.ogg"));
-
-        setCollisionCallBack([this](const std::string& objName, std::shared_ptr<RigidBody> obj) {collisionWithObject(objName, obj);});
-    };
+    Player();
 
     void setHealth(double h) {
         _health = h;
@@ -75,17 +58,9 @@ public:
     [[nodiscard]] double health() const { return _health; }
     [[nodiscard]] double ability() const { return _ability; }
 
-    [[nodiscard]] double maxHealth() const { return _healthMax; }
-    [[nodiscard]] double maxAbility() const { return _abilityMax; }
 
-    void setFullHealth() {
-        _health = _healthMax;
-        _fullHealthSound.play();
-    }
-    void setFullAbility() {
-        _ability = _abilityMax;
-        _fullAbilitySound.play();
-    }
+    void setFullHealth();
+    void setFullAbility();
 
     void initWeapons();
     void addWeapon(std::shared_ptr<Weapon> weapon);
@@ -117,7 +92,7 @@ public:
         _takeBonusCallBack = std::move(take);
     }
     void setAddWeaponCallBack(std::function<void(std::shared_ptr<Weapon>)> addWeapon) {
-        _addWeaponCallBack = addWeapon;
+        _addWeaponCallBack = std::move(addWeapon);
     }
     void setRemoveWeaponCallBack(std::function<void(std::shared_ptr<Weapon>)> removeWeapon) {
         _removeWeaponCallBack = std::move(removeWeapon);

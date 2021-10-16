@@ -46,6 +46,8 @@ public:
 
     void update();
     MsgType receive(sf::Packet& packet, sf::Uint16& senderId);
+
+    ~UDPSocket();
 };
 
 

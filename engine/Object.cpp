@@ -137,3 +137,7 @@ void Object::attach(std::shared_ptr<Object> object, const std::string &name) {
 void Object::unattach(const std::string &name) {
     _attachedObjects.erase(name);
 }
+
+Object::~Object() {
+    _attachedObjects.clear();
+}

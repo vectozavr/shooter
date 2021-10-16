@@ -2,13 +2,13 @@
 // Created by Иван Ильин on 01.06.2021.
 //
 
-#include <sstream>
 #include <utility>
 #include "Weapon.h"
 #include "../engine/ResourceManager.h"
 #include "../engine/utils/Log.h"
 #include "../engine/animation/AColor.h"
 #include "../engine/animation/AFunction.h"
+#include "../ShooterConsts.h"
 
 using namespace std;
 
@@ -20,10 +20,10 @@ Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, co
     rotate(r);
     translate(t);
 
-    noAmmoSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/no_ammo.ogg"));
+    noAmmoSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::NO_AMMO_SOUND));
 }
 
-std::map<std::string, double> Weapon::fire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) {
+std::map<std::string, double> Weapon::fire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction) {
     if(_clipAmmo == 0) {
         reload();
         if(_clipAmmo == 0)
@@ -39,7 +39,7 @@ std::map<std::string, double> Weapon::fire(std::function<std::pair<Vec3D, std::s
     fireSound.play();
     Log::log("Weapon::fire (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
 
-    return processFire(std::move(rayCastFunction), position, direction);
+    return processFire(std::move(rayCastFunction));
 }
 
 void Weapon::reload() {
@@ -58,21 +58,26 @@ void Weapon::reload() {
     _lastReloadTime = Time::time();
 }
 
-std::map<std::string, double> Weapon::processFire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& pos, const Vec3D& direction) {
+std::map<std::string, double> Weapon::processFire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction) {
+    return addTrace(std::move(rayCastFunction), position() + Vec3D(triangles().back()[0]), -lookAt());
+}
+
+std::map<std::string, double> Weapon::addTrace(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& from, const Vec3D& directionTo) {
     std::map<std::string, double> damagedPlayers;
 
+    double spreading = _spreading*ShooterConsts::FIRE_DISTANCE/100;
+
     //generate random vector
-    Vec3D randV(10.0*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10.0*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), 10.0*_spreading*(1.0 - 2.0*(double)rand()/RAND_MAX));
+    Vec3D randV(spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), spreading*(1.0 - 2.0*(double)rand()/RAND_MAX), spreading*(1.0 - 2.0*(double)rand()/RAND_MAX));
 
     // damage player
-    auto rayCast = rayCastFunction(pos, pos + direction * 1000 + randV);
+    auto rayCast = rayCastFunction(from, from + directionTo * ShooterConsts::FIRE_DISTANCE + randV);
     if(rayCast.second.find("Enemy") != std::string::npos) {
-        damagedPlayers[rayCast.second] += _damage/(1.0 + (pos - rayCast.first).abs());
+        damagedPlayers[rayCast.second] += _damage/(1.0 + (from - rayCast.first).abs());
     }
 
     // add trace line
-    Vec3D to = rayCast.first == Vec3D(0) ? pos + direction * 1000 + randV: rayCast.first;
-    Vec3D from = position() + Vec3D(triangles().back()[0]);
+    Vec3D to = rayCast.first == Vec3D(0) ? from + directionTo * ShooterConsts::FIRE_DISTANCE + randV: rayCast.first;
     _addTraceCallBack(from, to);
 
     return damagedPlayers;

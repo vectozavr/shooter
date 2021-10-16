@@ -82,6 +82,8 @@ public:
 
     [[nodiscard]] const std::function<void(const std::string&, std::shared_ptr<RigidBody>)>& collisionCallBack() const { return _collisionCallBack; }
     void setCollisionCallBack(const std::function<void(const std::string&, std::shared_ptr<RigidBody>)>& f) { _collisionCallBack = f; }
+
+    ~RigidBody() override = default;
 };
 
 

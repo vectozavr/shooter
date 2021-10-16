@@ -4,6 +4,7 @@
 
 #include "Keyboard.h"
 #include "utils/Time.h"
+#include "Consts.h"
 
 bool Keyboard::isKeyPressed(sf::Keyboard::Key key) {
     return sf::Keyboard::isKeyPressed(key);
@@ -16,7 +17,7 @@ bool Keyboard::isKeyTapped(sf::Keyboard::Key key) {
     if(_tappedKeys.count(key) == 0) {
         _tappedKeys.emplace(key, Time::time());
         return true;
-    } else if((Time::time() - _tappedKeys[key]) > 0.2) {
+    } else if((Time::time() - _tappedKeys[key]) > Consts::TAP_DELAY) {
         _tappedKeys[key] = Time::time();
         return true;
     }

@@ -37,6 +37,8 @@ public:
     void generateBonuses();
 
     void updateInfo() override;
+
+    ~Server() override;
 };
 
 

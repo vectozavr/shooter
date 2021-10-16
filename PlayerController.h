@@ -17,15 +17,12 @@ private:
 
     bool _inRunning = false;
     bool _isSliding = false;
-    double _slowMoCoefficient = 5;
     bool _isInSlowMo = false;
 
     sf::Sound _slowMoSound;
     sf::Sound _unSlowMoSound;
     sf::Sound _walkSound;
 
-    double _jumpHeight = 3;
-    double _walkSpeed = 10;
 public:
     PlayerController(std::shared_ptr<Player> player, std::shared_ptr<Keyboard> keyboard, std::shared_ptr<Mouse> mouse);
     void update();

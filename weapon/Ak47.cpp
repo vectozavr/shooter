@@ -4,12 +4,13 @@
 
 #include "../engine/ResourceManager.h"
 #include "Ak47.h"
+#include "../ShooterConsts.h"
 
 using namespace std;
 
-Ak47::Ak47(int ammo, const std::string& weaponName) : Weapon(weaponName, "obj/ak47.obj", "obj/ak47_mat.txt", Vec3D{3, 3, 3}, Vec3D{-0.8, 1.3, 0.3}, Vec3D{0, Consts::PI, 0}) {
-    fireSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/ak47.ogg"));
-    reloadSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/reload_ak47.ogg"));
+Ak47::Ak47(int ammo, const std::string& weaponName) : Weapon(weaponName, ShooterConsts::AK47_OBJ, "obj/ak47_mat.txt", Vec3D{3, 3, 3}, Vec3D{-0.8, 1.3, 0.3}, Vec3D{0, Consts::PI, 0}) {
+    fireSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::AK47_FIRE_SOUND));
+    reloadSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::AK47_RELOAD_SOUND));
 
 
     _stockAmmo = ammo - _clipCapacity;

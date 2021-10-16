@@ -27,7 +27,7 @@ public:
     // rayCast returns pair of Point4D and std::string:
     // 1) Point4D is point of collision
     // 2) std::string - title of the object
-    std::pair<Vec3D, std::string> rayCast(const Vec3D& from, const Vec3D& to);
+    std::pair<Vec3D, std::string> rayCast(const Vec3D& from, const Vec3D& to, const std::string& tag = "");
 
     void loadMap(const std::string& filename, const std::string& materials, const std::string& name = "map", const Vec3D & scale = Vec3D{1, 1, 1});
 };

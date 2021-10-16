@@ -4,8 +4,8 @@
 
 #include "UDPSocket.h"
 #include "../utils/Time.h"
-#include "config.h"
 #include <algorithm>
+#include "../Consts.h"
 
 UDPSocket::UDPSocket() : _ownId(0), _nextRelyMsgId(0)
 {
@@ -123,7 +123,7 @@ void UDPSocket::update()
 
     for (auto it = _confirmTimes.begin(); it != _confirmTimes.end();)
     {
-        if (Time::time() - it->second > Network::TIMEOUT)
+        if (Time::time() - it->second > Consts::NETWORK_TIMEOUT)
             _confirmTimes.erase(it++);
         else
             ++it;
@@ -160,7 +160,7 @@ MsgType UDPSocket::receive(sf::Packet& packet, sf::Uint16& senderId)
     if (type == MsgType::Connect)
     {
         sf::Uint32 version = 0;
-        if (!(packet >> version) || version != Network::VERSION)
+        if (!(packet >> version) || version != Consts::NETWORK_VERSION)
             return MsgType::Error;
         sf::Uint16 tmp;
         for (tmp = 64; tmp >= 1; tmp--)
@@ -192,4 +192,8 @@ bool UDPSocket::confirmed(sf::Uint16 msgId, sf::Uint16 senderId)
     _confirmTimes[confirmId] = Time::time();
 
     return repeat;
+}
+
+UDPSocket::~UDPSocket() {
+    unbind();
 }

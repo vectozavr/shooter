@@ -7,18 +7,33 @@
 #include "engine/ResourceManager.h"
 #include "engine/utils/Log.h"
 
+Player::Player() {
+    loadObj(ShooterConsts::CUBE_OBJ, "", Vec3D{0.5, 1.9, 0.5});
+    setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
+    setCollision(true);
+    setVisible(false);
+    setColor({240, 168, 168});
+
+    _changeWeaponSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::CHANGE_WEAPON_SOUND));
+
+    _fullHealthSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::RESTORE_HEALTH_SOUND));
+    _fullAbilitySound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::RESTORE_ABILITY_SOUND));
+
+    setCollisionCallBack([this](const std::string& objName, std::shared_ptr<RigidBody> obj) {collisionWithObject(objName, obj);});
+}
+
 void Player::rotateWeaponsRelativePoint(const Vec3D& point4D, const Vec3D& v, double val) {
     for(auto& weapon : _weapons)
         weapon->rotateRelativePoint(point4D, v, val);
 }
 
 void Player::playDeath() {
-    _deathSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/classic_hurt.ogg"));
+    _deathSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::DEATH_SOUND));
     _deathSound.play();
 }
 
 void Player::playKill() {
-    _killSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/kill.ogg"));
+    _killSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::KILL_SOUND));
     _killSound.play();
 }
 
@@ -111,7 +126,7 @@ void Player::previousWeapon() {
 
 void Player::fire() {
     if(attached("camera") != nullptr) {
-        auto damagedPlayers = _weapons[_selectedWeapon]->fire(_rayCastFunction, attached("camera")->position(), attached("camera")->lookAt());
+        auto damagedPlayers = _weapons[_selectedWeapon]->fire(_rayCastFunction);
         for(auto& damagedPlayer : damagedPlayers) {
             sf::Uint16 targetId = std::stoi(damagedPlayer.first.substr(6));
             _damagePlayerCallBack(targetId, damagedPlayer.second);
@@ -121,4 +136,14 @@ void Player::fire() {
 
 void Player::reload() {
     _weapons[_selectedWeapon]->reload();
+}
+
+void Player::setFullHealth() {
+    _health = ShooterConsts::HEALTH_MAX;
+    _fullHealthSound.play();
+}
+
+void Player::setFullAbility() {
+    _ability = ShooterConsts::ABILITY_MAX;
+    _fullAbilitySound.play();
 }

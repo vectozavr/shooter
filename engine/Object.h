@@ -48,6 +48,8 @@ public:
     void attach(std::shared_ptr<Object> object, const std::string& name);
     void unattach(const std::string& name);
     std::shared_ptr<Object> attached(const std::string& name);
+
+    virtual ~Object();
 };
 
 #endif //MINECRAFT_3DZAVR_OBJECT_H

@@ -215,3 +215,7 @@ void Mesh::setTriangles(const vector<Triangle> &t) {
         _tris.push_back(tri);
     }
 }
+
+Mesh::~Mesh() {
+    _tris.clear();
+}

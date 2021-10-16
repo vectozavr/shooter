@@ -4,7 +4,7 @@
 
 #include "UDPConnection.h"
 #include "../utils/Time.h"
-#include "config.h"
+#include "../Consts.h"
 
 UDPConnection::UDPConnection(sf::Uint16 id, sf::IpAddress ip, sf::Uint16 port) : _id(id), _ip(ip), _port(port), lastMsg(Time::time()) {}
 
@@ -25,7 +25,7 @@ sf::Uint16 UDPConnection::port() const
 
 bool UDPConnection::timeout() const
 {
-    return Time::time() - lastMsg > Network::TIMEOUT;
+    return Time::time() - lastMsg > Consts::NETWORK_TIMEOUT;
 }
 
 bool UDPConnection::same(sf::IpAddress& ip, sf::Uint16 port) const

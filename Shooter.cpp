@@ -8,6 +8,7 @@
 #include "engine/animation/AFunction.h"
 #include "engine/animation/ARotate.h"
 #include "engine/animation/Timeline.h"
+#include "ShooterConsts.h"
 
 using namespace std;
 
@@ -68,14 +69,14 @@ void Shooter::start() {
 
     mouse->setMouseCursorVisible(true);
 
-    world->loadMap("maps/map1.obj", "maps/materials.txt", "map", Vec3D{5, 5, 5});
+    world->loadMap(ShooterConsts::MAP_OBJ, "maps/materials.txt", "map", Vec3D{5, 5, 5});
 
     player = std::make_shared<Player>();
     playerController = std::make_shared<PlayerController>(player, keyboard, mouse);
 
     player->setAddTraceCallBack([this](const Vec3D& from, const Vec3D& to){ client->addTrace(from, to); addFireTrace(from, to); });
     player->setDamagePlayerCallBack([this] (sf::Uint16 targetId, double damage) { client->damagePlayer(targetId, damage); });
-    player->setRayCastFunction([this](const Vec3D& from, const Vec3D& to) { return world->rayCast(from, to); });
+    player->setRayCastFunction([this](const Vec3D& from, const Vec3D& to) { return world->rayCast(from, to, "Enemy"); });
     player->setTakeBonusCallBack([this] (const string& bonusName) { client->takeBonus(bonusName); });
     player->setAddWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ addWeapon(weapon); });
     player->setRemoveWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ removeWeapon(weapon); });
@@ -93,12 +94,12 @@ void Shooter::start() {
 
     // windows init:
     mainMenu.title("Main menu");
-    mainMenu.setBackgroundTexture("textures/back.png", 1.1, 1.1, screen->width(), screen->height());
+    mainMenu.setBackgroundTexture(ShooterConsts::MAIN_MENU_BACK, 1.1, 1.1, screen->width(), screen->height());
 
-    mainMenu.addButton(screen->width()/2, 200, 200, 20, [this] () { this->play(); }, "Play", 5, 5, "textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "sound/click.ogg");
-    mainMenu.addButton(screen->width()/2, 350, 200, 20, [this] () { this->player->translateToPoint(Vec3D{0, 0, 0}); this->player->setVelocity({}); this->play(); }, "Respawn", 5, 5, "textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "sound/click.ogg");
+    mainMenu.addButton(screen->width()/2, 200, 200, 20, [this] () { this->play(); }, "Play", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255}, ShooterConsts::CLICK_SOUND);
+    mainMenu.addButton(screen->width()/2, 350, 200, 20, [this] () { this->player->translateToPoint(Vec3D{0, 0, 0}); this->player->setVelocity({}); this->play(); }, "Respawn", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255}, ShooterConsts::CLICK_SOUND);
 
-    mainMenu.addButton(screen->width()/2, 500, 200, 20, [this] () { client->disconnect(); server->stop(); this->exit();}, "Exit", 5, 5, "textures/gui.png", {0, 66}, {0, 86}, {0, 46}, "engine/fonts/Roboto-Medium.ttf", {255, 255, 255}, "sound/click.ogg");
+    mainMenu.addButton(screen->width()/2, 500, 200, 20, [this] () { client->disconnect(); server->stop(); this->exit();}, "Exit", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255}, ShooterConsts::CLICK_SOUND);
 
     // connecting to the server
     InitNetwork();
@@ -133,7 +134,7 @@ void Shooter::update() {
     }
 
     if(inGame) {
-        screen->setTitle("Shooter");
+        screen->setTitle(ShooterConsts::PROJECT_NAME);
         playerController->update();
         mouse->setMouseInCenter();
     } else {
@@ -144,7 +145,7 @@ void Shooter::update() {
 
     // background sounds and music control
     if(backgroundNoise.getStatus() != sf::Sound::Status::Playing) {
-        backgroundNoise.setBuffer(*ResourceManager::loadSoundBuffer("sound/backNoise.ogg"));
+        backgroundNoise.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::BACK_NOISE));
         backgroundNoise.play();
     }
 }
@@ -152,7 +153,7 @@ void Shooter::update() {
 void Shooter::gui() {
 
     sf::Sprite sprite;
-    sprite.setTexture(*ResourceManager::loadTexture("textures/gui.png"));
+    sprite.setTexture(*ResourceManager::loadTexture(ShooterConsts::MAIN_MENU_GUI));
     sprite.setTextureRect(sf::IntRect(243, 3, 9, 9));
     sprite.scale(3, 3);
     sprite.setPosition(screen->width() / 2.0f - 27.0f/2.0f, screen->height() / 2.0f - 27.0f/2.0f);
@@ -172,14 +173,14 @@ void Shooter::drawPlayerStats() {
     int height = 10;
 
     screen->drawTetragon(Vec2D{xPos, yPos},
-                         Vec2D{xPos + width * player->health() / player->maxHealth(), yPos},
-                         Vec2D{xPos + width * player->health() / player->maxHealth(), yPos + height},
+                         Vec2D{xPos + width * player->health() / ShooterConsts::HEALTH_MAX, yPos},
+                         Vec2D{xPos + width * player->health() / ShooterConsts::HEALTH_MAX, yPos + height},
                          Vec2D{xPos, yPos + height},
-                         { static_cast<sf::Uint8>((player->maxHealth() - player->health())/player->maxHealth() * 255), static_cast<sf::Uint8>(player->health() * 255 / player->maxHealth()), 0, 100 });
+                         { static_cast<sf::Uint8>((ShooterConsts::HEALTH_MAX - player->health())/ShooterConsts::HEALTH_MAX * 255), static_cast<sf::Uint8>(player->health() * 255 / ShooterConsts::HEALTH_MAX), 0, 100 });
 
     screen->drawTetragon(Vec2D{xPos, yPos - 15},
-                         Vec2D{xPos + width * player->ability() / player->maxAbility(), yPos - 15},
-                         Vec2D{xPos + width * player->ability() / player->maxAbility(), yPos - 15 + height},
+                         Vec2D{xPos + width * player->ability() / ShooterConsts::ABILITY_MAX, yPos - 15},
+                         Vec2D{xPos + width * player->ability() / ShooterConsts::ABILITY_MAX, yPos - 15 + height},
                          Vec2D{xPos, yPos - 15 + height},
                          { 255, 168, 168, 100 });
 
@@ -208,18 +209,18 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     newPlayer->setAcceleration(Vec3D{0, 0, 0});
 
     // add head and other stuff:
-    world->loadBody(name + "_head", "obj/cube.obj", "", Vec3D{0.7, 0.7, 0.7});
+    world->loadBody(name + "_head", ShooterConsts::CUBE_OBJ, "", Vec3D{0.7, 0.7, 0.7});
     world->body(name + "_head")->translate(Vec3D{0, 2, 0});
     world->body(name + "_head")->setCollider(false);
     newPlayer->attach(world->body(name + "_head"), "head");
 
-    world->loadBody(name + "_eye1", "obj/cube.obj", "", Vec3D{0.2, 0.2, 0.05});
+    world->loadBody(name + "_eye1", ShooterConsts::CUBE_OBJ, "", Vec3D{0.2, 0.2, 0.05});
     world->body(name + "_eye1")->translate(Vec3D{0.3, 2.1, 0.7});
     world->body(name + "_eye1")->setCollider(false);
     world->body(name + "_eye1")->setColor({147, 159, 255});
     world->body(name + "_head")->attach(world->body(name + "_eye1"), "eye1");
 
-    world->loadBody(name + "_eye2", "obj/cube.obj", "", Vec3D{0.2, 0.2, 0.05});
+    world->loadBody(name + "_eye2", ShooterConsts::CUBE_OBJ, "", Vec3D{0.2, 0.2, 0.05});
     world->body(name + "_eye2")->translate(Vec3D{-0.3, 2.1, 0.7});
     world->body(name + "_eye2")->setCollider(false);
     world->body(name + "_eye2")->setColor({147, 159, 255});

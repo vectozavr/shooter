@@ -3,7 +3,6 @@
 //
 
 #include "RigidBody.h"
-#include "../Plane.h"
 #include "../utils/Log.h"
 #include "../utils/Time.h"
 #include <iostream>

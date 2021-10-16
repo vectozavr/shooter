@@ -29,7 +29,7 @@ protected:
 
     double _spreading = 2.0;
 
-    std::string _name = "Weapon_name";
+    std::string _name = "Weapon";
 
     double _lastFireTime = std::numeric_limits<double>::min();
     double _lastReloadTime = std::numeric_limits<double>::min();
@@ -42,12 +42,14 @@ protected:
 
     std::function<void(const Vec3D&, const Vec3D&)> _addTraceCallBack;
 
-    virtual std::map<std::string, double> processFire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
+    std::map<std::string, double> addTrace(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
+
+    virtual std::map<std::string, double> processFire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction);
 
 public:
     Weapon(const std::string& weaponName, const std::string& objFileName, const std::string& matFileName, const Vec3D& scale, const Vec3D& translate, const Vec3D& rotate);
 
-    std::map<std::string, double> fire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
+    std::map<std::string, double> fire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction);
     void reload();
 
     [[nodiscard]] std::pair<double, double> balance() const{ return std::make_pair(_clipAmmo, _stockAmmo); }

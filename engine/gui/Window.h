@@ -31,7 +31,7 @@ public:
                    std::function<void()> click,
                    const std::string& text = "_button", double sx = 1, double sy = 1,
                    const std::string& texture = "", tPos usualState = {}, tPos selectedState = {}, tPos pressedState = {},
-                   const std::string& font = "../engine/fonts/Roboto-Medium.ttf", sf::Color textColor = {255, 255, 255}, const std::string& clickSound = "");
+                   const std::string& font = Consts::MEDIUM_FONT, sf::Color textColor = {255, 255, 255}, const std::string& clickSound = "");
 
     [[nodiscard]] std::string title() const { return _name; }
     void title(const std::string& title) { _name = title; }

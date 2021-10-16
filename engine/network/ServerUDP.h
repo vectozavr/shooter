@@ -23,7 +23,6 @@ protected:
     bool timeout(sf::Uint16 id);
 
     std::set<sf::Uint16> _clients{};
-
 public:
     explicit ServerUDP();
     [[nodiscard]] bool isWorking() const;
@@ -44,6 +43,8 @@ public:
     virtual void processCustomPacket(MsgType type, sf::Packet& packet, sf::Uint16 senderId){};
 
     virtual void processStop(){};
+
+    virtual ~ServerUDP();
 };
 
 

@@ -3,9 +3,7 @@
 //
 
 #include "ServerUDP.h"
-#include "../utils/Time.h"
 #include "MsgType.h"
-#include "config.h"
 #include "../utils/Log.h"
 #include <cmath>
 
@@ -39,7 +37,7 @@ void ServerUDP::update()
     while (process());
 
     // World state broadcast
-    if (Time::time() - _lastBroadcast > 1.0 / Network::WORLD_UPDATE_RATE) {
+    if (Time::time() - _lastBroadcast > 1.0 / Consts::NETWORK_WORLD_UPDATE_RATE) {
         broadcast();
         _lastBroadcast = Time::time();
     }
@@ -125,4 +123,9 @@ bool ServerUDP::process()
     }
 
     return true;
+}
+
+ServerUDP::~ServerUDP() {
+    stop();
+    _clients.clear();
 }

@@ -4,12 +4,13 @@
 
 #include "../engine/ResourceManager.h"
 #include "Gun.h"
+#include "../ShooterConsts.h"
 
 using namespace std;
 
-Gun::Gun(int ammo, const std::string& weaponName) : Weapon(weaponName, "obj/gun.obj", "obj/gun_mat.txt", Vec3D{3, 3, 3}, Vec3D{-0.8, 1.3, 0.3}, Vec3D{0, Consts::PI, 0}) {
-    fireSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/gun.ogg"));
-    reloadSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/reload_gun.ogg"));
+Gun::Gun(int ammo, const std::string& weaponName) : Weapon(weaponName, ShooterConsts::GUN_OBJ, "obj/gun_mat.txt", Vec3D{3, 3, 3}, Vec3D{-0.8, 1.3, 0.3}, Vec3D{0, Consts::PI, 0}) {
+    fireSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::GUN_FIRE_SOUND));
+    reloadSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::GUN_RELOAD_SOUND));
 
     _initialPack = 30;
     _clipCapacity = 6; // how much ammo can be stored in one clip

@@ -7,7 +7,6 @@
 
 #include "ReliableMsg.h"
 #include "UDPSocket.h"
-#include "config.h"
 #include <memory>
 
 class ClientUDP
@@ -41,6 +40,8 @@ public:
     virtual void processCustomPacket(MsgType type, sf::Packet& packet){};
 
     virtual void processDisconnected(){};
+
+    virtual ~ClientUDP() = default;
 };
 
 

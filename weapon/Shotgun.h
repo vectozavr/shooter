@@ -10,7 +10,7 @@
 class Shotgun final : public Weapon {
 public:
     explicit Shotgun(int ammo = 15, const std::string& weaponName = "shotgun");
-    std::map<std::string, double> processFire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) override;
+    std::map<std::string, double> processFire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction) override;
 };
 
 

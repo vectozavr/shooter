@@ -19,7 +19,7 @@ void World::loadBody(const string &name, const string &filename, const std::stri
     Log::log("World::loadBody(): inserted body from " + filename + " with title '" + name + "' with " + std::to_string(_objects[name]->triangles().size()) + " tris.");
 }
 
-std::pair<Vec3D, string> World::rayCast(const Vec3D& from, const Vec3D& to) {
+std::pair<Vec3D, string> World::rayCast(const Vec3D& from, const Vec3D& to, const std::string& tag) {
 
     std::pair<Vec3D, string> result;
     std::unique_ptr<Vec3D> point = std::make_unique<Vec3D>();
@@ -27,7 +27,7 @@ std::pair<Vec3D, string> World::rayCast(const Vec3D& from, const Vec3D& to) {
     double minDistance = Consts::RAY_CAST_MAX_DISTANCE;
 
     for(auto& object : _objects) {
-        if((object.first.find("Player") != std::string::npos) || (object.first.find("Bonus") != std::string::npos))
+        if(!tag.empty() && object.first.find(tag) == std::string::npos)
             continue;
 
         for(auto& tri : object.second->triangles()) {
