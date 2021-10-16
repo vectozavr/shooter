@@ -101,6 +101,6 @@ void World::projectObjectsInCamera(std::shared_ptr<Camera> camera) {
 
 std::shared_ptr<RigidBody> World::body(const string &name) {
     if(_objects.count(name) == 0)
-        Log::log("World::body: mesh '" + name + "' does not exist.");
+        return nullptr;
     return _objects.find(name)->second;
 }

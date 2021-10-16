@@ -54,7 +54,7 @@ public:
         loadObj("obj/cube.obj", "", Vec3D{0.5, 1.9, 0.5});
         setAcceleration(Vec3D{0, -_g, 0});
         setCollision(true);
-        setVisible(false);
+        //setVisible(false);
         setColor({240, 168, 168});
 
         _changeWeaponSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/weapons/change_weapon.ogg"));

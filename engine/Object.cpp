@@ -122,7 +122,7 @@ void Object::rotateToAngle(const Vec3D &v) {
 
 std::shared_ptr<Object> Object::attached(const std::string &name) {
     if(_attachedObjects.count(name) == 0)
-        Log::log("Object::attached: object '" + name + "' does not exist.");
+        return nullptr;
     return _attachedObjects.find(name)->second;
 }
 

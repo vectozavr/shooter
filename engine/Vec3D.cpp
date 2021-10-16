@@ -68,7 +68,7 @@ Vec3D Vec3D::normalized() const {
     if(vecAbs > Consts::EPS)
         return Vec3D(*this)/abs();
     else
-        return Vec3D(0);
+        return Vec3D(1);
 }
 
 double Vec3D::dot(const Vec3D& vec) const {

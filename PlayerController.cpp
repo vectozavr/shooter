@@ -45,7 +45,7 @@ void PlayerController::update() {
                     Keyboard::isKeyPressed(sf::Keyboard::S));
 
     std::shared_ptr<Object> camera = _player->attached("camera");
-    if(_inRunning) {
+    if(camera != nullptr && _inRunning) {
         if (!Timeline::isInAnimList("camera_hor_oscil")) {
             Timeline::animate("camera_hor_oscil", new ATranslate(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::InterpolationType::cos));
             Timeline::animate("camera_hor_oscil", new AWait(0));
@@ -61,7 +61,7 @@ void PlayerController::update() {
 
             Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.3, Animation::LoopOut::None, Animation::InterpolationType::cos));
         }
-    } else if(inRunning_old && !_inRunning) {
+    } else if(camera != nullptr && inRunning_old && !_inRunning) {
         Timeline::deleteAnimationList("camera_hor_oscil");
         Timeline::deleteAnimationList("camera_vert_oscil");
         Timeline::deleteAnimationList("camera_init");
@@ -140,6 +140,9 @@ void PlayerController::update() {
 
     _player->setHeadAngle(_player->headAngle() + rotationLeft);
     _player->rotateWeaponsRelativePoint(_player->position() + Vec3D{0, 1.8, 0}, _player->left(), rotationLeft);
+
+    if(camera != nullptr)
+        camera->rotateLeft(_player->headAngle() - camera->angleLeftUpLookAt().x());
 
     if (_keyboard->isKeyTapped(sf::Keyboard::Right) || _keyboard->isKeyTapped(sf::Keyboard::E)) {
         _player->nextWeapon();

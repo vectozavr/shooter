@@ -41,6 +41,7 @@ public:
     // Rotate body around normalised vector 'v' by 'r' radians relative val 'point4D'
     void rotateRelativePoint(const Vec3D& point4D, const Vec3D& v, double r) override;
     void scale(const Vec3D& s) override;
+    [[nodiscard]] int size() const { return _tris.size()*3; }
 
     [[nodiscard]] sf::Color color() const { return _color; }
     void setColor(const sf::Color& c);

@@ -66,5 +66,5 @@ Point4D Point4D::normalized() const {
     if(vecAbs > Consts::EPS)
         return Point4D(*this)/abs();
     else
-        return Point4D(0);
+        return Point4D(1);
 }

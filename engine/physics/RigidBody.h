@@ -15,7 +15,6 @@
 struct CollisionPoint {
     const Vec3D normal;
     const double depth;
-    const bool hasCollision;
 };
 
 struct FaceNormal {
@@ -41,8 +40,10 @@ private:
     static NextSimplex _triangleCase(const Simplex& points);
     static NextSimplex _tetrahedronCase(const Simplex& points);
 
-    static std::pair<std::vector<std::shared_ptr<FaceNormal>>, size_t> _getFaceNormals(const std::vector<Vec3D>& polytope, const std::vector<size_t>&  faces);
+    static std::pair<std::vector<std::shared_ptr<FaceNormal>>, size_t> _getFaceNormals(const std::vector<Vec3D>& polytope, const std::vector<size_t>& faces);
     static std::vector<std::pair<size_t, size_t>> _addIfUniqueEdge(const std::vector<std::pair<size_t, size_t>>& edges, const std::vector<size_t>& faces, size_t a, size_t b);
+
+    static void makeLogObjPolytope(const std::vector<Vec3D>& polytope, const std::vector<size_t>& faces);
 
 protected:
     std::unique_ptr<Vec3D> _velocity = std::make_unique<Vec3D>(Vec3D{0, 0, 0});;

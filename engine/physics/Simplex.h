@@ -6,7 +6,7 @@
 #define ENGINE_SIMPLEX_H
 
 #include "../Vec3D.h"
-#include <deque>
+#include <list>
 
 enum class SimplexType {
     Zero,
@@ -18,7 +18,7 @@ enum class SimplexType {
 
 struct Simplex final {
 private:
-    std::deque<Vec3D> _points{};
+    std::list<Vec3D> _points{};
 
 public:
     Simplex() = default;
@@ -37,7 +37,13 @@ public:
             _points.pop_back();
     }
 
-    Vec3D operator[](unsigned i) const { return _points[i]; }
+    Vec3D operator[](unsigned i) const {
+        auto it = _points.begin();
+        for(int k=0; k<i; k++)
+            ++it;
+        return *it;
+
+    }
     [[nodiscard]] unsigned size() const { return _points.size(); }
 
     [[nodiscard]] auto begin() const { return _points.begin(); }

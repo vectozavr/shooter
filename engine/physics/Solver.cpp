@@ -6,8 +6,6 @@
 #include "../utils/Log.h"
 
 void Solver::solveCollision(std::shared_ptr<RigidBody> obj1, std::shared_ptr<RigidBody> obj2, const CollisionPoint& collision) {
-    if(!collision.hasCollision)
-        return;
 
     Vec3D obj1_velocity_parallel = collision.normal * obj1->velocity().dot(collision.normal);
     Vec3D obj1_velocity_perpendicular = obj1->velocity() - obj1_velocity_parallel;
@@ -27,8 +25,9 @@ void Solver::solveCollision(std::shared_ptr<RigidBody> obj1, std::shared_ptr<Rig
     if(obj1->isCollision() && obj2->isCollision()) {
         obj1->translate(-collision.normal * collision.depth/2.0);
         obj2->translate(collision.normal * collision.depth/2.0);
-    } else if(obj1->isCollision())
+    } else if(obj1->isCollision()) {
         obj1->translate(-collision.normal * collision.depth);
+    }
     else
         obj2->translate(collision.normal * collision.depth);
 }

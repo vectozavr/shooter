@@ -110,10 +110,12 @@ void Player::previousWeapon() {
 }
 
 void Player::fire() {
-    auto damagedPlayers = _weapons[_selectedWeapon]->fire(_rayCastFunction, attached("camera")->position(), attached("camera")->lookAt());
-    for(auto& damagedPlayer : damagedPlayers) {
-        sf::Uint16 targetId = std::stoi(damagedPlayer.first.substr(7));
-        _damagePlayerCallBack(targetId, damagedPlayer.second);
+    if(attached("camera") != nullptr) {
+        auto damagedPlayers = _weapons[_selectedWeapon]->fire(_rayCastFunction, attached("camera")->position(), attached("camera")->lookAt());
+        for(auto& damagedPlayer : damagedPlayers) {
+            sf::Uint16 targetId = std::stoi(damagedPlayer.first.substr(6));
+            _damagePlayerCallBack(targetId, damagedPlayer.second);
+        }
     }
 }
 

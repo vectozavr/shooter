@@ -66,7 +66,7 @@ std::map<std::string, double> Weapon::processFire(std::function<std::pair<Vec3D,
 
     // damage player
     auto rayCast = rayCastFunction(pos, pos + direction * 1000 + randV);
-    if(rayCast.second.find("Player") != std::string::npos) {
+    if(rayCast.second.find("Enemy") != std::string::npos) {
         damagedPlayers[rayCast.second] += _damage/(1.0 + (pos - rayCast.first).abs());
     }
 

@@ -136,8 +136,6 @@ void Shooter::update() {
         screen->setTitle("Shooter");
         playerController->update();
         mouse->setMouseInCenter();
-        camera->rotateLeft(player->headAngle() - camera->angleLeftUpLookAt().x());
-
     } else {
         mainMenu.update();
     }
@@ -229,7 +227,7 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
 }
 
 void Shooter::removePlayer(sf::Uint16 id) {
-    std::string name = "Enemy_" + std::to_string(id);
+    std::string name = std::to_string(id) + "_Enemy";
     world->removeBody(name);
     world->removeBody(name + "_head");
     world->removeBody(name + "_eye1");

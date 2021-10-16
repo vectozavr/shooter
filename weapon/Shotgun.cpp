@@ -34,7 +34,7 @@ Shotgun::processFire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, c
 
         // damage player
         auto rayCast = rayCastFunction(pos, pos + direction * 1000 + randV);
-        if (rayCast.second.find("Player") != std::string::npos) {
+        if (rayCast.second.find("Enemy") != std::string::npos) {
             damagedPlayers[rayCast.second] += _damage / (1.0 + (pos - rayCast.first).abs());
         }
 
