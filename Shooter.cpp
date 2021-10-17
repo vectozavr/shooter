@@ -228,7 +228,7 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
 }
 
 void Shooter::removePlayer(sf::Uint16 id) {
-    std::string name = std::to_string(id) + "_Enemy";
+    std::string name = "Enemy_" + std::to_string(id);
     world->removeBody(ObjectNameTag(name));
     world->removeBody(ObjectNameTag(name + "_head"));
     world->removeBody(ObjectNameTag(name + "_eye1"));
