@@ -12,6 +12,7 @@ namespace Consts {
     const int STANDARD_SCREEN_HEIGHT = 1920;
     const sf::Color BACKGROUND_COLOR = sf::Color(255, 255, 255);
     const std::string PROJECT_NAME = "engine";
+    const bool USE_LOG_FILE = true;
 
     const double PI = 3.14159265358979323846264338327950288;
     const double EPS = 0.000001;
