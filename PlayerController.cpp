@@ -99,13 +99,13 @@ void PlayerController::update() {
         // slow mo
         _isInSlowMo = true;
         _player->setVelocity(_player->velocity() / ShooterConsts::SLOW_MO_COEFFICIENT);
-        _player->setAcceleration(_player->acceleration() / (ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT));
+        _player->setAcceleration(Vec3D(0, -ShooterConsts::GRAVITY / (ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT), 0));
         _unSlowMoSound.stop();
         _slowMoSound.play();
     } else if (_isInSlowMo && !Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
         _isInSlowMo = false;
         _player->setVelocity(_player->velocity() * ShooterConsts::SLOW_MO_COEFFICIENT);
-        _player->setAcceleration(Vec3D(0, -ShooterConsts::GRAVITY * ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT, 0));
+        _player->setAcceleration(Vec3D(0, -ShooterConsts::GRAVITY, 0));
         _slowMoSound.stop();
         _unSlowMoSound.play();
     }
