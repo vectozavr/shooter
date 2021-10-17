@@ -56,6 +56,7 @@ void Shooter::InitNetwork()
 
     client->connect(clientIp, clientPort);
 
+    // TODO: encapsulate call backs inside Client
     client->setSpawnPlayerCallBack([this](sf::Uint16 id){ spawnPlayer(id); });
     client->setRemovePlayerCallBack([this](sf::Uint16 id){ removePlayer(id); });
     client->setAddFireTraceCallBack([this](const Vec3D& from, const Vec3D& to){ addFireTrace(from, to); });
@@ -70,11 +71,12 @@ void Shooter::start() {
 
     mouse->setMouseCursorVisible(true);
 
-    world->loadMap(ShooterConsts::MAP_OBJ, "maps/materials.txt", "map", Vec3D{5, 5, 5});
+    world->loadMap(ShooterConsts::MAP_OBJ, Vec3D{5, 5, 5});
 
     player = std::make_shared<Player>();
     playerController = std::make_shared<PlayerController>(player, keyboard, mouse);
 
+    // TODO: encapsulate call backs inside Player
     player->setAddTraceCallBack([this](const Vec3D& from, const Vec3D& to){ client->addTrace(from, to); addFireTrace(from, to); });
     player->setDamagePlayerCallBack([this] (sf::Uint16 targetId, double damage) { client->damagePlayer(targetId, damage); });
     player->setRayCastFunction([this](const Vec3D& from, const Vec3D& to) { return world->rayCast(from, to, "Enemy"); });
@@ -208,18 +210,18 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     newPlayer->setAcceleration(Vec3D{0, 0, 0});
 
     // add head and other stuff:
-    world->loadBody(ObjectNameTag(name + "_head"), ShooterConsts::CUBE_OBJ, "", Vec3D{0.7, 0.7, 0.7});
+    world->loadBody(ObjectNameTag(name + "_head"), ShooterConsts::CUBE_OBJ, Vec3D{0.7, 0.7, 0.7});
     world->body(ObjectNameTag(name + "_head"))->translate(Vec3D{0, 2, 0});
     world->body(ObjectNameTag(name + "_head"))->setCollider(false);
     newPlayer->attach(world->body(ObjectNameTag(name + "_head")), ObjectNameTag("head"));
 
-    world->loadBody(ObjectNameTag(name + "_eye1"), ShooterConsts::CUBE_OBJ, "", Vec3D{0.2, 0.2, 0.05});
+    world->loadBody(ObjectNameTag(name + "_eye1"), ShooterConsts::CUBE_OBJ, Vec3D{0.2, 0.2, 0.05});
     world->body(ObjectNameTag(name + "_eye1"))->translate(Vec3D{0.3, 2.1, 0.7});
     world->body(ObjectNameTag(name + "_eye1"))->setCollider(false);
     world->body(ObjectNameTag(name + "_eye1"))->setColor({147, 159, 255});
     world->body(ObjectNameTag(name + "_head"))->attach(world->body(ObjectNameTag(name + "_eye1")), ObjectNameTag("eye1"));
 
-    world->loadBody(ObjectNameTag(name + "_eye2"), ShooterConsts::CUBE_OBJ, "", Vec3D{0.2, 0.2, 0.05});
+    world->loadBody(ObjectNameTag(name + "_eye2"), ShooterConsts::CUBE_OBJ, Vec3D{0.2, 0.2, 0.05});
     world->body(ObjectNameTag(name + "_eye2"))->translate(Vec3D{-0.3, 2.1, 0.7});
     world->body(ObjectNameTag(name + "_eye2"))->setCollider(false);
     world->body(ObjectNameTag(name + "_eye2"))->setColor({147, 159, 255});
@@ -249,7 +251,7 @@ void Shooter::removeFireTrace(const ObjectNameTag& traceName) {
 
 void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
     std::string name = bonusName.substr(6, bonusName.size()-3-5);
-    world->addBody(std::make_shared<Bonus>(bonusName, "obj/" + name + ".obj", "obj/" + name + "_mat.txt", Vec3D{3, 3, 3}), ObjectNameTag(bonusName));
+    world->addBody(std::make_shared<Bonus>(bonusName, "obj/" + name + ".obj", Vec3D{3, 3, 3}), ObjectNameTag(bonusName));
     world->body(ObjectNameTag(bonusName))->translateToPoint(position);
     Timeline::animate(AnimationListTag(bonusName + "_rotation"), new ARotate(world->body(ObjectNameTag(bonusName)), Vec3D{0, 2*Consts::PI, 0}, 4, Animation::LoopOut::Continue, Animation::InterpolationType::linear));
 }

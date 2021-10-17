@@ -1,6 +1,6 @@
-# Blender v2.91.0 OBJ File: 'hill.blend'
-# www.blender.org
-mtllib hill.mtl
+m 000 255 255 255 255
+m 001 139 139 139 255
+m 002 231 92 71 255
 o Cube
 v -0.180827 -0.334950 0.425389
 v -0.180827 0.138945 0.425389

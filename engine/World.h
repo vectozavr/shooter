@@ -22,14 +22,14 @@ public:
     void addBody(std::shared_ptr<RigidBody> mesh, const ObjectNameTag& tag);
     std::shared_ptr<RigidBody> body(const ObjectNameTag& tag);
     void removeBody(const ObjectNameTag& tag);
-    void loadBody(const ObjectNameTag& tag, const std::string &filename, const std::string &materials = "", const Vec3D& scale = Vec3D{1, 1, 1});
+    void loadBody(const ObjectNameTag& tag, const std::string &filename, const Vec3D& scale = Vec3D{1, 1, 1});
 
     // rayCast returns pair of Point4D and std::string:
     // 1) Point4D is point of collision
     // 2) std::string - title of the object
     std::pair<Vec3D, ObjectNameTag> rayCast(const Vec3D& from, const Vec3D& to, const std::string& tag = "");
 
-    void loadMap(const std::string& filename, const std::string& materials, const std::string& name = "map", const Vec3D & scale = Vec3D{1, 1, 1});
+    void loadMap(const std::string& filename, const Vec3D & scale = Vec3D{1, 1, 1});
 };
 
 

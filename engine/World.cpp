@@ -13,8 +13,8 @@ void World::addBody(std::shared_ptr<RigidBody> body, const ObjectNameTag& tag) {
     Log::log("World::addBody(): inserted body '" + tag.str() + "' with " + std::to_string(_objects[tag]->triangles().size()) + " tris.");
 }
 
-void World::loadBody(const ObjectNameTag& tag, const string &filename, const std::string &materials, const Vec3D& scale) {
-    _objects.emplace(tag, std::make_shared<RigidBody>(Mesh(filename, materials, scale)));
+void World::loadBody(const ObjectNameTag& tag, const string &filename, const Vec3D& scale) {
+    _objects.emplace(tag, std::make_shared<RigidBody>(Mesh(filename, scale)));
     Log::log("World::loadBody(): inserted body from " + filename + " with title '" + tag.str() + "' with " + std::to_string(_objects[tag]->triangles().size()) + " tris.");
 }
 
@@ -45,10 +45,10 @@ std::pair<Vec3D, ObjectNameTag> World::rayCast(const Vec3D& from, const Vec3D& t
     return {*point, ObjectNameTag(bodyName)};
 }
 
-void World::loadMap(const std::string& filename, const std::string& materials, const std::string& name, const Vec3D& scale) {
-    auto objs = Mesh::LoadObjects(filename, materials, scale);
+void World::loadMap(const std::string& filename, const Vec3D& scale) {
+    auto objs = Mesh::LoadObjects(filename, scale);
     for(unsigned i = 0; i < objs.size(); i++) {
-        ObjectNameTag meshName = ObjectNameTag(name + "_" + to_string(i));
+        ObjectNameTag meshName = ObjectNameTag("map_" + to_string(i));
         addBody(std::make_shared<RigidBody>(*objs[i]), meshName);
     }
 }

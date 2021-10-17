@@ -12,10 +12,10 @@
 
 using namespace std;
 
-Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, const std::string& matFileName, const Vec3D& scale, const Vec3D& t, const Vec3D& r) {
+Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, const Vec3D& scale, const Vec3D& t, const Vec3D& r) {
     _name = weaponName;
 
-    loadObj(objFileName, matFileName, scale);
+    loadObj(objFileName, scale);
     setCollider(false);
     rotate(r);
     translate(t);

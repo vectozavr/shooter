@@ -44,7 +44,7 @@ protected:
     virtual std::map<ObjectNameTag, double> processFire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction);
 
 public:
-    Weapon(const std::string& weaponName, const std::string& objFileName, const std::string& matFileName, const Vec3D& scale, const Vec3D& translate, const Vec3D& rotate);
+    Weapon(const std::string& weaponName, const std::string& objFileName, const Vec3D& scale, const Vec3D& translate, const Vec3D& rotate);
 
     std::map<ObjectNameTag, double> fire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction);
     void reload();

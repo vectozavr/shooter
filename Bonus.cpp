@@ -4,8 +4,8 @@
 
 #include "Bonus.h"
 
-Bonus::Bonus(const std::string &bonusName, const std::string &filename, const std::string &materials, const Vec3D &scale) {
+Bonus::Bonus(const std::string &bonusName, const std::string &filename, const Vec3D &scale) {
     _name = bonusName;
-    loadObj(filename, materials, scale);
+    loadObj(filename, scale);
     setCollider(false);
 }

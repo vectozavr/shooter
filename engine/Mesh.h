@@ -23,9 +23,9 @@ public:
     Mesh(const Mesh& mesh);
 
     explicit Mesh(const std::vector<Triangle>& tries);
-    explicit Mesh(const std::string& filename, const std::string &materials = "", const Vec3D& scale = Vec3D{1, 1, 1});
+    explicit Mesh(const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
 
-    Mesh& loadObj(const std::string& filename, const std::string &materials = "", const Vec3D& scale = Vec3D{1, 1, 1});
+    Mesh& loadObj(const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
 
     [[nodiscard]] std::vector<Triangle>const &triangles() const { return _tris; }
     [[nodiscard]] std::vector<Triangle>& triangles() { return _tris; }
@@ -52,7 +52,7 @@ public:
     ~Mesh() override;
 
     Mesh static Obj(const std::string& filename);
-    std::vector<std::shared_ptr<Mesh>> static LoadObjects(const std::string& filename, const std::string &materials = "", const Vec3D& scale = Vec3D{1, 1, 1});
+    std::vector<std::shared_ptr<Mesh>> static LoadObjects(const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
     Mesh static LineTo(const Vec3D& from, const Vec3D& to, double line_width = 0.1, const sf::Color& color = {150, 150, 150, 255});
 };
 

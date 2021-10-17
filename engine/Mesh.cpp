@@ -21,9 +21,9 @@ Mesh &Mesh::operator*=(const Matrix4x4 &matrix4X4) {
     return *this;
 }
 
-Mesh &Mesh::loadObj(const std::string& filename, const std::string &materials, const Vec3D& scale) {
+Mesh &Mesh::loadObj(const std::string& filename, const Vec3D& scale) {
 
-    auto objects = Mesh::LoadObjects(filename, materials, scale);
+    auto objects = Mesh::LoadObjects(filename, scale);
     for(auto& obj : objects) {
         for (auto &tri : obj->triangles()) {
             _tris.push_back(tri);
@@ -32,8 +32,8 @@ Mesh &Mesh::loadObj(const std::string& filename, const std::string &materials, c
     return *this;
 }
 
-Mesh::Mesh(const std::string& filename, const std::string &materials, const Vec3D& scale){
-    loadObj(filename, materials, scale);
+Mesh::Mesh(const std::string& filename, const Vec3D& scale){
+    loadObj(filename, scale);
 }
 
 Mesh::Mesh(const vector<Triangle> &tries) : _tris(tries) {
@@ -79,7 +79,7 @@ void Mesh::setColor(const sf::Color& c) {
     setTriangles(newTriangles);
 }
 
-std::vector<std::shared_ptr<Mesh>> Mesh::LoadObjects(const string &filename, const string &materials, const Vec3D &scale) {
+std::vector<std::shared_ptr<Mesh>> Mesh::LoadObjects(const string &filename, const Vec3D &scale) {
     std::vector<std::shared_ptr<Mesh>> objects;
     map<string, sf::Color> maters;
 
@@ -88,32 +88,6 @@ std::vector<std::shared_ptr<Mesh>> Mesh::LoadObjects(const string &filename, con
     {
         Log::log("Mesh::LoadObjects(): cannot load file from " + filename);
         return objects;
-    }
-
-    if(!materials.empty()) {
-        ifstream mat(materials);
-
-        if (!mat.is_open())
-        {
-            Log::log("Mesh::LoadObjects(): cannot load mat from " + materials);
-            return objects;
-        } else {
-            while (!mat.eof())
-            {
-                char line[128];
-                mat.getline(line, 128);
-
-                stringstream s;
-                s << line;
-
-                int color[4];
-                string matName;
-
-                s >> matName >> color[0] >> color[1] >> color[2] >> color[3];
-                maters.insert({matName, sf::Color(color[0],color[1],color[2], color[3])});
-            }
-            mat.close();
-        }
     }
 
     vector<Point4D> verts;
@@ -153,6 +127,14 @@ std::vector<std::shared_ptr<Mesh>> Mesh::LoadObjects(const string &filename, con
             int f[3];
             s >> junk >> f[0] >> f[1] >> f[2];
             tris.emplace_back(verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1], currentColor);
+        }
+        if(line[0] == 'm')
+        {
+            int color[4];
+            string matName;
+
+            s >> junk >> matName >> color[0] >> color[1] >> color[2] >> color[3];
+            maters.insert({matName, sf::Color(color[0],color[1],color[2], color[3])});
         }
     }
 

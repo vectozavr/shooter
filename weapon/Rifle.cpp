@@ -6,7 +6,7 @@
 #include "Rifle.h"
 #include "../ShooterConsts.h"
 
-Rifle::Rifle(int ammo, const std::string &weaponName) : Weapon(weaponName, ShooterConsts::RIFLE_OBJ, "obj/rifle_mat.txt", Vec3D{3, 3, 3}, Vec3D{-1.2, 1, 0.3}, Vec3D{0, Consts::PI, 0}) {
+Rifle::Rifle(int ammo, const std::string &weaponName) : Weapon(weaponName, ShooterConsts::RIFLE_OBJ, Vec3D{3, 3, 3}, Vec3D{-1.2, 1, 0.3}, Vec3D{0, Consts::PI, 0}) {
     fireSound = ShooterConsts::RIFLE_FIRE_SOUND;
     reloadSound = ShooterConsts::RIFLE_RELOAD_SOUND;
 

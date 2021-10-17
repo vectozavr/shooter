@@ -9,7 +9,7 @@
 
 using namespace std;
 
-Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, ShooterConsts::SHOTGUN_OBJ, "obj/shotgun_mat.txt", Vec3D{3, 3, 3}, Vec3D{-0.95, 1.3, -0.6}, Vec3D{0, Consts::PI, 0}) {
+Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, ShooterConsts::SHOTGUN_OBJ, Vec3D{3, 3, 3}, Vec3D{-0.95, 1.3, -0.6}, Vec3D{0, Consts::PI, 0}) {
     fireSound = ShooterConsts::SHOTGUN_FIRE_SOUND;
     reloadSound = ShooterConsts::SHOTGUN_RELOAD_SOUND;
 

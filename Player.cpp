@@ -8,7 +8,7 @@
 #include "engine/utils/Log.h"
 
 Player::Player() {
-    loadObj(ShooterConsts::CUBE_OBJ, "", Vec3D{0.5, 1.9, 0.5});
+    loadObj(ShooterConsts::CUBE_OBJ, Vec3D{0.5, 1.9, 0.5});
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
     setCollision(true);
     setVisible(false);

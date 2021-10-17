@@ -12,7 +12,7 @@ class Bonus final : public RigidBody {
 private:
     std::string _name;
 public:
-    explicit Bonus(const std::string &bonusName, const std::string& filename, const std::string &materials = "", const Vec3D& scale = Vec3D{1, 1, 1});
+    explicit Bonus(const std::string &bonusName, const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
 
     [[nodiscard]] std::string name() const { return _name; }
 };

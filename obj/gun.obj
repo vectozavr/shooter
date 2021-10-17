@@ -1,6 +1,6 @@
-# Blender v2.91.0 OBJ File: 'gun.blend'
-# www.blender.org
-mtllib gun.mtl
+m 000 115 115 115 255
+m 001 186 185 185 255
+m 002 59 59 59 255
 o Cube
 v 0.023535 -0.036121 0.021633
 v 0.022901 -0.107817 0.006247

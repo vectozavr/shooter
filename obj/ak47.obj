@@ -1,6 +1,6 @@
-# Blender v2.91.0 OBJ File: 'ak47.blend'
-# www.blender.org
-mtllib ak47.mtl
+m 001 59 39 34 255
+m 002 104 105 110 255
+m 003 64 64 64 255
 o Cube
 v 0.035068 -0.126740 0.120392
 v 0.035068 0.049771 0.120392
