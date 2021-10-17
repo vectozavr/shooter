@@ -31,15 +31,23 @@ add_executable(shooter
         PlayerController.h
         Shooter.cpp
         Shooter.h
+        ShooterConsts.h
         # 3d engine:
+        engine/Consts.h
         engine/utils/Time.h
         engine/utils/Time.cpp
         engine/Point4D.h
         engine/Point4D.cpp
+        engine/Vec3D.cpp
+        engine/Vec3D.h
+        engine/Vec2D.cpp
+        engine/Vec2D.h
         engine/Matrix4x4.h
         engine/Matrix4x4.cpp
         engine/Triangle.h
         engine/Triangle.cpp
+        engine/Plane.h
+        engine/Plane.cpp
         engine/Mesh.h
         engine/Mesh.cpp
         engine/utils/Log.h
@@ -54,8 +62,6 @@ add_executable(shooter
         engine/Screen.cpp
         engine/Engine.h
         engine/Engine.cpp
-        engine/Plane.h
-        engine/Plane.cpp
         engine/Keyboard.cpp
         engine/Keyboard.h
         engine/Mouse.cpp
@@ -72,8 +78,6 @@ add_executable(shooter
         engine/physics/RigidBody.cpp
         engine/physics/RigidBody.h
         engine/physics/Simplex.h
-        engine/physics/Solver.cpp
-        engine/physics/Solver.h
         engine/Object.cpp
         engine/Object.h
         engine/gui/Button.cpp
@@ -92,9 +96,8 @@ add_executable(shooter
         engine/network/UDPConnection.h
         engine/network/UDPSocket.cpp
         engine/network/UDPSocket.h
-        engine/network/config.h
         engine/animation/AFunction.h
-        engine/Consts.h engine/Vec3D.cpp engine/Vec3D.h engine/Vec2D.cpp engine/Vec2D.h ShooterConsts.h)
+        )
 
 if(APPLE OR UNIX)
     include_directories(/usr/local/include)

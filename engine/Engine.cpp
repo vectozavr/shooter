@@ -6,7 +6,6 @@
 #include "utils/Time.h"
 #include <iostream>
 #include "ResourceManager.h"
-#include "physics/Solver.h"
 #include "animation/Timeline.h"
 
 Engine::Engine() {

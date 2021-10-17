@@ -5,7 +5,6 @@
 #include "World.h"
 #include "utils/Log.h"
 #include "Plane.h"
-#include "physics/Solver.h"
 
 using namespace std;
 
