@@ -11,23 +11,23 @@
 
 class World final {
 private:
-    std::map<std::string, std::shared_ptr<RigidBody>> _objects;
+    std::map<ObjectNameTag, std::shared_ptr<RigidBody>> _objects;
 public:
     World() = default;
 
-    void checkCollision(const std::string& body);
+    void checkCollision(const ObjectNameTag& tag);
     void update();
     void projectObjectsInCamera(std::shared_ptr<Camera> camera);
 
-    void addBody(std::shared_ptr<RigidBody> mesh, const std::string& name = "");
-    std::shared_ptr<RigidBody> body(const std::string& name);
-    void removeBody(std::string name);
-    void loadBody(const std::string &name, const std::string &filename, const std::string &materials = "", const Vec3D& scale = Vec3D{1, 1, 1});
+    void addBody(std::shared_ptr<RigidBody> mesh, const ObjectNameTag& tag);
+    std::shared_ptr<RigidBody> body(const ObjectNameTag& tag);
+    void removeBody(const ObjectNameTag& tag);
+    void loadBody(const ObjectNameTag& tag, const std::string &filename, const std::string &materials = "", const Vec3D& scale = Vec3D{1, 1, 1});
 
     // rayCast returns pair of Point4D and std::string:
     // 1) Point4D is point of collision
     // 2) std::string - title of the object
-    std::pair<Vec3D, std::string> rayCast(const Vec3D& from, const Vec3D& to, const std::string& tag = "");
+    std::pair<Vec3D, ObjectNameTag> rayCast(const Vec3D& from, const Vec3D& to, const std::string& tag = "");
 
     void loadMap(const std::string& filename, const std::string& materials, const std::string& name = "map", const Vec3D & scale = Vec3D{1, 1, 1});
 };

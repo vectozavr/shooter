@@ -7,8 +7,20 @@
 
 #include <map>
 #include "Vec3D.h"
-#include <memory>
 #include <string>
+#include <utility>
+
+class ObjectNameTag {
+private:
+    const std::string _name;
+public:
+    explicit ObjectNameTag(std::string name = "") : _name(std::move(name)) {}
+    [[nodiscard]] std::string str() const { return _name; }
+
+    bool operator==(const ObjectNameTag& tag) const { return _name == tag._name; }
+    bool operator!=(const ObjectNameTag& tag) const { return _name != tag._name; }
+    bool operator<(const ObjectNameTag& tag) const { return _name < tag._name; }
+};
 
 class Object {
 protected:
@@ -16,7 +28,7 @@ protected:
     std::unique_ptr<Vec3D> _up     = std::make_unique<Vec3D>(Vec3D{0, 1, 0}); // internal Y
     std::unique_ptr<Vec3D> _lookAt = std::make_unique<Vec3D>(Vec3D{0, 0, 1}); // internal Z
 
-    std::map<std::string, std::shared_ptr<Object>> _attachedObjects;
+    std::map<ObjectNameTag, std::shared_ptr<Object>> _attachedObjects;
 
     std::unique_ptr<Vec3D> _position = std::make_unique<Vec3D>(Vec3D{0, 0, 0});
     std::unique_ptr<Vec3D> _angle = std::make_unique<Vec3D>(Vec3D{0, 0, 0});
@@ -45,9 +57,9 @@ public:
     void rotateUp(double ru);
     void rotateLookAt(double rlAt);
 
-    void attach(std::shared_ptr<Object> object, const std::string& name);
-    void unattach(const std::string& name);
-    std::shared_ptr<Object> attached(const std::string& name);
+    void attach(std::shared_ptr<Object> object, const ObjectNameTag& tag);
+    void unattach(const ObjectNameTag& tag);
+    std::shared_ptr<Object> attached(const ObjectNameTag& tag);
 
     virtual ~Object();
 };

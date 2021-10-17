@@ -45,7 +45,7 @@ void Client::processUpdate(sf::Packet& packet) {
             _players[targetId]->setHealth(buf[3]);
             _players[targetId]->rotateToAngle(Vec3D{0, buf[4], 0});
 
-            _players[targetId]->attached("head")->rotate(Matrix4x4::RotationY(buf[4]) * Vec3D{1, 0, 0}, buf[5] - _players[targetId]->headAngle());
+            _players[targetId]->attached(ObjectNameTag("head"))->rotate(Matrix4x4::RotationY(buf[4]) * Vec3D{1, 0, 0}, buf[5] - _players[targetId]->headAngle());
 
             _players[targetId]->setHeadAngle(buf[5]);
         } else if (targetId == _socket.ownId()) {
@@ -118,8 +118,11 @@ void Client::processCustomPacket(MsgType type, sf::Packet& packet) {
         case MsgType::RemoveBonus:
             packet >> tmp;
             if(_removeBonusCallBack != nullptr)
-                _removeBonusCallBack(tmp);
+                _removeBonusCallBack(ObjectNameTag(tmp));
             break;
+
+        default:
+            throw std::logic_error{"Client::processCustomPacket: unknown MsgType"};
     }
 }
 
@@ -152,7 +155,7 @@ void Client::takeBonus(const std::string& bonusName) {
     _socket.send(packet, _socket.serverId());
 
     if(_removeBonusCallBack != nullptr)
-        _removeBonusCallBack(bonusName);
+        _removeBonusCallBack(ObjectNameTag(bonusName));
 }
 
 void Client::addPlayer(sf::Uint16 id, std::shared_ptr<Player> player) {
@@ -175,6 +178,6 @@ void Client::setAddBonusCallBack(std::function<void(const std::string &, const V
     _addBonusCallBack = std::move(addBonus);
 }
 
-void Client::setRemoveBonusCallBack(std::function<void(const std::string &)> removeBonus) {
+void Client::setRemoveBonusCallBack(std::function<void(const ObjectNameTag &)> removeBonus) {
     _removeBonusCallBack = std::move(removeBonus);
 }

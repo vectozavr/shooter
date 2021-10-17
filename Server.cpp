@@ -10,7 +10,6 @@ void Server::broadcast() {
     updatePacket << MsgType::Update;
 
     for (auto& player : _players) {
-        //player.second->setHealth(player.second->health() + (Time::time() - _lastBroadcast)/100);
         updatePacket << player.first << player.second->position().x() << player.second->position().y() << player.second->position().z() << player.second->health() << player.second->angle().y() << player.second->headAngle();
     }
 
@@ -36,12 +35,11 @@ void Server::processConnect(sf::Uint16 targetId) {
     }
     _socket.sendRely(sendPacket1, targetId);
 
-
     // bonuses init
     sendPacket2 << MsgType::InitBonuses;
-    for(auto& bonus : _bonuses) {
-        if(bonus.second.onTheMap)
-            sendPacket2 << bonus.first << bonus.second.position.x() << bonus.second.position.y() << bonus.second.position.z();
+    for(auto& [bonusName, bonusInfo] : _bonuses) {
+        if(bonusInfo->onTheMap)
+            sendPacket2 << bonusName << bonusInfo->position.x() << bonusInfo->position.y() << bonusInfo->position.z();
     }
     _socket.sendRely(sendPacket2, targetId);
 
@@ -111,14 +109,19 @@ void Server::processCustomPacket(MsgType type, sf::Packet& packet, sf::Uint16 se
                 _players[senderId]->setFullAbility();
             }
 
-            _bonuses[tmp].onTheMap = false;
-            _bonuses[tmp].lastTake = Time::time();
+            _bonuses[tmp] = std::make_shared<BonusInfo>(BonusInfo{_bonuses[tmp]->position, Time::time(), false});
+
             sendPacket << MsgType::RemoveBonus << tmp;
             for (auto& player : _players) {
                 if(player.first != senderId)
                     _socket.send(sendPacket, player.first);
             }
             break;
+        case MsgType::Error:
+
+            break;
+        default:
+            throw std::logic_error{"Server::processCustomPacket: unknown MsgType"};
     }
 }
 
@@ -128,36 +131,36 @@ void Server::processStop() {
 }
 
 void Server::generateBonuses() {
-    _bonuses.insert({"Bonus_gun_1", {Point4D(-10, -2, -15), -2*_bonusRechargeTime, true}});
-    _bonuses.insert({"Bonus_gun_2", {Point4D(10, -2, 15), -2*_bonusRechargeTime, true}});
+    _bonuses.insert({"Bonus_gun_1", std::make_shared<BonusInfo>(BonusInfo{Point4D(-10, -2, -15), -2*_bonusRechargeTime, true})});
+    _bonuses.insert({"Bonus_gun_2", std::make_shared<BonusInfo>(BonusInfo{Point4D(10, -2, 15), -2*_bonusRechargeTime, true})});
 
-    _bonuses.insert({"Bonus_shotgun_1", {Point4D(-10, 13, -24), -2*_bonusRechargeTime, true}});
-    _bonuses.insert({"Bonus_shotgun_2", {Point4D(10, 13, 24), -2*_bonusRechargeTime, true}});
+    _bonuses.insert({"Bonus_shotgun_1", std::make_shared<BonusInfo>(BonusInfo{Point4D(-10, 13, -24), -2*_bonusRechargeTime, true})});
+    _bonuses.insert({"Bonus_shotgun_2", std::make_shared<BonusInfo>(BonusInfo{Point4D(10, 13, 24), -2*_bonusRechargeTime, true})});
 
-    _bonuses.insert({"Bonus_ak47_1", {Point4D(-25, 30, 50), -2*_bonusRechargeTime, true}});
-    _bonuses.insert({"Bonus_ak47_2", {Point4D(25, 30, -50), -2*_bonusRechargeTime, true}});
+    _bonuses.insert({"Bonus_ak47_1", std::make_shared<BonusInfo>(BonusInfo{Point4D(-25, 30, 50), -2*_bonusRechargeTime, true})});
+    _bonuses.insert({"Bonus_ak47_2", std::make_shared<BonusInfo>(BonusInfo{Point4D(25, 30, -50), -2*_bonusRechargeTime, true})});
 
-    _bonuses.insert({"Bonus_gold_ak47_1", {Point4D(-35, 80, 25), -2*_bonusRechargeTime, true}});
-    _bonuses.insert({"Bonus_gold_ak47_2", {Point4D(35, 80, -25), -2*_bonusRechargeTime, true}});
+    _bonuses.insert({"Bonus_gold_ak47_1", std::make_shared<BonusInfo>(BonusInfo{Point4D(-35, 80, 25), -2*_bonusRechargeTime, true})});
+    _bonuses.insert({"Bonus_gold_ak47_2", std::make_shared<BonusInfo>(BonusInfo{Point4D(35, 80, -25), -2*_bonusRechargeTime, true})});
 
-    _bonuses.insert({"Bonus_rifle_1", {Point4D(40, -2, 45), -2*_bonusRechargeTime, true}});
-    _bonuses.insert({"Bonus_rifle_2", {Point4D(-40, -2, -45), -2*_bonusRechargeTime, true}});
+    _bonuses.insert({"Bonus_rifle_1", std::make_shared<BonusInfo>(BonusInfo{Point4D(40, -2, 45), -2*_bonusRechargeTime, true})});
+    _bonuses.insert({"Bonus_rifle_2", std::make_shared<BonusInfo>(BonusInfo{Point4D(-40, -2, -45), -2*_bonusRechargeTime, true})});
 
-    _bonuses.insert({"Bonus_hill_1", {Point4D(-40, -2, 45), -2*_bonusRechargeTime, true}});
-    _bonuses.insert({"Bonus_hill_2", {Point4D(40, -2, -45), -2*_bonusRechargeTime, true}});
+    _bonuses.insert({"Bonus_hill_1", std::make_shared<BonusInfo>(BonusInfo{Point4D(-40, -2, 45), -2*_bonusRechargeTime, true})});
+    _bonuses.insert({"Bonus_hill_2", std::make_shared<BonusInfo>(BonusInfo{Point4D(40, -2, -45), -2*_bonusRechargeTime, true})});
 
-    _bonuses.insert({"Bonus_ability_1", {Point4D(25, 18, -33), -2*_bonusRechargeTime, true}});
-    _bonuses.insert({"Bonus_ability_2", {Point4D(-25, 18, 33), -2*_bonusRechargeTime, true}});
+    _bonuses.insert({"Bonus_ability_1", std::make_shared<BonusInfo>(BonusInfo{Point4D(25, 18, -33), -2*_bonusRechargeTime, true})});
+    _bonuses.insert({"Bonus_ability_2", std::make_shared<BonusInfo>(BonusInfo{Point4D(-25, 18, 33), -2*_bonusRechargeTime, true})});
 }
 
 void Server::updateInfo() {
-    for(auto& bonus : _bonuses) {
-        if(!bonus.second.onTheMap && std::abs(Time::time() - bonus.second.lastTake) > _bonusRechargeTime) {
+    for(auto& [bonusName, bonusInfo] : _bonuses) {
+        if(!bonusInfo->onTheMap && std::abs(Time::time() - bonusInfo->lastTake) > _bonusRechargeTime) {
             sf::Packet sendPacket;
-            sendPacket << MsgType::AddBonus << bonus.first << bonus.second.position.x() << bonus.second.position.y() << bonus.second.position.z();
+            sendPacket << MsgType::AddBonus << bonusName << bonusInfo->position.x() << bonusInfo->position.y() << bonusInfo->position.z();
             for (const auto& player : _players)
                 _socket.sendRely(sendPacket, player.first);
-            bonus.second.onTheMap = true;
+            bonusInfo = std::make_shared<BonusInfo>(BonusInfo{bonusInfo->position, bonusInfo->lastTake, true});
         }
     }
 }

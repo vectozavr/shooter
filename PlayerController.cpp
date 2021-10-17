@@ -44,28 +44,28 @@ void PlayerController::update() {
                     Keyboard::isKeyPressed(sf::Keyboard::W) ||
                     Keyboard::isKeyPressed(sf::Keyboard::S));
 
-    std::shared_ptr<Object> camera = _player->attached("camera");
+    std::shared_ptr<Object> camera = _player->attached(ObjectNameTag("camera"));
     if(camera != nullptr && _inRunning) {
-        if (!Timeline::isInAnimList("camera_hor_oscil")) {
-            Timeline::animate("camera_hor_oscil", new ATranslate(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::InterpolationType::cos));
-            Timeline::animate("camera_hor_oscil", new AWait(0));
-            Timeline::animate("camera_hor_oscil", new ATranslate(camera, camera->left() / 6, 0.3, Animation::LoopOut::None, Animation::InterpolationType::cos));
+        if (!Timeline::isInAnimList(AnimationListTag("camera_hor_oscil"))) {
+            Timeline::animate(AnimationListTag("camera_hor_oscil"), new ATranslate(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_hor_oscil"), new AWait(0));
+            Timeline::animate(AnimationListTag("camera_hor_oscil"), new ATranslate(camera, camera->left() / 6, 0.3, Animation::LoopOut::None, Animation::InterpolationType::cos));
 
-            Timeline::animate("camera_vert_oscil", new ATranslate(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
-            Timeline::animate("camera_vert_oscil", new AWait(0));
-            Timeline::animate("camera_vert_oscil", new ATranslate(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
-            Timeline::animate("camera_vert_oscil", new AWait(0));
-            Timeline::animate("camera_vert_oscil", new ATranslate(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
-            Timeline::animate("camera_vert_oscil", new AWait(0));
-            Timeline::animate("camera_vert_oscil", new ATranslate(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), new AWait(0));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), new AWait(0));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), new AWait(0));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
 
-            Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.3, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_init"), new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.3, Animation::LoopOut::None, Animation::InterpolationType::cos));
         }
     } else if(camera != nullptr && inRunning_old && !_inRunning) {
-        Timeline::deleteAnimationList("camera_hor_oscil");
-        Timeline::deleteAnimationList("camera_vert_oscil");
-        Timeline::deleteAnimationList("camera_init");
-        Timeline::animate("camera_init", new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+        Timeline::deleteAnimationList(AnimationListTag("camera_hor_oscil"));
+        Timeline::deleteAnimationList(AnimationListTag("camera_vert_oscil"));
+        Timeline::deleteAnimationList(AnimationListTag("camera_init"));
+        Timeline::animate(AnimationListTag("camera_init"), new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
     }
 
     // Left and right

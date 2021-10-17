@@ -89,13 +89,13 @@ bool ServerUDP::process()
     sf::Packet packet;
     sf::Packet sendPacket;
     sf::Uint16 senderId;
-    MsgType type;
 
-    if ((type = _socket.receive(packet, senderId)) == MsgType::Empty)
+    MsgType type = _socket.receive(packet, senderId);
+
+    if (type == MsgType::Empty)
         return false;
 
-    switch (type)
-    {
+    switch (type) {
         // here we process any operations based on msg type
         case MsgType::Connect:
 
@@ -117,6 +117,9 @@ bool ServerUDP::process()
                 _socket.sendRely(sendPacket, client);
 
             processDisconnect(senderId);
+            break;
+        case MsgType::Confirm:
+
             break;
         default:
             processCustomPacket(type, packet, senderId);

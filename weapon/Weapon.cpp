@@ -23,7 +23,7 @@ Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, co
     noAmmoSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::NO_AMMO_SOUND));
 }
 
-std::map<std::string, double> Weapon::fire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction) {
+std::map<ObjectNameTag, double> Weapon::fire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction) {
     if(_clipAmmo == 0) {
         reload();
         if(_clipAmmo == 0)
@@ -31,7 +31,7 @@ std::map<std::string, double> Weapon::fire(std::function<std::pair<Vec3D, std::s
     }
 
     if(_clipAmmo <= 0 || std::abs(Time::time() - _lastFireTime) < _fireDelay || std::abs(Time::time() - _lastReloadTime) < _reloadTime)
-        return std::map<std::string, double>();
+        return std::map<ObjectNameTag, double>();
 
     _lastFireTime = Time::time();
     _clipAmmo--;
@@ -58,12 +58,12 @@ void Weapon::reload() {
     _lastReloadTime = Time::time();
 }
 
-std::map<std::string, double> Weapon::processFire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction) {
+std::map<ObjectNameTag, double> Weapon::processFire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction) {
     return addTrace(std::move(rayCastFunction), position() + Vec3D(triangles().back()[0]), -lookAt());
 }
 
-std::map<std::string, double> Weapon::addTrace(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& from, const Vec3D& directionTo) {
-    std::map<std::string, double> damagedPlayers;
+std::map<ObjectNameTag, double> Weapon::addTrace(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& from, const Vec3D& directionTo) {
+    std::map<ObjectNameTag, double> damagedPlayers;
 
     double spreading = _spreading*ShooterConsts::FIRE_DISTANCE/100;
 
@@ -72,7 +72,7 @@ std::map<std::string, double> Weapon::addTrace(std::function<std::pair<Vec3D, st
 
     // damage player
     auto rayCast = rayCastFunction(from, from + directionTo * ShooterConsts::FIRE_DISTANCE + randV);
-    if(rayCast.second.find("Enemy") != std::string::npos) {
+    if(rayCast.second.str().find("Enemy") != std::string::npos) {
         damagedPlayers[rayCast.second] += _damage/(1.0 + (from - rayCast.first).abs());
     }
 

@@ -163,7 +163,7 @@ MsgType UDPSocket::receive(sf::Packet& packet, sf::Uint16& senderId)
         if (!(packet >> version) || version != Consts::NETWORK_VERSION)
             return MsgType::Error;
         sf::Uint16 tmp;
-        for (tmp = 64; tmp >= 1; tmp--)
+        for (tmp = Consts::NETWORK_MAX_CLIENTS; tmp >= 1; tmp--)
         {
             if (!_connections.count(tmp))
                 senderId = tmp;

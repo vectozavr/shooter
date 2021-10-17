@@ -33,7 +33,7 @@ private:
     Vec3D _findFurthestPoint(const Vec3D& direction);
     Vec3D _support(std::shared_ptr<RigidBody> obj, const Vec3D& direction);
 
-    std::function<void(const std::string&, std::shared_ptr<RigidBody>)> _collisionCallBack;
+    std::function<void(const ObjectNameTag&, std::shared_ptr<RigidBody>)> _collisionCallBack;
 
     static NextSimplex _nextSimplex(const Simplex& points);
     static NextSimplex _lineCase(const Simplex& points);
@@ -80,8 +80,8 @@ public:
     [[nodiscard]] Vec3D velocity() const { return *_velocity; }
     [[nodiscard]] Vec3D acceleration() const { return *_acceleration; }
 
-    [[nodiscard]] const std::function<void(const std::string&, std::shared_ptr<RigidBody>)>& collisionCallBack() const { return _collisionCallBack; }
-    void setCollisionCallBack(const std::function<void(const std::string&, std::shared_ptr<RigidBody>)>& f) { _collisionCallBack = f; }
+    [[nodiscard]] const std::function<void(const ObjectNameTag&, std::shared_ptr<RigidBody>)>& collisionCallBack() const { return _collisionCallBack; }
+    void setCollisionCallBack(const std::function<void(const ObjectNameTag& tag, std::shared_ptr<RigidBody>)>& f) { _collisionCallBack = f; }
 
     ~RigidBody() override = default;
 };

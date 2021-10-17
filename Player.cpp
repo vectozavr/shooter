@@ -19,7 +19,7 @@ Player::Player() {
     _fullHealthSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::RESTORE_HEALTH_SOUND));
     _fullAbilitySound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::RESTORE_ABILITY_SOUND));
 
-    setCollisionCallBack([this](const std::string& objName, std::shared_ptr<RigidBody> obj) {collisionWithObject(objName, obj);});
+    setCollisionCallBack([this](const ObjectNameTag& tag, std::shared_ptr<RigidBody> obj) {collisionWithObject(tag, obj);});
 }
 
 void Player::rotateWeaponsRelativePoint(const Vec3D& point4D, const Vec3D& v, double val) {
@@ -37,30 +37,30 @@ void Player::playKill() {
     _killSound.play();
 }
 
-void Player::collisionWithObject(const std::string &objName, std::shared_ptr<RigidBody> obj) {
-    if(objName.find("Bonus_gun") != std::string::npos)
+void Player::collisionWithObject(const ObjectNameTag& tag, std::shared_ptr<RigidBody> obj) {
+    if(tag.str().find("Bonus_gun") != std::string::npos)
         addWeapon(std::make_shared<Gun>());
 
-    if(objName.find("Bonus_shotgun") != std::string::npos)
+    if(tag.str().find("Bonus_shotgun") != std::string::npos)
         addWeapon(std::make_shared<Shotgun>());
 
-    if(objName.find("Bonus_ak47") != std::string::npos)
+    if(tag.str().find("Bonus_ak47") != std::string::npos)
         addWeapon(std::make_shared<Ak47>());
 
-    if(objName.find("Bonus_gold_ak47") != std::string::npos)
+    if(tag.str().find("Bonus_gold_ak47") != std::string::npos)
         addWeapon(std::make_shared<Gold_Ak47>());
 
-    if(objName.find("Bonus_rifle") != std::string::npos)
+    if(tag.str().find("Bonus_rifle") != std::string::npos)
         addWeapon(std::make_shared<Rifle>());
 
-    if(objName.find("Bonus_hill") != std::string::npos)
+    if(tag.str().find("Bonus_hill") != std::string::npos)
         setFullHealth();
 
-    if(objName.find("Bonus_ability") != std::string::npos)
+    if(tag.str().find("Bonus_ability") != std::string::npos)
         setFullAbility();
 
-    if(objName.find("Bonus") != std::string::npos) {
-        _takeBonusCallBack(objName);
+    if(tag.str().find("Bonus") != std::string::npos) {
+        _takeBonusCallBack(tag.str());
     }
 }
 
@@ -75,7 +75,7 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     }
 
     _weapons.push_back(weapon);
-    attach(weapon, weapon->name());
+    attach(weapon, ObjectNameTag(weapon->name()));
 
     _weapons.back()->translate(position());
     _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, Vec3D{0, 1, 0}, _angle->y());
@@ -88,7 +88,7 @@ void Player::initWeapons() {
 
     if(!_weapons.empty()) {
         for(auto weapon : _weapons)
-            unattach(weapon->name());
+            unattach(ObjectNameTag(weapon->name()));
 
         _removeWeaponCallBack(_weapons[_selectedWeapon]);
         _weapons.clear();
@@ -125,11 +125,11 @@ void Player::previousWeapon() {
 }
 
 void Player::fire() {
-    if(attached("camera") != nullptr) {
+    if(attached(ObjectNameTag("camera")) != nullptr) {
         auto damagedPlayers = _weapons[_selectedWeapon]->fire(_rayCastFunction);
-        for(auto& damagedPlayer : damagedPlayers) {
-            sf::Uint16 targetId = std::stoi(damagedPlayer.first.substr(6));
-            _damagePlayerCallBack(targetId, damagedPlayer.second);
+        for(auto& [damagedPlayerName, damage] : damagedPlayers) {
+            sf::Uint16 targetId = std::stoi(damagedPlayerName.str().substr(6));
+            _damagePlayerCallBack(targetId, damage);
         }
     }
 }

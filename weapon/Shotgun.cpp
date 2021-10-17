@@ -24,12 +24,12 @@ Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, S
     _spreading = 5;
 }
 
-std::map<std::string, double>
-Shotgun::processFire(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction) {
-    std::map<std::string, double> damagedPlayers;
+std::map<ObjectNameTag, double>
+Shotgun::processFire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction) {
+    std::map<ObjectNameTag, double> damagedPlayers;
 
     for(int i = 0; i < 15; i++) {
-        std::map<std::string, double> damaged = addTrace(rayCastFunction, position() + Vec3D(triangles().back()[0]), -lookAt());
+        std::map<ObjectNameTag, double> damaged = addTrace(rayCastFunction, position() + Vec3D(triangles().back()[0]), -lookAt());
         for(auto& player : damaged)
             damagedPlayers[player.first] += player.second;
     }

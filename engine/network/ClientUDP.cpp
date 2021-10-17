@@ -82,9 +82,10 @@ bool ClientUDP::process()
     sf::Packet packet;
     sf::Uint16 senderId;
     sf::Uint16 targetId;
-    MsgType type;
 
-    if ((type = _socket.receive(packet, senderId)) == MsgType::Empty)
+    MsgType type = _socket.receive(packet, senderId);
+
+    if (type == MsgType::Empty)
         return false;
     if (!connected() && type != MsgType::Init)
         return true;
@@ -118,6 +119,10 @@ bool ClientUDP::process()
             Log::log("ClientUDP: client Id = " + std::to_string(targetId) + " disconnected from the server");
 
             processDisconnect(targetId);
+            break;
+
+        case MsgType::Confirm:
+
             break;
         default:
             processCustomPacket(type, packet);

@@ -9,13 +9,13 @@
 void Object::translate(const Vec3D &dv) {
     _position = std::make_unique<Vec3D>(*_position + dv);
 
-    for(auto attached : _attachedObjects)
-        attached.second->translate(dv);
+    for(auto &[attachedName, attachedObject] : _attachedObjects)
+        attachedObject->translate(dv);
 }
 
 void Object::scale(const Vec3D &s) {
-    for(auto attached : _attachedObjects)
-        attached.second->scale(s);
+    for(auto &[attachedName, attachedObject] : _attachedObjects)
+        attachedObject->scale(s);
 }
 
 void Object::rotate(const Vec3D &r) {
@@ -27,8 +27,8 @@ void Object::rotate(const Vec3D &r) {
     _up = std::make_unique<Vec3D>(rotationMatrix * *_up);
     _lookAt = std::make_unique<Vec3D>(rotationMatrix * *_lookAt);
 
-    for(auto attached : _attachedObjects)
-        attached.second->rotateRelativePoint(position(), r);
+    for(auto &[attachedName, attachedObject] : _attachedObjects)
+        attachedObject->rotateRelativePoint(position(), r);
 }
 
 void Object::rotate(const Vec3D &v, double rv) {
@@ -38,8 +38,8 @@ void Object::rotate(const Vec3D &v, double rv) {
     _up = std::make_unique<Vec3D>(rotationMatrix * *_up);
     _lookAt = std::make_unique<Vec3D>(rotationMatrix * *_lookAt);
 
-    for(auto attached : _attachedObjects)
-        attached.second->rotateRelativePoint(position(), v, rv);
+    for(auto &[attachedName, attachedObject] : _attachedObjects)
+        attachedObject->rotateRelativePoint(position(), v, rv);
 }
 
 void Object::rotateRelativePoint(const Vec3D &s, const Vec3D &r) {
@@ -59,8 +59,8 @@ void Object::rotateRelativePoint(const Vec3D &s, const Vec3D &r) {
     // After rotation we translate XYZ by vector -r2 and recalculate position
     _position = std::make_unique<Vec3D>(s + r2);
 
-    for(auto attached : _attachedObjects)
-        attached.second->rotateRelativePoint(s, r);
+    for(auto &[attachedName, attachedObject] : _attachedObjects)
+        attachedObject->rotateRelativePoint(s, r);
 }
 
 void Object::rotateRelativePoint(const Vec3D &s, const Vec3D &v, double r) {
@@ -77,8 +77,8 @@ void Object::rotateRelativePoint(const Vec3D &s, const Vec3D &v, double r) {
     // After rotation we translate XYZ by vector -r2 and recalculate position
     _position = std::make_unique<Vec3D>(s + r2);
 
-    for(auto attached : _attachedObjects)
-        attached.second->rotateRelativePoint(s, v, r);
+    for(auto &[attachedName, attachedObject] : _attachedObjects)
+        attachedObject->rotateRelativePoint(s, v, r);
 }
 
 void Object::rotateLeft(double rl) {
@@ -88,8 +88,8 @@ void Object::rotateLeft(double rl) {
 
     rotate(*_left, rl);
 
-    for(auto attached : _attachedObjects)
-        attached.second->rotateRelativePoint(position(), *_left, rl);
+    for(auto &[attachedName, attachedObject] : _attachedObjects)
+        attachedObject->rotateRelativePoint(position(), *_left, rl);
 }
 
 void Object::rotateUp(double ru) {
@@ -98,8 +98,8 @@ void Object::rotateUp(double ru) {
                                                           _angleLeftUpLookAt->z()});
     rotate(*_up, ru);
 
-    for(auto attached : _attachedObjects)
-        attached.second->rotateRelativePoint(position(), *_up, ru);
+    for(auto &[attachedName, attachedObject] : _attachedObjects)
+        attachedObject->rotateRelativePoint(position(), *_up, ru);
 }
 
 void Object::rotateLookAt(double rlAt) {
@@ -108,8 +108,8 @@ void Object::rotateLookAt(double rlAt) {
                                                           _angleLeftUpLookAt->z() + rlAt});
     rotate(*_lookAt, rlAt);
 
-    for(auto attached : _attachedObjects)
-        attached.second->rotateRelativePoint(position(), *_lookAt, rlAt);
+    for(auto &[attachedName, attachedObject] : _attachedObjects)
+        attachedObject->rotateRelativePoint(position(), *_lookAt, rlAt);
 }
 
 void Object::translateToPoint(const Vec3D &point) {
@@ -120,22 +120,22 @@ void Object::rotateToAngle(const Vec3D &v) {
     rotate(v - *_angle);
 }
 
-std::shared_ptr<Object> Object::attached(const std::string &name) {
-    if(_attachedObjects.count(name) == 0)
+std::shared_ptr<Object> Object::attached(const ObjectNameTag& tag) {
+    if(_attachedObjects.count(tag) == 0)
         return nullptr;
-    return _attachedObjects.find(name)->second;
+    return _attachedObjects.find(tag)->second;
 }
 
-void Object::attach(std::shared_ptr<Object> object, const std::string &name) {
+void Object::attach(std::shared_ptr<Object> object, const ObjectNameTag& tag) {
     // TODO: solve problem with possible infinite recursive call chains
     if(this != object.get())
-        _attachedObjects.emplace(name, object);
+        _attachedObjects.emplace(tag, object);
     else
         throw std::invalid_argument{"Object::attach: You cannot attach object to itself"};
 }
 
-void Object::unattach(const std::string &name) {
-    _attachedObjects.erase(name);
+void Object::unattach(const ObjectNameTag& tag) {
+    _attachedObjects.erase(tag);
 }
 
 Object::~Object() {

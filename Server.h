@@ -9,16 +9,16 @@
 #include "Player.h"
 #include "Bonus.h"
 
-struct BonusInfo {
-    Point4D position{};
-    double lastTake = std::numeric_limits<double>::min();
-    bool onTheMap = false;
+struct BonusInfo final {
+    const Point4D position{};
+    const double lastTake = std::numeric_limits<double>::min();
+    const bool onTheMap = false;
 };
 
 class Server final : public ServerUDP {
 private:
     std::map<sf::Uint16, std::shared_ptr<Player>> _players{};
-    std::map<std::string, BonusInfo> _bonuses{};
+    std::map<std::string, std::shared_ptr<BonusInfo>> _bonuses{};
     double _bonusRechargeTime = 60;
 
 public:

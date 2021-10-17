@@ -9,7 +9,7 @@
 #include "Player.h"
 
 class Bonus final : public RigidBody {
-protected:
+private:
     std::string _name;
 public:
     explicit Bonus(const std::string &bonusName, const std::string& filename, const std::string &materials = "", const Vec3D& scale = Vec3D{1, 1, 1});

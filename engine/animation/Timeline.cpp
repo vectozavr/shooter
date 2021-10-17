@@ -4,13 +4,14 @@
 
 #include <list>
 #include "Animation.h"
+#include "Timeline.h"
 
 namespace Timeline {
     namespace {
-        std::map<std::string, std::list<Animation*>> _animations;
+        std::map<AnimationListTag, std::list<Animation*>> _animations;
     }
 
-    void animate(const std::string& listName, Animation* anim) {
+    void animate(const AnimationListTag& listName, Animation* anim) {
         _animations[listName].emplace_back(anim);
     }
 
@@ -18,13 +19,13 @@ namespace Timeline {
         _animations.clear();
     }
 
-    void deleteAnimationList(const std::string& listName) {
+    void deleteAnimationList(const AnimationListTag& listName) {
         _animations[listName].clear();
         _animations.erase(listName);
     }
 
-    [[nodiscard]] bool isInAnimList(const std::string& name) {
-        return !_animations[name].empty();
+    [[nodiscard]] bool isInAnimList(const AnimationListTag& listName) {
+        return !_animations[listName].empty();
     }
 
     void update() {

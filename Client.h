@@ -19,7 +19,7 @@ private:
     std::function<void(sf::Uint16)> _removePlayerCallBack;
     std::function<void(const Vec3D&, const Vec3D&)> _addFireTraceCallBack;
     std::function<void(const std::string&, const Vec3D&)> _addBonusCallBack;
-    std::function<void(const std::string&)> _removeBonusCallBack;
+    std::function<void(const ObjectNameTag&)> _removeBonusCallBack;
 public:
     explicit Client(std::shared_ptr<Player>  player) : _player(player){};
 
@@ -29,7 +29,7 @@ public:
     void setRemovePlayerCallBack(std::function<void(sf::Uint16)> remove);
     void setAddFireTraceCallBack(std::function<void(const Vec3D&, const Vec3D&)> addTrace);
     void setAddBonusCallBack(std::function<void(const std::string&, const Vec3D&)> addBonus);
-    void setRemoveBonusCallBack(std::function<void(const std::string&)> removeBonus);
+    void setRemoveBonusCallBack(std::function<void(const ObjectNameTag&)> removeBonus);
 
     void processInit(sf::Packet& packet) override;
     void processUpdate(sf::Packet& packet) override;

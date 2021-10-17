@@ -44,7 +44,7 @@ private:
     std::function<void(std::shared_ptr<Weapon>)> _addWeaponCallBack;
     std::function<void(std::shared_ptr<Weapon>)> _removeWeaponCallBack;
 
-    std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> _rayCastFunction;
+    std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> _rayCastFunction;
 public:
     Player();
 
@@ -97,7 +97,7 @@ public:
     void setRemoveWeaponCallBack(std::function<void(std::shared_ptr<Weapon>)> removeWeapon) {
         _removeWeaponCallBack = std::move(removeWeapon);
     }
-    void setRayCastFunction(std::function<std::pair<Vec3D, std::string>(const Vec3D&, const Vec3D&)> rayCastFunction) {
+    void setRayCastFunction(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction) {
         _rayCastFunction = std::move(rayCastFunction);
     }
 
@@ -105,7 +105,7 @@ public:
     void setHeadAngle(double a) { _headAngle = a; }
     [[nodiscard]] double headAngle() const { return _headAngle; };
 
-    void collisionWithObject(const std::string& objName, std::shared_ptr<RigidBody> obj);
+    void collisionWithObject(const ObjectNameTag& tag, std::shared_ptr<RigidBody> obj);
 };
 
 
