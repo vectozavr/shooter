@@ -42,7 +42,7 @@ void PlayerController::update() {
                     Keyboard::isKeyPressed(sf::Keyboard::S));
 
     std::shared_ptr<Object> camera = _player->attached(ObjectNameTag("camera"));
-    if(camera != nullptr && _inRunning) {
+    if(camera != nullptr && _inRunning && _player->inCollision()) {
         if (!Timeline::isInAnimList(AnimationListTag("camera_hor_oscil"))) {
             Timeline::animate(AnimationListTag("camera_hor_oscil"), new ATranslate(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::InterpolationType::cos));
             Timeline::animate(AnimationListTag("camera_hor_oscil"), new AWait(0));
