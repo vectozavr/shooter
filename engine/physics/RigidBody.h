@@ -44,7 +44,6 @@ private:
     static std::vector<std::pair<size_t, size_t>> _addIfUniqueEdge(const std::vector<std::pair<size_t, size_t>>& edges, const std::vector<size_t>& faces, size_t a, size_t b);
 
     static void makeLogObjPolytope(const std::vector<Vec3D>& polytope, const std::vector<size_t>& faces);
-
 protected:
     std::unique_ptr<Vec3D> _velocity = std::make_unique<Vec3D>(Vec3D{0, 0, 0});;
     std::unique_ptr<Vec3D> _acceleration = std::make_unique<Vec3D>(Vec3D{0, 0, 0});;
@@ -61,6 +60,7 @@ public:
 
     [[nodiscard]] std::pair<bool, Simplex> checkGJKCollision(std::shared_ptr<RigidBody> obj);
     [[nodiscard]] CollisionPoint EPA(const Simplex& simplex, std::shared_ptr<RigidBody> obj);
+    void solveCollision(const CollisionPoint& collision);
 
     [[nodiscard]] Vec3D collisionNormal() const { return *_collisionNormal; }
 

@@ -77,7 +77,7 @@ void World::checkCollision(const std::string& body) {
                 if (gjk.first) {
                     if (obj->isCollider()) {
                         CollisionPoint epa = _objects[body]->EPA(gjk.second, obj);
-                        Solver::solveCollision(_objects[body], obj, epa);
+                        _objects[body]->solveCollision(epa);
                     }
                     if (_objects[body]->collisionCallBack() != nullptr)
                         _objects[body]->collisionCallBack()(name, obj);
