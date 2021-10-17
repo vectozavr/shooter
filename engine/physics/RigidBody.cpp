@@ -136,6 +136,13 @@ NextSimplex RigidBody::_tetrahedronCase(const Simplex &points) {
 }
 
 std::pair<bool, Simplex> RigidBody::checkGJKCollision(std::shared_ptr<RigidBody> obj) {
+    // This is implementation of GJK algorithm for collision detection.
+    // It builds a simplex (a simplest shape that can select point in space) around
+    // zero for Minkowski Difference. Collision happend when zero point is inside.
+    // See references:
+    // https://www.youtube.com/watch?v=MDusDn8oTSE
+    // https://blog.winter.dev/2020/gjk-algorithm/
+
 
     // Get initial support point in any direction
     std::shared_ptr<Vec3D> support = std::make_shared<Vec3D>(_support(obj, Vec3D{1, 0, 0}));
@@ -169,6 +176,12 @@ std::pair<bool, Simplex> RigidBody::checkGJKCollision(std::shared_ptr<RigidBody>
 }
 
 CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody> obj) {
+    // This is implementation of EPA algorithm for solving collision.
+    // It uses a simplex from GJK around and expand it to the border.
+    // The goal is to calculate the nearest normal and the intersection depth.
+    // See references:
+    // https://www.youtube.com/watch?v=0XQ2FSz3EK8
+    // https://blog.winter.dev/2020/epa-algorithm/
 
     std::vector<Vec3D> polytope(simplex.begin(), simplex.end());
     std::vector<size_t>  faces = {
