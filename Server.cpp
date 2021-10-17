@@ -117,11 +117,8 @@ void Server::processCustomPacket(MsgType type, sf::Packet& packet, sf::Uint16 se
                     _socket.send(sendPacket, player.first);
             }
             break;
-        case MsgType::Error:
-
-            break;
         default:
-            throw std::logic_error{"Server::processCustomPacket: unknown MsgType"};
+            return;
     }
 }
 

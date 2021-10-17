@@ -120,10 +120,6 @@ bool ClientUDP::process()
 
             processDisconnect(targetId);
             break;
-
-        case MsgType::Confirm:
-
-            break;
         default:
             processCustomPacket(type, packet);
     }

@@ -120,9 +120,8 @@ void Client::processCustomPacket(MsgType type, sf::Packet& packet) {
             if(_removeBonusCallBack != nullptr)
                 _removeBonusCallBack(ObjectNameTag(tmp));
             break;
-
         default:
-            throw std::logic_error{"Client::processCustomPacket: unknown MsgType"};
+            return;
     }
 }
 
