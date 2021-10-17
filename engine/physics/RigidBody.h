@@ -12,17 +12,17 @@
 #include "Simplex.h"
 #include "../Mesh.h"
 
-struct CollisionPoint {
+struct CollisionPoint final {
     const Vec3D normal;
     const double depth;
 };
 
-struct FaceNormal {
+struct FaceNormal final {
     const Vec3D normal;
     const double distance;
 };
 
-struct NextSimplex {
+struct NextSimplex final {
     const Simplex newSimplex;
     const Vec3D newDirection;
     const bool finishSearching;

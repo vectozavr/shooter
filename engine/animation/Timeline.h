@@ -7,7 +7,7 @@
 
 #include "Animation.h"
 
-class AnimationListTag {
+class AnimationListTag final {
 private:
     const std::string _name;
 public:

@@ -10,7 +10,7 @@
 #include <string>
 #include <utility>
 
-class ObjectNameTag {
+class ObjectNameTag final {
 private:
     const std::string _name;
 public:
