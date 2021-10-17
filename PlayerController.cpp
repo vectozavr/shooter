@@ -13,10 +13,7 @@
 
 PlayerController::PlayerController(std::shared_ptr<Player> player,
                                    std::shared_ptr<Keyboard> keyboard,
-                                   std::shared_ptr<Mouse> mouse) : _player(player), _keyboard(keyboard), _mouse(mouse) {
-    _slowMoSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::SLOW_MO_SOUND));
-    _unSlowMoSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::UN_SLOW_MO_SOUND));
-}
+                                   std::shared_ptr<Mouse> mouse) : _player(player), _keyboard(keyboard), _mouse(mouse) {}
 
 void PlayerController::update() {
     // friction
@@ -31,8 +28,8 @@ void PlayerController::update() {
             _isInSlowMo = false;
             _player->setVelocity(_player->velocity() * ShooterConsts::SLOW_MO_COEFFICIENT);
             _player->setAcceleration(_player->acceleration() * ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT);
-            _slowMoSound.stop();
-            _unSlowMoSound.play();
+            SoundController::stopSound(SoundTag("slowMo"));
+            SoundController::playSound(SoundTag("unSlowMo"), ShooterConsts::UN_SLOW_MO_SOUND);
         }
     }
 
@@ -100,14 +97,14 @@ void PlayerController::update() {
         _isInSlowMo = true;
         _player->setVelocity(_player->velocity() / ShooterConsts::SLOW_MO_COEFFICIENT);
         _player->setAcceleration(Vec3D(0, -ShooterConsts::GRAVITY / (ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT), 0));
-        _unSlowMoSound.stop();
-        _slowMoSound.play();
+        SoundController::stopSound(SoundTag("unSlowMo"));
+        SoundController::playSound(SoundTag("slowMo"), ShooterConsts::SLOW_MO_SOUND);
     } else if (_isInSlowMo && !Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
         _isInSlowMo = false;
         _player->setVelocity(_player->velocity() * ShooterConsts::SLOW_MO_COEFFICIENT);
         _player->setAcceleration(Vec3D(0, -ShooterConsts::GRAVITY, 0));
-        _slowMoSound.stop();
-        _unSlowMoSound.play();
+        SoundController::stopSound(SoundTag("slowMo"));
+        SoundController::playSound(SoundTag("unSlowMo"), ShooterConsts::UN_SLOW_MO_SOUND);
     }
 
     if (Keyboard::isKeyPressed(sf::Keyboard::Space) && _player->inCollision()) {
@@ -160,9 +157,8 @@ void PlayerController::update() {
         _player->reload();
     }
 
-    if ((_inRunning || _player->velocity().sqrAbs() > 3) && _player->inCollision() && _walkSound.getStatus() != sf::Sound::Status::Playing) {
+    if ((_inRunning || _player->velocity().sqrAbs() > 3) && _player->inCollision() && SoundController::getStatus(SoundTag("walk")) != sf::Sound::Status::Playing) {
         int soundNum = (int)((double) rand() / RAND_MAX * 5) + 1;
-        _walkSound.setBuffer(*ResourceManager::loadSoundBuffer("sound/stonestep" + std::to_string(soundNum) + ".ogg"));
-        _walkSound.play();
+        SoundController::playSound(SoundTag("walk"), "sound/stonestep" + std::to_string(soundNum) + ".ogg");
     }
 }

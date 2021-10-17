@@ -12,7 +12,7 @@
 #include <SFML/Audio/Sound.hpp>
 #include "../engine/Mesh.h"
 #include "../engine/utils/Time.h"
-
+#include "../engine/SoundController.h"
 #include "../engine/Consts.h"
 
 class Weapon : public RigidBody {
@@ -34,11 +34,8 @@ protected:
     double _lastFireTime = std::numeric_limits<double>::min();
     double _lastReloadTime = std::numeric_limits<double>::min();
 
-    sf::Sound fireSound;
-    sf::Sound reloadSound;
-    sf::Sound noAmmoSound;
-
-    int fireTraces = 0;
+    std::string fireSound;
+    std::string reloadSound;
 
     std::function<void(const Vec3D&, const Vec3D&)> _addTraceCallBack;
 

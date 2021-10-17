@@ -82,15 +82,15 @@ void Client::processCustomPacket(MsgType type, sf::Packet& packet) {
                 _player->addDeath();
                 // respawn
                 _player->translateToPoint(Vec3D{50.0*(-1 + 2.0*(double)rand()/RAND_MAX),30.0*(double)rand()/RAND_MAX,50.0*(-1 + 2.0*(double)rand()/RAND_MAX)});
-                _player->playDeath();
                 _player->initWeapons();
                 _player->setFullAbility();
+                SoundController::playSound(SoundTag("death"), ShooterConsts::DEATH_SOUND);
             }
             else
                 _players[buffId[0]]->addDeath();
             if(buffId[1] == _socket.ownId()) {
                 _player->addKill();
-                _player->playKill();
+                SoundController::playSound(SoundTag("kill"), ShooterConsts::KILL_SOUND);
             }
             else
                 _players[buffId[1]]->addKill();

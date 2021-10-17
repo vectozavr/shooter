@@ -19,10 +19,6 @@ private:
     bool _isSliding = false;
     bool _isInSlowMo = false;
 
-    sf::Sound _slowMoSound;
-    sf::Sound _unSlowMoSound;
-    sf::Sound _walkSound;
-
 public:
     PlayerController(std::shared_ptr<Player> player, std::shared_ptr<Keyboard> keyboard, std::shared_ptr<Mouse> mouse);
     void update();

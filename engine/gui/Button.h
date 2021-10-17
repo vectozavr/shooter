@@ -9,9 +9,9 @@
 #include <SFML/Audio.hpp>
 #include <functional>
 
-struct tPos {
-    int tx;
-    int ty;
+struct tPos final {
+    const int tx;
+    const int ty;
 };
 
 class Button final {
@@ -37,11 +37,8 @@ private:
     std::string _font;
     sf::Color _textColor;
 
-    std::string _clickSoundName;
-
     sf::Sprite _button;
     sf::Text _text;
-    sf::Sound _clickSound;
 
     bool _selected = false;
     bool _pressed = false;
@@ -49,7 +46,7 @@ private:
 
 public:
     Button() = default;
-    Button(int x, int y, int width, int height, std::function<void()> click, std::string  text, double sx, double sy, std::string  texture, tPos usualState, tPos selectedState, tPos pressedState, std::string  font, sf::Color textColor, std::string  clickSound);
+    Button(int x, int y, int width, int height, std::function<void()> click, std::string  text, double sx, double sy, std::string  texture, tPos usualState, tPos selectedState, tPos pressedState, std::string  font, sf::Color textColor);
 
     void select();
     void unSelect();

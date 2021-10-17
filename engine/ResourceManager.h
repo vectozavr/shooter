@@ -9,23 +9,36 @@
 #include <SFML/Audio.hpp>
 #include <memory>
 
-namespace ResourceManager
-{
-    // Unloads all currently loaded textures.
-    void unloadTextures();
-    void unloadSoundBuffers();
-    void unloadFonts();
-    void unloadShaders();
+class ResourceManager final {
+private:
+    std::map<std::string, std::shared_ptr<sf::Texture>> _textures;
+    std::map<std::string, std::shared_ptr<sf::Font>> _fonts;
+    std::map<std::string, std::shared_ptr<sf::SoundBuffer>> _soundBuffers;
 
-    void unloadAllResources();
+    static ResourceManager* _instance;
+
+    ResourceManager() = default;
+public:
+    ResourceManager(const ResourceManager&) = delete;
+    ResourceManager& operator=(ResourceManager&) = delete;
+
+    // Unloads all currently loaded textures.
+    static void unloadTextures();
+    static void unloadSoundBuffers();
+    static void unloadFonts();
+    static void unloadShaders();
+
+    static void unloadAllResources();
+
+    static void init();
+    static void free();
 
     // Try to load texture from file.
     // If success returns pointer to texture.
     // Otherwise returns nullptr.
-    std::shared_ptr<sf::Texture> loadTexture(const std::string& filename);
-    std::shared_ptr<sf::Font> loadFont(const std::string& filename);
-    std::shared_ptr<sf::SoundBuffer> loadSoundBuffer(const std::string& filename);
+    static std::shared_ptr<sf::Texture> loadTexture(const std::string& filename);
+    static std::shared_ptr<sf::Font> loadFont(const std::string& filename);
+    static std::shared_ptr<sf::SoundBuffer> loadSoundBuffer(const std::string& filename);
 };
-
 
 #endif //PSEUDO3DENGINE_RESOURCEMANAGER_H

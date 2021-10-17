@@ -27,13 +27,6 @@ private:
     int _kills = 0;
     int _deaths = 0;
 
-    // sounds
-    sf::Sound _killSound;
-    sf::Sound _deathSound;
-    sf::Sound _changeWeaponSound;
-    sf::Sound _fullHealthSound;
-    sf::Sound _fullAbilitySound;
-
     std::vector<std::shared_ptr<Weapon>> _weapons;
     size_t _selectedWeapon = 0;
 
@@ -48,12 +41,8 @@ private:
 public:
     Player();
 
-    void setHealth(double h) {
-        _health = h;
-    }
-    void setAbility(double a) {
-        _ability = a;
-    }
+    void setHealth(double h) { _health = h; }
+    void setAbility(double a) { _ability = a; }
 
     [[nodiscard]] double health() const { return _health; }
     [[nodiscard]] double ability() const { return _ability; }
@@ -73,14 +62,11 @@ public:
 
     void rotateWeaponsRelativePoint(const Vec3D& point, const Vec3D& v, double val);
 
-    [[nodiscard]] int kills() const {return _kills;}
-    [[nodiscard]] int deaths() const {return _deaths;}
+    [[nodiscard]] int kills() const { return _kills; }
+    [[nodiscard]] int deaths() const { return _deaths; }
 
     void addKill() { _kills++; }
     void addDeath() { _deaths++; }
-
-    void playDeath();
-    void playKill();
 
     void setDamagePlayerCallBack(std::function<void(sf::Uint16 targetId, double)> hit) {
         _damagePlayerCallBack = std::move(hit);

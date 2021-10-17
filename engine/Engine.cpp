@@ -7,8 +7,14 @@
 #include <iostream>
 #include "ResourceManager.h"
 #include "animation/Timeline.h"
+#include "SoundController.h"
 
 Engine::Engine() {
+    Time::init();
+    Timeline::init();
+    ResourceManager::init();
+    SoundController::init();
+
     screen = std::make_shared<Screen>();
     keyboard = std::make_shared<Keyboard>();
     mouse = std::make_shared<Mouse>();
@@ -64,14 +70,17 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
 
         screen->display();
     }
-    exit();
 }
 
 void Engine::exit() {
     if(screen->isOpen()) {
         screen->close();
     }
-    ResourceManager::unloadAllResources();
+    SoundController::free();
+    ResourceManager::free();
+    Timeline::free();
+    Time::free();
+
     Log::log("Engine::exit(): exit engine (" + std::to_string(screen->width()) + "x" + std::to_string(screen->height()) + ") with title '" +
                      screen->title() + "'.");
 }

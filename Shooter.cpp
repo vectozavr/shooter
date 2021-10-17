@@ -9,6 +9,7 @@
 #include "engine/animation/ARotate.h"
 #include "engine/animation/Timeline.h"
 #include "ShooterConsts.h"
+#include "engine/SoundController.h"
 
 using namespace std;
 
@@ -96,10 +97,10 @@ void Shooter::start() {
     mainMenu.title("Main menu");
     mainMenu.setBackgroundTexture(ShooterConsts::MAIN_MENU_BACK, 1.1, 1.1, screen->width(), screen->height());
 
-    mainMenu.addButton(screen->width()/2, 200, 200, 20, [this] () { this->play(); }, "Play", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255}, ShooterConsts::CLICK_SOUND);
-    mainMenu.addButton(screen->width()/2, 350, 200, 20, [this] () { this->player->translateToPoint(Vec3D{0, 0, 0}); this->player->setVelocity({}); this->play(); }, "Respawn", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255}, ShooterConsts::CLICK_SOUND);
+    mainMenu.addButton(screen->width()/2, 200, 200, 20, [this] () { this->play(); SoundController::playSound(SoundTag("click"), ShooterConsts::CLICK_SOUND);}, "Play", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
+    mainMenu.addButton(screen->width()/2, 350, 200, 20, [this] () { this->player->translateToPoint(Vec3D{0, 0, 0}); this->player->setVelocity({}); this->play(); SoundController::playSound(SoundTag("click"), ShooterConsts::CLICK_SOUND);}, "Respawn", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
 
-    mainMenu.addButton(screen->width()/2, 500, 200, 20, [this] () { client->disconnect(); server->stop(); this->exit();}, "Exit", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255}, ShooterConsts::CLICK_SOUND);
+    mainMenu.addButton(screen->width()/2, 500, 200, 20, [this] () { client->disconnect(); server->stop(); this->exit();}, "Exit", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
 
     // connecting to the server
     InitNetwork();
@@ -144,10 +145,8 @@ void Shooter::update() {
     setUpdateWorld(inGame);
 
     // background sounds and music control
-    if(backgroundNoise.getStatus() != sf::Sound::Status::Playing) {
-        backgroundNoise.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::BACK_NOISE));
-        backgroundNoise.play();
-    }
+    if(SoundController::getStatus(SoundTag("background")) != sf::Sound::Status::Playing)
+        SoundController::playSound(SoundTag("background"), ShooterConsts::BACK_NOISE);
 }
 
 void Shooter::gui() {

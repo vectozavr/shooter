@@ -7,8 +7,8 @@
 #include "../ShooterConsts.h"
 
 Rifle::Rifle(int ammo, const std::string &weaponName) : Weapon(weaponName, ShooterConsts::RIFLE_OBJ, "obj/rifle_mat.txt", Vec3D{3, 3, 3}, Vec3D{-1.2, 1, 0.3}, Vec3D{0, Consts::PI, 0}) {
-    fireSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::RIFLE_FIRE_SOUND));
-    reloadSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::RIFLE_RELOAD_SOUND));
+    fireSound = ShooterConsts::RIFLE_FIRE_SOUND;
+    reloadSound = ShooterConsts::RIFLE_RELOAD_SOUND;
 
     _initialPack = 5;
     _clipCapacity = 1; // how much ammo can be stored in one clip

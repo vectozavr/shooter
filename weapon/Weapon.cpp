@@ -19,15 +19,13 @@ Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, co
     setCollider(false);
     rotate(r);
     translate(t);
-
-    noAmmoSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::NO_AMMO_SOUND));
 }
 
 std::map<ObjectNameTag, double> Weapon::fire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction) {
     if(_clipAmmo == 0) {
         reload();
         if(_clipAmmo == 0)
-            noAmmoSound.play();
+            SoundController::playSound(SoundTag("noAmmo"), ShooterConsts::NO_AMMO_SOUND);
     }
 
     if(_clipAmmo <= 0 || std::abs(Time::time() - _lastFireTime) < _fireDelay || std::abs(Time::time() - _lastReloadTime) < _reloadTime)
@@ -36,7 +34,7 @@ std::map<ObjectNameTag, double> Weapon::fire(std::function<std::pair<Vec3D, Obje
     _lastFireTime = Time::time();
     _clipAmmo--;
 
-    fireSound.play();
+    SoundController::playSound(SoundTag("fire"), fireSound);
     Log::log("Weapon::fire (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
 
     return processFire(std::move(rayCastFunction));
@@ -53,7 +51,7 @@ void Weapon::reload() {
         _stockAmmo = 0;
     }
 
-    reloadSound.play();
+    SoundController::playSound(SoundTag("fire"), reloadSound);
     Log::log("Weapon::reload (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
     _lastReloadTime = Time::time();
 }

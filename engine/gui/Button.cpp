@@ -32,7 +32,7 @@ void Button::press()
         _button.setTextureRect(sf::IntRect(_pressedState.tx, _pressedState.ty, _w, _h));
         if(_checkBox)
             _pressed = true;
-        _clickSound.play();
+        //_clickSound.play();
         _click();
     }
     else
@@ -55,14 +55,14 @@ void Button::init() {
     _text.setFillColor(_textColor);
     _text.setPosition((float)(_x - _text.getLocalBounds().width / 2), (float)(_y - _h * _sy / 2 + _text.getLocalBounds().height / 4));
 
-    _clickSound.setBuffer(*ResourceManager::loadSoundBuffer(_clickSoundName));
-    _clickSound.setVolume(15);
+    //_clickSound.setBuffer(*ResourceManager::loadSoundBuffer(_clickSoundName));
+    //_clickSound.setVolume(15);
 }
 
 Button::Button(int x, int y, int width, int height, std::function<void()> click, std::string text, double sx,
                double sy, std::string texture, tPos usualState, tPos selectedState, tPos pressedState,
-               std::string font, sf::Color textColor, std::string clickSound) : _x(x), _y(y), _w(width), _h(height), _click(std::move(click)),
+               std::string font, sf::Color textColor) : _x(x), _y(y), _w(width), _h(height), _click(std::move(click)),
                _textString(std::move(text)), _sx(sx), _sy(sy), _texture(std::move(texture)), _usualState(usualState), _selectedState(selectedState), _pressedState(pressedState),
-               _font(std::move(font)), _textColor(textColor), _clickSoundName(std::move(clickSound)){
+               _font(std::move(font)), _textColor(textColor) {
 
 }

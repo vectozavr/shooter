@@ -24,6 +24,7 @@ namespace Consts {
     const std::string THIN_FONT = "engine/fonts/Roboto-Thin.ttf";
     const std::string MEDIUM_FONT = "engine/fonts/Roboto-Medium.ttf";
 
+    const double LARGEST_TIME_STEP = 1.0/15.0;
     const double TAP_DELAY = 0.2;
 
     const unsigned NETWORK_VERSION = 1U;

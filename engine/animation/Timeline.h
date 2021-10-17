@@ -19,14 +19,27 @@ public:
     bool operator<(const AnimationListTag& tag) const { return _name < tag._name; }
 };
 
-namespace Timeline {
-    void update();
-    void animate(const AnimationListTag& listName, Animation* anim);
+class Timeline {
+private:
+    std::map<AnimationListTag, std::list<Animation*>> _animations;
 
-    void deleteAllAnimations();
-    void deleteAnimationList(const AnimationListTag& listName);
+    static Timeline* _instance;
 
-    [[nodiscard]] bool isInAnimList(const AnimationListTag& listName);
-}
+    Timeline() = default;
+public:
+    Timeline(const Timeline&) = delete;
+    Timeline& operator=(Timeline&) = delete;
+
+    static void update();
+    static void animate(const AnimationListTag& listName, Animation* anim);
+
+    static void deleteAllAnimations();
+    static void deleteAnimationList(const AnimationListTag& listName);
+
+    [[nodiscard]] static bool isInAnimList(const AnimationListTag& listName);
+
+    static void init();
+    static void free();
+};
 
 #endif //SHOOTER_TIMELINE_H

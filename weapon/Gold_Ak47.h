@@ -11,8 +11,8 @@
 class Gold_Ak47 final : public Weapon {
 public:
     explicit Gold_Ak47(int ammo = 200, const std::string& weaponName = "gold_ak47") : Weapon(weaponName, ShooterConsts::GOLD_AK47_OBJ, "obj/gold_ak47_mat.txt", Vec3D{3, 3, 3}, Vec3D{-0.8, 1.3, 0.3}, Vec3D{0, Consts::PI, 0}) {
-        fireSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::GOLD_AK47_FIRE_SOUND));
-        reloadSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::GOLD_AK47_RELOAD_SOUND));
+        fireSound = ShooterConsts::GOLD_AK47_FIRE_SOUND;
+        reloadSound = ShooterConsts::GOLD_AK47_RELOAD_SOUND;
 
         _initialPack = 200;
         _spreading = 1.0;

@@ -14,27 +14,12 @@ Player::Player() {
     setVisible(false);
     setColor({240, 168, 168});
 
-    _changeWeaponSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::CHANGE_WEAPON_SOUND));
-
-    _fullHealthSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::RESTORE_HEALTH_SOUND));
-    _fullAbilitySound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::RESTORE_ABILITY_SOUND));
-
     setCollisionCallBack([this](const ObjectNameTag& tag, std::shared_ptr<RigidBody> obj) {collisionWithObject(tag, obj);});
 }
 
 void Player::rotateWeaponsRelativePoint(const Vec3D& point4D, const Vec3D& v, double val) {
     for(auto& weapon : _weapons)
         weapon->rotateRelativePoint(point4D, v, val);
-}
-
-void Player::playDeath() {
-    _deathSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::DEATH_SOUND));
-    _deathSound.play();
-}
-
-void Player::playKill() {
-    _killSound.setBuffer(*ResourceManager::loadSoundBuffer(ShooterConsts::KILL_SOUND));
-    _killSound.play();
 }
 
 void Player::collisionWithObject(const ObjectNameTag& tag, std::shared_ptr<RigidBody> obj) {
@@ -65,7 +50,7 @@ void Player::collisionWithObject(const ObjectNameTag& tag, std::shared_ptr<Rigid
 }
 
 void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
-    _changeWeaponSound.play();
+    SoundController::playSound(SoundTag("changeWeapon"), ShooterConsts::CHANGE_WEAPON_SOUND);
 
     for(auto& w : _weapons) {
         if (w->name() == weapon->name()) {
@@ -106,7 +91,7 @@ void Player::nextWeapon() {
         _selectedWeapon = (_selectedWeapon + 1) % _weapons.size();
         _addWeaponCallBack(_weapons[_selectedWeapon]);
         Log::log("selectedWeapon " + std::to_string(_selectedWeapon));
-        _changeWeaponSound.play();
+        SoundController::playSound(SoundTag("changeWeapon"), ShooterConsts::CHANGE_WEAPON_SOUND);
     }
 }
 
@@ -120,7 +105,7 @@ void Player::previousWeapon() {
             _selectedWeapon = _weapons.size() - 1;
         _addWeaponCallBack(_weapons[_selectedWeapon]);
         Log::log("selectedWeapon " + std::to_string(_selectedWeapon));
-        _changeWeaponSound.play();
+        SoundController::playSound(SoundTag("changeWeapon"), ShooterConsts::CHANGE_WEAPON_SOUND);
     }
 }
 
@@ -140,10 +125,10 @@ void Player::reload() {
 
 void Player::setFullHealth() {
     _health = ShooterConsts::HEALTH_MAX;
-    _fullHealthSound.play();
+    SoundController::playSound(SoundTag("addHealth"), ShooterConsts::RESTORE_HEALTH_SOUND);
 }
 
 void Player::setFullAbility() {
     _ability = ShooterConsts::ABILITY_MAX;
-    _fullAbilitySound.play();
+    SoundController::playSound(SoundTag("addAbility"), ShooterConsts::RESTORE_ABILITY_SOUND);
 }

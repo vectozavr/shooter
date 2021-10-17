@@ -9,8 +9,8 @@
 
 void Window::addButton(int x, int y, int w, int h, std::function<void()> click, const std::string &text, double sx, double sy,
                        const std::string &texture, tPos usualState, tPos selectedState, tPos pressedState,
-                       const std::string& font, sf::Color textColor, const std::string& clickSound) {
-    _buttons.push_back(Button{x, y, w, h, std::move(click), text, sx, sy, texture, usualState, selectedState, pressedState, font, textColor, clickSound});
+                       const std::string& font, sf::Color textColor) {
+    _buttons.push_back(Button{x, y, w, h, std::move(click), text, sx, sy, texture, usualState, selectedState, pressedState, font, textColor});
     _buttons.back().init();
 }
 
