@@ -25,7 +25,7 @@ namespace ShooterConsts {
     const std::string AK47_OBJ = "obj/ak47.obj";
     const std::string AK47_FIRE_SOUND = "sound/weapons/ak47.ogg";
     const std::string AK47_RELOAD_SOUND = "sound/weapons/reload_ak47.ogg";
-    const std::string GOLD_AK47_OBJ = "gold_ak47.obj";
+    const std::string GOLD_AK47_OBJ = "obj/gold_ak47.obj";
     const std::string GOLD_AK47_FIRE_SOUND = "sound/weapons/ak47.ogg";
     const std::string GOLD_AK47_RELOAD_SOUND = "sound/weapons/reload_ak47.ogg";
     const std::string RIFLE_OBJ = "obj/rifle.obj";
