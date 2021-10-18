@@ -4,6 +4,7 @@
 
 #include "Shooter.h"
 #include <fstream>
+#include <utility>
 #include "engine/animation/AColor.h"
 #include "engine/animation/AFunction.h"
 #include "engine/animation/ARotate.h"
@@ -81,8 +82,8 @@ void Shooter::start() {
     player->setDamagePlayerCallBack([this] (sf::Uint16 targetId, double damage) { client->damagePlayer(targetId, damage); });
     player->setRayCastFunction([this](const Vec3D& from, const Vec3D& to) { return world->rayCast(from, to, "Enemy"); });
     player->setTakeBonusCallBack([this] (const string& bonusName) { client->takeBonus(bonusName); });
-    player->setAddWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ addWeapon(weapon); });
-    player->setRemoveWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ removeWeapon(weapon); });
+    player->setAddWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ addWeapon(std::move(weapon)); });
+    player->setRemoveWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ removeWeapon(std::move(weapon)); });
 
     player->initWeapons();
 

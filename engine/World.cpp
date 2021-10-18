@@ -47,10 +47,11 @@ std::pair<Vec3D, ObjectNameTag> World::rayCast(const Vec3D& from, const Vec3D& t
 }
 
 void World::loadMap(const std::string& filename, const Vec3D& scale) {
-    auto objs = ResourceManager::loadObjects(filename, scale);
+    auto objs = ResourceManager::loadObjects(filename);
     for(unsigned i = 0; i < objs.size(); i++) {
         ObjectNameTag meshName = ObjectNameTag("map_" + to_string(i));
         addBody(std::make_shared<RigidBody>(*objs[i]), meshName);
+        body(meshName)->scale(scale);
     }
 }
 

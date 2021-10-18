@@ -20,12 +20,14 @@ Mesh &Mesh::operator*=(const Matrix4x4 &matrix4X4) {
 
 Mesh &Mesh::loadObj(const std::string& filename, const Vec3D& scale) {
 
-    auto objects = ResourceManager::loadObjects(filename, scale);
+    auto objects = ResourceManager::loadObjects(filename);
     for(auto& obj : objects) {
         for (auto &tri : obj->triangles()) {
             _tris.push_back(tri);
         }
     }
+    this->scale(scale);
+
     return *this;
 }
 

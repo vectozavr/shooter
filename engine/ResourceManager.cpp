@@ -33,11 +33,21 @@ void ResourceManager::unloadFonts() {
     _instance->_fonts.clear();
 }
 
+void ResourceManager::unloadObjects() {
+    _instance->_objects.clear();
+}
+
 void ResourceManager::unloadAllResources() {
     unloadTextures();
     unloadSoundBuffers();
     unloadFonts();
     unloadObjects();
+}
+
+void ResourceManager::free() {
+    unloadAllResources();
+    delete _instance;
+    _instance = nullptr;
 }
 
 std::shared_ptr<sf::Texture> ResourceManager::loadTexture(const std::string& filename) {
@@ -101,7 +111,7 @@ std::shared_ptr<sf::Font> ResourceManager::loadFont(const std::string& filename)
     return font;
 }
 
-std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::string &filename, const Vec3D& scale) {
+std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::string &filename) {
 
     // If objects is already loaded - return pointer to it
     auto it = _instance->_objects.find(filename);
@@ -133,10 +143,8 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
 
         char junk;
         if(line[0] == 'o') {
-            if(!tris.empty()) {
+            if(!tris.empty())
                 objects.push_back(make_shared<Mesh>(tris));
-                objects.back()->scale(scale);
-            }
             tris.clear();
         }
         if (line[0] == 'v')
@@ -167,10 +175,8 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
         }
     }
 
-    if(!tris.empty()) {
+    if(!tris.empty())
         objects.push_back(make_shared<Mesh>(tris));
-        objects.back()->scale(scale);
-    }
 
     file.close();
 
@@ -178,14 +184,4 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
     _instance->_objects.emplace(filename, objects);
 
     return objects;
-}
-
-void ResourceManager::unloadObjects() {
-    _instance->_objects.clear();
-}
-
-void ResourceManager::free() {
-    unloadAllResources();
-    delete _instance;
-    _instance = nullptr;
 }
