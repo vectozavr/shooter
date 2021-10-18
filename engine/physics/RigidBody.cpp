@@ -337,7 +337,7 @@ void RigidBody::makeLogObjPolytope(const std::vector<Vec3D> &polytope, const std
     for(auto &p : polytope)
         file << "v " << p.x() << " " << p.y()  << " " << p.z() << std::endl;
 
-    for(int i = 0; i < faces.size(); i += 3)
+    for(size_t i = 0; i < faces.size(); i += 3)
         file << "f " << faces[i + 0]+1 << " " << faces[i + 1]+1  << " " << faces[i + 2]+1 << std::endl;
 
     file.close();

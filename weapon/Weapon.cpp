@@ -51,7 +51,7 @@ void Weapon::reload() {
         _stockAmmo = 0;
     }
 
-    SoundController::playSound(SoundTag("fire"), reloadSound);
+    SoundController::playSound(SoundTag("reload"), reloadSound);
     Log::log("Weapon::reload (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
     _lastReloadTime = Time::time();
 }

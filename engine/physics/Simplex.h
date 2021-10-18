@@ -39,7 +39,7 @@ public:
 
     Vec3D operator[](unsigned i) const {
         auto it = _points.begin();
-        for(int k=0; k<i; k++)
+        for(unsigned k=0; k<i; k++)
             ++it;
         return *it;
 
