@@ -14,11 +14,6 @@ void Client::updatePacket() {
     _socket.send(packet, _socket.serverId());
 }
 
-void Client::spawnPlayer(sf::Uint16 id) {
-    if(_spawnPlayerCallBack != nullptr)
-        _spawnPlayerCallBack(id);
-}
-
 void Client::processInit(sf::Packet& packet) {
     sf::Uint16 targetId;
     double buf[4];
@@ -26,7 +21,8 @@ void Client::processInit(sf::Packet& packet) {
     while (packet >> targetId >> buf[0] >> buf[1] >> buf[2] >> buf[3])
     {
         if(targetId != _socket.ownId()) {
-            spawnPlayer(targetId);
+            if(_spawnPlayerCallBack != nullptr)
+                _spawnPlayerCallBack(targetId);
 
             _players[targetId]->translateToPoint(Vec3D{ buf[0], buf[1], buf[2]});
             _players[targetId]->setHealth(buf[3]);
@@ -45,7 +41,11 @@ void Client::processUpdate(sf::Packet& packet) {
             _players[targetId]->setHealth(buf[3]);
             _players[targetId]->rotateToAngle(Vec3D{0, buf[4], 0});
 
-            _players[targetId]->attached(ObjectNameTag("head"))->rotate(Matrix4x4::RotationY(buf[4]) * Vec3D{1, 0, 0}, buf[5] - _players[targetId]->headAngle());
+            auto head =  _players[targetId]->attached(ObjectNameTag("head"));
+            auto weapon = _players[targetId]->attached(ObjectNameTag("Weapon"));
+
+            head->rotateLeft(buf[5] - _players[targetId]->headAngle());
+            weapon->rotateLeft(-(buf[5] - _players[targetId]->headAngle()));
 
             _players[targetId]->setHeadAngle(buf[5]);
         } else if (targetId == _socket.ownId()) {
@@ -59,7 +59,8 @@ void Client::processNewClient(sf::Packet& packet) {
 
     packet >> targetId;
 
-    spawnPlayer(targetId);
+    if(_spawnPlayerCallBack != nullptr)
+        _spawnPlayerCallBack(targetId);
 }
 
 void Client::processDisconnect(sf::Uint16 targetId) {
@@ -120,6 +121,12 @@ void Client::processCustomPacket(MsgType type, sf::Packet& packet) {
             if(_removeBonusCallBack != nullptr)
                 _removeBonusCallBack(ObjectNameTag(tmp));
             break;
+        case MsgType::ChangeWeapon:
+            packet >> buffId[0] >> tmp;
+
+            if(_changeEnemyWeaponCallBack != nullptr)
+                _changeEnemyWeaponCallBack(tmp, buffId[0]);
+            break;
         default:
             return;
     }
@@ -135,7 +142,7 @@ void Client::damagePlayer(sf::Uint16 targetId, double damage) {
     sf::Packet packet;
 
     packet << MsgType::Damage << targetId << damage;
-    _socket.send(packet, _socket.serverId());
+    _socket.sendRely(packet, _socket.serverId());
 
     Log::log("Client: damagePlayer " + std::to_string(targetId) + " ( -" + std::to_string(damage) + "hp )");
 }
@@ -151,10 +158,17 @@ void Client::takeBonus(const std::string& bonusName) {
     sf::Packet packet;
 
     packet << MsgType::RemoveBonus << bonusName;
-    _socket.send(packet, _socket.serverId());
+    _socket.sendRely(packet, _socket.serverId());
 
     if(_removeBonusCallBack != nullptr)
         _removeBonusCallBack(ObjectNameTag(bonusName));
+}
+
+void Client::changeWeapon(const std::string &weaponName) {
+    sf::Packet packet;
+
+    packet << MsgType::ChangeWeapon << weaponName;
+    _socket.sendRely(packet, _socket.serverId());
 }
 
 void Client::addPlayer(sf::Uint16 id, std::shared_ptr<Player> player) {
@@ -179,4 +193,8 @@ void Client::setAddBonusCallBack(std::function<void(const std::string &, const V
 
 void Client::setRemoveBonusCallBack(std::function<void(const ObjectNameTag &)> removeBonus) {
     _removeBonusCallBack = std::move(removeBonus);
+}
+
+void Client::setChangeEnemyWeaponCallBack(std::function<void(const std::string&, sf::Uint16)> changeEnemyWeapon) {
+    _changeEnemyWeaponCallBack = std::move(changeEnemyWeapon);
 }

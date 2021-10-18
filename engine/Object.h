@@ -44,6 +44,9 @@ public:
     virtual void rotateToAngle(const Vec3D& v);
     virtual void rotateRelativePoint(const Vec3D& s, const Vec3D& r);
     virtual void rotateRelativePoint(const Vec3D& s, const Vec3D& v, double r);
+    void rotateLeft(double rl);
+    void rotateUp(double ru);
+    void rotateLookAt(double rlAt);
 
     [[nodiscard]] Vec3D position() const { return *_position; }
     [[nodiscard]] Vec3D angle() const { return *_angle; }
@@ -52,10 +55,6 @@ public:
     [[nodiscard]] Vec3D left() const { return *_left; }
     [[nodiscard]] Vec3D up() const { return *_up; }
     [[nodiscard]] Vec3D lookAt() const { return *_lookAt; }
-
-    void rotateLeft(double rl);
-    void rotateUp(double ru);
-    void rotateLookAt(double rlAt);
 
     void attach(std::shared_ptr<Object> object, const ObjectNameTag& tag);
     void unattach(const ObjectNameTag& tag);

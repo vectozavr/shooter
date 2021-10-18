@@ -112,15 +112,14 @@ std::shared_ptr<sf::Font> ResourceManager::loadFont(const std::string& filename)
 }
 
 std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::string &filename) {
+    std::vector<std::shared_ptr<Mesh>> objects{};
+    std::map<std::string, sf::Color> maters{};
 
     // If objects is already loaded - return pointer to it
     auto it = _instance->_objects.find(filename);
-    if (it != _instance->_objects.end())
+    if (it != _instance->_objects.end()) {
         return it->second;
-
-
-    std::vector<std::shared_ptr<Mesh>> objects{};
-    std::map<std::string, sf::Color> maters{};
+    }
 
     std::ifstream file(filename);
     if (!file.is_open())

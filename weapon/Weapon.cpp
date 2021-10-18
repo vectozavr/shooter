@@ -21,7 +21,7 @@ Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, co
     translate(t);
 }
 
-std::map<ObjectNameTag, double> Weapon::fire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction) {
+std::map<ObjectNameTag, double> Weapon::fire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) {
     if(_clipAmmo == 0) {
         reload();
         if(_clipAmmo == 0)
@@ -37,7 +37,7 @@ std::map<ObjectNameTag, double> Weapon::fire(std::function<std::pair<Vec3D, Obje
     SoundController::playSound(SoundTag("fire"), fireSound);
     Log::log("Weapon::fire (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
 
-    return processFire(std::move(rayCastFunction));
+    return processFire(std::move(rayCastFunction), position, direction);
 }
 
 void Weapon::reload() {
@@ -56,8 +56,8 @@ void Weapon::reload() {
     _lastReloadTime = Time::time();
 }
 
-std::map<ObjectNameTag, double> Weapon::processFire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction) {
-    return addTrace(std::move(rayCastFunction), position() + Vec3D(triangles().back()[0]), -lookAt());
+std::map<ObjectNameTag, double> Weapon::processFire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) {
+    return addTrace(std::move(rayCastFunction), position, direction);
 }
 
 std::map<ObjectNameTag, double> Weapon::addTrace(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& from, const Vec3D& directionTo) {
@@ -75,8 +75,9 @@ std::map<ObjectNameTag, double> Weapon::addTrace(std::function<std::pair<Vec3D, 
     }
 
     // add trace line
-    Vec3D to = rayCast.first == Vec3D(0) ? from + directionTo * ShooterConsts::FIRE_DISTANCE + randV: rayCast.first;
-    _addTraceCallBack(from, to);
+    Vec3D lineFrom = position() + Vec3D(triangles().back()[0]);
+    Vec3D lineTo = rayCast.first == Vec3D(0) ? position() + -lookAt() * ShooterConsts::FIRE_DISTANCE + randV: rayCast.first;
+    _addTraceCallBack(lineFrom, lineTo);
 
     return damagedPlayers;
 }

@@ -63,6 +63,7 @@ void Shooter::InitNetwork()
     client->setAddFireTraceCallBack([this](const Vec3D& from, const Vec3D& to){ addFireTrace(from, to); });
     client->setAddBonusCallBack([this](const std::string& bonusName, const Vec3D& position){ addBonus(bonusName, position); });
     client->setRemoveBonusCallBack([this](const ObjectNameTag& bonusName){ removeBonus(bonusName); });
+    client->setChangeEnemyWeaponCallBack([this](const std::string& weaponName, sf::Uint16 id){ changeEnemyWeapon(weaponName, id); });
 }
 
 void Shooter::start() {
@@ -227,6 +228,8 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     world->body(ObjectNameTag(name + "_eye2"))->setCollider(false);
     world->body(ObjectNameTag(name + "_eye2"))->setColor({147, 159, 255});
     world->body(ObjectNameTag(name + "_head"))->attach(world->body(ObjectNameTag(name + "_eye2")), ObjectNameTag("eye2"));
+
+    changeEnemyWeapon("gun", id);
 }
 
 void Shooter::removePlayer(sf::Uint16 id) {
@@ -235,6 +238,7 @@ void Shooter::removePlayer(sf::Uint16 id) {
     world->removeBody(ObjectNameTag(name + "_head"));
     world->removeBody(ObjectNameTag(name + "_eye1"));
     world->removeBody(ObjectNameTag(name + "_eye2"));
+    world->removeBody(ObjectNameTag("enemyWeapon_" + std::to_string(id)));
 }
 
 void Shooter::addFireTrace(const Vec3D &from, const Vec3D &to) {
@@ -263,6 +267,30 @@ void Shooter::removeBonus(const ObjectNameTag &bonusName) {
 
 void Shooter::addWeapon(std::shared_ptr<Weapon> weapon) {
     world->addBody(weapon, weapon->name());
+
+    if(client != nullptr)
+        client->changeWeapon(weapon->name().str());
+}
+
+void Shooter::changeEnemyWeapon(const std::string& weaponName, sf::Uint16 enemyId) {
+    ObjectNameTag weaponTag("enemyWeapon_" + std::to_string(enemyId));
+    auto head = world->body(ObjectNameTag("Enemy_" + std::to_string(enemyId) + "_head"));
+    auto enemy = world->body(ObjectNameTag("Enemy_" + std::to_string(enemyId)));
+
+
+    // remove old weapon:
+    world->removeBody(weaponTag);
+    enemy->unattach(ObjectNameTag("Weapon"));
+
+    world->loadBody(weaponTag, "obj/" + weaponName + ".obj");
+    world->body(weaponTag)->setCollider(false);
+    world->body(weaponTag)->scale(Vec3D(3, 3, 3));
+
+    world->body(weaponTag)->translateToPoint(head->position() - enemy->left() - enemy->up());
+
+    world->body(weaponTag)->rotate(Vec3D(0, Consts::PI + head->angle().y(), 0));
+    world->body(weaponTag)->rotateLeft(-head->angleLeftUpLookAt().x());
+    enemy->attach(world->body(weaponTag), ObjectNameTag("Weapon"));
 }
 
 void Shooter::removeWeapon(std::shared_ptr<Weapon> weapon) {

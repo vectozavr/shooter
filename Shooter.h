@@ -49,6 +49,7 @@ private:
     void removeBonus(const ObjectNameTag& bonusName);
     void addWeapon(std::shared_ptr<Weapon> weapon);
     void removeWeapon(std::shared_ptr<Weapon> weapon);
+    void changeEnemyWeapon(const std::string& weaponName, sf::Uint16 enemyId);
 public:
     Shooter() : mainMenu(screen, mouse) {};
 };

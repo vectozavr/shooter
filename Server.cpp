@@ -87,7 +87,7 @@ void Server::processCustomPacket(MsgType type, sf::Packet& packet, sf::Uint16 se
 
                 sendPacket << MsgType::Kill << targetId << senderId;
                 for (auto& player : _players)
-                    _socket.send(sendPacket, player.first);
+                    _socket.sendRely(sendPacket, player.first);
             }
             break;
         case MsgType::FireTrace:
@@ -114,8 +114,18 @@ void Server::processCustomPacket(MsgType type, sf::Packet& packet, sf::Uint16 se
             sendPacket << MsgType::RemoveBonus << tmp;
             for (auto& player : _players) {
                 if(player.first != senderId)
-                    _socket.send(sendPacket, player.first);
+                    _socket.sendRely(sendPacket, player.first);
             }
+            break;
+        case MsgType::ChangeWeapon:
+            packet >> tmp;
+            sendPacket << MsgType::ChangeWeapon << senderId << tmp;
+
+            for (auto& player : _players) {
+                if(player.first != senderId)
+                    _socket.sendRely(sendPacket, player.first);
+            }
+
             break;
         default:
             return;

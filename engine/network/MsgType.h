@@ -29,6 +29,7 @@ enum class MsgType
     InitBonuses,
     AddBonus,
     RemoveBonus,
+    ChangeWeapon,
 };
 
 sf::Packet& operator<<(sf::Packet& packet, MsgType type);

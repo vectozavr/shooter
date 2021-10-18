@@ -83,33 +83,25 @@ void Object::rotateRelativePoint(const Vec3D &s, const Vec3D &v, double r) {
 
 void Object::rotateLeft(double rl) {
     _angleLeftUpLookAt = std::make_unique<Vec3D>(Vec3D{_angleLeftUpLookAt->x() + rl,
-                                                          _angleLeftUpLookAt->y(),
-                                                          _angleLeftUpLookAt->z()});
+                                                      _angleLeftUpLookAt->y(),
+                                                      _angleLeftUpLookAt->z()});
 
-    rotate(*_left, rl);
-
-    for(auto &[attachedName, attachedObject] : _attachedObjects)
-        attachedObject->rotateRelativePoint(position(), *_left, rl);
+    rotate(Vec3D(*_left), rl);
 }
 
 void Object::rotateUp(double ru) {
     _angleLeftUpLookAt = std::make_unique<Vec3D>(Vec3D{_angleLeftUpLookAt->x(),
-                                                          _angleLeftUpLookAt->y() + ru,
-                                                          _angleLeftUpLookAt->z()});
-    rotate(*_up, ru);
+                                                       _angleLeftUpLookAt->y() + ru,
+                                                       _angleLeftUpLookAt->z()});
 
-    for(auto &[attachedName, attachedObject] : _attachedObjects)
-        attachedObject->rotateRelativePoint(position(), *_up, ru);
+    rotate(Vec3D(*_up), ru);
 }
 
 void Object::rotateLookAt(double rlAt) {
     _angleLeftUpLookAt = std::make_unique<Vec3D>(Vec3D{_angleLeftUpLookAt->x(),
                                                           _angleLeftUpLookAt->y(),
                                                           _angleLeftUpLookAt->z() + rlAt});
-    rotate(*_lookAt, rlAt);
-
-    for(auto &[attachedName, attachedObject] : _attachedObjects)
-        attachedObject->rotateRelativePoint(position(), *_lookAt, rlAt);
+    rotate(Vec3D(*_lookAt), rlAt);
 }
 
 void Object::translateToPoint(const Vec3D &point) {

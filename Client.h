@@ -13,13 +13,12 @@ private:
     std::map<sf::Uint16, std::shared_ptr<Player>> _players{};
     std::shared_ptr<Player> _player;
 
-    void spawnPlayer(sf::Uint16 id);
-
     std::function<void(sf::Uint16)> _spawnPlayerCallBack;
     std::function<void(sf::Uint16)> _removePlayerCallBack;
     std::function<void(const Vec3D&, const Vec3D&)> _addFireTraceCallBack;
     std::function<void(const std::string&, const Vec3D&)> _addBonusCallBack;
     std::function<void(const ObjectNameTag&)> _removeBonusCallBack;
+    std::function<void(const std::string&, sf::Uint16)> _changeEnemyWeaponCallBack;
 public:
     explicit Client(std::shared_ptr<Player>  player) : _player(player){};
 
@@ -30,6 +29,8 @@ public:
     void setAddFireTraceCallBack(std::function<void(const Vec3D&, const Vec3D&)> addTrace);
     void setAddBonusCallBack(std::function<void(const std::string&, const Vec3D&)> addBonus);
     void setRemoveBonusCallBack(std::function<void(const ObjectNameTag&)> removeBonus);
+
+    void setChangeEnemyWeaponCallBack(std::function<void(const std::string&, sf::Uint16)> changeEnemyWeapon);
 
     void processInit(sf::Packet& packet) override;
     void processUpdate(sf::Packet& packet) override;
@@ -45,6 +46,8 @@ public:
     void takeBonus(const std::string& bonusName);
 
     void addTrace(const Vec3D& from, const Vec3D& to);
+
+    void changeWeapon(const std::string& weaponName);
 
     void addPlayer(sf::Uint16 id, std::shared_ptr<Player> player);
 };

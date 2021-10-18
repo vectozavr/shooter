@@ -25,11 +25,11 @@ Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, S
 }
 
 std::map<ObjectNameTag, double>
-Shotgun::processFire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction) {
+Shotgun::processFire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) {
     std::map<ObjectNameTag, double> damagedPlayers;
 
     for(int i = 0; i < 15; i++) {
-        std::map<ObjectNameTag, double> damaged = addTrace(rayCastFunction, position() + Vec3D(triangles().back()[0]), -lookAt());
+        std::map<ObjectNameTag, double> damaged = addTrace(rayCastFunction, position, direction);
         for(auto& player : damaged)
             damagedPlayers[player.first] += player.second;
     }
