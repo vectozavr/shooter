@@ -45,8 +45,10 @@ sf::Sound::Status SoundController::getStatus(const SoundTag& soundTag) {
 
     if(_instance->_sounds.count(soundTag) > 0)
         return _instance->_sounds[soundTag].getStatus();
-    else
+    else {
+        _instance->_sounds.erase(soundTag);
         return sf::Sound::Status::Stopped;
+    }
 }
 
 void SoundController::free() {

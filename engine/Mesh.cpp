@@ -3,11 +3,10 @@
 //
 
 #include <string>
-#include <fstream>
-#include <sstream>
 #include <utility>
 #include "Mesh.h"
 #include "utils/Log.h"
+#include "ResourceManager.h"
 
 using namespace std;
 
@@ -23,7 +22,7 @@ Mesh &Mesh::operator*=(const Matrix4x4 &matrix4X4) {
 
 Mesh &Mesh::loadObj(const std::string& filename, const Vec3D& scale) {
 
-    auto objects = Mesh::LoadObjects(filename, scale);
+    auto objects = ResourceManager::loadObjects(filename, scale);
     for(auto& obj : objects) {
         for (auto &tri : obj->triangles()) {
             _tris.push_back(tri);
@@ -77,75 +76,6 @@ void Mesh::setColor(const sf::Color& c) {
         newTriangles.emplace_back(Triangle(t[0], t[1], t[2], c));
     }
     setTriangles(newTriangles);
-}
-
-std::vector<std::shared_ptr<Mesh>> Mesh::LoadObjects(const string &filename, const Vec3D &scale) {
-    std::vector<std::shared_ptr<Mesh>> objects;
-    map<string, sf::Color> maters;
-
-    ifstream file(filename);
-    if (!file.is_open())
-    {
-        Log::log("Mesh::LoadObjects(): cannot load file from " + filename);
-        return objects;
-    }
-
-    vector<Point4D> verts;
-    std::vector<Triangle> tris;
-    sf::Color currentColor = sf::Color(255, 245, 194, 255);
-
-    while (!file.eof())
-    {
-        char line[128];
-        file.getline(line, 128);
-
-        stringstream s;
-        s << line;
-
-        char junk;
-        if(line[0] == 'o') {
-            if(!tris.empty()) {
-                objects.push_back(make_shared<Mesh>(tris));
-                objects.back()->scale(scale);
-            }
-            tris.clear();
-        }
-        if (line[0] == 'v')
-        {
-            double x, y, z;
-            s >> junk >> x >> y >> z;
-            verts.emplace_back(x, y, z, 1);
-        }
-        if(line[0] == 'g') {
-            string matInfo;
-            s >> junk >> matInfo;
-            string colorName = matInfo.substr(matInfo.size()-3, 3);
-            currentColor = maters[matInfo.substr(matInfo.size()-3, 3)];
-        }
-        if (line[0] == 'f')
-        {
-            int f[3];
-            s >> junk >> f[0] >> f[1] >> f[2];
-            tris.emplace_back(verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1], currentColor);
-        }
-        if(line[0] == 'm')
-        {
-            int color[4];
-            string matName;
-
-            s >> junk >> matName >> color[0] >> color[1] >> color[2] >> color[3];
-            maters.insert({matName, sf::Color(color[0],color[1],color[2], color[3])});
-        }
-    }
-
-    if(!tris.empty()) {
-        objects.push_back(make_shared<Mesh>(tris));
-        objects.back()->scale(scale);
-    }
-
-    file.close();
-
-    return objects;
 }
 
 Mesh Mesh::LineTo(const Vec3D& from, const Vec3D& to, double line_width, const sf::Color& color) {

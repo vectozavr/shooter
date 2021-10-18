@@ -8,12 +8,14 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <memory>
+#include "Mesh.h"
 
 class ResourceManager final {
 private:
     std::map<std::string, std::shared_ptr<sf::Texture>> _textures;
     std::map<std::string, std::shared_ptr<sf::Font>> _fonts;
     std::map<std::string, std::shared_ptr<sf::SoundBuffer>> _soundBuffers;
+    std::map<std::string, std::vector<std::shared_ptr<Mesh>>> _objects;
 
     static ResourceManager* _instance;
 
@@ -23,10 +25,10 @@ public:
     ResourceManager& operator=(ResourceManager&) = delete;
 
     // Unloads all currently loaded textures.
+    static void unloadObjects();
     static void unloadTextures();
     static void unloadSoundBuffers();
     static void unloadFonts();
-    static void unloadShaders();
 
     static void unloadAllResources();
 
@@ -36,6 +38,7 @@ public:
     // Try to load texture from file.
     // If success returns pointer to texture.
     // Otherwise returns nullptr.
+    static std::vector<std::shared_ptr<Mesh>> loadObjects(const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
     static std::shared_ptr<sf::Texture> loadTexture(const std::string& filename);
     static std::shared_ptr<sf::Font> loadFont(const std::string& filename);
     static std::shared_ptr<sf::SoundBuffer> loadSoundBuffer(const std::string& filename);

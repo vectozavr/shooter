@@ -87,7 +87,7 @@ void Shooter::start() {
     player->initWeapons();
 
     camera->translateToPoint(player->position() + Vec3D{0, 1.8, 0});
-    player->attach(camera, ObjectNameTag("camera"));
+    player->attach(camera, ObjectNameTag("Camera"));
 
     world->addBody(player, ObjectNameTag("Player"));
     player->translate(Vec3D{0, 10, 0});

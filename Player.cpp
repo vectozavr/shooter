@@ -110,7 +110,7 @@ void Player::previousWeapon() {
 }
 
 void Player::fire() {
-    if(attached(ObjectNameTag("camera")) != nullptr) {
+    if(attached(ObjectNameTag("Camera")) != nullptr) {
         auto damagedPlayers = _weapons[_selectedWeapon]->fire(_rayCastFunction);
         for(auto& [damagedPlayerName, damage] : damagedPlayers) {
             sf::Uint16 targetId = std::stoi(damagedPlayerName.str().substr(6));
