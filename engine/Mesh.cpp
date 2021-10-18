@@ -2,10 +2,8 @@
 // Created by Иван Ильин on 13.01.2021.
 //
 
-#include <string>
 #include <utility>
 #include "Mesh.h"
-#include "utils/Log.h"
 #include "ResourceManager.h"
 
 using namespace std;
