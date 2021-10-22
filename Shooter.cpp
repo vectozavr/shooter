@@ -81,7 +81,7 @@ void Shooter::start() {
     // TODO: encapsulate call backs inside Player
     player->setAddTraceCallBack([this](const Vec3D& from, const Vec3D& to){ client->addTrace(from, to); addFireTrace(from, to); });
     player->setDamagePlayerCallBack([this] (sf::Uint16 targetId, double damage) { client->damagePlayer(targetId, damage); });
-    player->setRayCastFunction([this](const Vec3D& from, const Vec3D& to) { return world->rayCast(from, to, "Enemy"); });
+    player->setRayCastFunction([this](const Vec3D& from, const Vec3D& to) { return world->rayCast(from, to, "weapon Player"); });
     player->setTakeBonusCallBack([this] (const string& bonusName) { client->takeBonus(bonusName); });
     player->setAddWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ addWeapon(std::move(weapon)); });
     player->setRemoveWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ removeWeapon(std::move(weapon)); });
@@ -246,7 +246,7 @@ void Shooter::addFireTrace(const Vec3D &from, const Vec3D &to) {
     world->addBody(std::make_shared<RigidBody>(Mesh::LineTo(from, to, 0.05)), ObjectNameTag(traceName));
     world->body(ObjectNameTag(traceName))->setCollider(false);
 
-    Timeline::animate(AnimationListTag(traceName + "_fadeOut"), new AColor(world->body(ObjectNameTag(traceName)), {255, 255, 255, 0}));
+    Timeline::animate(AnimationListTag(traceName + "_fadeOut"), new AColor(world->body(ObjectNameTag(traceName)), {150, 150, 150, 0}));
     Timeline::animate(AnimationListTag(traceName + "_delete"), new AFunction([this, traceName](){ removeFireTrace(ObjectNameTag(traceName)); }, 1, 2));
 }
 
@@ -266,7 +266,7 @@ void Shooter::removeBonus(const ObjectNameTag &bonusName) {
 }
 
 void Shooter::addWeapon(std::shared_ptr<Weapon> weapon) {
-    world->addBody(weapon, weapon->name());
+    world->addBody(weapon, ObjectNameTag("weapon_" + weapon->name().str()));
 
     if(client != nullptr)
         client->changeWeapon(weapon->name().str());
@@ -294,5 +294,5 @@ void Shooter::changeEnemyWeapon(const std::string& weaponName, sf::Uint16 enemyI
 }
 
 void Shooter::removeWeapon(std::shared_ptr<Weapon> weapon) {
-    world->removeBody(ObjectNameTag(weapon->name()));
+    world->removeBody(ObjectNameTag("weapon_" + weapon->name().str()));
 }

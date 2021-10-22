@@ -113,3 +113,19 @@ if (SFML_FOUND)
 endif()
 
 target_link_libraries(shooter sfml-audio sfml-network sfml-graphics sfml-window sfml-system)
+
+# OpenGL part
+if (APPLE OR UNIX)
+    set(GLEW_H /usr/local/Cellar/glew/2.1.0/include/GL)
+    set(GLFW_H /usr/local/Cellar/glfw/3.2.1/include/GLFW)
+    include_directories(${GLEW_H} ${GLFW_H})
+
+    set(GLEW_LINK /usr/local/Cellar/glew/2.1.0/lib/libGLEW.2.1.dylib)
+    set(GLFW_LINK /usr/local/Cellar/glfw/3.2.1/lib/libglfw.3.dylib)
+    link_libraries(${OPENGL} ${GLEW_LINK} ${GLFW_LINK})
+
+    target_link_libraries(shooter "-framework OpenGL")
+    target_link_libraries(shooter "-framework GLUT")
+else()
+
+endif()

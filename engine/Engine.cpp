@@ -42,11 +42,6 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
         Time::update();
         update();
 
-        /* Project all mesh
-         * Here we project all _tris for each body from world._objects.
-         * When we call camera.project(m.second),
-         */
-
         // sometimes we dont need to update physics world
         // (for example in menu or while pause)
         // hence we can set '_updateWorld' equal to false in setUpdateWorld(bool):
@@ -54,15 +49,30 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
 
             Timeline::update();
 
-            camera->clear();
             world->update();
-            world->projectObjectsInCamera(camera);
 
-            // draw projected body
-            for (auto &t : camera->sorted())
-                screen->drawTriangle(*t);
+            if(_useOpenGL) {
+                GLfloat* view = camera->view();
+                for(auto & it : *world) {
+                    if (it.second->isVisible()) {
+                        GLfloat* geometry = Screen::glMeshToGLfloatArray(it.second, camera->position());
+                        screen->glDrawMesh(geometry, view, 3 * it.second->triangles().size());
+                        free(geometry);
+                    }
+                }
+                free(view);
+            } else {
+                // clear triangles from previous frame
+                camera->clear();
+                // project triangles to the camera plane
+                for(auto & it : *world)
+                    camera->project(it.second);
+                // draw triangles on the screen
+                for (auto &t : camera->sorted())
+                    screen->drawTriangle(*t);
 
-            _triPerSec = camera->buffSize() * Time::fps();
+                _triPerSec = camera->buffSize() * Time::fps();
+            }
 
             printDebugText();
             gui();
@@ -87,13 +97,18 @@ void Engine::exit() {
 
 void Engine::printDebugText() const {
     if (_debugText) {
-        screen->debugText(_name + "\n\n X: " +
+        std::string str = _name + "\n\n X: " +
                           std::to_string((camera->position().x())) + "\n Y: " +
                           std::to_string((camera->position().y())) + "\n Z: " +
                           std::to_string((camera->position().z())) + "\n\n" +
                           std::to_string(screen->width()) + "x" +
-                          std::to_string(screen->height()) + "\n" +
-                          std::to_string(Time::fps()) +
-                          " fps \n" + std::to_string((int) _triPerSec) + " tris/s");
+                          std::to_string(screen->height()) + "\t" +
+                          std::to_string(Time::fps()) + " fps";
+        if(_useOpenGL) {
+            str += "\n Using OpenGL acceleration";
+        } else {
+            str += "\n" + std::to_string((int) _triPerSec) + " tris/s";
+        }
+        screen->debugText(str);
     }
 }

@@ -6,7 +6,6 @@
 #include "utils/Log.h"
 
 #include <cmath>
-#include "Consts.h"
 
 std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mesh) {
 
@@ -64,9 +63,9 @@ std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mes
             Triangle clippedProjected = clipped * _SP;
 
             Triangle clippedProjectedNormalized = Triangle(clippedProjected[0] / clippedProjected[0].w(),
-                                                         clippedProjected[1] / clippedProjected[1].w(),
-                                                         clippedProjected[2] / clippedProjected[2].w(),
-                                                         ambientColor);
+                                                           clippedProjected[1] / clippedProjected[1].w(),
+                                                           clippedProjected[2] / clippedProjected[2].w(),
+                                                           ambientColor);
 
             _triangles.emplace_back(std::make_shared<Triangle>(clippedProjectedNormalized));
         }
@@ -127,4 +126,31 @@ void Camera::clear() {
     // the position of camera and insert new cartridge for photo.
     _triangles.clear();
     _V = Matrix4x4::View(left(), up(), lookAt(), position());
+}
+
+// OpenGL function
+GLfloat *Camera::view() const {
+    auto* v = (GLfloat*)malloc(4*4*sizeof(GLfloat));
+
+    v[0] = -(GLfloat)left().x();
+    v[4] = -(GLfloat)left().y();
+    v[8] = -(GLfloat)left().z();
+    v[12] = (GLfloat)position().dot(left());
+
+    v[1] = (GLfloat)up().x();
+    v[5] = (GLfloat)up().y();
+    v[9] = (GLfloat)up().z();
+    v[13] = -(GLfloat)position().dot(up());
+
+    v[2] = -(GLfloat)lookAt().x();
+    v[6] = -(GLfloat)lookAt().y();
+    v[10] = -(GLfloat)lookAt().z();
+    v[14] = (GLfloat)position().dot(lookAt());
+
+    v[3] = (GLfloat)0.0f;
+    v[7] = (GLfloat)0.0f;
+    v[11] = (GLfloat)0.0f;
+    v[15] = (GLfloat)1.0f;
+
+    return v;
 }

@@ -52,7 +52,7 @@ public:
     ~Mesh() override;
 
     Mesh static Obj(const std::string& filename);
-    Mesh static LineTo(const Vec3D& from, const Vec3D& to, double line_width = 0.1, const sf::Color& color = {150, 150, 150, 255});
+    Mesh static LineTo(const Vec3D& from, const Vec3D& to, double line_width = 0.1, const sf::Color& color = {150, 150, 150, 100});
 };
 
 #endif //INC_3DZAVR_MESH_H

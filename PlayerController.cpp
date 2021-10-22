@@ -9,6 +9,7 @@
 #include "engine/animation/ATranslate.h"
 #include "engine/animation/ATranslateToPoint.h"
 #include "engine/animation/Timeline.h"
+#include "engine/animation/ARotate.h"
 #include "ShooterConsts.h"
 
 PlayerController::PlayerController(std::shared_ptr<Player> player,
@@ -107,15 +108,24 @@ void PlayerController::update() {
         SoundController::playSound(SoundTag("unSlowMo"), ShooterConsts::UN_SLOW_MO_SOUND);
     }
 
+    if (Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+        bool shot = _player->fire();
+
+        if(shot) {
+            if(!_player->inCollision() && (_player->weaponName() == ObjectNameTag("shotgun")))
+                _player->addVelocity(-camera->lookAt() * 30 * coeff);
+        }
+    }
+
     if (Keyboard::isKeyPressed(sf::Keyboard::Space) && _player->inCollision()) {
         // if we just want to jump, we have to add particular speed
         if (!_isSliding)
             _player->addVelocity(Vec3D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * ShooterConsts::JUMP_HEIGHT) * coeff, 0 });
         // if we want to slide, we have to add speed * 60/fps to make it independent on frame rate
         else
-            _player->addVelocity(Vec3D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * ShooterConsts::JUMP_HEIGHT) * coeff * 60.0 / Time::fps(), 0 });
+            _player->addVelocity(Vec3D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * ShooterConsts::JUMP_HEIGHT) * coeff * Time::deltaTime() * 60, 0 });
 
-        _player->translate(Vec3D{ 0, Time::deltaTime() * ShooterConsts::WALK_SPEED * 2 * coeff * 60.0 / Time::fps(), 0 });
+        _player->translate(Vec3D{ 0, Time::deltaTime() * ShooterConsts::WALK_SPEED * 2 * coeff, 0 });
         _isSliding = true;
     } else {
         _isSliding = false;
@@ -147,10 +157,6 @@ void PlayerController::update() {
 
     if (_keyboard->isKeyTapped(sf::Keyboard::Left) || _keyboard->isKeyTapped(sf::Keyboard::Q)) {
         _player->previousWeapon();
-    }
-
-    if (Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-        _player->fire();
     }
 
     if(Keyboard::isKeyPressed(sf::Keyboard::R)) {

@@ -21,7 +21,7 @@ Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, co
     translate(t);
 }
 
-std::map<ObjectNameTag, double> Weapon::fire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) {
+FireInformation Weapon::fire(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) {
     if(_clipAmmo == 0) {
         reload();
         if(_clipAmmo == 0)
@@ -29,7 +29,7 @@ std::map<ObjectNameTag, double> Weapon::fire(std::function<std::pair<Vec3D, Obje
     }
 
     if(_clipAmmo <= 0 || std::abs(Time::time() - _lastFireTime) < _fireDelay || std::abs(Time::time() - _lastReloadTime) < _reloadTime)
-        return std::map<ObjectNameTag, double>();
+        return FireInformation{std::map<ObjectNameTag, double>(), false};
 
     _lastFireTime = Time::time();
     _clipAmmo--;
@@ -37,7 +37,7 @@ std::map<ObjectNameTag, double> Weapon::fire(std::function<std::pair<Vec3D, Obje
     SoundController::playSound(SoundTag("fire"), fireSound);
     Log::log("Weapon::fire (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
 
-    return processFire(std::move(rayCastFunction), position, direction);
+    return FireInformation{processFire(std::move(rayCastFunction), position, direction), true};
 }
 
 void Weapon::reload() {
@@ -56,11 +56,11 @@ void Weapon::reload() {
     _lastReloadTime = Time::time();
 }
 
-std::map<ObjectNameTag, double> Weapon::processFire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) {
+std::map<ObjectNameTag, double> Weapon::processFire(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) {
     return addTrace(std::move(rayCastFunction), position, direction);
 }
 
-std::map<ObjectNameTag, double> Weapon::addTrace(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& from, const Vec3D& directionTo) {
+std::map<ObjectNameTag, double> Weapon::addTrace(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& from, const Vec3D& directionTo) {
     std::map<ObjectNameTag, double> damagedPlayers;
 
     double spreading = _spreading*ShooterConsts::FIRE_DISTANCE/100;
@@ -70,13 +70,12 @@ std::map<ObjectNameTag, double> Weapon::addTrace(std::function<std::pair<Vec3D, 
 
     // damage player
     auto rayCast = rayCastFunction(from, from + directionTo * ShooterConsts::FIRE_DISTANCE + randV);
-    if(rayCast.second.str().find("Enemy") != std::string::npos) {
-        damagedPlayers[rayCast.second] += _damage/(1.0 + (from - rayCast.first).abs());
-    }
+    if(rayCast.objectName.str().find("Enemy") != std::string::npos)
+        damagedPlayers[rayCast.objectName] += _damage/(1.0 + rayCast.distanceToObject);
 
     // add trace line
     Vec3D lineFrom = position() + Vec3D(triangles().back()[0]);
-    Vec3D lineTo = rayCast.first == Vec3D(0) ? position() + -lookAt() * ShooterConsts::FIRE_DISTANCE + randV: rayCast.first;
+    Vec3D lineTo = rayCast.intersected ? rayCast.pointOfIntersection : position() + -lookAt() * ShooterConsts::FIRE_DISTANCE + randV;
     _addTraceCallBack(lineFrom, lineTo);
 
     return damagedPlayers;

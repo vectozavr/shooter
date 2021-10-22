@@ -20,6 +20,7 @@ private:
     double _triPerSec = 0;
     bool _debugText = true;
     bool _updateWorld = true;
+    bool _useOpenGL = Consts::USE_OPEN_GL;
 
     void printDebugText() const;
 protected:
@@ -35,6 +36,7 @@ protected:
 
     void setDebugText(bool value) { _debugText = value; }
     void setUpdateWorld(bool value) { _updateWorld = value; }
+    void setGlEnable(bool value) { _useOpenGL = value; }
 
     virtual void gui(){}
 public:

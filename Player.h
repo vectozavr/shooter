@@ -37,7 +37,7 @@ private:
     std::function<void(std::shared_ptr<Weapon>)> _addWeaponCallBack;
     std::function<void(std::shared_ptr<Weapon>)> _removeWeaponCallBack;
 
-    std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> _rayCastFunction;
+    std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> _rayCastFunction;
 public:
     Player();
 
@@ -57,8 +57,10 @@ public:
 
     void nextWeapon();
     void previousWeapon();
-    void fire();
+    bool fire();
     void reload();
+    [[nodiscard]] ObjectNameTag weaponName() const { return _weapons[_selectedWeapon]->name(); }
+    std::shared_ptr<Weapon> weapon() { return _weapons[_selectedWeapon]; }
 
     void rotateWeaponsRelativePoint(const Vec3D& point, const Vec3D& v, double val);
 
@@ -83,7 +85,7 @@ public:
     void setRemoveWeaponCallBack(std::function<void(std::shared_ptr<Weapon>)> removeWeapon) {
         _removeWeaponCallBack = std::move(removeWeapon);
     }
-    void setRayCastFunction(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction) {
+    void setRayCastFunction(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction) {
         _rayCastFunction = std::move(rayCastFunction);
     }
 

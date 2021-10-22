@@ -6,6 +6,8 @@
 #include "utils/Log.h"
 #include "Plane.h"
 #include "ResourceManager.h"
+#include <sstream>
+#include <cmath>
 
 using namespace std;
 
@@ -19,15 +21,28 @@ void World::loadBody(const ObjectNameTag& tag, const string &filename, const Vec
     Log::log("World::loadBody(): inserted body from " + filename + " with title '" + tag.str() + "' with " + std::to_string(_objects[tag]->triangles().size()) + " tris.");
 }
 
-std::pair<Vec3D, ObjectNameTag> World::rayCast(const Vec3D& from, const Vec3D& to, const std::string& tag) {
+IntersectionInformation World::rayCast(const Vec3D& from, const Vec3D& to, const std::string& skipTags) {
 
-    std::pair<Vec3D, string> result;
+    // make vector of tags, that we are going to escape
+    vector <string> tagsToSkip;
+    stringstream s(skipTags);
+    std::string t;
+    while (s >> t) tagsToSkip.push_back(t);
+
+    bool intersected = false;
     std::unique_ptr<Vec3D> point = std::make_unique<Vec3D>();
+    std::unique_ptr<Triangle> triangle = std::make_unique<Triangle>();
     std::string bodyName;
     double minDistance = Consts::RAY_CAST_MAX_DISTANCE;
+    std::shared_ptr<RigidBody> intersectedBody = nullptr;
 
     for(auto& [name, body]  : _objects) {
-        if(!tag.empty() && name.str().find(tag) == std::string::npos)
+
+        //for (auto& escapeTag : tagsToSkip)
+        //    if(name.str().find(escapeTag) != std::string::npos)
+        //        continue;
+
+        if(name.str().find("Player") != std::string::npos || name.str().find("weapon") != std::string::npos)
             continue;
 
         for(auto& tri : body->triangles()) {
@@ -39,11 +54,14 @@ std::pair<Vec3D, ObjectNameTag> World::rayCast(const Vec3D& from, const Vec3D& t
             if(intersection.second > 0 && distance < minDistance && tri_translated.isPointInside(intersection.first)) {
                 minDistance = distance;
                 point = std::make_unique<Vec3D>(intersection.first);
+                triangle = std::make_unique<Triangle>(tri_translated);
                 bodyName = name.str();
+                intersected = true;
+                intersectedBody = body;
             }
         }
     }
-    return {*point, ObjectNameTag(bodyName)};
+    return IntersectionInformation{*point, sqrt(minDistance), *triangle, ObjectNameTag(bodyName), intersectedBody, intersected};
 }
 
 void World::loadMap(const std::string& filename, const Vec3D& scale) {
@@ -53,6 +71,8 @@ void World::loadMap(const std::string& filename, const Vec3D& scale) {
         addBody(std::make_shared<RigidBody>(*objs[i]), meshName);
         body(meshName)->scale(scale);
     }
+
+    auto it = _objects.begin();
 }
 
 void World::removeBody(const ObjectNameTag& tag) {
@@ -93,11 +113,6 @@ void World::update() {
         m.second->updatePhysicsState();
         checkCollision(m.first);
     }
-}
-
-void World::projectObjectsInCamera(std::shared_ptr<Camera> camera) {
-    for (auto &[name, body] : _objects)
-        camera->project(body);
 }
 
 std::shared_ptr<RigidBody> World::body(const ObjectNameTag& tag) {

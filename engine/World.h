@@ -7,7 +7,17 @@
 
 #include <map>
 #include "Camera.h"
+#include "Screen.h"
 #include "physics/RigidBody.h"
+
+struct IntersectionInformation final {
+    const Vec3D pointOfIntersection;
+    const double distanceToObject;
+    const Triangle intersectedTriangle;
+    const ObjectNameTag objectName;
+    const std::shared_ptr<RigidBody> obj;
+    const bool intersected;
+};
 
 class World final {
 private:
@@ -17,19 +27,19 @@ public:
 
     void checkCollision(const ObjectNameTag& tag);
     void update();
-    void projectObjectsInCamera(std::shared_ptr<Camera> camera);
 
     void addBody(std::shared_ptr<RigidBody> mesh, const ObjectNameTag& tag);
     std::shared_ptr<RigidBody> body(const ObjectNameTag& tag);
     void removeBody(const ObjectNameTag& tag);
     void loadBody(const ObjectNameTag& tag, const std::string &filename, const Vec3D& scale = Vec3D{1, 1, 1});
 
-    // rayCast returns pair of Point4D and std::string:
-    // 1) Point4D is point of collision
-    // 2) std::string - title of the object
-    std::pair<Vec3D, ObjectNameTag> rayCast(const Vec3D& from, const Vec3D& to, const std::string& tag = "");
+    // std::string skipTags is a string that consist of all objects we want to skip in ray casting
+    IntersectionInformation rayCast(const Vec3D& from, const Vec3D& to, const std::string& skipTags = "");
 
     void loadMap(const std::string& filename, const Vec3D & scale = Vec3D{1, 1, 1});
+
+    std::map<ObjectNameTag, std::shared_ptr<RigidBody>>::iterator begin() { return _objects.begin(); }
+    std::map<ObjectNameTag, std::shared_ptr<RigidBody>>::iterator end() { return _objects.end(); }
 };
 
 

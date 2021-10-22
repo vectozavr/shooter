@@ -13,6 +13,8 @@
 #include "utils/Time.h"
 #include "Mouse.h"
 #include "Consts.h"
+#include "Mesh.h"
+#include "Camera.h"
 
 class Screen final {
 private:
@@ -29,7 +31,7 @@ public:
 
     void display();
     void clear();
-    bool hasFocus() const { return _window->hasFocus(); }
+    [[nodiscard]] bool hasFocus() const { return _window->hasFocus(); }
 
     void drawTriangle(const Triangle& triangle);
     void drawTetragon(const Vec2D& p1, const Vec2D& p2, const Vec2D& p3, const Vec2D& p4, sf::Color color);
@@ -50,6 +52,10 @@ public:
     void debugText(const std::string& text);
 
     void attachMouse(std::shared_ptr<Mouse> mouse);
+
+    // OpenGL functions
+    void glDrawMesh(GLfloat* geometry, GLfloat* view, size_t count);
+    static GLfloat* glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D& cameraPosition);
 };
 
 

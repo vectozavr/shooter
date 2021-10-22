@@ -6,9 +6,9 @@
 #define ENGINE_CAMERA_H
 
 #include <vector>
-#include "Screen.h"
 #include "Plane.h"
 #include "Mesh.h"
+#include <SFML/OpenGL.hpp>
 
 class Camera final : public Object{
 private:
@@ -24,6 +24,7 @@ private:
 
     bool _ready = false;
     double _aspect = 0;
+
 public:
     Camera() = default;
     Camera(const Camera& camera) = delete;
@@ -36,6 +37,9 @@ public:
 
     [[nodiscard]] int buffSize() const { return _triangles.size(); }
     std::vector<std::shared_ptr<Triangle>> sorted();
+
+    // OpenGL function
+    [[nodiscard]] GLfloat* view() const;
 };
 
 

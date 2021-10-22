@@ -15,6 +15,11 @@
 #include "../engine/SoundController.h"
 #include "../engine/Consts.h"
 
+struct FireInformation {
+    const std::map<ObjectNameTag, double> damagedPlayers;
+    const bool shot;
+};
+
 class Weapon : public RigidBody {
 protected:
     int _initialPack = 100; // how much ammo do you have when you find the weapon
@@ -39,14 +44,14 @@ protected:
 
     std::function<void(const Vec3D&, const Vec3D&)> _addTraceCallBack;
 
-    std::map<ObjectNameTag, double> addTrace(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
+    std::map<ObjectNameTag, double> addTrace(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
 
-    virtual std::map<ObjectNameTag, double> processFire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
+    virtual std::map<ObjectNameTag, double> processFire(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
 
 public:
     Weapon(const std::string& weaponName, const std::string& objFileName, const Vec3D& scale, const Vec3D& translate, const Vec3D& rotate);
 
-    std::map<ObjectNameTag, double> fire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
+    FireInformation fire(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
     void reload();
 
     [[nodiscard]] std::pair<double, double> balance() const{ return std::make_pair(_clipAmmo, _stockAmmo); }

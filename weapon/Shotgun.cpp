@@ -9,7 +9,7 @@
 
 using namespace std;
 
-Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, ShooterConsts::SHOTGUN_OBJ, Vec3D{3, 3, 3}, Vec3D{-0.95, 1.3, -0.6}, Vec3D{0, Consts::PI, 0}) {
+Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, ShooterConsts::SHOTGUN_OBJ, Vec3D{3, 3, 3}, Vec3D{-1.95, 0.8, 1.5}, Vec3D{0, Consts::PI, 0}) {
     fireSound = ShooterConsts::SHOTGUN_FIRE_SOUND;
     reloadSound = ShooterConsts::SHOTGUN_RELOAD_SOUND;
 
@@ -25,7 +25,7 @@ Shotgun::Shotgun(int ammo, const std::string& weaponName) : Weapon(weaponName, S
 }
 
 std::map<ObjectNameTag, double>
-Shotgun::processFire(std::function<std::pair<Vec3D, ObjectNameTag>(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) {
+Shotgun::processFire(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) {
     std::map<ObjectNameTag, double> damagedPlayers;
 
     for(int i = 0; i < 15; i++) {

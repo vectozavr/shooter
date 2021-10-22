@@ -8,7 +8,7 @@
 #include "engine/utils/Log.h"
 
 Player::Player() {
-    loadObj(ShooterConsts::CUBE_OBJ, Vec3D{0.5, 1.9, 0.5});
+    loadObj(ShooterConsts::CUBE_OBJ, Vec3D{1.5, 1.9, 1.5});
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
     setCollision(true);
     setVisible(false);
@@ -109,15 +109,17 @@ void Player::previousWeapon() {
     }
 }
 
-void Player::fire() {
+bool Player::fire() {
     auto camera = attached(ObjectNameTag("Camera"));
     if(camera != nullptr) {
-        auto damagedPlayers = _weapons[_selectedWeapon]->fire(_rayCastFunction, camera->position(), camera->lookAt());
-        for(auto& [damagedPlayerName, damage] : damagedPlayers) {
+        auto fireInfo = _weapons[_selectedWeapon]->fire(_rayCastFunction, camera->position(), camera->lookAt());
+        for(auto& [damagedPlayerName, damage] : fireInfo.damagedPlayers) {
             sf::Uint16 targetId = std::stoi(damagedPlayerName.str().substr(6));
             _damagePlayerCallBack(targetId, damage);
         }
+        return fireInfo.shot;
     }
+    return false;
 }
 
 void Player::reload() {
