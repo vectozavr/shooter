@@ -72,10 +72,19 @@
     <ClCompile Include="engine\utils\Log.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="engine\utils\Matrix4x4.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\utils\Point4D.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
     <ClCompile Include="engine\utils\Time.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="engine\physics\RigidBody.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\physics\Solver.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="engine\network\ClientUDP.cpp">
@@ -121,21 +130,6 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="weapon\Weapon.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Matrix4x4.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Point4D.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\SoundController.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Vec2D.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Vec3D.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -194,6 +188,12 @@
     <ClInclude Include="engine\utils\Log.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="engine\utils\Matrix4x4.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utils\Point4D.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
     <ClInclude Include="engine\utils\Time.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -203,7 +203,13 @@
     <ClInclude Include="engine\physics\Simplex.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="engine\physics\Solver.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
     <ClInclude Include="engine\network\ClientUDP.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\network\config.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="engine\network\MsgType.h">
@@ -275,26 +281,15 @@
     <ClInclude Include="weapon\Weapon.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ShooterConsts.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Consts.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Matrix4x4.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Point4D.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\SoundController.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Vec2D.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Vec3D.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="obj\ability_mat.txt" />
+    <Text Include="obj\ak47_mat.txt" />
+    <Text Include="obj\gold_ak47_mat.txt" />
+    <Text Include="obj\gun_mat.txt" />
+    <Text Include="obj\hill_mat.txt" />
+    <Text Include="obj\rifle_mat.txt" />
+    <Text Include="obj\shotgun_mat.txt" />
+    <Text Include="maps\materials.txt" />
   </ItemGroup>
 </Project>

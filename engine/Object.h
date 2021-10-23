@@ -9,6 +9,7 @@
 #include "Vec3D.h"
 #include <string>
 #include <utility>
+#include <memory>
 
 class ObjectNameTag final {
 private:
