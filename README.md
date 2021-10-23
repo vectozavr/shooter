@@ -11,10 +11,10 @@ Source code of simple shooter on [3Dzavr game engine](https://github.com/vectoza
 1) [Download shooter.7z](https://drive.google.com/file/d/10mhgxUXd0e482U4oMaq4RD1rDeu3-YAX/view?usp=sharing), [unzip it](https://www.7-zip.org) and run shooter.exe
 
 
-2) Write <b>ip</b> and <b>port</b> of server in <b>bin/connect.txt</b> file.
+2) Write <b>ip</b> and <b>port</b> of server in <b>connect.txt</b> file.
 
 
-3) Write <b>port</b> of the server in <b>bin/server.txt</b> file (only for computer where the server will be running).
+3) Write <b>port</b> of the server in <b>server.txt</b> file (only for computer where the server will be running).
 
 
 3) Enjoy gaming!
