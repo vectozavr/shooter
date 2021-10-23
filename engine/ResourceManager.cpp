@@ -143,7 +143,7 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
         char junk;
         if(line[0] == 'o') {
             if(!tris.empty())
-                objects.push_back(make_shared<Mesh>(tris));
+                objects.push_back(std::make_shared<Mesh>(tris));
             tris.clear();
         }
         if (line[0] == 'v')
@@ -175,7 +175,7 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
     }
 
     if(!tris.empty())
-        objects.push_back(make_shared<Mesh>(tris));
+        objects.push_back(std::make_shared<Mesh>(tris));
 
     file.close();
 
