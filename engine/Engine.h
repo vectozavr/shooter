@@ -18,8 +18,8 @@ private:
     std::string _name;
 
     double _triPerSec = 0;
-    bool _debugText = true;
     bool _updateWorld = true;
+    bool _debugText = Consts::SHOW_COORDINATES;
     bool _useOpenGL = Consts::USE_OPEN_GL;
 
     void printDebugText() const;
