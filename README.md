@@ -7,9 +7,8 @@ Source code of simple shooter on [3Dzavr game engine](https://github.com/vectoza
 ![Project demonstration](img/gamePlay2.png)
 
 
-<h4>Installation (old version for Windows):</h4>
-1) Download and install .exe file
-   download game: https://drive.google.com/file/d/1_8zUCwxyC-eLbqswM7OBXoNIAdzpUrkI/view
+<h4>Installation (OS Windows):</h4>
+1) [Download "shooter.7z"](https://drive.google.com/file/d/10mhgxUXd0e482U4oMaq4RD1rDeu3-YAX/view?usp=sharing), unzip [(7zip)](https://www.7-zip.org) and run shooter.exe
 
 
 2) Write <b>ip</b> and <b>port</b> of server in <b>bin/connect.txt</b> file.
