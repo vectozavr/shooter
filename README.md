@@ -40,13 +40,13 @@ Structure:
 
 3) Open project
    
-   Using [CLion](https://www.jetbrains.com/clion/) with [MinGW (32-bit)](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-posix/dwarf/i686-7.3.0-release-posix-dwarf-rt_v5-rev0.7z/download) compiler: open CMakeList.txt as a project
+   Using [CLion](https://www.jetbrains.com/clion/) with [MinGW (32-bit)](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-posix/dwarf/i686-7.3.0-release-posix-dwarf-rt_v5-rev0.7z/download) compiler: open <b>CMakeList.txt</b> as a project
 
-   Using [Visual Studio](https://visualstudio.microsoft.com/ru/): open shooter.sln as a project
+   Using [Visual Studio](https://visualstudio.microsoft.com/ru/): open <b>shooter.sln</b> as a project
 
 4) Built project and run the game
 
-P/S: SFML for 32-bit Windows already included into this repository. So, you don't need to manually install it to your computer. If you have any issues with SFML, you can try to [download another version or build SFML by yourself.](https://www.sfml-dev.org/download.php) 
+P/S: <b>SFML for 32-bit OS Windows is already included into this repository.</b> So, you don't need to manually install it to your computer. If you have any problems with SFML, you can try to [download another version or build SFML by yourself.](https://www.sfml-dev.org/download.php) 
 
 Demos:
 
