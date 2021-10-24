@@ -76,6 +76,7 @@ void Shooter::start() {
     world->loadMap(ShooterConsts::MAP_OBJ, Vec3D{5, 5, 5});
 
     player = std::make_shared<Player>();
+    player->scale(Vec3D(3, 1, 3));
     playerController = std::make_shared<PlayerController>(player, keyboard, mouse);
 
     // TODO: encapsulate call backs inside Player
