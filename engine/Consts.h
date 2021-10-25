@@ -30,7 +30,7 @@ namespace Consts {
     const double TAP_DELAY = 0.2;
 
     const unsigned NETWORK_VERSION = 1U;
-    const int NETWORK_TIMEOUT = 1U;
+    const int NETWORK_TIMEOUT = 5U;
     const int NETWORK_WORLD_UPDATE_RATE = 30;
     const double NETWORK_RELIABLE_RETRY_TIME = 1.0/20;
     const uint16_t NETWORK_MAX_CLIENTS = 64;

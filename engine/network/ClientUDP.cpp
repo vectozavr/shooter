@@ -12,6 +12,7 @@
 
 ClientUDP::ClientUDP() : _lastBroadcast(-std::numeric_limits<double>::max()), _working(false)
 {
+    // TODO: replace this with lambda
     _socket.setTimeoutCallback(std::bind(&ClientUDP::timeout, this, std::placeholders::_1));
 }
 
