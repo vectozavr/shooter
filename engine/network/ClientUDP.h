@@ -15,6 +15,8 @@ protected:
     UDPSocket _socket;
     double _lastBroadcast;
     bool _working;
+    sf::Uint16 _port;
+    sf::IpAddress _ip;
 
     bool process();
     bool timeout(sf::Uint16 id);
@@ -28,6 +30,9 @@ public:
     void connect(sf::IpAddress ip, sf::Uint16 port);
     void disconnect();
     void update();
+
+    [[nodiscard]] sf::IpAddress ip() const { return _ip; }
+    [[nodiscard]] sf::Uint16 port() const { return _port; }
 
     // virtual functions
     virtual void updatePacket(){};

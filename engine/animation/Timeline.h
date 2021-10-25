@@ -21,6 +21,7 @@ public:
 
 class Timeline {
 private:
+    // TODO: replace Animation* with shared_ptr<Animation> & check for possible memory leaks
     std::map<AnimationListTag, std::list<Animation*>> _animations;
 
     static Timeline* _instance;
