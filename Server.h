@@ -10,7 +10,7 @@
 #include "Bonus.h"
 
 struct BonusInfo final {
-    const Point4D position{};
+    const Vec3D position{};
     const double lastTake = std::numeric_limits<double>::min();
     const bool onTheMap = false;
 };

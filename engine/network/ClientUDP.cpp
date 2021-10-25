@@ -33,7 +33,7 @@ void ClientUDP::connect(sf::IpAddress ip, sf::Uint16 port)
     _socket.addConnection(_socket.serverId(), ip, port);
     _socket.sendRely(packet, _socket.serverId());
 
-    Log::log("ClientUDP: connecting to the server...");
+    Log::log("ClientUDP::connect(): connecting to the server...");
 }
 
 void ClientUDP::update()
@@ -61,13 +61,13 @@ void ClientUDP::disconnect()
     _socket.unbind();
     _working = false;
 
-    Log::log("ClientUDP: disconnected from the server.");
+    Log::log("ClientUDP::disconnect(): disconnected from the server.");
     processDisconnected();
 }
 
 bool ClientUDP::timeout(sf::Uint16 id)
 {
-    Log::log("ClientUDP: timeout from the server.");
+    Log::log("ClientUDP::timeout(): timeout from the server.");
 
     if (id != _socket.serverId())
         return true;
@@ -97,7 +97,7 @@ bool ClientUDP::process()
             packet >> targetId;
             _socket.setId(targetId);
 
-            Log::log("ClientUDP: client Id = " + std::to_string(targetId) + " connected.");
+            Log::log("ClientUDP::process(): client Id = " + std::to_string(targetId) + " connected.");
 
             processInit(packet);
             break;
@@ -107,7 +107,7 @@ bool ClientUDP::process()
             break;
         case MsgType::NewClient:
 
-            Log::log("ClientUDP: new client init...");
+            Log::log("ClientUDP::process(): new client init...");
 
             processNewClient(packet);
             break;
@@ -116,7 +116,7 @@ bool ClientUDP::process()
             if (targetId == _socket.ownId())
                 disconnect();
 
-            Log::log("ClientUDP: client Id = " + std::to_string(targetId) + " disconnected from the server");
+            Log::log("ClientUDP::process(): client Id = " + std::to_string(targetId) + " disconnected from the server");
 
             processDisconnect(targetId);
             break;
