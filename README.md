@@ -6,9 +6,14 @@ Source code of simple shooter on [3Dzavr game engine](https://github.com/vectoza
 
 ![Project demonstration](img/gamePlay2.png)
 
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://choosealicense.com/licenses/mit/)
+[![Community Discord](https://img.shields.io/discord/788056426324426782.svg?label=discord&logo=discord)](https://discord.gg/NzSf5tyS)
+![Commits](https://img.shields.io/github/last-commit/vectozavr/shooter)
+![Issues](https://img.shields.io/bitbucket/issues-raw/vectozavr/shooter)
+![Repo size](https://img.shields.io/github/repo-size/vectozavr/shooter)
 
 <h4>Installation (OS Windows):</h4>
-1) [Download shooter.7z](https://drive.google.com/file/d/10mhgxUXd0e482U4oMaq4RD1rDeu3-YAX/view?usp=sharing), [unzip it](https://www.7-zip.org/) and run shooter.exe
+1) [Download shooter 7z](https://drive.google.com/file/d/10mhgxUXd0e482U4oMaq4RD1rDeu3-YAX/view?usp=sharing/), [unzip it](https://www.7-zip.org/) and run shooter.exe
 
 
 2) Write <b>ip</b> and <b>port</b> of server in <b>connect.txt</b> file.
