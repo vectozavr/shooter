@@ -22,7 +22,7 @@ bool ServerUDP::start(sf::Uint16 port)
     _working = _socket.bind(port);
 
     if(_working)
-        Log::log("ServerUDP::start(): server successfully started.");
+        Log::log("ServerUDP::start(): the server was successfully started.");
     else
         Log::log("ServerUDP::start(): failed to start the server.");
 
