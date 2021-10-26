@@ -103,7 +103,7 @@ void Client::processCustomPacket(MsgType type, sf::Packet& packet) {
                 _players[buffId[1]]->addKill();
                 _lastEvent += _players[buffId[1]]->playerName();
             }
-            _lastEvent += " kill ";
+            _lastEvent += " ~> ";
 
             if(buffId[0] == _socket.ownId()) {
                 _player->addDeath();
