@@ -27,11 +27,11 @@ void Server::processConnect(sf::Uint16 targetId) {
     extraPacket << MsgType::NewClient << targetId;
     sendPacket1 << MsgType::Init << targetId;
     _players.insert({ targetId, std::make_shared<Player>() });
-    for (const auto& player : _players)
+    for (const auto& [playerId, player] : _players)
     {
-        sendPacket1 << player.first << player.second->position().x() << player.second->position().y() << player.second->position().z() << player.second->health();
-        if (player.first != targetId)
-            _socket.sendRely(extraPacket, player.first);
+        sendPacket1 << playerId << player->position().x() << player->position().y() << player->position().z() << player->health() << player->kills() << player->deaths();
+        if (playerId != targetId)
+            _socket.sendRely(extraPacket, playerId);
     }
     _socket.sendRely(sendPacket1, targetId);
 

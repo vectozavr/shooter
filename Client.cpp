@@ -19,8 +19,9 @@ void Client::updatePacket() {
 void Client::processInit(sf::Packet& packet) {
     sf::Uint16 targetId;
     double buf[4];
+    int kills, deaths;
 
-    while (packet >> targetId >> buf[0] >> buf[1] >> buf[2] >> buf[3])
+    while (packet >> targetId >> buf[0] >> buf[1] >> buf[2] >> buf[3] >> kills >> deaths)
     {
         if(targetId != _socket.ownId()) {
             if(_spawnPlayerCallBack != nullptr)
@@ -28,6 +29,8 @@ void Client::processInit(sf::Packet& packet) {
 
             _players[targetId]->translateToPoint(Vec3D{ buf[0], buf[1], buf[2]});
             _players[targetId]->setHealth(buf[3]);
+            _players[targetId]->setKills(kills);
+            _players[targetId]->setDeaths(deaths);
         }
     }
 }

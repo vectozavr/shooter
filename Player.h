@@ -72,6 +72,9 @@ public:
     void addKill() { _kills++; }
     void addDeath() { _deaths++; }
 
+    void setKills(int kills) { _kills = kills; }
+    void setDeaths(int deaths) { _deaths = deaths; }
+
     void setDamagePlayerCallBack(std::function<void(sf::Uint16 targetId, double)> hit) {
         _damagePlayerCallBack = std::move(hit);
     }
