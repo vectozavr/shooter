@@ -173,7 +173,9 @@ void Shooter::gui() {
 }
 
 void Shooter::drawStatsTable() {
-    int i = 0;
+    int i = 1;
+
+    screen->drawText(client->lastEvent(),Vec2D{10, 10},25, sf::Color(0, 0, 0, 100));
 
     vector<shared_ptr<Player>> allPlayers;
     allPlayers.push_back(player);
@@ -185,8 +187,8 @@ void Shooter::drawStatsTable() {
     } );
 
     for(auto& p : allPlayers) {
-        screen->drawText(std::to_string(i + 1) + "\t" + p->playerName() + "\t" + std::to_string(p->kills()) + " / " + std::to_string(p->deaths()),
-                         Vec2D{10, 10 + 35.0*i}, 25, sf::Color(0, 0, 0, 150));
+        screen->drawText(std::to_string(i) + "\t" + p->playerName() + "\t" + std::to_string(p->kills()) + " / " + std::to_string(p->deaths()),
+                         Vec2D{10, 15 + 35.0*i}, 25, sf::Color(0, 0, 0, 150));
         i++;
     }
 }

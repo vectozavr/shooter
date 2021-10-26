@@ -90,6 +90,18 @@ void Client::processCustomPacket(MsgType type, sf::Packet& packet) {
     switch (type) {
         case MsgType::Kill:
             packet >> buffId[0] >> buffId[1];
+            _lastEvent = "";
+            if(buffId[1] == _socket.ownId()) {
+                _player->addKill();
+                SoundController::playSound(SoundTag("kill"), ShooterConsts::KILL_SOUND);
+                _lastEvent += _player->playerName();
+            }
+            else {
+                _players[buffId[1]]->addKill();
+                _lastEvent += _players[buffId[1]]->playerName();
+            }
+            _lastEvent += " kill ";
+
             if(buffId[0] == _socket.ownId()) {
                 _player->addDeath();
                 // respawn
@@ -97,15 +109,12 @@ void Client::processCustomPacket(MsgType type, sf::Packet& packet) {
                 _player->initWeapons();
                 _player->setFullAbility();
                 SoundController::playSound(SoundTag("death"), ShooterConsts::DEATH_SOUND);
+                _lastEvent += _player->playerName();
             }
-            else
+            else {
                 _players[buffId[0]]->addDeath();
-            if(buffId[1] == _socket.ownId()) {
-                _player->addKill();
-                SoundController::playSound(SoundTag("kill"), ShooterConsts::KILL_SOUND);
+                _lastEvent += _players[buffId[0]]->playerName();
             }
-            else
-                _players[buffId[1]]->addKill();
             break;
         case MsgType::FireTrace:
             packet >> dbuff[0] >> dbuff[1] >> dbuff[2] >> dbuff[3] >> dbuff[4] >> dbuff[5];

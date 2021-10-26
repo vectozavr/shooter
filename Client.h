@@ -10,6 +10,8 @@
 
 class Client final : public ClientUDP {
 private:
+    std::string _lastEvent;
+
     std::map<sf::Uint16, std::shared_ptr<Player>> _players{};
     std::shared_ptr<Player> _player;
 
@@ -50,7 +52,9 @@ public:
     void changeWeapon(const std::string& weaponName);
 
     void addPlayer(sf::Uint16 id, std::shared_ptr<Player> player);
-    std::map<sf::Uint16, std::shared_ptr<Player>>const & players() const { return _players; }
+    [[nodiscard]] std::map<sf::Uint16, std::shared_ptr<Player>>const & players() const { return _players; }
+
+    [[nodiscard]] std::string lastEvent() const { return _lastEvent; }
 };
 
 
