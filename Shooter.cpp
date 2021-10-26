@@ -21,17 +21,19 @@ void Shooter::InitNetwork()
     std::string clientIp;
     sf::Uint16 clientPort;
     sf::Uint16 serverPort;
+    std::string playerName;
     std::ifstream connectFile("connect.txt", std::ifstream::in);
 
     // If failed to read client settings
-    if (!connectFile.is_open() || !(connectFile >> clientIp >> clientPort) || sf::IpAddress(clientIp) == sf::IpAddress::None)
+    if (!connectFile.is_open() || !(connectFile >> clientIp >> clientPort >> playerName) || sf::IpAddress(clientIp) == sf::IpAddress::None)
     {
         connectFile.close();
         // Create file and write default settings
         clientIp = "127.0.0.1";
         clientPort = 54000;
+        playerName = "PlayerName";
         std::ofstream temp("connect.txt", std::ofstream::out);
-        temp << clientIp << std::endl << clientPort;
+        temp << clientIp << std::endl << clientPort << std::endl << playerName;
         temp.close();
     }
     connectFile.close();
@@ -56,6 +58,7 @@ void Shooter::InitNetwork()
     }
 
     client->connect(clientIp, clientPort);
+    player->setPlayerName(playerName);
 
     // TODO: encapsulate call backs inside Client
     client->setSpawnPlayerCallBack([this](sf::Uint16 id){ spawnPlayer(id); });
@@ -68,7 +71,7 @@ void Shooter::InitNetwork()
 
 void Shooter::start() {
     // This code executed once in the beginning:
-    //setDebugText(false);
+    setDebugText(false);
     setUpdateWorld(false);
 
     mouse->setMouseCursorVisible(true);
@@ -122,7 +125,6 @@ void Shooter::start() {
     mainMenu.addButton(screen->width()/2, 350, 200, 20, [this] () { this->player->translateToPoint(Vec3D{0, 0, 0}); this->player->setVelocity({}); this->play(); SoundController::playSound(SoundTag("click"), ShooterConsts::CLICK_SOUND);}, "Respawn", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
 
     mainMenu.addButton(screen->width()/2, 500, 200, 20, [this] () { client->disconnect(); server->stop(); this->exit();}, "Exit", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
-
 }
 
 void Shooter::update() {
@@ -162,11 +164,31 @@ void Shooter::gui() {
     sprite.setTextureRect(sf::IntRect(243, 3, 9, 9));
     sprite.scale(3, 3);
     sprite.setPosition(screen->width() / 2.0f - 27.0f/2.0f, screen->height() / 2.0f - 27.0f/2.0f);
-    sprite.setColor(sf::Color(0, 0, 0, 200));
+    sprite.setColor(sf::Color(0, 0, 0, 250));
     screen->drawSprite(sprite);
 
     // health player stats
     drawPlayerStats();
+    drawStatsTable();
+}
+
+void Shooter::drawStatsTable() {
+    int i = 0;
+
+    vector<shared_ptr<Player>> allPlayers;
+    allPlayers.push_back(player);
+    for(auto& [playerId, player] : client->players())
+        allPlayers.push_back(player);
+
+    std::sort(allPlayers.begin(), allPlayers.end(), [](std::shared_ptr<Player> p1, std::shared_ptr<Player> p2){
+        return p1->kills() - p1->deaths() > p2->kills() - p2->deaths();
+    } );
+
+    for(auto& p : allPlayers) {
+        screen->drawText(std::to_string(i + 1) + "\t" + p->playerName() + "\t" + std::to_string(p->kills()) + " / " + std::to_string(p->deaths()),
+                         Vec2D{10, 10 + 35.0*i}, 25, sf::Color(0, 0, 0, 150));
+        i++;
+    }
 }
 
 void Shooter::drawPlayerStats() {
@@ -194,8 +216,8 @@ void Shooter::drawPlayerStats() {
     screen->drawText(std::to_string((int)balance.first), Vec2D{150, static_cast<double>(screen->height() - 150)}, 100, sf::Color(0, 0, 0, 100));
     screen->drawText(std::to_string((int)balance.second), Vec2D{50, static_cast<double>(screen->height() - 100)}, 50, sf::Color(0, 0, 0, 70));
 
-    screen->drawText("KILLS: " + std::to_string(player->kills()) + " | " + "DEATHS: " + std::to_string(player->deaths()),
-                     Vec2D{10, 10},25, sf::Color(0, 0, 0, 100));
+    //screen->drawText("KILLS: " + std::to_string(player->kills()) + " | " + "DEATHS: " + std::to_string(player->deaths()),
+    //                 Vec2D{10, 10},25, sf::Color(0, 0, 0, 100));
 }
 
 void Shooter::play() {
@@ -265,6 +287,7 @@ void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
 
 void Shooter::removeBonus(const ObjectNameTag &bonusName) {
     world->removeBody(bonusName);
+    Timeline::deleteAnimationList(AnimationListTag(bonusName.str() + "_rotation"));
 }
 
 void Shooter::addWeapon(std::shared_ptr<Weapon> weapon) {

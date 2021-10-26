@@ -50,6 +50,7 @@ public:
     void changeWeapon(const std::string& weaponName);
 
     void addPlayer(sf::Uint16 id, std::shared_ptr<Player> player);
+    std::map<sf::Uint16, std::shared_ptr<Player>>const & players() const { return _players; }
 };
 
 

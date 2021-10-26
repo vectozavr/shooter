@@ -14,7 +14,9 @@ namespace ShooterConsts {
     const double MOUSE_SENSITIVITY = 1.0 / 1000.0;
     const double SLOW_MO_COEFFICIENT = 5;
     const double FIRE_DISTANCE = 1000;
+    const double BONUS_RECHARGE_TIME = 30;
 
+    const std::string PLAYER_NAME = "Player";
     const std::string PROJECT_NAME = "Shooter";
 
     const std::string ABILITY_OBJ = "obj/ability.obj";

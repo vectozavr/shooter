@@ -12,7 +12,7 @@
 
 void Client::updatePacket() {
     sf::Packet packet;
-    packet << MsgType::ClientUpdate << _player->position().x() << _player->position().y() << _player->position().z() << _player->angle().y() << _player->headAngle();
+    packet << MsgType::ClientUpdate << _player->position().x() << _player->position().y() << _player->position().z() << _player->angle().y() << _player->headAngle() << _player->playerName();
     _socket.send(packet, _socket.serverId());
 }
 
@@ -35,20 +35,22 @@ void Client::processInit(sf::Packet& packet) {
 void Client::processUpdate(sf::Packet& packet) {
     sf::Uint16 targetId;
     double buf[6];
+    std::string playerName;
 
-    while (packet >> targetId >> buf[0] >> buf[1] >> buf[2] >> buf[3] >> buf[4] >> buf[5]) {
+    while (packet >> targetId >> buf[0] >> buf[1] >> buf[2] >> buf[3] >> buf[4] >> buf[5] >> playerName) {
         if (_players.count(targetId)) {
-            std::string name = "Player_" + std::to_string(targetId);
+            std::string tagName = "Player_" + std::to_string(targetId);
 
             // old approach (no animation):
             //_players[targetId]->translateToPoint(Vec3D{buf[0], buf[1], buf[2]});
 
             // new approach (linear extrapolational animations)
             double duration = 1.0 / Consts::NETWORK_WORLD_UPDATE_RATE;
-            Timeline::animate(AnimationListTag(name + "_linearTranslation"), new ATranslateToPoint(_players[targetId], Vec3D{buf[0], buf[1], buf[2]}, duration, Animation::LoopOut::None, Animation::InterpolationType::linear));
+            Timeline::animate(AnimationListTag(tagName + "_linearTranslation"), new ATranslateToPoint(_players[targetId], Vec3D{buf[0], buf[1], buf[2]}, duration, Animation::LoopOut::None, Animation::InterpolationType::linear));
 
             _players[targetId]->setHealth(buf[3]);
             _players[targetId]->rotateToAngle(Vec3D{0, buf[4], 0});
+            _players[targetId]->setPlayerName(playerName);
 
             auto head =  _players[targetId]->attached(ObjectNameTag("head"));
             auto weapon = _players[targetId]->attached(ObjectNameTag("Weapon"));

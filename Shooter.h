@@ -39,6 +39,7 @@ private:
     void play();
 
     void drawPlayerStats();
+    void drawStatsTable();
     void InitNetwork();
 
     void spawnPlayer(sf::Uint16 id);

@@ -19,8 +19,6 @@ class Server final : public ServerUDP {
 private:
     std::map<sf::Uint16, std::shared_ptr<Player>> _players{};
     std::map<std::string, std::shared_ptr<BonusInfo>> _bonuses{};
-    double _bonusRechargeTime = 60;
-
 public:
     Server() = default;
 

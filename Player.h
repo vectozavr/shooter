@@ -30,6 +30,8 @@ private:
     std::vector<std::shared_ptr<Weapon>> _weapons;
     size_t _selectedWeapon = 0;
 
+    std::string _name = ShooterConsts::PLAYER_NAME;
+
     std::function<void(sf::Uint16 targetId, double)> _damagePlayerCallBack;
     std::function<void(const Vec3D&, const Vec3D&)> _addTraceCallBack;
     std::function<void(const std::string&)> _takeBonusCallBack;
@@ -94,6 +96,9 @@ public:
     [[nodiscard]] double headAngle() const { return _headAngle; };
 
     void collisionWithObject(const ObjectNameTag& tag, std::shared_ptr<RigidBody> obj);
+
+    [[nodiscard]] std::string playerName() const { return _name; }
+    void setPlayerName(const std::string& name) { _name = name; }
 };
 
 
