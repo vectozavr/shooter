@@ -34,6 +34,10 @@ FireInformation Weapon::fire(std::function<IntersectionInformation(const Vec3D&,
     _lastFireTime = Time::time();
     _clipAmmo--;
 
+    if(_clipAmmo == 0) {
+        reload();
+    }
+
     SoundController::playSound(SoundTag("fire"), fireSound);
     Log::log("Weapon::fire (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
 
