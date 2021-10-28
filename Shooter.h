@@ -11,8 +11,8 @@
 #include "PlayerController.h"
 #include "engine/gui/Window.h"
 
-#include "Client.h"
-#include "Server.h"
+#include "ShooterClient.h"
+#include "ShooterServer.h"
 
 
 class Shooter final : public Engine {
@@ -24,8 +24,8 @@ private:
 
     Window mainMenu;
 
-    std::shared_ptr<Server> server;
-    std::shared_ptr<Client> client;
+    std::shared_ptr<ShooterServer> server;
+    std::shared_ptr<ShooterClient> client;
 
     bool inGame = false;
 

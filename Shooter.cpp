@@ -11,7 +11,6 @@
 #include "engine/animation/Timeline.h"
 #include "ShooterConsts.h"
 #include "engine/SoundController.h"
-#include "engine/animation/ATranslateToPoint.h"
 
 using namespace std;
 
@@ -60,7 +59,7 @@ void Shooter::InitNetwork() {
     client->connect(clientIp, clientPort);
     player->setPlayerNickName(playerName);
 
-    // TODO: encapsulate call backs inside Client
+    // TODO: encapsulate call backs inside ShooterClient
     client->setSpawnPlayerCallBack([this](sf::Uint16 id){ spawnPlayer(id); });
     client->setRemovePlayerCallBack([this](sf::Uint16 id){ removePlayer(id); });
     client->setAddFireTraceCallBack([this](const Vec3D& from, const Vec3D& to){ addFireTrace(from, to); });
@@ -98,8 +97,8 @@ void Shooter::start() {
     world->addBody(player);
     player->translate(Vec3D{0, 10, 0});
 
-    client = std::make_shared<Client>(player);
-    server = std::make_shared<Server>();
+    client = std::make_shared<ShooterClient>(player);
+    server = std::make_shared<ShooterServer>();
 
     // connecting to the server
     InitNetwork();

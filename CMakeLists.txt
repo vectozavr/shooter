@@ -10,10 +10,10 @@ add_executable(shooter
         Source.cpp
         Player.cpp
         Player.h
-        Client.cpp
-        Client.h
-        Server.cpp
-        Server.h
+        ShooterClient.cpp
+        ShooterClient.h
+        ShooterServer.cpp
+        ShooterServer.h
         weapon/Weapon.cpp
         weapon/Weapon.h
         weapon/Ak47.cpp

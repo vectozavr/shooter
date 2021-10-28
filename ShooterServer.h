@@ -2,8 +2,8 @@
 // Created by Иван Ильин on 25.05.2021.
 //
 
-#ifndef SHOOTER_SERVER_H
-#define SHOOTER_SERVER_H
+#ifndef SHOOTER_SHOOTERSERVER_H
+#define SHOOTER_SHOOTERSERVER_H
 
 #include "engine/network/ServerUDP.h"
 #include "Player.h"
@@ -14,12 +14,12 @@ struct BonusInfo final {
     const bool onTheMap = false;
 };
 
-class Server final : public ServerUDP {
+class ShooterServer final : public ServerUDP {
 private:
     std::map<sf::Uint16, std::shared_ptr<Player>> _players{};
     std::map<std::string, std::shared_ptr<BonusInfo>> _bonuses{};
 public:
-    Server() = default;
+    ShooterServer() = default;
 
     void broadcast() override;
 
@@ -35,7 +35,7 @@ public:
 
     void updateInfo() override;
 
-    ~Server() override;
+    ~ShooterServer() override;
 };
 
 

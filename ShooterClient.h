@@ -2,13 +2,13 @@
 // Created by Иван Ильин on 25.05.2021.
 //
 
-#ifndef SHOOTER_CLIENT_H
-#define SHOOTER_CLIENT_H
+#ifndef SHOOTER_SHOOTERCLIENT_H
+#define SHOOTER_SHOOTERCLIENT_H
 
 #include "engine/network/ClientUDP.h"
 #include "Player.h"
 
-class Client final : public ClientUDP {
+class ShooterClient final : public ClientUDP {
 private:
     std::string _lastEvent;
 
@@ -22,7 +22,7 @@ private:
     std::function<void(const ObjectNameTag&)> _removeBonusCallBack;
     std::function<void(const std::string&, sf::Uint16)> _changeEnemyWeaponCallBack;
 public:
-    explicit Client(std::shared_ptr<Player>  player) : _player(player){};
+    explicit ShooterClient(std::shared_ptr<Player>  player) : _player(player){};
 
     void updatePacket() override;
 

@@ -2,11 +2,11 @@
 // Created by Иван Ильин on 25.05.2021.
 //
 
-#include "Server.h"
+#include "ShooterServer.h"
 #include "engine/utils/Log.h"
 #include "ShooterMsgType.h"
 
-void Server::broadcast() {
+void ShooterServer::broadcast() {
     sf::Packet updatePacket;
     updatePacket << MsgType::ServerUpdate;
 
@@ -20,7 +20,7 @@ void Server::broadcast() {
 }
 
 
-void Server::processConnect(sf::Uint16 targetId) {
+void ShooterServer::processConnect(sf::Uint16 targetId) {
     sf::Packet sendPacket1, sendPacket2;
     sf::Packet extraPacket;
 
@@ -46,7 +46,7 @@ void Server::processConnect(sf::Uint16 targetId) {
 
 }
 
-void Server::processClientUpdate(sf::Uint16 senderId, sf::Packet& packet) {
+void ShooterServer::processClientUpdate(sf::Uint16 senderId, sf::Packet& packet) {
     double buf[5];
     std::string playerName;
 
@@ -57,7 +57,7 @@ void Server::processClientUpdate(sf::Uint16 senderId, sf::Packet& packet) {
     _players.at(senderId)->setPlayerNickName(playerName);
 }
 
-void Server::processDisconnect(sf::Uint16 senderId) {
+void ShooterServer::processDisconnect(sf::Uint16 senderId) {
     sf::Packet sendPacket;
 
     sendPacket << MsgType::Disconnect << senderId;
@@ -68,7 +68,7 @@ void Server::processDisconnect(sf::Uint16 senderId) {
 }
 
 
-void Server::processCustomPacket(sf::Packet& packet, sf::Uint16 senderId) {
+void ShooterServer::processCustomPacket(sf::Packet& packet, sf::Uint16 senderId) {
     sf::Packet sendPacket;
     double dbuff[10];
     sf::Uint16 targetId;
@@ -137,17 +137,17 @@ void Server::processCustomPacket(sf::Packet& packet, sf::Uint16 senderId) {
 
             break;
         default:
-            Log::log("Server::processCustomPacket: unknown message type " + std::to_string(static_cast<int>(type)));
+            Log::log("ShooterServer::processCustomPacket: unknown message type " + std::to_string(static_cast<int>(type)));
             return;
     }
 }
 
-void Server::processStop() {
+void ShooterServer::processStop() {
     _players.clear();
     _bonuses.clear();
 }
 
-void Server::generateBonuses() {
+void ShooterServer::generateBonuses() {
     _bonuses.insert({"Bonus_gun_1", std::make_shared<BonusInfo>(BonusInfo{Vec3D(-10, -2, -15), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
     _bonuses.insert({"Bonus_gun_2", std::make_shared<BonusInfo>(BonusInfo{Vec3D(10, -2, 15), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
 
@@ -170,7 +170,7 @@ void Server::generateBonuses() {
     _bonuses.insert({"Bonus_ability_2", std::make_shared<BonusInfo>(BonusInfo{Vec3D(-25, 18, 33), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
 }
 
-void Server::updateInfo() {
+void ShooterServer::updateInfo() {
     for(auto& [bonusName, bonusInfo] : _bonuses) {
         if(!bonusInfo->onTheMap && std::abs(Time::time() - bonusInfo->lastTake) > ShooterConsts::BONUS_RECHARGE_TIME) {
             sf::Packet sendPacket;
@@ -183,6 +183,6 @@ void Server::updateInfo() {
     }
 }
 
-Server::~Server() {
+ShooterServer::~ShooterServer() {
     processStop();
 }

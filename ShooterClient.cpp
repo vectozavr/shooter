@@ -2,7 +2,7 @@
 // Created by Иван Ильин on 25.05.2021.
 //
 
-#include "Client.h"
+#include "ShooterClient.h"
 
 #include <utility>
 #include "engine/utils/Log.h"
@@ -10,13 +10,13 @@
 #include "engine/animation/ATranslateToPoint.h"
 #include "ShooterMsgType.h"
 
-void Client::updatePacket() {
+void ShooterClient::updatePacket() {
     sf::Packet packet;
     packet << MsgType::ClientUpdate << _player->position().x() << _player->position().y() << _player->position().z() << _player->angle().y() << _player->headAngle() << _player->playerNickName();
     _socket.send(packet, _socket.serverId());
 }
 
-void Client::processInit(sf::Packet& packet) {
+void ShooterClient::processInit(sf::Packet& packet) {
     sf::Uint16 targetId;
     double buf[4];
     int kills, deaths;
@@ -36,7 +36,7 @@ void Client::processInit(sf::Packet& packet) {
     }
 }
 
-void Client::processUpdate(sf::Packet& packet) {
+void ShooterClient::processUpdate(sf::Packet& packet) {
     sf::Uint16 targetId;
     double buf[6];
     std::string playerName;
@@ -68,7 +68,7 @@ void Client::processUpdate(sf::Packet& packet) {
     }
 }
 
-void Client::processNewClient(sf::Packet& packet) {
+void ShooterClient::processNewClient(sf::Packet& packet) {
     sf::Uint16 targetId;
 
     packet >> targetId;
@@ -78,7 +78,7 @@ void Client::processNewClient(sf::Packet& packet) {
     }
 }
 
-void Client::processDisconnect(sf::Uint16 targetId) {
+void ShooterClient::processDisconnect(sf::Uint16 targetId) {
     if (targetId != _socket.ownId() && _players.count(targetId)) {
         _players.erase(targetId);
         _removePlayerCallBack(targetId);
@@ -86,7 +86,7 @@ void Client::processDisconnect(sf::Uint16 targetId) {
 }
 
 
-void Client::processCustomPacket(sf::Packet& packet) {
+void ShooterClient::processCustomPacket(sf::Packet& packet) {
     sf::Uint16 buffId[2];
     double dbuff[10];
     std::string tmp, tmp2;
@@ -160,34 +160,34 @@ void Client::processCustomPacket(sf::Packet& packet) {
             }
             break;
         default:
-            Log::log("Client::processCustomPacket: unknown message type " + std::to_string(static_cast<int>(type)));
+            Log::log("ShooterClient::processCustomPacket: unknown message type " + std::to_string(static_cast<int>(type)));
             return;
     }
 }
 
-void Client::processDisconnected() {
+void ShooterClient::processDisconnected() {
     for (auto it = _players.begin(); it != _players.end();) {
         processDisconnect(it++->first);
     }
 }
 
-void Client::damagePlayer(sf::Uint16 targetId, double damage) {
+void ShooterClient::damagePlayer(sf::Uint16 targetId, double damage) {
     sf::Packet packet;
 
     packet << MsgType::Custom << ShooterMsgType::Damage << targetId << damage;
     _socket.sendRely(packet, _socket.serverId());
 
-    Log::log("Client: damagePlayer " + std::to_string(targetId) + " ( -" + std::to_string(damage) + "hp )");
+    Log::log("ShooterClient: damagePlayer " + std::to_string(targetId) + " ( -" + std::to_string(damage) + "hp )");
 }
 
-void Client::addTrace(const Vec3D& from, const Vec3D& to) {
+void ShooterClient::addTrace(const Vec3D& from, const Vec3D& to) {
     sf::Packet packet;
 
     packet << MsgType::Custom << ShooterMsgType::FireTrace << from.x() << from.y() << from.z() << to.x() << to.y() << to.z();
     _socket.send(packet, _socket.serverId());
 }
 
-void Client::takeBonus(const std::string& bonusName) {
+void ShooterClient::takeBonus(const std::string& bonusName) {
     sf::Packet packet;
 
     packet << MsgType::Custom << ShooterMsgType::RemoveBonus << bonusName;
@@ -198,37 +198,37 @@ void Client::takeBonus(const std::string& bonusName) {
     }
 }
 
-void Client::changeWeapon(const std::string &weaponName) {
+void ShooterClient::changeWeapon(const std::string &weaponName) {
     sf::Packet packet;
 
     packet << MsgType::Custom << ShooterMsgType::ChangeWeapon << weaponName;
     _socket.sendRely(packet, _socket.serverId());
 }
 
-void Client::addPlayer(sf::Uint16 id, std::shared_ptr<Player> player) {
+void ShooterClient::addPlayer(sf::Uint16 id, std::shared_ptr<Player> player) {
     _players.insert({ id, player });
 }
 
-void Client::setSpawnPlayerCallBack(std::function<void(sf::Uint16)> spawn) {
+void ShooterClient::setSpawnPlayerCallBack(std::function<void(sf::Uint16)> spawn) {
     _spawnPlayerCallBack = std::move(spawn);
 }
 
-void Client::setRemovePlayerCallBack(std::function<void(sf::Uint16)> remove) {
+void ShooterClient::setRemovePlayerCallBack(std::function<void(sf::Uint16)> remove) {
     _removePlayerCallBack = std::move(remove);
 }
 
-void Client::setAddFireTraceCallBack(std::function<void(const Vec3D &, const Vec3D &)> addTrace) {
+void ShooterClient::setAddFireTraceCallBack(std::function<void(const Vec3D &, const Vec3D &)> addTrace) {
     _addFireTraceCallBack = std::move(addTrace);
 }
 
-void Client::setAddBonusCallBack(std::function<void(const std::string &, const Vec3D &)> addBonus) {
+void ShooterClient::setAddBonusCallBack(std::function<void(const std::string &, const Vec3D &)> addBonus) {
     _addBonusCallBack = std::move(addBonus);
 }
 
-void Client::setRemoveBonusCallBack(std::function<void(const ObjectNameTag &)> removeBonus) {
+void ShooterClient::setRemoveBonusCallBack(std::function<void(const ObjectNameTag &)> removeBonus) {
     _removeBonusCallBack = std::move(removeBonus);
 }
 
-void Client::setChangeEnemyWeaponCallBack(std::function<void(const std::string&, sf::Uint16)> changeEnemyWeapon) {
+void ShooterClient::setChangeEnemyWeaponCallBack(std::function<void(const std::string&, sf::Uint16)> changeEnemyWeapon) {
     _changeEnemyWeaponCallBack = std::move(changeEnemyWeapon);
 }
