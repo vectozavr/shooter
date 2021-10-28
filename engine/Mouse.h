@@ -6,18 +6,17 @@
 #define SHOOTER_MOUSE_H
 
 #include <memory>
-#include <SFML/Graphics.hpp>
+#include <utility>
+#include "Screen.h"
 #include "Vec2D.h"
 
 class Mouse final {
 private:
-    std::shared_ptr<sf::RenderWindow> _window;
+    const std::shared_ptr<Screen> _screen;
 
     std::map<sf::Mouse::Button, double> _tappedButtons;
 public:
-    Mouse() = default;
-
-    void setWindow(std::shared_ptr<sf::RenderWindow> window);
+    explicit Mouse(std::shared_ptr<Screen> screen) : _screen(std::move(screen)) {};
 
     static bool isButtonPressed(sf::Mouse::Button button); // returns true if this _button is _pressed
     bool isButtonTapped(sf::Mouse::Button button); // returns true if this _button is tapped and 1/5 sec passed (_button bouncing problem solved)
@@ -25,7 +24,6 @@ public:
     [[nodiscard]] Vec2D getMousePosition() const;
     [[nodiscard]] Vec2D getMouseDisplacement() const;
     void setMouseInCenter() const;
-    void setMouseCursorVisible(bool visible);
 };
 
 

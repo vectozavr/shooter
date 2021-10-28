@@ -31,7 +31,6 @@ public:
     bool bind(sf::Uint16 port);
     void unbind();
     void setTimeoutCallback(std::function<bool(sf::Uint16)> callback);
-    void clearTimeoutCallback();
     void addConnection(sf::Uint16 id, sf::IpAddress ip, sf::Uint16 port);
     void removeConnection(sf::Uint16 id);
 

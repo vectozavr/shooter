@@ -31,8 +31,8 @@ public:
     void disconnect();
     void update();
 
-    [[nodiscard]] sf::IpAddress ip() const { return _ip; }
-    [[nodiscard]] sf::Uint16 port() const { return _port; }
+    [[nodiscard]] sf::IpAddress serverIp() const { return _ip; }
+    [[nodiscard]] sf::Uint16 serverPort() const { return _port; }
 
     // virtual functions
     virtual void updatePacket(){};
@@ -42,7 +42,7 @@ public:
     virtual void processNewClient(sf::Packet& packet){};
     virtual void processDisconnect(sf::Uint16 targetId){};
 
-    virtual void processCustomPacket(MsgType type, sf::Packet& packet){};
+    virtual void processCustomPacket(sf::Packet& packet){};
 
     virtual void processDisconnected(){};
 

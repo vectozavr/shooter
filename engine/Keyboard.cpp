@@ -11,8 +11,9 @@ bool Keyboard::isKeyPressed(sf::Keyboard::Key key) {
 }
 
 bool Keyboard::isKeyTapped(sf::Keyboard::Key key) {
-    if (!Keyboard::isKeyPressed(key))
+    if (!Keyboard::isKeyPressed(key)) {
         return false;
+    }
 
     if(_tappedKeys.count(key) == 0) {
         _tappedKeys.emplace(key, Time::time());

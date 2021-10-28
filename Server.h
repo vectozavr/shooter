@@ -7,7 +7,6 @@
 
 #include "engine/network/ServerUDP.h"
 #include "Player.h"
-#include "Bonus.h"
 
 struct BonusInfo final {
     const Vec3D position{};
@@ -28,7 +27,7 @@ public:
     void processClientUpdate(sf::Uint16 senderId, sf::Packet& packet) override;
     void processDisconnect(sf::Uint16 senderId) override;
 
-    void processCustomPacket(MsgType type, sf::Packet& packet, sf::Uint16 senderId) override;
+    void processCustomPacket(sf::Packet& packet, sf::Uint16 senderId) override;
 
     void processStop() override;
 

@@ -13,48 +13,45 @@
 class Animation {
 public:
     enum class InterpolationType {
-        linear,
-        cos,
-        bezier,
-        bouncing
+        Linear,
+        Cos,
+        Bezier,
+        Bouncing
     };
     enum class LoopOut {
         None,
         Cycle,
         Continue
     };
-protected:
-    double _time = 0; // normalized time (from 0 to 1)
+private:
+    // normalized time (from 0 to 1)
+    double _time = 0;
     double _dtime = 0;
 
-    double _duration = 0;
-    bool _started = false;
-    LoopOut _looped = LoopOut::None;
-    // _p - animation progress
-    double _p = 0;
-    double _dp = 0;
+    bool _finished = false;
 
-    InterpolationType _intType = InterpolationType::bezier;
-    std::unique_ptr<Vec2D> _bezier[2] = {std::make_unique<Vec2D>(Vec2D{0.8, 0}),
-                                         std::make_unique<Vec2D>(Vec2D{0.2, 1})};
+    double _progress = 0;
+    double _dprogress = 0;
 
     // If '_waitFor' == true then we need to finish all animation before starting this one. (for example for a_wait() or a_scale())
-    bool _waitFor = false;
-
-    bool updateState();
-public:
-    Animation() = default;
-    virtual ~Animation() = default;
-
-    void setBezierPoints(const Vec2D& p1, const Vec2D& p2) {
-        _bezier[0] = std::make_unique<Vec2D>(p1);
-        _bezier[1] = std::make_unique<Vec2D>(p2);
-    }
-    [[nodiscard]] bool waitFor() const { return _waitFor; }
-
+    const bool _waitFor = false;
+    const double _duration = 0;
+    const LoopOut _looped = LoopOut::None;
+    const InterpolationType _intType = InterpolationType::Bezier;
 
     // You should override this method for your particular animation
-    virtual bool update() = 0;
+    virtual void update() = 0;
+public:
+    Animation(double duration, LoopOut looped, InterpolationType intType, bool _waitFor = false);
+    virtual ~Animation() = default;
+
+    [[nodiscard]] bool waitFor() const { return _waitFor; }
+
+    bool updateState();
+
+    [[nodiscard]] double progress() const { return _progress; }
+    [[nodiscard]] double dprogress() const { return _dprogress; }
+    void stop() { _finished = true;}
 };
 
 #endif //INC_3DZAVR_ANIMATION_H

@@ -5,6 +5,7 @@
 #ifndef ENGINE_MESH_H
 #define ENGINE_MESH_H
 
+#include <utility>
 #include <vector>
 #include "Triangle.h"
 #include <SFML/Graphics.hpp>
@@ -18,14 +19,14 @@ private:
 
     Mesh& operator*=(const Matrix4x4& matrix4X4);
 public:
-    Mesh() = default;
+    explicit Mesh(ObjectNameTag nameTag) : Object(std::move(nameTag)) {};
     Mesh& operator=(const Mesh& mesh) = delete;
     Mesh(const Mesh& mesh);
 
-    explicit Mesh(const std::vector<Triangle>& tries);
-    explicit Mesh(const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
+    explicit Mesh(ObjectNameTag nameTag, const std::vector<Triangle>& tries);
+    explicit Mesh(ObjectNameTag nameTag, const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
 
-    Mesh& loadObj(const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
+    void loadObj(const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
 
     [[nodiscard]] std::vector<Triangle>const &triangles() const { return _tris; }
     [[nodiscard]] std::vector<Triangle>& triangles() { return _tris; }
@@ -51,8 +52,8 @@ public:
 
     ~Mesh() override;
 
-    Mesh static Obj(const std::string& filename);
-    Mesh static LineTo(const Vec3D& from, const Vec3D& to, double line_width = 0.1, const sf::Color& color = {150, 150, 150, 100});
+    Mesh static Obj(ObjectNameTag nameTag, const std::string& filename);
+    Mesh static LineTo(ObjectNameTag nameTag, const Vec3D& from, const Vec3D& to, double line_width = 0.1, const sf::Color& color = {150, 150, 150, 100});
 };
 
 #endif //INC_3DZAVR_MESH_H

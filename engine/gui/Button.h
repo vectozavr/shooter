@@ -16,26 +16,26 @@ struct tPos final {
 
 class Button final {
 private:
-    int _x{};
-    int _y{};
+    const int _x{};
+    const int _y{};
 
-    int _w{};
-    int _h{};
+    const int _w{};
+    const int _h{};
 
-    std::function<void()> _click;
+    const std::function<void()> _click;
 
-    std::string _textString;
+    const std::string _textString;
 
-    double _sx{};
-    double _sy{};
+    const double _sx{};
+    const double _sy{};
 
-    std::string _texture;
-    tPos _usualState{};
-    tPos _selectedState{};
-    tPos _pressedState{};
+    const std::string _texture;
+    const tPos _usualState{};
+    const tPos _selectedState{};
+    const tPos _pressedState{};
 
-    std::string _font;
-    sf::Color _textColor;
+    const std::string _font;
+    const sf::Color _textColor;
 
     sf::Sprite _button;
     sf::Text _text;

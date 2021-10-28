@@ -30,7 +30,7 @@ private:
     std::vector<std::shared_ptr<Weapon>> _weapons;
     size_t _selectedWeapon = 0;
 
-    std::string _name = ShooterConsts::PLAYER_NAME;
+    std::string _nickName = ShooterConsts::PLAYER_NAME;
 
     std::function<void(sf::Uint16 targetId, double)> _damagePlayerCallBack;
     std::function<void(const Vec3D&, const Vec3D&)> _addTraceCallBack;
@@ -41,7 +41,7 @@ private:
 
     std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> _rayCastFunction;
 public:
-    Player();
+    explicit Player(ObjectNameTag name);
 
     void setHealth(double h) { _health = h; }
     void setAbility(double a) { _ability = a; }
@@ -100,8 +100,8 @@ public:
 
     void collisionWithObject(const ObjectNameTag& tag, std::shared_ptr<RigidBody> obj);
 
-    [[nodiscard]] std::string playerName() const { return _name; }
-    void setPlayerName(const std::string& name) { _name = name; }
+    [[nodiscard]] std::string playerNickName() const { return _nickName; }
+    void setPlayerNickName(const std::string& name) { _nickName = name; }
 };
 
 

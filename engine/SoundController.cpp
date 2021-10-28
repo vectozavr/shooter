@@ -12,8 +12,9 @@ void SoundController::init() {
 }
 
 void SoundController::playSound(const SoundTag& soundTag, const std::string& filename) {
-    if(!_instance)
+    if(!_instance) {
         return;
+    }
 
     stopSound(soundTag);
     _instance->_sounds.emplace(soundTag, sf::Sound(*ResourceManager::loadSoundBuffer(filename)));
@@ -21,8 +22,9 @@ void SoundController::playSound(const SoundTag& soundTag, const std::string& fil
 }
 
 void SoundController::pauseSound(const SoundTag& soundTag) {
-    if(!_instance)
+    if(!_instance) {
         return;
+    }
 
     if(_instance->_sounds.count(soundTag) > 0) {
         _instance->_sounds[soundTag].pause();
@@ -30,8 +32,9 @@ void SoundController::pauseSound(const SoundTag& soundTag) {
 }
 
 void SoundController::stopSound(const SoundTag& soundTag) {
-    if(!_instance)
+    if(!_instance) {
         return;
+    }
 
     if(_instance->_sounds.count(soundTag) > 0) {
         _instance->_sounds[soundTag].stop();
@@ -40,12 +43,13 @@ void SoundController::stopSound(const SoundTag& soundTag) {
 }
 
 sf::Sound::Status SoundController::getStatus(const SoundTag& soundTag) {
-    if(_instance == nullptr)
+    if(_instance == nullptr) {
         return sf::Sound::Status::Stopped;
+    }
 
-    if(_instance->_sounds.count(soundTag) > 0)
+    if(_instance->_sounds.count(soundTag) > 0) {
         return _instance->_sounds[soundTag].getStatus();
-    else {
+    } else {
         _instance->_sounds.erase(soundTag);
         return sf::Sound::Status::Stopped;
     }

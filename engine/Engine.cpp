@@ -14,20 +14,11 @@ Engine::Engine() {
     Timeline::init();
     ResourceManager::init();
     SoundController::init();
-
-    screen = std::make_shared<Screen>();
-    keyboard = std::make_shared<Keyboard>();
-    mouse = std::make_shared<Mouse>();
-
-    world = std::make_shared<World>();
-    camera = std::make_shared<Camera>();
 }
 
 void Engine::create(int screenWidth, int screenHeight, const std::string &name, bool verticalSync, sf::Color background, sf::Uint32 style) {
     _name = name;
-
     screen->open(screenWidth, screenHeight, name, verticalSync, background, style);
-    screen->attachMouse(mouse);
 
     Log::log("Engine::create(): started engine (" + std::to_string(screenWidth) + "x" + std::to_string(screenHeight) + ") with title '" + name + "'.");
     Time::update();
@@ -65,11 +56,13 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
                 // clear triangles from previous frame
                 camera->clear();
                 // project triangles to the camera plane
-                for(auto & it : *world)
+                for(auto & it : *world) {
                     camera->project(it.second);
+                }
                 // draw triangles on the screen
-                for (auto &t : camera->sorted())
+                for (auto &t : camera->sorted()) {
                     screen->drawTriangle(*t);
+                }
 
                 _triPerSec = camera->buffSize() * Time::fps();
             }

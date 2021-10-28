@@ -7,7 +7,7 @@
 #include "engine/ResourceManager.h"
 #include "engine/utils/Log.h"
 
-Player::Player() {
+Player::Player(ObjectNameTag name) : RigidBody(name) {
     loadObj(ShooterConsts::CUBE_OBJ, Vec3D{0.5, 1.9, 0.5});
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
     setCollision(true);
@@ -18,31 +18,39 @@ Player::Player() {
 }
 
 void Player::rotateWeaponsRelativePoint(const Vec3D& point4D, const Vec3D& v, double val) {
-    for(auto& weapon : _weapons)
+    for(auto& weapon : _weapons) {
         weapon->rotateRelativePoint(point4D, v, val);
+    }
 }
 
 void Player::collisionWithObject(const ObjectNameTag& tag, std::shared_ptr<RigidBody> obj) {
-    if(tag.str().find("Bonus_gun") != std::string::npos)
+    if(tag.str().find("Bonus_gun") != std::string::npos) {
         addWeapon(std::make_shared<Gun>());
+    }
 
-    if(tag.str().find("Bonus_shotgun") != std::string::npos)
+    if(tag.str().find("Bonus_shotgun") != std::string::npos) {
         addWeapon(std::make_shared<Shotgun>());
+    }
 
-    if(tag.str().find("Bonus_ak47") != std::string::npos)
+    if(tag.str().find("Bonus_ak47") != std::string::npos) {
         addWeapon(std::make_shared<Ak47>());
+    }
 
-    if(tag.str().find("Bonus_gold_ak47") != std::string::npos)
+    if(tag.str().find("Bonus_gold_ak47") != std::string::npos) {
         addWeapon(std::make_shared<Gold_Ak47>());
+    }
 
-    if(tag.str().find("Bonus_rifle") != std::string::npos)
+    if(tag.str().find("Bonus_rifle") != std::string::npos) {
         addWeapon(std::make_shared<Rifle>());
+    }
 
-    if(tag.str().find("Bonus_hill") != std::string::npos)
+    if(tag.str().find("Bonus_hill") != std::string::npos) {
         setFullHealth();
+    }
 
-    if(tag.str().find("Bonus_ability") != std::string::npos)
+    if(tag.str().find("Bonus_ability") != std::string::npos) {
         setFullAbility();
+    }
 
     if(tag.str().find("Bonus") != std::string::npos) {
         _takeBonusCallBack(tag.str());
@@ -60,10 +68,10 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     }
 
     _weapons.push_back(weapon);
-    attach(weapon, ObjectNameTag(weapon->name()));
+    attach(weapon);
 
     _weapons.back()->translate(position());
-    _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, Vec3D{0, 1, 0}, _angle->y());
+    _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, Vec3D{0, 1, 0}, _angle.y());
     _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, left(), headAngle());
 
     _weapons.back()->setAddTraceCallBack(_addTraceCallBack);
@@ -72,8 +80,9 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
 void Player::initWeapons() {
 
     if(!_weapons.empty()) {
-        for(auto weapon : _weapons)
+        for(auto weapon : _weapons) {
             unattach(ObjectNameTag(weapon->name()));
+        }
 
         _removeWeaponCallBack(_weapons[_selectedWeapon]);
         _weapons.clear();
@@ -99,10 +108,11 @@ void Player::previousWeapon() {
     if(_weapons.size() > 1) {
         // change '_selectedWeapon'
         _removeWeaponCallBack(_weapons[_selectedWeapon]);
-        if (_selectedWeapon > 0)
+        if (_selectedWeapon > 0) {
             _selectedWeapon = (_selectedWeapon - 1) % _weapons.size();
-        else
+        } else {
             _selectedWeapon = _weapons.size() - 1;
+        }
         _addWeaponCallBack(_weapons[_selectedWeapon]);
         Log::log("selectedWeapon " + std::to_string(_selectedWeapon));
         SoundController::playSound(SoundTag("changeWeapon"), ShooterConsts::CHANGE_WEAPON_SOUND);

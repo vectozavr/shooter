@@ -103,10 +103,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a6c534536ed186a2ad65e75484c8abafe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the vertex count.  <a href="#a6c534536ed186a2ad65e75484c8abafe">More...</a><br /></td></tr>
 <tr class="separator:a6c534536ed186a2ad65e75484c8abafe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad100a5f578a91c49a9009e3c6956c82d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsf_1_1VertexBuffer.html#ad100a5f578a91c49a9009e3c6956c82d">update</a> (const <a class="el" href="classsf_1_1Vertex.html">Vertex</a> *vertices)</td></tr>
-<tr class="memdesc:ad100a5f578a91c49a9009e3c6956c82d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the whole buffer from an array of vertices.  <a href="#ad100a5f578a91c49a9009e3c6956c82d">More...</a><br /></td></tr>
+<tr class="memdesc:ad100a5f578a91c49a9009e3c6956c82d"><td class="mdescLeft">&#160;</td><td class="mdescRight">ServerUpdate the whole buffer from an array of vertices.  <a href="#ad100a5f578a91c49a9009e3c6956c82d">More...</a><br /></td></tr>
 <tr class="separator:ad100a5f578a91c49a9009e3c6956c82d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6c8649a64861507010d21e77fbd53fa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsf_1_1VertexBuffer.html#ae6c8649a64861507010d21e77fbd53fa">update</a> (const <a class="el" href="classsf_1_1Vertex.html">Vertex</a> *vertices, std::size_t vertexCount, unsigned int offset)</td></tr>
-<tr class="memdesc:ae6c8649a64861507010d21e77fbd53fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update a part of the buffer from an array of vertices.  <a href="#ae6c8649a64861507010d21e77fbd53fa">More...</a><br /></td></tr>
+<tr class="memdesc:ae6c8649a64861507010d21e77fbd53fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">ServerUpdate a part of the buffer from an array of vertices.  <a href="#ae6c8649a64861507010d21e77fbd53fa">More...</a><br /></td></tr>
 <tr class="separator:ae6c8649a64861507010d21e77fbd53fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41f8bbcf07f403e7fe29b1b905dc7544"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsf_1_1VertexBuffer.html#a41f8bbcf07f403e7fe29b1b905dc7544">update</a> (const <a class="el" href="classsf_1_1VertexBuffer.html">VertexBuffer</a> &amp;vertexBuffer)</td></tr>
 <tr class="memdesc:a41f8bbcf07f403e7fe29b1b905dc7544"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy the contents of another buffer into this buffer.  <a href="#a41f8bbcf07f403e7fe29b1b905dc7544">More...</a><br /></td></tr>
@@ -664,7 +664,7 @@ Static Private Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Update the whole buffer from an array of vertices. </p>
+<p>ServerUpdate the whole buffer from an array of vertices. </p>
 <p>The <em>vertex</em> array is assumed to have the same size as the <em>created</em> buffer.</p>
 <p>No additional check is performed on the size of the vertex array, passing invalid arguments will lead to undefined behavior.</p>
 <p>This function does nothing if <em>vertices</em> is null or if the buffer was not previously created.</p>
@@ -710,7 +710,7 @@ Static Private Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Update a part of the buffer from an array of vertices. </p>
+<p>ServerUpdate a part of the buffer from an array of vertices. </p>
 <p><code>offset</code> is specified as the number of vertices to skip from the beginning of the buffer.</p>
 <p>If <code>offset</code> is 0 and <code>vertexCount</code> is equal to the size of the currently created buffer, its whole contents are replaced.</p>
 <p>If <code>offset</code> is 0 and <code>vertexCount</code> is greater than the size of the currently created buffer, a new buffer is created containing the vertex data.</p>

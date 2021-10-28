@@ -5,30 +5,33 @@
 #ifndef ENGINE_ATRANSLATETOPOINT_H
 #define ENGINE_ATRANSLATETOPOINT_H
 
+#include <utility>
+
 #include "Animation.h"
 #include "../Object.h"
 
 class ATranslateToPoint final : public Animation {
 private:
-    std::shared_ptr<Object> _object;
+    const std::weak_ptr<Object> _object;
+    const Vec3D _targetPoint;
+    Vec3D _translationValue;
 
-    Vec3D point;
-    std::unique_ptr<Vec3D> value;
-public:
-    ATranslateToPoint(std::shared_ptr<Object> object, const Vec3D& p, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) : point(p) {
-        _object = object;
-        _duration = duration;
-        _looped = looped;
-        _intType = interpolationType;
-    }
+    bool _started = false;
 
-    bool update() override {
-        if(!_started) {
-            value = std::make_unique<Vec3D>(point - _object->position());
+    void update() override {
+        if(_object.expired()) {
+            stop();
+            return;
         }
-        _object->translate(*value * _dp);
 
-        return updateState();
+        if(!_started) {
+            _started = true;
+            _translationValue = _targetPoint - _object.lock()->position();
+        }
+        _object.lock()->translate(_translationValue * dprogress());
+    }
+public:
+    ATranslateToPoint(std::weak_ptr<Object> object, const Vec3D& p, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::Bezier) : Animation(duration, looped, interpolationType), _targetPoint(p), _object(object) {
     }
 };
 

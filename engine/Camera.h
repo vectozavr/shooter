@@ -26,7 +26,7 @@ private:
     double _aspect = 0;
 
 public:
-    Camera() = default;
+    Camera() : Object(ObjectNameTag("Camera")) {};
     Camera(const Camera& camera) = delete;
 
     void init(int width, int height, double fov = 110.0, double ZNear = 0.1, double ZFar = 5000.0);

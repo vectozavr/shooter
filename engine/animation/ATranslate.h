@@ -5,25 +5,26 @@
 #ifndef ENGINE_ATRANSLATE_H
 #define ENGINE_ATRANSLATE_H
 
+#include <utility>
+
 #include "Animation.h"
 #include "../Object.h"
 
 class ATranslate final : public Animation {
 private:
-    std::shared_ptr<Object> _object;
+    const std::weak_ptr<Object> _object;
+    const Vec3D _translationValue;
 
-    Vec3D value;
-public:
-    ATranslate(std::shared_ptr<Object> object, const Vec3D& t, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) : value(t){
-        _object = object;
-        _duration = duration;
-        _looped = looped;
-        _intType = interpolationType;
+    void update() override {
+        if(_object.expired()) {
+            stop();
+            return;
+        }
+
+        _object.lock()->translate(_translationValue * dprogress());
     }
-
-    bool update() override {
-        _object->translate(value * _dp);
-        return updateState();
+public:
+    ATranslate(std::weak_ptr<Object> object, const Vec3D& t, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::Bezier) : Animation(duration, looped, interpolationType), _object(std::move(object)), _translationValue(t){
     }
 };
 

@@ -4,13 +4,14 @@
 
 #include "Server.h"
 #include "engine/utils/Log.h"
+#include "ShooterMsgType.h"
 
 void Server::broadcast() {
     sf::Packet updatePacket;
-    updatePacket << MsgType::Update;
+    updatePacket << MsgType::ServerUpdate;
 
     for (auto& [playerId, player] : _players) {
-        updatePacket << playerId << player->position().x() << player->position().y() << player->position().z() << player->health() << player->angle().y() << player->headAngle() << player->playerName();
+        updatePacket << playerId << player->position().x() << player->position().y() << player->position().z() << player->health() << player->angle().y() << player->headAngle() << player->playerNickName();
     }
 
     for (auto& player : _players) {
@@ -26,9 +27,8 @@ void Server::processConnect(sf::Uint16 targetId) {
     // players init
     extraPacket << MsgType::NewClient << targetId;
     sendPacket1 << MsgType::Init << targetId;
-    _players.insert({ targetId, std::make_shared<Player>() });
-    for (const auto& [playerId, player] : _players)
-    {
+    _players.insert({ targetId, std::make_shared<Player>(ObjectNameTag("Player_" + std::to_string(targetId))) });
+    for (const auto& [playerId, player] : _players) {
         sendPacket1 << playerId << player->position().x() << player->position().y() << player->position().z() << player->health() << player->kills() << player->deaths();
         if (playerId != targetId)
             _socket.sendRely(extraPacket, playerId);
@@ -36,10 +36,11 @@ void Server::processConnect(sf::Uint16 targetId) {
     _socket.sendRely(sendPacket1, targetId);
 
     // bonuses init
-    sendPacket2 << MsgType::InitBonuses;
+    sendPacket2 << MsgType::Custom << ShooterMsgType::InitBonuses;
     for(auto& [bonusName, bonusInfo] : _bonuses) {
-        if(bonusInfo->onTheMap)
+        if(bonusInfo->onTheMap) {
             sendPacket2 << bonusName << bonusInfo->position.x() << bonusInfo->position.y() << bonusInfo->position.z();
+        }
     }
     _socket.sendRely(sendPacket2, targetId);
 
@@ -53,7 +54,7 @@ void Server::processClientUpdate(sf::Uint16 senderId, sf::Packet& packet) {
     _players.at(senderId)->translateToPoint(Vec3D{ buf[0], buf[1], buf[2] });
     _players.at(senderId)->rotateToAngle(Vec3D{0, buf[3], 0});
     _players.at(senderId)->setHeadAngle(buf[4]);
-    _players.at(senderId)->setPlayerName(playerName);
+    _players.at(senderId)->setPlayerNickName(playerName);
 }
 
 void Server::processDisconnect(sf::Uint16 senderId) {
@@ -61,12 +62,13 @@ void Server::processDisconnect(sf::Uint16 senderId) {
 
     sendPacket << MsgType::Disconnect << senderId;
     _players.erase(senderId);
-    for (const auto& player : _players)
+    for (const auto& player : _players) {
         _socket.sendRely(sendPacket, player.first);
+    }
 }
 
 
-void Server::processCustomPacket(MsgType type, sf::Packet& packet, sf::Uint16 senderId) {
+void Server::processCustomPacket(sf::Packet& packet, sf::Uint16 senderId) {
     sf::Packet sendPacket;
     double dbuff[10];
     sf::Uint16 targetId;
@@ -74,34 +76,37 @@ void Server::processCustomPacket(MsgType type, sf::Packet& packet, sf::Uint16 se
     std::string tmp;
     double newHealth;
 
+    ShooterMsgType type;
+    packet >> type;
+
     switch (type) {
-        case MsgType::Damage:
+        case ShooterMsgType::Damage:
             packet >> targetId >> damage;
             newHealth = _players[targetId]->health() - damage;
             if(newHealth > 0) {
                 _players[targetId]->setHealth(newHealth);
-            }
-            else {
+            } else {
                 _players[targetId]->setFullHealth();
                 _players[targetId]->setFullAbility();
                 _players[targetId]->addDeath();
                 _players[senderId]->addKill();
 
-                sendPacket << MsgType::Kill << targetId << senderId;
+                sendPacket << MsgType::Custom << ShooterMsgType::Kill << targetId << senderId;
                 for (auto& player : _players)
                     _socket.sendRely(sendPacket, player.first);
             }
             break;
-        case MsgType::FireTrace:
+        case ShooterMsgType::FireTrace:
             packet >> dbuff[0] >> dbuff[1] >> dbuff[2] >> dbuff[3] >> dbuff[4] >> dbuff[5];
-            sendPacket << MsgType::FireTrace << dbuff[0] << dbuff[1] << dbuff[2] << dbuff[3] << dbuff[4] << dbuff[5];
+            sendPacket << MsgType::Custom << ShooterMsgType::FireTrace << dbuff[0] << dbuff[1] << dbuff[2] << dbuff[3] << dbuff[4] << dbuff[5];
             for (auto& player : _players) {
-                if(player.first != senderId)
+                if(player.first != senderId) {
                     _socket.send(sendPacket, player.first);
+                }
             }
 
             break;
-        case MsgType::RemoveBonus:
+        case ShooterMsgType::RemoveBonus:
             packet >> tmp;
 
             if(tmp.find("Bonus_hill") != std::string::npos) {
@@ -113,23 +118,26 @@ void Server::processCustomPacket(MsgType type, sf::Packet& packet, sf::Uint16 se
 
             _bonuses[tmp] = std::make_shared<BonusInfo>(BonusInfo{_bonuses[tmp]->position, Time::time(), false});
 
-            sendPacket << MsgType::RemoveBonus << tmp;
+            sendPacket << MsgType::Custom << ShooterMsgType::RemoveBonus << tmp;
             for (auto& player : _players) {
-                if(player.first != senderId)
+                if(player.first != senderId) {
                     _socket.sendRely(sendPacket, player.first);
+                }
             }
             break;
-        case MsgType::ChangeWeapon:
+        case ShooterMsgType::ChangeWeapon:
             packet >> tmp;
-            sendPacket << MsgType::ChangeWeapon << senderId << tmp;
+            sendPacket << MsgType::Custom << ShooterMsgType::ChangeWeapon << senderId << tmp;
 
             for (auto& player : _players) {
-                if(player.first != senderId)
+                if(player.first != senderId) {
                     _socket.sendRely(sendPacket, player.first);
+                }
             }
 
             break;
         default:
+            Log::log("Server::processCustomPacket: unknown message type " + std::to_string(static_cast<int>(type)));
             return;
     }
 }
@@ -166,9 +174,10 @@ void Server::updateInfo() {
     for(auto& [bonusName, bonusInfo] : _bonuses) {
         if(!bonusInfo->onTheMap && std::abs(Time::time() - bonusInfo->lastTake) > ShooterConsts::BONUS_RECHARGE_TIME) {
             sf::Packet sendPacket;
-            sendPacket << MsgType::AddBonus << bonusName << bonusInfo->position.x() << bonusInfo->position.y() << bonusInfo->position.z();
-            for (const auto& player : _players)
+            sendPacket << MsgType::Custom << ShooterMsgType::AddBonus << bonusName << bonusInfo->position.x() << bonusInfo->position.y() << bonusInfo->position.z();
+            for (const auto& player : _players) {
                 _socket.sendRely(sendPacket, player.first);
+            }
             bonusInfo = std::make_shared<BonusInfo>(BonusInfo{bonusInfo->position, bonusInfo->lastTake, true});
         }
     }

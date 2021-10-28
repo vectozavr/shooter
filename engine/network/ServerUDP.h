@@ -40,7 +40,7 @@ public:
     virtual void processClientUpdate(sf::Uint16 senderId, sf::Packet& packet){};
     virtual void processDisconnect(sf::Uint16 senderId){};
 
-    virtual void processCustomPacket(MsgType type, sf::Packet& packet, sf::Uint16 senderId){};
+    virtual void processCustomPacket(sf::Packet& packet, sf::Uint16 senderId){};
 
     virtual void processStop(){};
 

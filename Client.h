@@ -39,7 +39,7 @@ public:
     void processNewClient(sf::Packet& packet) override;
     void processDisconnect(sf::Uint16 targetId) override;
 
-    void processCustomPacket(MsgType type, sf::Packet& packet) override;
+    void processCustomPacket(sf::Packet& packet) override;
 
     void processDisconnected() override;
 

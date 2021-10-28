@@ -10,7 +10,7 @@
 void Window::addButton(int x, int y, int w, int h, std::function<void()> click, const std::string &text, double sx, double sy,
                        const std::string &texture, tPos usualState, tPos selectedState, tPos pressedState,
                        const std::string& font, sf::Color textColor) {
-    _buttons.push_back(Button{x, y, w, h, std::move(click), text, sx, sy, texture, usualState, selectedState, pressedState, font, textColor});
+    _buttons.emplace_back(x, y, w, h, std::move(click), text, sx, sy, texture, usualState, selectedState, pressedState, font, textColor);
     _buttons.back().init();
 }
 
@@ -20,7 +20,7 @@ void Window::update() {
     _screen->drawSprite(_back);
 
     Vec2D mousePos = _mouse->getMousePosition();
-    Vec2D dMousePos = mousePos - *_prevMousePosition;
+    Vec2D dMousePos = mousePos - _prevMousePosition;
     _back.setPosition(_back.getPosition() - sf::Vector2f((float)(dMousePos.x() / 30), (float)(dMousePos.y() / 30)));
     bool isPressed = _mouse->isButtonTapped(sf::Mouse::Left);
 
@@ -40,7 +40,7 @@ void Window::update() {
         }
     }
 
-    _prevMousePosition = std::make_unique<Vec2D>(mousePos);
+    _prevMousePosition = mousePos;
 }
 
 void Window::setBackgroundTexture(const std::string &texture, double sx, double sy, int w, int h) {

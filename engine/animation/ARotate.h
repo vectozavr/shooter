@@ -5,25 +5,26 @@
 #ifndef ENGINE_AROTATE_H
 #define ENGINE_AROTATE_H
 
+#include <utility>
+
 #include "Animation.h"
 #include "../Object.h"
 
 class ARotate final : public Animation {
 private:
-    std::shared_ptr<Object> _object;
+    const std::weak_ptr<Object> _object;
+    const Vec3D _rotationValue;
 
-    Vec3D value;
-public:
-    ARotate(std::shared_ptr<Object> object, const Vec3D& r, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) : value(r) {
-        _object = object;
-        _duration = duration;
-        _looped = looped;
-        _intType = interpolationType;
+    void update() override {
+        if(_object.expired()) {
+            stop();
+            return;
+        }
+
+        _object.lock()->rotate(_rotationValue * dprogress());
     }
-
-    bool update() override {
-        _object->rotate(value * _dp);
-        return updateState();
+public:
+    ARotate(std::weak_ptr<Object> object, const Vec3D& r, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::Bezier) : Animation(duration, looped, interpolationType), _object(std::move(object)), _rotationValue(r) {
     }
 };
 

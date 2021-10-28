@@ -8,16 +8,5 @@
 
 using namespace std;
 
-Gun::Gun(int ammo, const std::string& weaponName) : Weapon(weaponName, ShooterConsts::GUN_OBJ, Vec3D{3, 3, 3}, Vec3D{-1.8, 1.3, 1.8}, Vec3D{0, Consts::PI, 0}) {
-    fireSound = ShooterConsts::GUN_FIRE_SOUND;
-    reloadSound = ShooterConsts::GUN_RELOAD_SOUND;
-
-    _initialPack = 30;
-    _clipCapacity = 6; // how much ammo can be stored in one clip
-    _stockAmmo = ammo - _clipCapacity; // how much ammo do you have in stock
-    _clipAmmo = _clipCapacity; // how much ammo do you have in current clip
-    _reloadTime = 2;
-    _fireDelay = 0.3; // time delay between fires
-    _damage = 800;
-    _spreading = 3.0;
+Gun::Gun() : Weapon(30, 6, 2.0, 0.3, 800, 3.0, ShooterConsts::GUN_FIRE_SOUND, ShooterConsts::GUN_RELOAD_SOUND, "gun", ShooterConsts::GUN_OBJ, Vec3D{3, 3, 3}, Vec3D{-1.8, 1.3, 1.8}, Vec3D{0, Consts::PI, 0}) {
 }

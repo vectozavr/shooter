@@ -8,37 +8,30 @@
 
 UDPConnection::UDPConnection(sf::Uint16 id, sf::IpAddress ip, sf::Uint16 port) : _id(id), _ip(ip), _port(port), lastMsg(Time::time()) {}
 
-sf::Uint16 UDPConnection::id() const
-{
+sf::Uint16 UDPConnection::id() const {
     return _id;
 }
 
-const sf::IpAddress& UDPConnection::ip() const
-{
+const sf::IpAddress& UDPConnection::ip() const {
     return _ip;
 }
 
-sf::Uint16 UDPConnection::port() const
-{
+sf::Uint16 UDPConnection::port() const {
     return _port;
 }
 
-bool UDPConnection::timeout() const
-{
+bool UDPConnection::timeout() const {
     return Time::time() - lastMsg > Consts::NETWORK_TIMEOUT;
 }
 
-bool UDPConnection::same(sf::IpAddress& ip, sf::Uint16 port) const
-{
+bool UDPConnection::same(sf::IpAddress& ip, sf::Uint16 port) const {
     return _ip == ip && _port == port;
 }
 
-void UDPConnection::update()
-{
+void UDPConnection::update() {
     lastMsg = Time::time();
 }
 
-void UDPConnection::send(sf::UdpSocket& socket, sf::Packet& packet)
-{
+void UDPConnection::send(sf::UdpSocket& socket, sf::Packet& packet) {
     socket.send(packet, _ip, _port);
 }

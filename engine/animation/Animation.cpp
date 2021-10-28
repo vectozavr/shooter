@@ -4,37 +4,44 @@
 
 #include "Animation.h"
 
+Animation::Animation(double duration, Animation::LoopOut looped, Animation::InterpolationType intType, bool waitFor) : _duration(duration), _looped(looped), _intType(intType), _waitFor(waitFor) {
+}
+
 bool Animation::updateState() {
-    if(!_started) {
-        _started = true;
-        return _duration != 0;
+    if(_finished || std::abs(_duration) < Consts::EPS) {
+        return false;
     }
 
     // linear normalized time:
     _dtime = Time::deltaTime()/_duration;
     _time += _dtime;
 
-    if(_looped == LoopOut::Continue && _time > 0.5)
+    if(_looped == LoopOut::Continue && _time > 0.5) {
         _time = 0.5;
+    }
 
     switch (_intType) {
-        case InterpolationType::bezier:
-            _p = Interpolation::Bezier(*_bezier[0], *_bezier[1], _time);
-            _dp = Interpolation::dBezier(*_bezier[0], *_bezier[1], _time, _dtime);
+        case InterpolationType::Bezier:
+            _progress = Interpolation::Bezier(Consts::BEZIER[0], Consts::BEZIER[1], _time);
+            _dprogress = Interpolation::dBezier(Consts::BEZIER[0], Consts::BEZIER[1], _time, _dtime);
             break;
-        case InterpolationType::bouncing:
-            _p = Interpolation::Bouncing(_time);
-            _dp = Interpolation::dBouncing(_time, _dtime);
+        case InterpolationType::Bouncing:
+            _progress = Interpolation::Bouncing(_time);
+            _dprogress = Interpolation::dBouncing(_time, _dtime);
             break;
-        case InterpolationType::linear:
-            _p = Interpolation::Linear(_time);
-            _dp = Interpolation::dLinear(_time, _dtime);
+        case InterpolationType::Linear:
+            _progress = Interpolation::Linear(_time);
+            _dprogress = Interpolation::dLinear(_time, _dtime);
             break;
-        case InterpolationType::cos:
-            _p = Interpolation::Cos(_time);
-            _dp = Interpolation::dCos(_time, _dtime);
+        case InterpolationType::Cos:
+            _progress = Interpolation::Cos(_time);
+            _dprogress = Interpolation::dCos(_time, _dtime);
             break;
+        default:
+            throw std::logic_error{"Animation::updateState: unknown interpolation type " + std::to_string(static_cast<int>(_intType))};
     }
+
+    update();
 
     return (_time < 1) || _looped == LoopOut::Cycle;
 }

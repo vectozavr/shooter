@@ -9,9 +9,9 @@
 
 class UDPConnection final {
 private:
-    sf::Uint16 _id;
-    sf::IpAddress _ip;
-    sf::Uint16 _port;
+    const sf::Uint16 _id;
+    const sf::IpAddress _ip;
+    const sf::Uint16 _port;
     double lastMsg;
 
 public:

@@ -18,7 +18,7 @@ Mesh &Mesh::operator*=(const Matrix4x4 &matrix4X4) {
     return *this;
 }
 
-Mesh &Mesh::loadObj(const std::string& filename, const Vec3D& scale) {
+void Mesh::loadObj(const std::string& filename, const Vec3D& scale) {
 
     auto objects = ResourceManager::loadObjects(filename);
     for(auto& obj : objects) {
@@ -27,19 +27,17 @@ Mesh &Mesh::loadObj(const std::string& filename, const Vec3D& scale) {
         }
     }
     this->scale(scale);
-
-    return *this;
 }
 
-Mesh::Mesh(const std::string& filename, const Vec3D& scale){
+Mesh::Mesh(ObjectNameTag nameTag, const std::string& filename, const Vec3D& scale) : Object(nameTag) {
     loadObj(filename, scale);
 }
 
-Mesh::Mesh(const vector<Triangle> &tries) : _tris(tries) {
+Mesh::Mesh(ObjectNameTag nameTag, const vector<Triangle> &tries) : Object(nameTag), _tris(tries) {
 }
 
-Mesh Mesh::Obj(const std::string& filename) {
-    return Mesh(filename);
+Mesh Mesh::Obj(ObjectNameTag nameTag, const std::string& filename) {
+    return Mesh(std::move(nameTag), filename);
 }
 
 void Mesh::rotate(const Vec3D &r) {
@@ -78,24 +76,24 @@ void Mesh::setColor(const sf::Color& c) {
     setTriangles(newTriangles);
 }
 
-Mesh Mesh::LineTo(const Vec3D& from, const Vec3D& to, double line_width, const sf::Color& color) {
+Mesh Mesh::LineTo(ObjectNameTag nameTag, const Vec3D& from, const Vec3D& to, double line_width, const sf::Color& color) {
 
-    Mesh line;
+    Mesh line(nameTag);
 
     Vec3D v1 = (to - from).normalized();
     Vec3D v2 = from.cross(from + Vec3D{1, 0, 0}).normalized();
     Vec3D v3 = v1.cross(v2).normalized();
 
     // from plane
-    Point4D p1 = (from - v2 * line_width/2.0 - v3 * line_width/2.0).makePoint4D();
-    Point4D p2 = (from - v2 * line_width/2.0 + v3 * line_width/2.0).makePoint4D();
-    Point4D p3 = (from + v2 * line_width/2.0 + v3 * line_width/2.0).makePoint4D();
-    Point4D p4 = (from + v2 * line_width/2.0 - v3 * line_width/2.0).makePoint4D();
+    Vec4D p1 = (from - v2 * line_width / 2.0 - v3 * line_width / 2.0).makePoint4D();
+    Vec4D p2 = (from - v2 * line_width / 2.0 + v3 * line_width / 2.0).makePoint4D();
+    Vec4D p3 = (from + v2 * line_width / 2.0 + v3 * line_width / 2.0).makePoint4D();
+    Vec4D p4 = (from + v2 * line_width / 2.0 - v3 * line_width / 2.0).makePoint4D();
     // to plane
-    Point4D p5 = (to - v2 * line_width/2.0 - v3 * line_width/2.0).makePoint4D();
-    Point4D p6 = (to - v2 * line_width/2.0 + v3 * line_width/2.0).makePoint4D();
-    Point4D p7 = (to + v2 * line_width/2.0 + v3 * line_width/2.0).makePoint4D();
-    Point4D p8 = (to + v2 * line_width/2.0 - v3 * line_width/2.0).makePoint4D();
+    Vec4D p5 = (to - v2 * line_width / 2.0 - v3 * line_width / 2.0).makePoint4D();
+    Vec4D p6 = (to - v2 * line_width / 2.0 + v3 * line_width / 2.0).makePoint4D();
+    Vec4D p7 = (to + v2 * line_width / 2.0 + v3 * line_width / 2.0).makePoint4D();
+    Vec4D p8 = (to + v2 * line_width / 2.0 - v3 * line_width / 2.0).makePoint4D();
 
 
     line._tris = std::move(std::vector<Triangle>{
@@ -117,7 +115,7 @@ Mesh Mesh::LineTo(const Vec3D& from, const Vec3D& to, double line_width, const s
     return line;
 }
 
-Mesh::Mesh(const Mesh &mesh) : _tris(mesh._tris), _color(mesh._color), _visible(mesh._visible) {
+Mesh::Mesh(const Mesh &mesh) : Object(mesh.name()), _tris(mesh._tris), _color(mesh._color), _visible(mesh._visible) {
 
 }
 

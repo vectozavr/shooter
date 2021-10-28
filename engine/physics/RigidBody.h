@@ -5,6 +5,7 @@
 #ifndef ENGINE_RIGIDBODY_H
 #define ENGINE_RIGIDBODY_H
 
+#include <utility>
 #include <vector>
 #include <memory>
 #include <functional>
@@ -40,29 +41,29 @@ private:
     static NextSimplex _triangleCase(const Simplex& points);
     static NextSimplex _tetrahedronCase(const Simplex& points);
 
-    static std::pair<std::vector<std::shared_ptr<FaceNormal>>, size_t> _getFaceNormals(const std::vector<Vec3D>& polytope, const std::vector<size_t>& faces);
+    static std::pair<std::vector<FaceNormal>, size_t> _getFaceNormals(const std::vector<Vec3D>& polytope, const std::vector<size_t>& faces);
     static std::vector<std::pair<size_t, size_t>> _addIfUniqueEdge(const std::vector<std::pair<size_t, size_t>>& edges, const std::vector<size_t>& faces, size_t a, size_t b);
 
-    static void makeLogObjPolytope(const std::vector<Vec3D>& polytope, const std::vector<size_t>& faces);
 protected:
-    std::unique_ptr<Vec3D> _velocity = std::make_unique<Vec3D>(Vec3D{0, 0, 0});;
-    std::unique_ptr<Vec3D> _acceleration = std::make_unique<Vec3D>(Vec3D{0, 0, 0});;
+    Vec3D _velocity{0, 0, 0};
+    Vec3D _acceleration{0, 0, 0};
 
     bool _collision = false;
     bool _isCollider = true;
 
     bool _inCollision = false;
-    std::shared_ptr<Vec3D> _collisionNormal = std::make_unique<Vec3D>(Vec3D{0, 0, 0});;
+    Vec3D _collisionNormal{0, 0, 0};
 
 public:
-    RigidBody() = default;
+    explicit RigidBody(ObjectNameTag nameTag) : Mesh(std::move(nameTag)) {};
     explicit RigidBody(const Mesh& mesh);
+    RigidBody(ObjectNameTag nameTag, const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
 
     [[nodiscard]] std::pair<bool, Simplex> checkGJKCollision(std::shared_ptr<RigidBody> obj);
     [[nodiscard]] CollisionPoint EPA(const Simplex& simplex, std::shared_ptr<RigidBody> obj);
     void solveCollision(const CollisionPoint& collision);
 
-    [[nodiscard]] Vec3D collisionNormal() const { return *_collisionNormal; }
+    [[nodiscard]] Vec3D collisionNormal() const { return _collisionNormal; }
 
     [[nodiscard]] bool isCollision() const { return _collision; }
     [[nodiscard]] bool inCollision() const {return _inCollision; }
@@ -77,8 +78,8 @@ public:
     void addVelocity(const Vec3D& velocity);
     void setAcceleration(const Vec3D& acceleration);
 
-    [[nodiscard]] Vec3D velocity() const { return *_velocity; }
-    [[nodiscard]] Vec3D acceleration() const { return *_acceleration; }
+    [[nodiscard]] Vec3D velocity() const { return _velocity; }
+    [[nodiscard]] Vec3D acceleration() const { return _acceleration; }
 
     [[nodiscard]] const std::function<void(const ObjectNameTag&, std::shared_ptr<RigidBody>)>& collisionCallBack() const { return _collisionCallBack; }
     void setCollisionCallBack(const std::function<void(const ObjectNameTag& tag, std::shared_ptr<RigidBody>)>& f) { _collisionCallBack = f; }

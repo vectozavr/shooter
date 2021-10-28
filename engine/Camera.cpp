@@ -4,7 +4,7 @@
 
 #include "Camera.h"
 #include "utils/Log.h"
-
+#include "Consts.h"
 #include <cmath>
 
 std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mesh) {
@@ -14,8 +14,9 @@ std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mes
         return _triangles;
     }
 
-    if(!mesh->isVisible())
+    if(!mesh->isVisible()) {
         return this->_triangles;
+    }
 
     // Model transform matrix: translate _tris in the origin of body.
     Matrix4x4 M = Matrix4x4::Translation(mesh->position());
@@ -26,11 +27,11 @@ std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mes
 
     for(auto& t : mesh->triangles()) {
 
-
         double dot = t.norm().dot((mesh->position() + Vec3D(t[0]) - position()).normalized());
 
-        if(dot > 0)
+        if(dot > 0) {
             continue;
+        }
 
         // It needs to be cleared because it's reused through iterations. Usually it doesn't free memory.
         clippedTriangles.clear();
@@ -39,14 +40,13 @@ std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mes
         // In the beginning we need to to translate triangle from world coordinate to our camera system:
         // After that we apply clipping for all planes from _clipPlanes
         clippedTriangles.emplace_back(t * VM);
-        for(auto& plane : _clipPlanes)
-        {
-            while(!clippedTriangles.empty())
-            {
+        for(auto& plane : _clipPlanes) {
+            while(!clippedTriangles.empty()) {
                 std::vector<Triangle> clipResult = plane.clip(clippedTriangles.back());
                 clippedTriangles.pop_back();
-                for(auto & i : clipResult)
+                for(auto & i : clipResult) {
                     tempBuffer.emplace_back(i);
+                }
             }
             clippedTriangles.swap(tempBuffer);
         }
@@ -103,8 +103,7 @@ std::vector<std::shared_ptr<Triangle>> Camera::sorted() {
 
     // Sort _tris from _back to front
     // This is some replacement for Z-buffer
-    std::sort(_triangles.begin(), _triangles.end(), [](std::shared_ptr<Triangle> &t1, std::shared_ptr<Triangle> &t2)
-    {
+    std::sort(_triangles.begin(), _triangles.end(), [](std::shared_ptr<Triangle> &t1, std::shared_ptr<Triangle> &t2) {
         std::vector<double> v_z1({(*t1)[0].z(), (*t1)[1].z(), (*t1)[2].z()});
         std::vector<double> v_z2({(*t2)[0].z(), (*t2)[1].z(), (*t2)[2].z()});
 

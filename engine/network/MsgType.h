@@ -18,18 +18,12 @@ enum class MsgType
     Connect,      // connection         (client ---> server)
     Disconnect,   // disconnect         (client <==> server)
     Init,         // initialization     (client <--- server)
-    Update,       // update             (client <--- server)
+    ServerUpdate, // update             (client <--- server)
     ClientUpdate, // update             (client ---> server)
     NewClient,    // add new client     (client <--- server)
 
-    // custom
-    Damage,
-    Kill,
-    FireTrace,
-    InitBonuses,
-    AddBonus,
-    RemoveBonus,
-    ChangeWeapon,
+    // this is for higher level clients & servers
+    Custom,
 };
 
 sf::Packet& operator<<(sf::Packet& packet, MsgType type);

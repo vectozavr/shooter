@@ -7,14 +7,13 @@
 
 #include <SFML/Network.hpp>
 
-class ReliableMsg final
-{
+class ReliableMsg final {
 private:
     sf::Packet packet;
-    sf::IpAddress address;
-    sf::Uint16 port;
+    const sf::IpAddress address;
+    const sf::Uint16 port;
+    const double firstTry;
     double lastTry;
-    double firstTry;
 
 public:
     ReliableMsg(sf::Packet& packet, sf::IpAddress address, sf::Uint16 port);

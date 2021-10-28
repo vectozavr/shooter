@@ -4,21 +4,19 @@
 
 #include "Plane.h"
 
-Plane::Plane(const Triangle& tri) : _triangle(tri), _n(tri.norm()), _p(tri[0]) {
-
+Plane::Plane(const Triangle& tri) : _normal(tri.norm()), _point(tri[0]) {
 }
 
-Plane::Plane(const Vec3D &N, const Vec3D &P) : _n(N.normalized()), _p(P) {
-
+Plane::Plane(const Vec3D &N, const Vec3D &P) : _normal(N.normalized()), _point(P) {
 }
 
 double Plane::distance(const Vec3D &point) const {
-    return point.dot(_n) - _p.dot(_n);
+    return point.dot(_normal) - _point.dot(_normal);
 }
 
 std::pair<Vec3D, double> Plane::intersection(const Vec3D &start, const Vec3D &end) const {
-    double s_dot_n = start.dot(_n);
-    double k = (s_dot_n - _p.dot(_n)) / (s_dot_n - end.dot(_n));
+    double s_dot_n = start.dot(_normal);
+    double k = (s_dot_n - _point.dot(_normal)) / (s_dot_n - end.dot(_normal));
     Vec3D res = start + (end - start)*k;
     return std::make_pair(res, k);
 }

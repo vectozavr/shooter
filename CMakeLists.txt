@@ -22,8 +22,6 @@ add_executable(shooter
         weapon/Shotgun.h
         weapon/Gun.cpp
         weapon/Gun.h
-        Bonus.cpp
-        Bonus.h
         weapon/Gold_Ak47.h
         weapon/Rifle.cpp
         weapon/Rifle.h
@@ -34,8 +32,8 @@ add_executable(shooter
         ShooterConsts.h
         # 3d engine:
         engine/Consts.h
-        engine/Point4D.h
-        engine/Point4D.cpp
+        engine/Vec4D.h
+        engine/Vec4D.cpp
         engine/Vec3D.cpp
         engine/Vec3D.h
         engine/Vec2D.cpp
@@ -97,7 +95,7 @@ add_executable(shooter
         engine/network/UDPConnection.h
         engine/network/UDPSocket.cpp
         engine/network/UDPSocket.h
-        engine/SoundController.cpp engine/SoundController.h)
+        engine/SoundController.cpp engine/SoundController.h ShooterMsgType.h ShooterMsgType.cpp)
 
 if(APPLE OR UNIX)
     include_directories(/usr/local/include)

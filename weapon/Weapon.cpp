@@ -7,15 +7,15 @@
 #include "../engine/ResourceManager.h"
 #include "../engine/utils/Log.h"
 #include "../engine/animation/AColor.h"
-#include "../engine/animation/AFunction.h"
 #include "../ShooterConsts.h"
 
 using namespace std;
 
-Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, const Vec3D& scale, const Vec3D& t, const Vec3D& r) {
-    _name = weaponName;
+Weapon::Weapon(int initialPack, int clipCapacity, double reloadTime, double fireDelay, double damage, double spreading, std::string fireSound, std::string reloadSound, const std::string& weaponName, const std::string& objFileName, const Vec3D& s, const Vec3D& t, const Vec3D& r) : RigidBody(ObjectNameTag("weapon_" + weaponName), weaponName), _initialPack(initialPack), _clipCapacity(clipCapacity), _reloadTime(reloadTime), _fireDelay(fireDelay), _damage(damage), _spreading(spreading), _fireSound(std::move(fireSound)), _reloadSound(std::move(reloadSound)) {
+    _stockAmmo = _initialPack - _clipCapacity;
+    _clipAmmo = _clipCapacity;
 
-    loadObj(objFileName, scale);
+    loadObj(objFileName, s);
     setCollider(false);
     rotate(r);
     translate(t);
@@ -24,12 +24,14 @@ Weapon::Weapon(const std::string& weaponName, const std::string& objFileName, co
 FireInformation Weapon::fire(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) {
     if(_clipAmmo == 0) {
         reload();
-        if(_clipAmmo == 0)
+        if(_clipAmmo == 0) {
             SoundController::playSound(SoundTag("noAmmo"), ShooterConsts::NO_AMMO_SOUND);
+        }
     }
 
-    if(_clipAmmo <= 0 || std::abs(Time::time() - _lastFireTime) < _fireDelay || std::abs(Time::time() - _lastReloadTime) < _reloadTime)
+    if(_clipAmmo <= 0 || std::abs(Time::time() - _lastFireTime) < _fireDelay || std::abs(Time::time() - _lastReloadTime) < _reloadTime) {
         return FireInformation{std::map<ObjectNameTag, double>(), false};
+    }
 
     _lastFireTime = Time::time();
     _clipAmmo--;
@@ -38,15 +40,16 @@ FireInformation Weapon::fire(std::function<IntersectionInformation(const Vec3D&,
         reload();
     }
 
-    SoundController::playSound(SoundTag("fire"), fireSound);
+    SoundController::playSound(SoundTag("fire"), _fireSound);
     Log::log("Weapon::fire (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
 
     return FireInformation{processFire(std::move(rayCastFunction), position, direction), true};
 }
 
 void Weapon::reload() {
-    if (_stockAmmo == 0 || std::abs(Time::time() - _lastReloadTime) < _reloadTime)
+    if (_stockAmmo == 0 || std::abs(Time::time() - _lastReloadTime) < _reloadTime) {
         return;
+    }
     if(_clipCapacity - _clipAmmo <= _stockAmmo) {
         _stockAmmo -= _clipCapacity - _clipAmmo;
         _clipAmmo = _clipCapacity;
@@ -55,7 +58,7 @@ void Weapon::reload() {
         _stockAmmo = 0;
     }
 
-    SoundController::playSound(SoundTag("reload"), reloadSound);
+    SoundController::playSound(SoundTag("reload"), _reloadSound);
     Log::log("Weapon::reload (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
     _lastReloadTime = Time::time();
 }
@@ -74,8 +77,9 @@ std::map<ObjectNameTag, double> Weapon::addTrace(std::function<IntersectionInfor
 
     // damage player
     auto rayCast = rayCastFunction(from, from + directionTo * ShooterConsts::FIRE_DISTANCE + randV);
-    if(rayCast.objectName.str().find("Enemy") != std::string::npos)
-        damagedPlayers[rayCast.objectName] += _damage/(1.0 + rayCast.distanceToObject);
+    if(rayCast.objectName.str().find("Enemy") != std::string::npos) {
+        damagedPlayers[rayCast.objectName] += _damage / (1.0 + rayCast.distanceToObject);
+    }
 
     // add trace line
     Vec3D lineFrom = position() + Vec3D(triangles().back()[0]);

@@ -5,38 +5,38 @@
 #ifndef ENGINE_ACOLOR_H
 #define ENGINE_ACOLOR_H
 
+#include <utility>
+
 #include "Animation.h"
 #include "../Mesh.h"
 
 class AColor final : public Animation {
 private:
-    std::shared_ptr<Mesh> _mesh;
+    const std::weak_ptr<Mesh> _mesh;
 
-    sf::Color newColor;
-    sf::Color startColor;
+    sf::Color _startColor;
+    const sf::Color _newColor;
+    bool _started = false;
 
-public:
-    AColor(std::shared_ptr<Mesh> mesh, const sf::Color &color, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::linear) {
-        _mesh = mesh;
-        _duration = duration;
-        _looped = looped;
-        _intType = interpolationType;
-        _waitFor = true;
+    void update() override {
+        if(_mesh.expired()) {
+            stop();
+            return;
+        }
 
-        newColor = color;
+        if(!_started) {
+            _started = true;
+            _startColor = _mesh.lock()->color();
+        }
+
+        Vec4D start(_startColor.r, _startColor.g, _startColor.b, _startColor.a);
+        Vec4D end(_newColor.r, _newColor.g, _newColor.b, _newColor.a);
+        Vec4D mid = start + (end - start) * progress();
+
+        _mesh.lock()->setColor(sf::Color(static_cast<sf::Uint8>(mid.x()), static_cast<sf::Uint8>(mid.y()), static_cast<sf::Uint8>(mid.z()), static_cast<sf::Uint8>(mid.w())));
     }
-
-    bool update() override {
-        if(!_started)
-            startColor = _mesh->color();
-
-        Point4D start(startColor.r, startColor.g, startColor.b, startColor.a);
-        Point4D end(newColor.r, newColor.g, newColor.b, newColor.a);
-        Point4D mid = start + (end - start)*_p;
-
-        _mesh->setColor(sf::Color(static_cast<sf::Uint8>(mid.x()), static_cast<sf::Uint8>(mid.y()), static_cast<sf::Uint8>(mid.z()), static_cast<sf::Uint8>(mid.w())));
-
-        return updateState();
+public:
+    AColor(std::weak_ptr<Mesh> mesh, const sf::Color &color, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::Linear) : Animation(duration, looped, interpolationType), _mesh(std::move(mesh)), _newColor(color) {
     }
 };
 

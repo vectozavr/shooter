@@ -24,12 +24,12 @@ private:
 
     void printDebugText() const;
 protected:
-    std::shared_ptr<Screen> screen;
-    std::shared_ptr<Keyboard> keyboard;
-    std::shared_ptr<Mouse> mouse;
+    const std::shared_ptr<Screen> screen = std::make_shared<Screen>();
+    const std::shared_ptr<Keyboard> keyboard = std::make_shared<Keyboard>();
+    const std::shared_ptr<Mouse> mouse = std::make_shared<Mouse>(screen);
 
-    std::shared_ptr<World> world;
-    std::shared_ptr<Camera> camera;
+    const std::shared_ptr<World> world = std::make_shared<World>();
+    const std::shared_ptr<Camera> camera = std::make_shared<Camera>();
 
     virtual void start() {};
     virtual void update() {};

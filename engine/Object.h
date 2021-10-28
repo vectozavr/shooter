@@ -24,18 +24,22 @@ public:
 };
 
 class Object {
+private:
+    bool checkIfAttached(Object* obj);
+    const ObjectNameTag _nameTag;
+
 protected:
-    std::unique_ptr<Vec3D> _left   = std::make_unique<Vec3D>(Vec3D{1, 0, 0}); // internal X
-    std::unique_ptr<Vec3D> _up     = std::make_unique<Vec3D>(Vec3D{0, 1, 0}); // internal Y
-    std::unique_ptr<Vec3D> _lookAt = std::make_unique<Vec3D>(Vec3D{0, 0, 1}); // internal Z
+    Vec3D _left     {1, 0, 0}; // internal X
+    Vec3D _up       {0, 1, 0}; // internal Y
+    Vec3D _lookAt   {0, 0, 1}; // internal Z
 
-    std::map<ObjectNameTag, std::shared_ptr<Object>> _attachedObjects;
+    std::map<ObjectNameTag, std::weak_ptr<Object>> _attachedObjects;
 
-    std::unique_ptr<Vec3D> _position = std::make_unique<Vec3D>(Vec3D{0, 0, 0});
-    std::unique_ptr<Vec3D> _angle = std::make_unique<Vec3D>(Vec3D{0, 0, 0});
-    std::unique_ptr<Vec3D> _angleLeftUpLookAt = std::make_unique<Vec3D>(Vec3D{0, 0, 0});
+    Vec3D _position         {0, 0, 0};
+    Vec3D _angle            {0, 0, 0};
+    Vec3D _angleLeftUpLookAt{0, 0, 0};
 public:
-    Object() = default;
+    Object(ObjectNameTag nameTag) : _nameTag(nameTag) {};
 
     virtual void translate(const Vec3D& dv);
     virtual void translateToPoint(const Vec3D& point);
@@ -49,17 +53,19 @@ public:
     void rotateUp(double ru);
     void rotateLookAt(double rlAt);
 
-    [[nodiscard]] Vec3D position() const { return *_position; }
-    [[nodiscard]] Vec3D angle() const { return *_angle; }
-    [[nodiscard]] Vec3D angleLeftUpLookAt() const { return *_angleLeftUpLookAt; }
+    [[nodiscard]] Vec3D position() const { return _position; }
+    [[nodiscard]] Vec3D angle() const { return _angle; }
+    [[nodiscard]] Vec3D angleLeftUpLookAt() const { return _angleLeftUpLookAt; }
 
-    [[nodiscard]] Vec3D left() const { return *_left; }
-    [[nodiscard]] Vec3D up() const { return *_up; }
-    [[nodiscard]] Vec3D lookAt() const { return *_lookAt; }
+    [[nodiscard]] Vec3D left() const { return _left; }
+    [[nodiscard]] Vec3D up() const { return _up; }
+    [[nodiscard]] Vec3D lookAt() const { return _lookAt; }
 
-    void attach(std::shared_ptr<Object> object, const ObjectNameTag& tag);
+    void attach(std::shared_ptr<Object> object);
     void unattach(const ObjectNameTag& tag);
     std::shared_ptr<Object> attached(const ObjectNameTag& tag);
+
+    ObjectNameTag name() const { return _nameTag; }
 
     virtual ~Object();
 };

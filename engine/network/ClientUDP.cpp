@@ -93,8 +93,7 @@ bool ClientUDP::process()
     if (!connected() && type != MsgType::Init)
         return true;
 
-    switch (type)
-    {
+    switch (type) {
         // here we process any operations based on msg type
         case MsgType::Init:
             packet >> targetId;
@@ -104,7 +103,7 @@ bool ClientUDP::process()
 
             processInit(packet);
             break;
-        case MsgType::Update:
+        case MsgType::ServerUpdate:
 
             processUpdate(packet);
             break;
@@ -123,8 +122,14 @@ bool ClientUDP::process()
 
             processDisconnect(targetId);
             break;
+        case MsgType::Custom:
+            processCustomPacket(packet);
+            break;
+        case MsgType::Error:
+            Log::log("ClientUDP::process(): Error message");
+            break;
         default:
-            processCustomPacket(type, packet);
+            Log::log("ClientUDP::process(): unknown message type " + std::to_string(static_cast<int>(type)));
     }
 
     return true;

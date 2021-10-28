@@ -28,7 +28,7 @@ public:
     void checkCollision(const ObjectNameTag& tag);
     void update();
 
-    void addBody(std::shared_ptr<RigidBody> mesh, const ObjectNameTag& tag);
+    void addBody(std::shared_ptr<RigidBody> mesh);
     std::shared_ptr<RigidBody> body(const ObjectNameTag& tag);
     void removeBody(const ObjectNameTag& tag);
     void loadBody(const ObjectNameTag& tag, const std::string &filename, const Vec3D& scale = Vec3D{1, 1, 1});

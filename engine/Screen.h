@@ -11,7 +11,6 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 #include "utils/Time.h"
-#include "Mouse.h"
 #include "Consts.h"
 #include "Mesh.h"
 #include "Camera.h"
@@ -25,7 +24,7 @@ private:
 
     sf::Color _background;
 
-    std::shared_ptr<sf::RenderWindow> _window;
+    const std::shared_ptr<sf::RenderWindow> _window = std::make_shared<sf::RenderWindow>();
 public:
     void open(int screenWidth = Consts::STANDARD_SCREEN_WIDTH, int screenHeight = Consts::STANDARD_SCREEN_HEIGHT, const std::string& name = Consts::PROJECT_NAME, bool verticalSync = true, sf::Color background = Consts::BACKGROUND_COLOR, sf::Uint32 style = sf::Style::Default);
 
@@ -51,11 +50,13 @@ public:
 
     void debugText(const std::string& text);
 
-    void attachMouse(std::shared_ptr<Mouse> mouse);
+    void setMouseCursorVisible(bool visible);
 
     // OpenGL functions
     void glDrawMesh(GLfloat* geometry, GLfloat* view, size_t count);
     static GLfloat* glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D& cameraPosition);
+
+    [[nodiscard]] std::shared_ptr<sf::RenderWindow> renderWindow() { return _window; }
 };
 
 

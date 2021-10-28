@@ -20,12 +20,12 @@ private:
 
     sf::Sprite _back;
 
-    std::unique_ptr<Vec2D> _prevMousePosition = std::make_unique<Vec2D>(Vec2D{0, 0});
+    Vec2D _prevMousePosition{0, 0};
 
     std::shared_ptr<Screen> _screen;
     std::shared_ptr<Mouse> _mouse;
 public:
-    explicit Window(std::shared_ptr<Screen> screen, std::shared_ptr<Mouse> mouse, std::string name = "Menu", std::string backTexture = "") : _screen(screen), _mouse(mouse), _name(std::move(name)), _backTexture(std::move(backTexture)){}
+    explicit Window(std::shared_ptr<Screen> screen, std::shared_ptr<Mouse> mouse, std::string name = "Menu", std::string backTexture = "") : _screen(std::move(screen)), _mouse(std::move(mouse)), _name(std::move(name)), _backTexture(std::move(backTexture)){}
 
     void addButton(int x, int y, int w, int h,
                    std::function<void()> click,
@@ -33,8 +33,7 @@ public:
                    const std::string& texture = "", tPos usualState = {}, tPos selectedState = {}, tPos pressedState = {},
                    const std::string& font = Consts::MEDIUM_FONT, sf::Color textColor = {255, 255, 255});
 
-    [[nodiscard]] std::string title() const { return _name; }
-    void title(const std::string& title) { _name = title; }
+    void setTitle(const std::string& title) { _name = title; }
 
     void setBackgroundTexture(const std::string& texture, double sx = 1, double sy = 1, int w = 1920, int h = 1080);
 

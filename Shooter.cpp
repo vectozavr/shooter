@@ -11,13 +11,13 @@
 #include "engine/animation/Timeline.h"
 #include "ShooterConsts.h"
 #include "engine/SoundController.h"
+#include "engine/animation/ATranslateToPoint.h"
 
 using namespace std;
 
 // Read server/client settings and start both.
 // If client doesn't connect to the localhost - server doesn't start.
-void Shooter::InitNetwork()
-{
+void Shooter::InitNetwork() {
     std::string clientIp;
     sf::Uint16 clientPort;
     sf::Uint16 serverPort;
@@ -58,7 +58,7 @@ void Shooter::InitNetwork()
     }
 
     client->connect(clientIp, clientPort);
-    player->setPlayerName(playerName);
+    player->setPlayerNickName(playerName);
 
     // TODO: encapsulate call backs inside Client
     client->setSpawnPlayerCallBack([this](sf::Uint16 id){ spawnPlayer(id); });
@@ -74,11 +74,11 @@ void Shooter::start() {
     setDebugText(false);
     setUpdateWorld(false);
 
-    mouse->setMouseCursorVisible(true);
+    screen->setMouseCursorVisible(true);
 
     world->loadMap(ShooterConsts::MAP_OBJ, Vec3D{5, 5, 5});
 
-    player = std::make_shared<Player>();
+    player = std::make_shared<Player>(ObjectNameTag("Player"));
     player->scale(Vec3D(3, 1, 3));
     playerController = std::make_shared<PlayerController>(player, keyboard, mouse);
 
@@ -93,9 +93,9 @@ void Shooter::start() {
     player->initWeapons();
 
     camera->translateToPoint(player->position() + Vec3D{0, 1.8, 0});
-    player->attach(camera, ObjectNameTag("Camera"));
+    player->attach(camera);
 
-    world->addBody(player, ObjectNameTag("Player"));
+    world->addBody(player);
     player->translate(Vec3D{0, 10, 0});
 
     client = std::make_shared<Client>(player);
@@ -104,24 +104,22 @@ void Shooter::start() {
     // connecting to the server
     InitNetwork();
     // Waiting for connect and updating server if it's same window
-    while (client->isWorking() && !client->connected())
-    {
+    while (client->isWorking() && !client->connected()) {
         client->update();
         server->update();
         Time::update();
     }
     // If connect fail - return to menu
-    if (!client->isWorking())
-    {
+    if (!client->isWorking()) {
         inGame = false;
         server->stop();
     }
 
     // windows init:
-    mainMenu.title("Main menu");
+    mainMenu.setTitle("Main menu");
     mainMenu.setBackgroundTexture(ShooterConsts::MAIN_MENU_BACK, 1.1, 1.1, screen->width(), screen->height());
 
-    mainMenu.addButton(screen->width()/2, 200, 200, 20, [this] () { this->play(); SoundController::playSound(SoundTag("click"), ShooterConsts::CLICK_SOUND);}, "Server: " + client->ip().toString(), 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
+    mainMenu.addButton(screen->width()/2, 200, 200, 20, [this] () { this->play(); SoundController::playSound(SoundTag("click"), ShooterConsts::CLICK_SOUND);}, "Server: " + client->serverIp().toString(), 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
     mainMenu.addButton(screen->width()/2, 350, 200, 20, [this] () { this->player->translateToPoint(Vec3D{0, 0, 0}); this->player->setVelocity({}); this->play(); SoundController::playSound(SoundTag("click"), ShooterConsts::CLICK_SOUND);}, "Respawn", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
 
     mainMenu.addButton(screen->width()/2, 500, 200, 20, [this] () { client->disconnect(); server->stop(); this->exit();}, "Exit", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
@@ -134,12 +132,13 @@ void Shooter::update() {
     client->update();
 
     // Check all input after this condition please
-    if (!screen->hasFocus())
+    if (!screen->hasFocus()) {
         return;
+    }
 
     if(keyboard->isKeyTapped(sf::Keyboard::Escape)) {
         inGame = !inGame;
-        mouse->setMouseCursorVisible(!inGame);
+        screen->setMouseCursorVisible(!inGame);
     }
 
     if(inGame) {
@@ -153,8 +152,9 @@ void Shooter::update() {
     setUpdateWorld(inGame);
 
     // background sounds and music control
-    if(SoundController::getStatus(SoundTag("background")) != sf::Sound::Status::Playing)
+    if(SoundController::getStatus(SoundTag("background")) != sf::Sound::Status::Playing) {
         SoundController::playSound(SoundTag("background"), ShooterConsts::BACK_NOISE);
+    }
 }
 
 void Shooter::gui() {
@@ -187,7 +187,7 @@ void Shooter::drawStatsTable() {
     } );
 
     for(auto& p : allPlayers) {
-        screen->drawText(std::to_string(i) + "\t" + p->playerName() + "\t" + std::to_string(p->kills()) + " / " + std::to_string(p->deaths()),
+        screen->drawText(std::to_string(i) + "\t" + p->playerNickName() + "\t" + std::to_string(p->kills()) + " / " + std::to_string(p->deaths()),
                          Vec2D{10, 15 + 35.0*i}, 25, sf::Color(0, 0, 0, 150));
         i++;
     }
@@ -217,23 +217,21 @@ void Shooter::drawPlayerStats() {
 
     screen->drawText(std::to_string((int)balance.first), Vec2D{150, static_cast<double>(screen->height() - 150)}, 100, sf::Color(0, 0, 0, 100));
     screen->drawText(std::to_string((int)balance.second), Vec2D{50, static_cast<double>(screen->height() - 100)}, 50, sf::Color(0, 0, 0, 70));
-
-    //screen->drawText("KILLS: " + std::to_string(player->kills()) + " | " + "DEATHS: " + std::to_string(player->deaths()),
-    //                 Vec2D{10, 10},25, sf::Color(0, 0, 0, 100));
 }
 
 void Shooter::play() {
     inGame = true;
-    mouse->setMouseCursorVisible(false);
+    screen->setMouseCursorVisible(false);
 }
 
 void Shooter::spawnPlayer(sf::Uint16 id) {
     std::string name = "Enemy_" + std::to_string(id);
-    std::shared_ptr<Player> newPlayer = std::make_shared<Player>();
+
+    std::shared_ptr<Player> newPlayer = std::make_shared<Player>(ObjectNameTag(name));
     newPlayer->setCollision(false);
 
     client->addPlayer(id, newPlayer);
-    world->addBody(newPlayer, ObjectNameTag(name));
+    world->addBody(newPlayer);
     newPlayer->setVisible(true);
     newPlayer->setAcceleration(Vec3D{0, 0, 0});
 
@@ -241,19 +239,19 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     world->loadBody(ObjectNameTag(name + "_head"), ShooterConsts::CUBE_OBJ, Vec3D{0.7, 0.7, 0.7});
     world->body(ObjectNameTag(name + "_head"))->translate(Vec3D{0, 2, 0});
     world->body(ObjectNameTag(name + "_head"))->setCollider(false);
-    newPlayer->attach(world->body(ObjectNameTag(name + "_head")), ObjectNameTag("head"));
+    newPlayer->attach(world->body(ObjectNameTag(name + "_head")));
 
     world->loadBody(ObjectNameTag(name + "_eye1"), ShooterConsts::CUBE_OBJ, Vec3D{0.2, 0.2, 0.05});
     world->body(ObjectNameTag(name + "_eye1"))->translate(Vec3D{0.3, 2.1, 0.7});
     world->body(ObjectNameTag(name + "_eye1"))->setCollider(false);
     world->body(ObjectNameTag(name + "_eye1"))->setColor({147, 159, 255});
-    world->body(ObjectNameTag(name + "_head"))->attach(world->body(ObjectNameTag(name + "_eye1")), ObjectNameTag("eye1"));
+    world->body(ObjectNameTag(name + "_head"))->attach(world->body(ObjectNameTag(name + "_eye1")));
 
     world->loadBody(ObjectNameTag(name + "_eye2"), ShooterConsts::CUBE_OBJ, Vec3D{0.2, 0.2, 0.05});
     world->body(ObjectNameTag(name + "_eye2"))->translate(Vec3D{-0.3, 2.1, 0.7});
     world->body(ObjectNameTag(name + "_eye2"))->setCollider(false);
     world->body(ObjectNameTag(name + "_eye2"))->setColor({147, 159, 255});
-    world->body(ObjectNameTag(name + "_head"))->attach(world->body(ObjectNameTag(name + "_eye2")), ObjectNameTag("eye2"));
+    world->body(ObjectNameTag(name + "_head"))->attach(world->body(ObjectNameTag(name + "_eye2")));
 
     changeEnemyWeapon("gun", id);
 }
@@ -264,12 +262,12 @@ void Shooter::removePlayer(sf::Uint16 id) {
     world->removeBody(ObjectNameTag(name + "_head"));
     world->removeBody(ObjectNameTag(name + "_eye1"));
     world->removeBody(ObjectNameTag(name + "_eye2"));
-    world->removeBody(ObjectNameTag("enemyWeapon_" + std::to_string(id)));
+    world->removeBody(ObjectNameTag("Enemy_" + std::to_string(id) + "_weapon"));
 }
 
 void Shooter::addFireTrace(const Vec3D &from, const Vec3D &to) {
     std::string traceName = "Client_fireTraces_" + std::to_string(fireTraces++);
-    world->addBody(std::make_shared<RigidBody>(Mesh::LineTo(from, to, 0.05)), ObjectNameTag(traceName));
+    world->addBody(std::make_shared<RigidBody>(Mesh::LineTo(ObjectNameTag(traceName), from, to, 0.05)));
     world->body(ObjectNameTag(traceName))->setCollider(false);
 
     Timeline::animate(AnimationListTag(traceName + "_fadeOut"), new AColor(world->body(ObjectNameTag(traceName)), {150, 150, 150, 0}));
@@ -282,9 +280,13 @@ void Shooter::removeFireTrace(const ObjectNameTag& traceName) {
 
 void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
     std::string name = bonusName.substr(6, bonusName.size()-3-5);
-    world->addBody(std::make_shared<Bonus>(bonusName, "obj/" + name + ".obj", Vec3D{3, 3, 3}), ObjectNameTag(bonusName));
+
+    ObjectNameTag nameTag(bonusName);
+
+    world->addBody(std::make_shared<RigidBody>(ObjectNameTag(bonusName), "obj/" + name + ".obj", Vec3D{3, 3, 3}));
     world->body(ObjectNameTag(bonusName))->translateToPoint(position);
-    Timeline::animate(AnimationListTag(bonusName + "_rotation"), new ARotate(world->body(ObjectNameTag(bonusName)), Vec3D{0, 2*Consts::PI, 0}, 4, Animation::LoopOut::Continue, Animation::InterpolationType::linear));
+    world->body(ObjectNameTag(bonusName))->setCollider(false);
+    Timeline::animate(AnimationListTag(bonusName + "_rotation"), new ARotate(world->body(ObjectNameTag(bonusName)), Vec3D{0, 2*Consts::PI, 0}, 4, Animation::LoopOut::Continue, Animation::InterpolationType::Linear));
 }
 
 void Shooter::removeBonus(const ObjectNameTag &bonusName) {
@@ -293,14 +295,15 @@ void Shooter::removeBonus(const ObjectNameTag &bonusName) {
 }
 
 void Shooter::addWeapon(std::shared_ptr<Weapon> weapon) {
-    world->addBody(weapon, ObjectNameTag("weapon_" + weapon->name().str()));
+    world->addBody(weapon);
 
-    if(client != nullptr)
+    if(client != nullptr) {
         client->changeWeapon(weapon->name().str());
+    }
 }
 
 void Shooter::changeEnemyWeapon(const std::string& weaponName, sf::Uint16 enemyId) {
-    ObjectNameTag weaponTag("enemyWeapon_" + std::to_string(enemyId));
+    ObjectNameTag weaponTag("Enemy_" + std::to_string(enemyId) + "_weapon");
     auto head = world->body(ObjectNameTag("Enemy_" + std::to_string(enemyId) + "_head"));
     auto enemy = world->body(ObjectNameTag("Enemy_" + std::to_string(enemyId)));
 
@@ -317,9 +320,9 @@ void Shooter::changeEnemyWeapon(const std::string& weaponName, sf::Uint16 enemyI
 
     world->body(weaponTag)->rotate(Vec3D(0, Consts::PI + head->angle().y(), 0));
     world->body(weaponTag)->rotateLeft(-head->angleLeftUpLookAt().x());
-    enemy->attach(world->body(weaponTag), ObjectNameTag("Weapon"));
+    enemy->attach(world->body(weaponTag));
 }
 
 void Shooter::removeWeapon(std::shared_ptr<Weapon> weapon) {
-    world->removeBody(ObjectNameTag("weapon_" + weapon->name().str()));
+    world->removeBody(weapon->name());
 }

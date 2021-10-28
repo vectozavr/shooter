@@ -18,8 +18,8 @@ Matrix4x4 Matrix4x4::operator*(const Matrix4x4 &matrix4X4) const {
     return result;
 }
 
-Point4D Matrix4x4::operator*(const Point4D &point4D) const {
-    return Point4D(
+Vec4D Matrix4x4::operator*(const Vec4D &point4D) const {
+    return Vec4D(
             _arr[0][0] * point4D.x() + _arr[0][1] * point4D.y() + _arr[0][2] * point4D.z() + _arr[0][3] * point4D.w(),
             _arr[1][0] * point4D.x() + _arr[1][1] * point4D.y() + _arr[1][2] * point4D.z() + _arr[1][3] * point4D.w(),
             _arr[2][0] * point4D.x() + _arr[2][1] * point4D.y() + _arr[2][2] * point4D.z() + _arr[2][3] * point4D.w(),
@@ -38,12 +38,15 @@ Vec3D Matrix4x4::operator*(const Vec3D &vec) const {
 Matrix4x4 Matrix4x4::Identity() {
     Matrix4x4 result;
 
-    for(int i = 0; i < 4; i++)
-        for(int j = 0; j < 4; j++)
-            if(i == j)
+    for(int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (i == j) {
                 result._arr[j][i] = 1.0;
-            else
+            } else {
                 result._arr[j][i] = 0.0;
+            }
+        }
+    }
 
     return result;
 }
@@ -51,9 +54,11 @@ Matrix4x4 Matrix4x4::Identity() {
 Matrix4x4 Matrix4x4::Constant(double value) {
     Matrix4x4 result;
 
-    for(int i = 0; i < 4; i++)
-        for(int j = 0; j < 4; j++)
+    for(int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
             result._arr[j][i] = value;
+        }
+    }
 
     return result;
 }

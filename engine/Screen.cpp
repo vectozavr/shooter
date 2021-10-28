@@ -21,7 +21,6 @@ void Screen::open(int screenWidth, int screenHeight, const std::string &name, bo
     settings.depthBits = 24;
     settings.antialiasingLevel = 8;
 
-    _window = std::make_shared<sf::RenderWindow>();
     _window->create(sf::VideoMode(_w, _h), name, style, settings);
     _window->setVerticalSyncEnabled(verticalSync);
 }
@@ -88,6 +87,10 @@ void Screen::debugText(const std::string& text) {
     _window->popGLStates();
 }
 
+void Screen::setMouseCursorVisible(bool visible) {
+    _window->setMouseCursorVisible(visible);
+}
+
 void Screen::drawTetragon(const Vec2D &p1, const Vec2D &p2, const Vec2D &p3, const Vec2D &p4, sf::Color color) {
     sf::ConvexShape polygon;
     polygon.setPointCount(4);
@@ -129,10 +132,6 @@ void Screen::drawText(const sf::Text &text) {
     _window->pushGLStates();
     _window->draw(text);
     _window->popGLStates();
-}
-
-void Screen::attachMouse(std::shared_ptr<Mouse> mouse) {
-    mouse->setWindow(_window);
 }
 
 // OpenGL functions

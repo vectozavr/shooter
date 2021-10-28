@@ -9,7 +9,7 @@
 
 class Ak47 final : public Weapon {
 public:
-    explicit Ak47(int ammo = 100, const std::string& weaponName = "ak47");
+    explicit Ak47(const std::string& weaponName = "ak47");
 };
 
 

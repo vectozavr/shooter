@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include "Vec2D.h"
+#include "Consts.h"
 
 Vec2D::Vec2D(const Vec2D &vec) {
     _arr_point[0] = vec.x();
@@ -15,7 +16,7 @@ Vec2D::Vec2D (double x, double y) {
     _arr_point[1] = y;
 }
 
-Vec2D::Vec2D(const Point4D &point4D) {
+Vec2D::Vec2D(const Vec4D &point4D) {
     _arr_point[0] = point4D.x();
     _arr_point[1] = point4D.y();
 }
@@ -43,10 +44,11 @@ Vec2D Vec2D::operator*(double number) const {
 }
 
 Vec2D Vec2D::operator/(double number) const {
-    if(std::abs(number) > Consts::EPS)
-        return Vec2D(*this)*(1.0/number);
-    else
+    if(std::abs(number) > Consts::EPS) {
+        return Vec2D(*this) * (1.0 / number);
+    } else {
         throw std::domain_error{"Vec2D::operator/(double number): division by zero"};
+    }
 }
 
 // Other useful methods
@@ -60,10 +62,11 @@ double Vec2D::abs() const {
 
 Vec2D Vec2D::normalized() const {
     double vecAbs = abs();
-    if(vecAbs > Consts::EPS)
-        return Vec2D(*this)/abs();
-    else
+    if(vecAbs > Consts::EPS) {
+        return Vec2D(*this) / abs();
+    } else {
         return Vec2D(0);
+    }
 }
 
 double Vec2D::dot(const Vec2D& vec) const {

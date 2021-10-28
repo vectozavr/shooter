@@ -4,12 +4,10 @@
 
 #include "PlayerController.h"
 #include "engine/utils/Log.h"
-#include "engine/animation/AFunction.h"
 #include "engine/animation/AWait.h"
 #include "engine/animation/ATranslate.h"
 #include "engine/animation/ATranslateToPoint.h"
 #include "engine/animation/Timeline.h"
-#include "engine/animation/ARotate.h"
 #include "ShooterConsts.h"
 
 PlayerController::PlayerController(std::shared_ptr<Player> player,
@@ -18,13 +16,14 @@ PlayerController::PlayerController(std::shared_ptr<Player> player,
 
 void PlayerController::update() {
     // friction
-    if(_player->inCollision())
-        _player->setVelocity(_player->velocity()*(1.0 - Time::deltaTime() * 2));
+    if(_player->inCollision()) {
+        _player->setVelocity(_player->velocity() * (1.0 - Time::deltaTime() * 2));
+    }
 
     if(_isInSlowMo) {
-        if(_player->ability() > 0)
+        if(_player->ability() > 0) {
             _player->setAbility(_player->ability() - Time::deltaTime());
-        else {
+        } else {
             _player->setAbility(0);
             _isInSlowMo = false;
             _player->setVelocity(_player->velocity() * ShooterConsts::SLOW_MO_COEFFICIENT);
@@ -45,52 +44,56 @@ void PlayerController::update() {
     std::shared_ptr<Object> camera = _player->attached(ObjectNameTag("Camera"));
     if(camera != nullptr && _inRunning && _player->inCollision()) {
         if (!Timeline::isInAnimList(AnimationListTag("camera_hor_oscil"))) {
-            Timeline::animate(AnimationListTag("camera_hor_oscil"), new ATranslate(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_hor_oscil"), new ATranslate(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::InterpolationType::Cos));
             Timeline::animate(AnimationListTag("camera_hor_oscil"), new AWait(0));
-            Timeline::animate(AnimationListTag("camera_hor_oscil"), new ATranslate(camera, camera->left() / 6, 0.3, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_hor_oscil"), new ATranslate(camera, camera->left() / 6, 0.3, Animation::LoopOut::None, Animation::InterpolationType::Cos));
 
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
             Timeline::animate(AnimationListTag("camera_vert_oscil"), new AWait(0));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
             Timeline::animate(AnimationListTag("camera_vert_oscil"), new AWait(0));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
             Timeline::animate(AnimationListTag("camera_vert_oscil"), new AWait(0));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
 
-            Timeline::animate(AnimationListTag("camera_init"), new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.3, Animation::LoopOut::None, Animation::InterpolationType::cos));
+            Timeline::animate(AnimationListTag("camera_init"), new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.3, Animation::LoopOut::None, Animation::InterpolationType::Cos));
         }
     } else if(camera != nullptr && inRunning_old && !_inRunning) {
         Timeline::deleteAnimationList(AnimationListTag("camera_hor_oscil"));
         Timeline::deleteAnimationList(AnimationListTag("camera_vert_oscil"));
         Timeline::deleteAnimationList(AnimationListTag("camera_init"));
-        Timeline::animate(AnimationListTag("camera_init"), new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.15, Animation::LoopOut::None, Animation::InterpolationType::cos));
+        Timeline::animate(AnimationListTag("camera_init"), new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
     }
 
     // Left and right
 
     if (Keyboard::isKeyPressed(sf::Keyboard::A)) {
         _player->translate(_player->left() * Time::deltaTime() * ShooterConsts::WALK_SPEED * coeff);
-        if(_player->inCollision())
-            _player->setVelocity(Vec3D{0,0,0});
+        if(_player->inCollision()) {
+            _player->setVelocity(Vec3D{0, 0, 0});
+        }
     }
     if (Keyboard::isKeyPressed(sf::Keyboard::D)) {
         _player->translate(-_player->left() * Time::deltaTime() * ShooterConsts::WALK_SPEED * coeff);
-        if(_player->inCollision())
-            _player->setVelocity(Vec3D{0,0,0});
+        if(_player->inCollision()) {
+            _player->setVelocity(Vec3D{0, 0, 0});
+        }
     }
 
     // Forward and backward
     if (Keyboard::isKeyPressed(sf::Keyboard::W)) {
         _player->translate(_player->lookAt() * Time::deltaTime() * ShooterConsts::WALK_SPEED * coeff);
-        if(_player->inCollision())
-            _player->setVelocity(Vec3D{0,0,0});
+        if(_player->inCollision()) {
+            _player->setVelocity(Vec3D{0, 0, 0});
+        }
     }
 
     if (Keyboard::isKeyPressed(sf::Keyboard::S)) {
         _player->translate(-_player->lookAt() * Time::deltaTime() * ShooterConsts::WALK_SPEED * coeff);
 
-        if(_player->inCollision())
-            _player->setVelocity(Vec3D{0,0,0});
+        if(_player->inCollision()) {
+            _player->setVelocity(Vec3D{0, 0, 0});
+        }
     }
 
     if (_player->ability() > 0 && !_isInSlowMo && Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
@@ -112,19 +115,24 @@ void PlayerController::update() {
         bool shot = _player->fire();
 
         if(shot) {
-            if(!_player->inCollision() && (_player->weaponName() == ObjectNameTag("shotgun")))
+            if(!_player->inCollision() && (_player->weaponName() == ObjectNameTag("weapon_shotgun"))) {
                 _player->addVelocity(-camera->lookAt() * 30 * coeff);
+            }
         }
     }
 
     if (Keyboard::isKeyPressed(sf::Keyboard::Space) && _player->inCollision()) {
         // if we just want to jump, we have to add particular speed
-        if (!_isSliding)
-            _player->addVelocity(Vec3D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * ShooterConsts::JUMP_HEIGHT) * coeff, 0 });
-        // if we want to slide, we have to add speed * 60/fps to make it independent on frame rate
-        else
-            _player->addVelocity(Vec3D{ 0, std::abs(_player->collisionNormal().y()) * sqrt(2 * -_player->acceleration().y() * ShooterConsts::JUMP_HEIGHT) * coeff * Time::deltaTime() * 60, 0 });
-
+        if (!_isSliding) {
+            _player->addVelocity(Vec3D{0, std::abs(_player->collisionNormal().y()) *
+                                          sqrt(2 * -_player->acceleration().y() * ShooterConsts::JUMP_HEIGHT) * coeff,
+                                       0});
+            // if we want to slide, we have to add speed * 60/fps to make it independent on frame rate
+        } else {
+            _player->addVelocity(Vec3D{0, std::abs(_player->collisionNormal().y()) *
+                                          sqrt(2 * -_player->acceleration().y() * ShooterConsts::JUMP_HEIGHT) * coeff *
+                                          Time::deltaTime() * 60, 0});
+        }
         _player->translate(Vec3D{ 0, Time::deltaTime() * ShooterConsts::WALK_SPEED * 2 * coeff, 0 });
         _isSliding = true;
     } else {
@@ -140,16 +148,19 @@ void PlayerController::update() {
     double rotationLeft = displacement.y() * ShooterConsts::MOUSE_SENSITIVITY;
 
     // You can only see in range [-90 : 90] grad
-    if (_player->headAngle() + rotationLeft > Consts::PI / 2)
+    if (_player->headAngle() + rotationLeft > Consts::PI / 2) {
         rotationLeft = Consts::PI / 2 - _player->headAngle();
-    if (_player->headAngle() + rotationLeft < -Consts::PI / 2)
+    }
+    if (_player->headAngle() + rotationLeft < -Consts::PI / 2) {
         rotationLeft = -Consts::PI / 2 - _player->headAngle();
+    }
 
     _player->setHeadAngle(_player->headAngle() + rotationLeft);
     _player->rotateWeaponsRelativePoint(_player->position() + Vec3D{0, 1.8, 0}, _player->left(), rotationLeft);
 
-    if(camera != nullptr)
+    if(camera != nullptr) {
         camera->rotateLeft(_player->headAngle() - camera->angleLeftUpLookAt().x());
+    }
 
     if (_keyboard->isKeyTapped(sf::Keyboard::Right) || _keyboard->isKeyTapped(sf::Keyboard::E)) {
         _player->nextWeapon();

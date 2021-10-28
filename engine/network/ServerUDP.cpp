@@ -7,32 +7,31 @@
 #include "../utils/Log.h"
 #include <cmath>
 
-ServerUDP::ServerUDP() : _lastBroadcast(-std::numeric_limits<double>::max()), _working(false)
-{
+ServerUDP::ServerUDP() : _lastBroadcast(-std::numeric_limits<double>::max()), _working(false) {
+    // TODO: replace this with lambda:
     _socket.setTimeoutCallback(std::bind(&ServerUDP::timeout, this, std::placeholders::_1));
 }
 
-bool ServerUDP::isWorking() const
-{
+bool ServerUDP::isWorking() const {
     return _working;
 }
 
-bool ServerUDP::start(sf::Uint16 port)
-{
+bool ServerUDP::start(sf::Uint16 port) {
     _working = _socket.bind(port);
 
-    if(_working)
+    if(_working) {
         Log::log("ServerUDP::start(): the server was successfully started.");
-    else
+    } else {
         Log::log("ServerUDP::start(): failed to start the server.");
+    }
 
     return _working;
 }
 
-void ServerUDP::update()
-{
-    if (!isWorking())
+void ServerUDP::update() {
+    if (!isWorking()) {
         return;
+    }
 
     while (process());
 
@@ -48,10 +47,8 @@ void ServerUDP::update()
     updateInfo();
 }
 
-void ServerUDP::stop()
-{
-    for (auto it = _clients.begin(); it != _clients.end();)
-    {
+void ServerUDP::stop() {
+    for (auto it = _clients.begin(); it != _clients.end();) {
         sf::Packet packet;
         packet << MsgType::Disconnect << *it;
         _socket.send(packet, *it);
@@ -66,15 +63,15 @@ void ServerUDP::stop()
     Log::log("ServerUDP::stop(): the server was killed.");
 }
 
-bool ServerUDP::timeout(sf::Uint16 playerId)
-{
+bool ServerUDP::timeout(sf::Uint16 playerId) {
     sf::Packet packet;
     packet << MsgType::Disconnect << playerId;
 
     _clients.erase(playerId);
 
-    for (auto client : _clients)
+    for (auto client : _clients) {
         _socket.sendRely(packet, client);
+    }
 
     Log::log("ServerUDP::timeout(): client Id = " + std::to_string(playerId) + " disconnected due to timeout.");
     processDisconnect(playerId);
@@ -84,21 +81,20 @@ bool ServerUDP::timeout(sf::Uint16 playerId)
 
 // Recive and process message.
 // Returns true, if some message was received.
-bool ServerUDP::process()
-{
+bool ServerUDP::process() {
     sf::Packet packet;
     sf::Packet sendPacket;
     sf::Uint16 senderId;
 
     MsgType type = _socket.receive(packet, senderId);
 
-    if (type == MsgType::Empty)
+    if (type == MsgType::Empty) {
         return false;
+    }
 
     switch (type) {
         // here we process any operations based on msg type
         case MsgType::Connect:
-
             Log::log("ServerUDP::process(): client Id = " + std::to_string(senderId) + " connecting...");
 
             processConnect(senderId);
@@ -113,13 +109,20 @@ bool ServerUDP::process()
             sendPacket << MsgType::Disconnect << senderId;
             _clients.erase(senderId);
             _socket.removeConnection(senderId);
-            for (auto client : _clients)
+            for (auto client : _clients) {
                 _socket.sendRely(sendPacket, client);
+            }
 
             processDisconnect(senderId);
             break;
+        case MsgType::Custom:
+            processCustomPacket(packet, senderId);
+            break;
+        case MsgType::Error:
+            Log::log("ServerUDP::process(): Error message");
+            break;
         default:
-            processCustomPacket(type, packet, senderId);
+            Log::log("ServerUDP::process(): message type " + std::to_string(static_cast<int>(type)));
     }
 
     return true;

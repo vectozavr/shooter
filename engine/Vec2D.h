@@ -5,9 +5,8 @@
 #ifndef SHOOTER_VEC2D_H
 #define SHOOTER_VEC2D_H
 
-
 #include <array>
-#include "Point4D.h"
+#include "Vec4D.h"
 
 class Vec2D final {
 private:
@@ -16,9 +15,9 @@ private:
 public:
     Vec2D () = default;
     Vec2D (const Vec2D& vec);
-    explicit Vec2D (const Point4D& point4D);
+    explicit Vec2D (const Vec4D& point4D);
     explicit Vec2D (double x, double y = 0.0);
-    Vec2D& operator=(const Vec2D&) = delete;
+    Vec2D& operator=(const Vec2D&) = default;
 
     [[nodiscard]] double x() const { return _arr_point[0]; }
     [[nodiscard]] double y() const { return _arr_point[1]; }

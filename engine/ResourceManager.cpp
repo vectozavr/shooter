@@ -16,20 +16,23 @@ void ResourceManager::init() {
 }
 
 void ResourceManager::unloadTextures() {
-    for (auto & _texture : _instance->_textures)
+    for (auto & _texture : _instance->_textures) {
         _texture.second.reset();
+    }
     _instance->_textures.clear();
 }
 
 void ResourceManager::unloadSoundBuffers() {
-    for (auto & _soundBuffer : _instance->_soundBuffers)
+    for (auto & _soundBuffer : _instance->_soundBuffers) {
         _soundBuffer.second.reset();
+    }
     _instance->_soundBuffers.clear();
 }
 
 void ResourceManager::unloadFonts() {
-    for (auto & _font : _instance->_fonts)
+    for (auto & _font : _instance->_fonts) {
         _font.second.reset();
+    }
     _instance->_fonts.clear();
 }
 
@@ -51,18 +54,21 @@ void ResourceManager::free() {
 }
 
 std::shared_ptr<sf::Texture> ResourceManager::loadTexture(const std::string& filename) {
-    if(!_instance)
+    if(!_instance) {
         return nullptr;
+    }
 
     // If texture is already loaded - return pointer to it
     auto it = _instance->_textures.find(filename);
-    if (it != _instance->_textures.end())
+    if (it != _instance->_textures.end()) {
         return it->second;
+    }
 
     // Otherwise - try to load it. If failure - return zero
     std::shared_ptr<sf::Texture> texture(new sf::Texture);
-    if (!texture->loadFromFile(filename))
+    if (!texture->loadFromFile(filename)) {
         return nullptr;
+    }
 
     // If success - remember and return texture pointer
     texture->setRepeated(true);
@@ -72,18 +78,21 @@ std::shared_ptr<sf::Texture> ResourceManager::loadTexture(const std::string& fil
 }
 
 std::shared_ptr<sf::SoundBuffer> ResourceManager::loadSoundBuffer(const std::string& filename) {
-    if(!_instance)
+    if(!_instance) {
         return nullptr;
+    }
 
     // If sound buffer is already loaded - return pointer to it
     auto it = _instance->_soundBuffers.find(filename);
-    if (it != _instance->_soundBuffers.end())
+    if (it != _instance->_soundBuffers.end()) {
         return it->second;
+    }
 
     // Otherwise - try to load it. If failure - return zero
     std::shared_ptr<sf::SoundBuffer> soundBuffer(new sf::SoundBuffer);
-    if (!soundBuffer->loadFromFile(filename))
+    if (!soundBuffer->loadFromFile(filename)) {
         return nullptr;
+    }
 
     // If success - remember and return sound pointer
     _instance->_soundBuffers.emplace(filename, soundBuffer);
@@ -92,18 +101,21 @@ std::shared_ptr<sf::SoundBuffer> ResourceManager::loadSoundBuffer(const std::str
 }
 
 std::shared_ptr<sf::Font> ResourceManager::loadFont(const std::string& filename) {
-    if(!_instance)
+    if(!_instance) {
         return nullptr;
+    }
 
     // If font is already loaded - return pointer to it
     auto it = _instance->_fonts.find(filename);
-    if (it != _instance->_fonts.end())
+    if (it != _instance->_fonts.end()) {
         return it->second;
+    }
 
     // Otherwise - try to load it. If failure - return zero
     std::shared_ptr<sf::Font> font(new sf::Font);
-    if (!font->loadFromFile(filename))
+    if (!font->loadFromFile(filename)) {
         return nullptr;
+    }
 
     // If success - remember and return font pointer
     _instance->_fonts.emplace(filename, font);
@@ -122,18 +134,16 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
     }
 
     std::ifstream file(filename);
-    if (!file.is_open())
-    {
+    if (!file.is_open()) {
         Log::log("Mesh::LoadObjects(): cannot load file from " + filename);
         return objects;
     }
 
-    std::vector<Point4D> verts{};
+    std::vector<Vec4D> verts{};
     std::vector<Triangle> tris{};
     sf::Color currentColor = sf::Color(255, 245, 194, 255);
 
-    while (!file.eof())
-    {
+    while (!file.eof()) {
         char line[128];
         file.getline(line, 128);
 
@@ -143,14 +153,14 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
         char junk;
         if(line[0] == 'o') {
             if(!tris.empty())
-                objects.push_back(std::make_shared<Mesh>(tris));
+                objects.push_back(std::make_shared<Mesh>(ObjectNameTag(filename + "_temp_obj_" + std::to_string(objects.size())), tris));
             tris.clear();
         }
         if (line[0] == 'v')
         {
             double x, y, z;
             s >> junk >> x >> y >> z;
-            verts.emplace_back(x, y, z, 1);
+            verts.emplace_back(x, y, z, 1.0);
         }
         if(line[0] == 'g') {
             std::string matInfo;
@@ -174,8 +184,11 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
         }
     }
 
-    if(!tris.empty())
-        objects.push_back(std::make_shared<Mesh>(tris));
+    if(!tris.empty()) {
+        objects.push_back(
+                std::make_shared<Mesh>(ObjectNameTag(filename + "_temp_obj_" + std::to_string(objects.size())), tris));
+    }
+    tris.clear();
 
     file.close();
 

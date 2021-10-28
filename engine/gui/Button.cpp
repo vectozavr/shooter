@@ -9,8 +9,7 @@
 
 void Button::select()
 {
-    if (!_selected && !_pressed)
-    {
+    if (!_selected && !_pressed) {
         _button.setTextureRect(sf::IntRect(_selectedState.tx, _selectedState.ty, _w, _h));
         _selected = true;
     }
@@ -18,8 +17,7 @@ void Button::select()
 
 void Button::unSelect()
 {
-    if (_selected && !_pressed)
-    {
+    if (_selected && !_pressed) {
         _button.setTextureRect(sf::IntRect(_usualState.tx, _usualState.ty, _w, _h));
         _selected = false;
     }
@@ -27,19 +25,17 @@ void Button::unSelect()
 
 void Button::press()
 {
-    if (!_pressed)
-    {
+    if (!_pressed) {
         _button.setTextureRect(sf::IntRect(_pressedState.tx, _pressedState.ty, _w, _h));
-        if(_checkBox)
+        if(_checkBox) {
             _pressed = true;
-        //_clickSound.play();
+        }
         _click();
-    }
-    else
-    {
+    } else {
         _button.setTextureRect(sf::IntRect(_usualState.tx, _usualState.ty, _w, _h));
-        if(_checkBox)
+        if(_checkBox) {
             _pressed = false;
+        }
     }
 }
 
@@ -54,9 +50,6 @@ void Button::init() {
     _text.setCharacterSize((unsigned int)(_h * _sy / 2));
     _text.setFillColor(_textColor);
     _text.setPosition((float)(_x - _text.getLocalBounds().width / 2), (float)(_y - _h * _sy / 2 + _text.getLocalBounds().height / 4));
-
-    //_clickSound.setBuffer(*ResourceManager::loadSoundBuffer(_clickSoundName));
-    //_clickSound.setVolume(15);
 }
 
 Button::Button(int x, int y, int width, int height, std::function<void()> click, std::string text, double sx,

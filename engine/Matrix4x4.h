@@ -6,7 +6,7 @@
 #define ENGINE_MATRIX4X4_H
 
 #include <array>
-#include "Point4D.h"
+#include "Vec4D.h"
 #include "Vec3D.h"
 
 class Matrix4x4 final {
@@ -18,7 +18,7 @@ public:
     Matrix4x4& operator=(const Matrix4x4& matrix4X4) = default;
 
     [[nodiscard]] Matrix4x4 operator*(const Matrix4x4& matrix4X4) const;
-    [[nodiscard]] Point4D operator*(const Point4D& point4D) const;
+    [[nodiscard]] Vec4D operator*(const Vec4D& point4D) const;
     [[nodiscard]] Vec3D operator*(const Vec3D& vec) const;
 
     // Any useful matrix (static methods)

@@ -11,13 +11,13 @@
 
 using namespace std;
 
-void World::addBody(std::shared_ptr<RigidBody> body, const ObjectNameTag& tag) {
-    _objects.emplace(tag, body);
-    Log::log("World::addBody(): inserted body '" + tag.str() + "' with " + std::to_string(_objects[tag]->triangles().size()) + " tris.");
+void World::addBody(std::shared_ptr<RigidBody> body) {
+    _objects.emplace(body->name(), body);
+    Log::log("World::addBody(): inserted body '" + body->name().str() + "' with " + std::to_string(_objects[body->name()]->triangles().size()) + " tris.");
 }
 
 void World::loadBody(const ObjectNameTag& tag, const string &filename, const Vec3D& scale) {
-    _objects.emplace(tag, std::make_shared<RigidBody>(Mesh(filename, scale)));
+    _objects.emplace(tag, std::make_shared<RigidBody>(Mesh(tag, filename, scale)));
     Log::log("World::loadBody(): inserted body from " + filename + " with title '" + tag.str() + "' with " + std::to_string(_objects[tag]->triangles().size()) + " tris.");
 }
 
@@ -30,20 +30,23 @@ IntersectionInformation World::rayCast(const Vec3D& from, const Vec3D& to, const
     while (s >> t) tagsToSkip.push_back(t);
 
     bool intersected = false;
-    std::unique_ptr<Vec3D> point = std::make_unique<Vec3D>();
-    std::unique_ptr<Triangle> triangle = std::make_unique<Triangle>();
+    Vec3D point{};
+    Triangle triangle;
     std::string bodyName;
     double minDistance = Consts::RAY_CAST_MAX_DISTANCE;
     std::shared_ptr<RigidBody> intersectedBody = nullptr;
 
     for(auto& [name, body]  : _objects) {
 
+
+        // TODO: check this stuff:
         //for (auto& escapeTag : tagsToSkip)
         //    if(name.str().find(escapeTag) != std::string::npos)
         //        continue;
 
-        if(name.str().find("Player") != std::string::npos || name.str().find("weapon") != std::string::npos)
+        if(name.str().find("Player") != std::string::npos || name.str().find("weapon") != std::string::npos) {
             continue;
+        }
 
         for(auto& tri : body->triangles()) {
             Triangle tri_translated(tri[0] + body->position().makePoint4D(), tri[1] + body->position().makePoint4D(), tri[2] + body->position().makePoint4D());
@@ -53,33 +56,32 @@ IntersectionInformation World::rayCast(const Vec3D& from, const Vec3D& to, const
             double distance = (intersection.first - from).sqrAbs();
             if(intersection.second > 0 && distance < minDistance && tri_translated.isPointInside(intersection.first)) {
                 minDistance = distance;
-                point = std::make_unique<Vec3D>(intersection.first);
-                triangle = std::make_unique<Triangle>(tri_translated);
+                point = intersection.first;
+                triangle = tri_translated;
                 bodyName = name.str();
                 intersected = true;
                 intersectedBody = body;
             }
         }
     }
-    return IntersectionInformation{*point, sqrt(minDistance), *triangle, ObjectNameTag(bodyName), intersectedBody, intersected};
+    return IntersectionInformation{point, sqrt(minDistance), triangle, ObjectNameTag(bodyName), intersectedBody, intersected};
 }
 
 void World::loadMap(const std::string& filename, const Vec3D& scale) {
     auto objs = ResourceManager::loadObjects(filename);
-    for(unsigned i = 0; i < objs.size(); i++) {
-        ObjectNameTag meshName = ObjectNameTag("map_" + to_string(i));
-        addBody(std::make_shared<RigidBody>(*objs[i]), meshName);
-        body(meshName)->scale(scale);
+    for(auto & i : objs) {
+        std::shared_ptr<RigidBody> obj = std::make_shared<RigidBody>(*i);
+        addBody(obj);
+        obj->scale(scale);
     }
-
-    auto it = _objects.begin();
 }
 
 void World::removeBody(const ObjectNameTag& tag) {
-    if(_objects.erase(tag) > 0)
+    if(_objects.erase(tag) > 0) {
         Log::log("World::removeBody(): removed body '" + tag.str() + "'");
-    else
+    } else {
         Log::log("World::removeBody(): cannot remove body '" + tag.str() + "': body does not exist.");
+    }
 }
 
 void World::checkCollision(const ObjectNameTag& tag) {
@@ -88,7 +90,6 @@ void World::checkCollision(const ObjectNameTag& tag) {
         _objects[tag]->setInCollision(false);
 
         for (auto it = _objects.begin(); it != _objects.end();) {
-
             auto obj = it->second;
             ObjectNameTag name = it->first;
             it++;
@@ -100,8 +101,9 @@ void World::checkCollision(const ObjectNameTag& tag) {
                         CollisionPoint epa = _objects[tag]->EPA(gjk.second, obj);
                         _objects[tag]->solveCollision(epa);
                     }
-                    if (_objects[tag]->collisionCallBack() != nullptr)
+                    if (_objects[tag]->collisionCallBack() != nullptr) {
                         _objects[tag]->collisionCallBack()(name, obj);
+                    }
                 }
             }
         }
@@ -116,7 +118,8 @@ void World::update() {
 }
 
 std::shared_ptr<RigidBody> World::body(const ObjectNameTag& tag) {
-    if(_objects.count(tag) == 0)
+    if(_objects.count(tag) == 0) {
         return nullptr;
+    }
     return _objects.find(tag)->second;
 }

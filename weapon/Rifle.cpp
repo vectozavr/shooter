@@ -6,16 +6,5 @@
 #include "Rifle.h"
 #include "../ShooterConsts.h"
 
-Rifle::Rifle(int ammo, const std::string &weaponName) : Weapon(weaponName, ShooterConsts::RIFLE_OBJ, Vec3D{3, 3, 3}, Vec3D{-2.3, 1, 1.3}, Vec3D{0, Consts::PI, 0}) {
-    fireSound = ShooterConsts::RIFLE_FIRE_SOUND;
-    reloadSound = ShooterConsts::RIFLE_RELOAD_SOUND;
-
-    _initialPack = 5;
-    _clipCapacity = 1; // how much ammo can be stored in one clip
-    _stockAmmo = ammo - _clipCapacity; // how much ammo do you have in stock
-    _clipAmmo = _clipCapacity; // how much ammo do you have in current clip
-    _reloadTime = 1;
-    _fireDelay = 1; // time delay between fires
-    _damage = 30000;
-    _spreading = 0.5;
+Rifle::Rifle() : Weapon(5, 1, 1.0, 1.0, 30000, 0.5, ShooterConsts::RIFLE_FIRE_SOUND, ShooterConsts::RIFLE_RELOAD_SOUND, "rifle", ShooterConsts::RIFLE_OBJ, Vec3D{3, 3, 3}, Vec3D{-2.3, 1, 1.3}, Vec3D{0, Consts::PI, 0}) {
 }

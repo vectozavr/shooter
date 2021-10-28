@@ -5,35 +5,31 @@
 #ifndef ENGINE_ASCALE_H
 #define ENGINE_ASCALE_H
 
-#include "Animatable.h"
+#include <utility>
+
 #include "Animation.h"
-#include "Mesh.h"
+#include "../physics/RigidBody.h"
 
 class AScale final : public Animation {
 private:
-    std::shared_ptr<Mesh> _mesh;
+    const std::weak_ptr<RigidBody> _object;
+    const Vec3D _scalingValue;
 
-    Vec3D value;
-    std::vector<Triangle> triangles{};
-public:
-    AScale(std::shared_ptr<Mesh> mesh, const Vec3D &s, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::bezier) : value(s) {
-        _mesh = mesh;
-        _duration = duration;
-        _looped = looped;
-        _intType = interpolationType;
-        _waitFor = true;
-    }
-
-    bool update() override {
-        if(!_started)
-            triangles = _mesh->triangles();
+    void update() override {
+        if(_object.expired()) {
+            stop();
+            return;
+        }
 
         std::vector<Triangle> newTriangles;
-        for(auto &t : triangles) {
-            newTriangles.emplace_back(t * Matrix4x4::Scale(Point4D{1, 1, 1} + (value - Point4D{1, 1, 1}) * _p));
+        for(auto &t : _object->triangles()) {
+            newTriangles.emplace_back(t * Matrix4x4::Scale(Vec3D{1, 1, 1} + (_scalingValue - Vec3D{1, 1, 1}) * progress()));
         }
-        _mesh->setTriangles(newTriangles);
+        _object.lock()->setTriangles(newTriangles);
         return updateState();
+    }
+public:
+    AScale(std::weak_ptr<RigidBody> object, const Vec3D &s, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::Bezier) : Animation(duration, looped, interpolationType), _object(object), _scalingValue(s) {
     }
 };
 

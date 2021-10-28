@@ -4,15 +4,16 @@
 
 #include "Mouse.h"
 #include "utils/Time.h"
+#include "Consts.h"
 
 Vec2D Mouse::getMousePosition() const {
-    sf::Vector2<int> pos = sf::Mouse::getPosition(*_window);
+    sf::Vector2<int> pos = sf::Mouse::getPosition(*_screen->renderWindow());
     return Vec2D(pos.x, pos.y);
 }
 
 Vec2D Mouse::getMouseDisplacement() const {
-    sf::Vector2<int> mousePos = sf::Mouse::getPosition(*_window);
-    sf::Vector2<int> center = sf::Vector2<int>(_window->getSize().x/2, _window->getSize().y/2);
+    sf::Vector2<int> mousePos = sf::Mouse::getPosition(*_screen->renderWindow());
+    sf::Vector2<int> center = sf::Vector2<int>(_screen->width()/2, _screen->height()/2);
 
     sf::Vector2<int> displacement = mousePos - center;
     //setMouseInCenter();
@@ -20,7 +21,7 @@ Vec2D Mouse::getMouseDisplacement() const {
 }
 
 void Mouse::setMouseInCenter() const {
-    sf::Mouse::setPosition({ static_cast<int>(_window->getSize().x / 2), static_cast<int>(_window->getSize().y / 2) }, *_window);
+    sf::Mouse::setPosition({ static_cast<int>(_screen->width() / 2), static_cast<int>(_screen->height() / 2) }, *_screen->renderWindow());
 }
 
 bool Mouse::isButtonPressed(sf::Mouse::Button button) {
@@ -28,8 +29,9 @@ bool Mouse::isButtonPressed(sf::Mouse::Button button) {
 }
 
 bool Mouse::isButtonTapped(sf::Mouse::Button button) {
-    if (!Mouse::isButtonPressed(button))
+    if (!Mouse::isButtonPressed(button)) {
         return false;
+    }
 
     if(_tappedButtons.count(button) == 0) {
         _tappedButtons.emplace(button, Time::time());
@@ -39,12 +41,4 @@ bool Mouse::isButtonTapped(sf::Mouse::Button button) {
         return true;
     }
     return false;
-}
-
-void Mouse::setWindow(std::shared_ptr<sf::RenderWindow> window) {
-    _window = window;
-}
-
-void Mouse::setMouseCursorVisible(bool visible) {
-    _window->setMouseCursorVisible(visible);
 }
