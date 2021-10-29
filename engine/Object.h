@@ -34,7 +34,6 @@ private:
 
     std::map<ObjectNameTag, std::weak_ptr<Object>> _attachedObjects;
 
-    Vec3D _position         {0, 0, 0};
     Vec3D _angle            {0, 0, 0};
     Vec3D _angleLeftUpLookAt{0, 0, 0};
 public:
@@ -56,7 +55,7 @@ public:
     [[nodiscard]] Vec3D left() const        { return _transformMatrix.x(); }
     [[nodiscard]] Vec3D up() const          { return _transformMatrix.y(); }
     [[nodiscard]] Vec3D lookAt() const      { return _transformMatrix.z(); }
-    [[nodiscard]] Vec3D position() const    { return _position; }
+    [[nodiscard]] Vec3D position() const    { return _transformMatrix.w(); }
 
     [[nodiscard]] Vec3D angle() const { return _angle; }
     [[nodiscard]] Vec3D angleLeftUpLookAt() const { return _angleLeftUpLookAt; }
@@ -67,7 +66,7 @@ public:
 
     [[nodiscard]] ObjectNameTag name() const { return _nameTag; }
 
-    [[nodiscard]] Matrix4x4 model() const { return _transformMatrix; }
+    [[nodiscard]] Matrix4x4 model() const { return Matrix4x4::Model(_transformMatrix); }
 
     // OpenGL function
     [[nodiscard]] GLfloat* glModel() const;

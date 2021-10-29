@@ -20,7 +20,7 @@ Vec3D RigidBody::_findFurthestPoint(const Vec3D& direction) {
 
     for(auto& tri : triangles()){
         for(int i = 0; i < 3; i++){
-            Vec3D point = model()*Vec3D(tri[i]) + position();
+            Vec3D point(model()*tri[i]);
 
             double distance = point.dot(direction.normalized());
             if(distance > maxDistance) {

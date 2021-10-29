@@ -8,7 +8,7 @@
 
 void Object::translate(const Vec3D &dv) {
 
-    _position = _position + dv;
+    _transformMatrix = _transformMatrix * Matrix4x4::Translation(dv);
 
     for(auto &[attachedName, attachedObject] : _attachedObjects) {
         if(!attachedObject.expired()) {
@@ -67,7 +67,8 @@ void Object::rotateRelativePoint(const Vec3D &s, const Vec3D &r) {
     _transformMatrix = rotationMatrix*_transformMatrix;
 
     // After rotation we translate XYZ by vector -r2 and recalculate position
-    _position = s + r2;
+    _transformMatrix = _transformMatrix * Matrix4x4::Translation(s + r2 - position());
+
 
     for(auto &[attachedName, attachedObject] : _attachedObjects) {
         if(!attachedObject.expired()) {
@@ -86,7 +87,7 @@ void Object::rotateRelativePoint(const Vec3D &s, const Vec3D &v, double r) {
     _transformMatrix = rotationMatrix*_transformMatrix;
 
     // After rotation we translate XYZ by vector -r2 and recalculate position
-    _position = s + r2;
+    _transformMatrix = _transformMatrix * Matrix4x4::Translation(s + r2 - position());
 
     for(auto &[attachedName, attachedObject] : _attachedObjects) {
         if(!attachedObject.expired()) {

@@ -85,10 +85,6 @@ Matrix4x4 Matrix4x4::Translation(const Vec3D& v) {
     t._arr[2][2] = 1.0;
     t._arr[3][3] = 1.0;
 
-    //t._arr[0][3] = v.x();
-    //t._arr[1][3] = v.y();
-    //t._arr[2][3] = v.z();
-
     t._arr[3][0] = v.x();
     t._arr[3][1] = v.y();
     t._arr[3][2] = v.z();
@@ -192,6 +188,20 @@ Matrix4x4 Matrix4x4::ScreenSpace(int width, int height) {
     return s;
 }
 
+Matrix4x4 Matrix4x4::Model(const Matrix4x4& transformMatrix) {
+    Matrix4x4 M(transformMatrix);
+
+    M._arr[0][3] = M._arr[3][0];
+    M._arr[1][3] = M._arr[3][1];
+    M._arr[2][3] = M._arr[3][2];
+
+    M._arr[3][0] = 0;
+    M._arr[3][1] = 0;
+    M._arr[3][2] = 0;
+
+    return M;
+}
+
 Matrix4x4 Matrix4x4::View(const Vec3D &left, const Vec3D &up, const Vec3D &lookAt, const Vec3D &eye) {
     Matrix4x4 V = Zero();
 
@@ -225,4 +235,8 @@ Vec3D Matrix4x4::y() const {
 
 Vec3D Matrix4x4::z() const {
     return Vec3D(_arr[0][2], _arr[1][2],_arr[2][2]);
+}
+
+[[nodiscard]] Vec3D Matrix4x4::w() const {
+    return Vec3D(_arr[3][0], _arr[3][1],_arr[3][2]);
 }

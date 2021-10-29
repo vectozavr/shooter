@@ -190,7 +190,6 @@ void Screen::glDrawMesh(GLfloat* geometry, GLfloat* view, GLfloat* model, size_t
 }
 
 GLfloat* Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D& cameraPosition) {
-    Vec3D pos = mesh->position();
     std::vector<Triangle>& triangles = mesh->triangles();
 
     auto* geometry = (GLfloat*)malloc(7*3*triangles.size()*sizeof(GLfloat));
@@ -199,7 +198,7 @@ GLfloat* Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D& c
 
         int stride = 21*i;
 
-        double dot = triangles[i].norm().dot((pos + mesh->model()*Vec3D(triangles[i][0]) - cameraPosition).normalized());
+        double dot = triangles[i].norm().dot((mesh->model()*Vec3D(triangles[i][0]) - cameraPosition).normalized());
         sf::Color color = triangles[i].color();
         sf::Color ambientColor = sf::Color((sf::Uint8)(color.r * (0.3 * std::abs(dot) + 0.7)),
                                            (sf::Uint8)(color.g * (0.3 * std::abs(dot) + 0.7)),
