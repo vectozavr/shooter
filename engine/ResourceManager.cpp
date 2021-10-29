@@ -10,9 +10,12 @@
 #include <fstream>
 
 ResourceManager* ResourceManager::_instance = nullptr;
+bool ResourceManager::_validInstance = false;
+
 
 void ResourceManager::init() {
     _instance = new ResourceManager();
+    _validInstance = true;
 }
 
 void ResourceManager::unloadTextures() {
@@ -41,6 +44,10 @@ void ResourceManager::unloadObjects() {
 }
 
 void ResourceManager::unloadAllResources() {
+    if(!_validInstance) {
+        return;
+    }
+
     unloadTextures();
     unloadSoundBuffers();
     unloadFonts();
@@ -49,12 +56,12 @@ void ResourceManager::unloadAllResources() {
 
 void ResourceManager::free() {
     unloadAllResources();
+    _validInstance = false;
     delete _instance;
-    _instance = nullptr;
 }
 
 std::shared_ptr<sf::Texture> ResourceManager::loadTexture(const std::string& filename) {
-    if(!_instance) {
+    if(!_validInstance) {
         return nullptr;
     }
 
@@ -78,7 +85,7 @@ std::shared_ptr<sf::Texture> ResourceManager::loadTexture(const std::string& fil
 }
 
 std::shared_ptr<sf::SoundBuffer> ResourceManager::loadSoundBuffer(const std::string& filename) {
-    if(!_instance) {
+    if(!_validInstance) {
         return nullptr;
     }
 
@@ -101,7 +108,7 @@ std::shared_ptr<sf::SoundBuffer> ResourceManager::loadSoundBuffer(const std::str
 }
 
 std::shared_ptr<sf::Font> ResourceManager::loadFont(const std::string& filename) {
-    if(!_instance) {
+    if(!_validInstance) {
         return nullptr;
     }
 
@@ -124,8 +131,13 @@ std::shared_ptr<sf::Font> ResourceManager::loadFont(const std::string& filename)
 }
 
 std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::string &filename) {
+
     std::vector<std::shared_ptr<Mesh>> objects{};
     std::map<std::string, sf::Color> maters{};
+
+    if(!_validInstance) {
+        return objects;
+    }
 
     // If objects is already loaded - return pointer to it
     auto it = _instance->_objects.find(filename);

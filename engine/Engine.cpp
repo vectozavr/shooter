@@ -43,12 +43,14 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
             world->update();
 
             if(_useOpenGL) {
-                GLfloat* view = camera->view();
+                GLfloat* view = camera->glView();
                 for(auto & it : *world) {
                     if (it.second->isVisible()) {
+                        GLfloat* model = it.second->glModel();
                         GLfloat* geometry = Screen::glMeshToGLfloatArray(it.second, camera->position());
-                        screen->glDrawMesh(geometry, view, 3 * it.second->triangles().size());
+                        screen->glDrawMesh(geometry, view, model, 3 * it.second->triangles().size());
                         free(geometry);
+                        free(model);
                     }
                 }
                 free(view);

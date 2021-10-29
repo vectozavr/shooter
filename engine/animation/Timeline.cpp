@@ -7,13 +7,15 @@
 #include "Timeline.h"
 
 Timeline* Timeline::_instance = nullptr;
+bool Timeline::_validInstance = false;
 
 void Timeline::init() {
     _instance = new Timeline();
+    _validInstance = true;
 }
 
 void Timeline::animate(const AnimationListTag& listName, Animation* anim) {
-    if(!_instance) {
+    if(!_validInstance) {
         return;
     }
 
@@ -21,7 +23,7 @@ void Timeline::animate(const AnimationListTag& listName, Animation* anim) {
 }
 
 void Timeline::deleteAllAnimations() {
-    if(!_instance) {
+    if(!_validInstance) {
         return;
     }
 
@@ -36,7 +38,7 @@ void Timeline::deleteAllAnimations() {
 }
 
 void Timeline::deleteAnimationList(const AnimationListTag& listName) {
-    if(!_instance) {
+    if(!_validInstance) {
         return;
     }
 
@@ -45,7 +47,7 @@ void Timeline::deleteAnimationList(const AnimationListTag& listName) {
 }
 
 [[nodiscard]] bool Timeline::isInAnimList(const AnimationListTag& listName) {
-    if(!_instance) {
+    if(!_validInstance) {
         return false;
     }
 
@@ -53,7 +55,7 @@ void Timeline::deleteAnimationList(const AnimationListTag& listName) {
 }
 
 void Timeline::update() {
-    if(!_instance) {
+    if(!_validInstance) {
         return;
     }
 
@@ -85,7 +87,7 @@ void Timeline::update() {
 
 void Timeline::free() {
     Timeline::deleteAllAnimations();
+    _validInstance = false;
 
     delete _instance;
-    _instance = nullptr;
 }

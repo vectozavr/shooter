@@ -38,8 +38,6 @@ public:
     [[nodiscard]] int buffSize() const { return _triangles.size(); }
     std::vector<std::shared_ptr<Triangle>> sorted();
 
-    // OpenGL function
-    [[nodiscard]] GLfloat* view() const;
 };
 
 

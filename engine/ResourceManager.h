@@ -18,17 +18,18 @@ private:
     std::map<std::string, std::vector<std::shared_ptr<Mesh>>> _objects;
 
     static ResourceManager* _instance;
+    static bool _validInstance;
 
     ResourceManager() = default;
-public:
-    ResourceManager(const ResourceManager&) = delete;
-    ResourceManager& operator=(ResourceManager&) = delete;
-
     // Unloads all currently loaded textures.
     static void unloadObjects();
     static void unloadTextures();
     static void unloadSoundBuffers();
     static void unloadFonts();
+
+public:
+    ResourceManager(const ResourceManager&) = delete;
+    ResourceManager& operator=(ResourceManager&) = delete;
 
     static void unloadAllResources();
 

@@ -21,7 +21,7 @@ private:
 public:
     explicit Mesh(ObjectNameTag nameTag) : Object(std::move(nameTag)) {};
     Mesh& operator=(const Mesh& mesh) = delete;
-    Mesh(const Mesh& mesh);
+    Mesh(const Mesh& mesh) = default;
 
     explicit Mesh(ObjectNameTag nameTag, const std::vector<Triangle>& tries);
     explicit Mesh(ObjectNameTag nameTag, const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
@@ -32,16 +32,6 @@ public:
     [[nodiscard]] std::vector<Triangle>& triangles() { return _tris; }
     void setTriangles(const std::vector<Triangle>& t);
 
-    // Translate body
-    // Rotate body around XYZ axes
-    void rotate(const Vec3D& r) override;
-    // Rotate body around normalised vector 'v' by 'r' radians
-    void rotate(const Vec3D& v, double r) override;
-    // Rotate body around XYZ by (r._x, r._y, r.z) radians relative val 'point4D'
-    void rotateRelativePoint(const Vec3D& point, const Vec3D& r) override;
-    // Rotate body around normalised vector 'v' by 'r' radians relative val 'point4D'
-    void rotateRelativePoint(const Vec3D& point4D, const Vec3D& v, double r) override;
-    void scale(const Vec3D& s) override;
     [[nodiscard]] int size() const { return _tris.size()*3; }
 
     [[nodiscard]] sf::Color color() const { return _color; }

@@ -8,28 +8,33 @@
 using namespace std::chrono;
 
 Time* Time::_instance = nullptr;
+bool Time::_validInstance = false;
 
 void Time::init() {
     _instance = new Time();
+    _validInstance = true;
 }
 
 double Time::time() {
-    if(!_instance)
+    if(!_validInstance) {
         return 0;
+    }
 
     return _instance->_time;
 }
 
 double Time::deltaTime() {
-    if(!_instance)
+    if(!_validInstance) {
         return 0;
+    }
 
     return _instance->_deltaTime;
 }
 
 void Time::update() {
-    if(!_instance)
+    if(!_validInstance) {
         return;
+    }
 
     high_resolution_clock::time_point t = high_resolution_clock::now();
 
@@ -53,15 +58,14 @@ void Time::update() {
 }
 
 int Time::fps() {
-    if(!_instance)
+    if(!_validInstance) {
         return 0;
+    }
     // Cast is faster than floor and has the same behavior for positive numbers
     return static_cast<int>(_instance->_lastFps);
 }
 
 void Time::free() {
-    Time* t = _instance;
-
+    _validInstance = false;
     delete _instance;
-    _instance = nullptr;
 }

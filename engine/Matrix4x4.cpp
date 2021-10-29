@@ -85,9 +85,13 @@ Matrix4x4 Matrix4x4::Translation(const Vec3D& v) {
     t._arr[2][2] = 1.0;
     t._arr[3][3] = 1.0;
 
-    t._arr[0][3] = v.x();
-    t._arr[1][3] = v.y();
-    t._arr[2][3] = v.z();
+    //t._arr[0][3] = v.x();
+    //t._arr[1][3] = v.y();
+    //t._arr[2][3] = v.z();
+
+    t._arr[3][0] = v.x();
+    t._arr[3][1] = v.y();
+    t._arr[3][2] = v.z();
 
     return t;
 }
@@ -209,4 +213,16 @@ Matrix4x4 Matrix4x4::View(const Vec3D &left, const Vec3D &up, const Vec3D &lookA
     V._arr[3][3] = 1.0;
 
     return V;
+}
+
+Vec3D Matrix4x4::x() const {
+    return Vec3D(_arr[0][0], _arr[1][0],_arr[2][0]);
+}
+
+Vec3D Matrix4x4::y() const {
+    return Vec3D(_arr[0][1], _arr[1][1],_arr[2][1]);
+}
+
+Vec3D Matrix4x4::z() const {
+    return Vec3D(_arr[0][2], _arr[1][2],_arr[2][2]);
 }

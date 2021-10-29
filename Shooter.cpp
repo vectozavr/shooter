@@ -89,11 +89,11 @@ void Shooter::start() {
 
     player->initWeapons();
 
+    player->translate(Vec3D{0, 0, 0});
     camera->translateToPoint(player->position() + Vec3D{0, 1.8, 0});
     player->attach(camera);
 
     world->addBody(player);
-    player->translate(Vec3D{0, 10, 0});
 
     // connecting to the server
     InitNetwork();

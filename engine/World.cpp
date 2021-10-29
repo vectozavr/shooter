@@ -44,6 +44,7 @@ IntersectionInformation World::rayCast(const Vec3D& from, const Vec3D& to, const
         for (auto& escapeTag : tagsToSkip) {
             if (name.str().find(escapeTag) != std::string::npos) {
                 escapeThisBody = true;
+                break;
             }
         }
         if(escapeThisBody) {
@@ -51,7 +52,7 @@ IntersectionInformation World::rayCast(const Vec3D& from, const Vec3D& to, const
         }
 
         for(auto& tri : body->triangles()) {
-            Triangle tri_translated(tri[0] + body->position().makePoint4D(), tri[1] + body->position().makePoint4D(), tri[2] + body->position().makePoint4D());
+            Triangle tri_translated(body->model()*tri[0] + body->position().makePoint4D(), body->model()*tri[1] + body->position().makePoint4D(), body->model()*tri[2] + body->position().makePoint4D());
 
             Plane plane(tri_translated);
             auto intersection = plane.intersection(from, to);

@@ -6,13 +6,16 @@
 #include "ResourceManager.h"
 
 SoundController* SoundController::_instance = nullptr;
+bool SoundController::_validInstance = false;
+
 
 void SoundController::init() {
     _instance = new SoundController();
+    _validInstance = true;
 }
 
 void SoundController::playSound(const SoundTag& soundTag, const std::string& filename) {
-    if(!_instance) {
+    if(!_validInstance) {
         return;
     }
 
@@ -22,7 +25,7 @@ void SoundController::playSound(const SoundTag& soundTag, const std::string& fil
 }
 
 void SoundController::pauseSound(const SoundTag& soundTag) {
-    if(!_instance) {
+    if(!_validInstance) {
         return;
     }
 
@@ -32,7 +35,7 @@ void SoundController::pauseSound(const SoundTag& soundTag) {
 }
 
 void SoundController::stopSound(const SoundTag& soundTag) {
-    if(!_instance) {
+    if(!_validInstance) {
         return;
     }
 
@@ -43,7 +46,7 @@ void SoundController::stopSound(const SoundTag& soundTag) {
 }
 
 sf::Sound::Status SoundController::getStatus(const SoundTag& soundTag) {
-    if(_instance == nullptr) {
+    if(!_validInstance) {
         return sf::Sound::Status::Stopped;
     }
 
@@ -56,11 +59,13 @@ sf::Sound::Status SoundController::getStatus(const SoundTag& soundTag) {
 }
 
 void SoundController::free() {
-    for(auto& [soundTag, sound] : _instance->_sounds) {
-        sound.stop();
+    if(_validInstance) {
+        for(auto& [soundTag, sound] : _instance->_sounds) {
+            sound.stop();
+        }
     }
 
     _instance->_sounds.clear();
+    _validInstance = false;
     delete _instance;
-    _instance = nullptr;
 }

@@ -56,6 +56,7 @@ protected:
 
 public:
     explicit RigidBody(ObjectNameTag nameTag) : Mesh(std::move(nameTag)) {};
+    explicit RigidBody(const RigidBody& rigidBody) = default;
     explicit RigidBody(const Mesh& mesh);
     RigidBody(ObjectNameTag nameTag, const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
 

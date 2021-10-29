@@ -21,6 +21,10 @@ public:
     [[nodiscard]] Vec4D operator*(const Vec4D& point4D) const;
     [[nodiscard]] Vec3D operator*(const Vec3D& vec) const;
 
+    [[nodiscard]] Vec3D x() const;
+    [[nodiscard]] Vec3D y() const;
+    [[nodiscard]] Vec3D z() const;
+
     // Any useful matrix (static methods)
     Matrix4x4 static Identity();
     Matrix4x4 static Zero();

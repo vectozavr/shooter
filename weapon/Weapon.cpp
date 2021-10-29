@@ -82,7 +82,7 @@ std::map<ObjectNameTag, double> Weapon::addTrace(std::function<IntersectionInfor
     }
 
     // add trace line
-    Vec3D lineFrom = position() + Vec3D(triangles().back()[0]);
+    Vec3D lineFrom = position() + model()*Vec3D(triangles().back()[0]);
     Vec3D lineTo = rayCast.intersected ? rayCast.pointOfIntersection : position() + -lookAt() * ShooterConsts::FIRE_DISTANCE + randV;
     _addTraceCallBack(lineFrom, lineTo);
 

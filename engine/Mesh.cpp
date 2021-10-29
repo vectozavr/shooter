@@ -29,40 +29,15 @@ void Mesh::loadObj(const std::string& filename, const Vec3D& scale) {
     this->scale(scale);
 }
 
-Mesh::Mesh(ObjectNameTag nameTag, const std::string& filename, const Vec3D& scale) : Object(nameTag) {
+Mesh::Mesh(ObjectNameTag nameTag, const std::string& filename, const Vec3D& scale) : Object(std::move(nameTag)) {
     loadObj(filename, scale);
 }
 
-Mesh::Mesh(ObjectNameTag nameTag, const vector<Triangle> &tries) : Object(nameTag), _tris(tries) {
+Mesh::Mesh(ObjectNameTag nameTag, const vector<Triangle> &tries) : Object(std::move(nameTag)), _tris(tries) {
 }
 
 Mesh Mesh::Obj(ObjectNameTag nameTag, const std::string& filename) {
     return Mesh(std::move(nameTag), filename);
-}
-
-void Mesh::rotate(const Vec3D &r) {
-    Object::rotate(r);
-    *this *= Matrix4x4::Rotation(r);
-}
-
-void Mesh::rotate(const Vec3D &v, double r) {
-    Object::rotate(v, r);
-    *this *= Matrix4x4::Rotation(v, r);
-}
-
-void Mesh::scale(const Vec3D &s) {
-    Object::scale(s);
-    *this *= Matrix4x4::Scale(s);
-}
-
-void Mesh::rotateRelativePoint(const Vec3D &s, const Vec3D &r) {
-    Object::rotateRelativePoint(s, r);
-    *this *= Matrix4x4::Rotation(r);
-}
-
-void Mesh::rotateRelativePoint(const Vec3D &s, const Vec3D &v, double r) {
-    Object::rotateRelativePoint(s, v, r);
-    *this *= Matrix4x4::Rotation(v, r);
 }
 
 void Mesh::setColor(const sf::Color& c) {
@@ -78,7 +53,7 @@ void Mesh::setColor(const sf::Color& c) {
 
 Mesh Mesh::LineTo(ObjectNameTag nameTag, const Vec3D& from, const Vec3D& to, double line_width, const sf::Color& color) {
 
-    Mesh line(nameTag);
+    Mesh line(std::move(nameTag));
 
     Vec3D v1 = (to - from).normalized();
     Vec3D v2 = from.cross(from + Vec3D{1, 0, 0}).normalized();
@@ -113,10 +88,6 @@ Mesh Mesh::LineTo(ObjectNameTag nameTag, const Vec3D& from, const Vec3D& to, dou
     line.setColor(color);
 
     return line;
-}
-
-Mesh::Mesh(const Mesh &mesh) : Object(mesh.name()), _tris(mesh._tris), _color(mesh._color), _visible(mesh._visible) {
-
 }
 
 void Mesh::setTriangles(const vector<Triangle> &t) {

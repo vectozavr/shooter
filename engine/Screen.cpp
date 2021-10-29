@@ -135,7 +135,7 @@ void Screen::drawText(const sf::Text &text) {
 }
 
 // OpenGL functions
-void Screen::glDrawMesh(GLfloat* geometry, GLfloat* view, size_t count) {
+void Screen::glDrawMesh(GLfloat* geometry, GLfloat* view, GLfloat* model, size_t count) {
     // OpenGL:
     // Make the window the active window for OpenGL calls
     _window->setActive(true);
@@ -180,6 +180,7 @@ void Screen::glDrawMesh(GLfloat* geometry, GLfloat* view, size_t count) {
     glLoadIdentity();
 
     glLoadMatrixf(view);
+    glMultMatrixf(model);
 
     // Draw the mesh
     glDrawArrays(GL_TRIANGLES, 0, count);
@@ -195,9 +196,10 @@ GLfloat* Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D& c
     auto* geometry = (GLfloat*)malloc(7*3*triangles.size()*sizeof(GLfloat));
 
     for(int i = 0; i < triangles.size(); i++) {
+
         int stride = 21*i;
 
-        double dot = triangles[i].norm().dot((pos + Vec3D(triangles[i][0]) - cameraPosition).normalized());
+        double dot = triangles[i].norm().dot((pos + mesh->model()*Vec3D(triangles[i][0]) - cameraPosition).normalized());
         sf::Color color = triangles[i].color();
         sf::Color ambientColor = sf::Color((sf::Uint8)(color.r * (0.3 * std::abs(dot) + 0.7)),
                                            (sf::Uint8)(color.g * (0.3 * std::abs(dot) + 0.7)),
@@ -205,27 +207,27 @@ GLfloat* Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D& c
                                            (sf::Uint8)color.a);
 
 
-        geometry[stride + 0] = (GLfloat)triangles[i][0].x() + pos.x();
-        geometry[stride + 1] = (GLfloat)triangles[i][0].y() + pos.y();
-        geometry[stride + 2] = (GLfloat)triangles[i][0].z() + pos.z();
+        geometry[stride + 0] = (GLfloat)triangles[i][0].x();
+        geometry[stride + 1] = (GLfloat)triangles[i][0].y();
+        geometry[stride + 2] = (GLfloat)triangles[i][0].z();
 
         geometry[stride + 3] = (GLfloat)ambientColor.r/255.0f;
         geometry[stride + 4] = (GLfloat)ambientColor.g/255.0f;
         geometry[stride + 5] = (GLfloat)ambientColor.b/255.0f;
         geometry[stride + 6] = (GLfloat)ambientColor.a/255.0f;
 
-        geometry[stride + 7] = (GLfloat)triangles[i][1].x() + pos.x();
-        geometry[stride + 8] = (GLfloat)triangles[i][1].y() + pos.y();
-        geometry[stride + 9] = (GLfloat)triangles[i][1].z() + pos.z();
+        geometry[stride + 7] = (GLfloat)triangles[i][1].x();
+        geometry[stride + 8] = (GLfloat)triangles[i][1].y();
+        geometry[stride + 9] = (GLfloat)triangles[i][1].z();
 
         geometry[stride + 10] = (GLfloat)ambientColor.r/255.0f;
         geometry[stride + 11] = (GLfloat)ambientColor.g/255.0f;
         geometry[stride + 12] = (GLfloat)ambientColor.b/255.0f;
         geometry[stride + 13] = (GLfloat)ambientColor.a/255.0f;
 
-        geometry[stride + 14] = (GLfloat)triangles[i][2].x() + pos.x();
-        geometry[stride + 15] = (GLfloat)triangles[i][2].y() + pos.y();
-        geometry[stride + 16] = (GLfloat)triangles[i][2].z() + pos.z();
+        geometry[stride + 14] = (GLfloat)triangles[i][2].x();
+        geometry[stride + 15] = (GLfloat)triangles[i][2].y();
+        geometry[stride + 16] = (GLfloat)triangles[i][2].z();
 
         geometry[stride + 17] = (GLfloat)ambientColor.r/255.0f;
         geometry[stride + 18] = (GLfloat)ambientColor.g/255.0f;

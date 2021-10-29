@@ -10,9 +10,8 @@ Player::Player(ObjectNameTag name) : RigidBody(name) {
     loadObj(ShooterConsts::CUBE_OBJ, Vec3D{0.5, 1.9, 0.5});
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
     setCollision(true);
-    setVisible(false);
+    //setVisible(false);
 
-    //setColor({240, 168, 168});
     Vec3D randColor = Vec3D::Random();
     setColor({static_cast<sf::Uint8>(randColor.x()*255), static_cast<sf::Uint8>(randColor.y()*255), static_cast<sf::Uint8>(randColor.z()*255)});
 
@@ -73,7 +72,7 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     attach(weapon);
 
     _weapons.back()->translate(position());
-    _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, Vec3D{0, 1, 0}, _angle.y());
+    _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, Vec3D{0, 1, 0}, angle().y());
     _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, left(), headAngle());
 
     _weapons.back()->setAddTraceCallBack(_addTraceCallBack);

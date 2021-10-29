@@ -25,6 +25,7 @@ private:
     std::map<AnimationListTag, std::list<Animation*>> _animations;
 
     static Timeline* _instance;
+    static bool _validInstance;
 
     Timeline() = default;
 public:

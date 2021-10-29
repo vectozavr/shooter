@@ -26,6 +26,7 @@ private:
     std::map<SoundTag, sf::Sound> _sounds;
 
     static SoundController* _instance;
+    static bool _validInstance;
 
     SoundController() = default;
 public:
