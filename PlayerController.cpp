@@ -115,7 +115,7 @@ void PlayerController::update() {
         bool shot = _player->fire();
 
         if(shot) {
-            if(!_player->inCollision() && (_player->weaponName() == ObjectNameTag("shotgun"))) {
+            if(_player->weaponName() == ObjectNameTag("shotgun")) {
                 _player->addVelocity(-camera->lookAt() * 30 * coeff);
             }
         }
