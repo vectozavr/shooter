@@ -87,3 +87,7 @@ Vec3D Vec3D::cross(const Vec3D& vec) const {
 Vec4D Vec3D::makePoint4D() const {
     return Vec4D(x(), y(), z(), 1.0);
 }
+
+Vec3D Vec3D::Random() {
+    return Vec3D((double)rand()/RAND_MAX, (double)rand()/RAND_MAX, (double)rand()/RAND_MAX);
+}

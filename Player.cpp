@@ -4,7 +4,6 @@
 
 #include "Player.h"
 #include "engine/Screen.h"
-#include "engine/ResourceManager.h"
 #include "engine/utils/Log.h"
 
 Player::Player(ObjectNameTag name) : RigidBody(name) {
@@ -12,7 +11,10 @@ Player::Player(ObjectNameTag name) : RigidBody(name) {
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
     setCollision(true);
     setVisible(false);
-    setColor({240, 168, 168});
+
+    //setColor({240, 168, 168});
+    Vec3D randColor = Vec3D::Random();
+    setColor({static_cast<sf::Uint8>(randColor.x()*255), static_cast<sf::Uint8>(randColor.y()*255), static_cast<sf::Uint8>(randColor.z()*255)});
 
     setCollisionCallBack([this](const ObjectNameTag& tag, std::shared_ptr<RigidBody> obj) {collisionWithObject(tag, obj);});
 }
