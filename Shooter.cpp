@@ -306,10 +306,9 @@ void Shooter::changeEnemyWeapon(const std::string& weaponName, sf::Uint16 enemyI
     auto head = world->body(ObjectNameTag("Enemy_" + std::to_string(enemyId) + "_head"));
     auto enemy = world->body(ObjectNameTag("Enemy_" + std::to_string(enemyId)));
 
-
     // remove old weapon:
     world->removeBody(weaponTag);
-    enemy->unattach(ObjectNameTag("Weapon"));
+    enemy->unattach(weaponTag);
 
     world->loadBody(weaponTag, "obj/" + weaponName + ".obj");
     world->body(weaponTag)->setCollider(false);

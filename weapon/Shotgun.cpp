@@ -9,7 +9,7 @@
 
 using namespace std;
 
-Shotgun::Shotgun(const std::string& weaponName) : Weapon(15, 1, 1.0, 1.0, 400, 5.0, ShooterConsts::SHOTGUN_FIRE_SOUND, ShooterConsts::SHOTGUN_RELOAD_SOUND, weaponName, ShooterConsts::SHOTGUN_OBJ, Vec3D{3, 3, 3}, Vec3D{-1.95, 0.8, 1.5}, Vec3D{0, Consts::PI, 0}) {
+Shotgun::Shotgun() : Weapon(15, 1, 1.0, 1.0, 400, 5.0, ShooterConsts::SHOTGUN_FIRE_SOUND, ShooterConsts::SHOTGUN_RELOAD_SOUND, ObjectNameTag("shotgun"), ShooterConsts::SHOTGUN_OBJ, Vec3D{3, 3, 3}, Vec3D{-1.95, 0.8, 1.5}, Vec3D{0, Consts::PI, 0}) {
 }
 
 std::map<ObjectNameTag, double>

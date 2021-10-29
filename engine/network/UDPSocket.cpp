@@ -27,8 +27,7 @@ void UDPSocket::unbind() {
     sf::Packet packet;
     packet << MsgType::Disconnect << _ownId;
 
-    for (auto it = _connections.begin(); it != _connections.end();)
-    {
+    for (auto it = _connections.begin(); it != _connections.end();) {
         send(packet, it->first);
         _connections.erase(it++);
     }

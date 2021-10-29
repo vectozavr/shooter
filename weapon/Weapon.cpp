@@ -11,7 +11,7 @@
 
 using namespace std;
 
-Weapon::Weapon(int initialPack, int clipCapacity, double reloadTime, double fireDelay, double damage, double spreading, std::string fireSound, std::string reloadSound, const std::string& weaponName, const std::string& objFileName, const Vec3D& s, const Vec3D& t, const Vec3D& r) : RigidBody(ObjectNameTag("weapon_" + weaponName), weaponName), _initialPack(initialPack), _clipCapacity(clipCapacity), _reloadTime(reloadTime), _fireDelay(fireDelay), _damage(damage), _spreading(spreading), _fireSound(std::move(fireSound)), _reloadSound(std::move(reloadSound)) {
+Weapon::Weapon(int initialPack, int clipCapacity, double reloadTime, double fireDelay, double damage, double spreading, std::string fireSound, std::string reloadSound, ObjectNameTag weaponName, const std::string& objFileName, const Vec3D& s, const Vec3D& t, const Vec3D& r) : RigidBody(std::move(weaponName), objFileName), _initialPack(initialPack), _clipCapacity(clipCapacity), _reloadTime(reloadTime), _fireDelay(fireDelay), _damage(damage), _spreading(spreading), _fireSound(std::move(fireSound)), _reloadSound(std::move(reloadSound)) {
     _stockAmmo = _initialPack - _clipCapacity;
     _clipAmmo = _clipCapacity;
 

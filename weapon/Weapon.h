@@ -44,7 +44,7 @@ protected:
     virtual std::map<ObjectNameTag, double> processFire(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
 
 public:
-    Weapon(int initialPack, int clipCapacity, double reloadTime, double fireDelay, double damage, double spreading, std::string fireSound, std::string reloadSound, const std::string& weaponName, const std::string& objFileName, const Vec3D& s, const Vec3D& t, const Vec3D& r);
+    Weapon(int initialPack, int clipCapacity, double reloadTime, double fireDelay, double damage, double spreading, std::string fireSound, std::string reloadSound, ObjectNameTag weaponName, const std::string& objFileName, const Vec3D& s, const Vec3D& t, const Vec3D& r);
 
     FireInformation fire(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
     void reload();
