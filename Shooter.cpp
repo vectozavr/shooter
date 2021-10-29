@@ -77,14 +77,12 @@ void Shooter::start() {
 
     world->loadMap(ShooterConsts::MAP_OBJ, Vec3D{5, 5, 5});
 
-    player = std::make_shared<Player>(ObjectNameTag("Player"));
     player->scale(Vec3D(3, 1, 3));
-    playerController = std::make_shared<PlayerController>(player, keyboard, mouse);
 
     // TODO: encapsulate call backs inside Player
     player->setAddTraceCallBack([this](const Vec3D& from, const Vec3D& to){ client->addTrace(from, to); addFireTrace(from, to); });
     player->setDamagePlayerCallBack([this] (sf::Uint16 targetId, double damage) { client->damagePlayer(targetId, damage); });
-    player->setRayCastFunction([this](const Vec3D& from, const Vec3D& to) { return world->rayCast(from, to, "weapon Player"); });
+    player->setRayCastFunction([this](const Vec3D& from, const Vec3D& to) { return world->rayCast(from, to, "Player Weapon"); });
     player->setTakeBonusCallBack([this] (const string& bonusName) { client->takeBonus(bonusName); });
     player->setAddWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ addWeapon(std::move(weapon)); });
     player->setRemoveWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ removeWeapon(std::move(weapon)); });
@@ -96,9 +94,6 @@ void Shooter::start() {
 
     world->addBody(player);
     player->translate(Vec3D{0, 10, 0});
-
-    client = std::make_shared<ShooterClient>(player);
-    server = std::make_shared<ShooterServer>();
 
     // connecting to the server
     InitNetwork();

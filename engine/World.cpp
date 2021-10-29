@@ -24,10 +24,12 @@ void World::loadBody(const ObjectNameTag& tag, const string &filename, const Vec
 IntersectionInformation World::rayCast(const Vec3D& from, const Vec3D& to, const std::string& skipTags) {
 
     // make vector of tags, that we are going to escape
-    vector <string> tagsToSkip;
+    vector <std::string> tagsToSkip;
     stringstream s(skipTags);
     std::string t;
-    while (s >> t) tagsToSkip.push_back(t);
+    while (s >> t) {
+        tagsToSkip.push_back(t);
+    }
 
     bool intersected = false;
     Vec3D point{};
@@ -38,13 +40,13 @@ IntersectionInformation World::rayCast(const Vec3D& from, const Vec3D& to, const
 
     for(auto& [name, body]  : _objects) {
 
-
-        // TODO: check this stuff:
-        //for (auto& escapeTag : tagsToSkip)
-        //    if(name.str().find(escapeTag) != std::string::npos)
-        //        continue;
-
-        if(name.str().find("Player") != std::string::npos || name.str().find("weapon") != std::string::npos) {
+        bool escapeThisBody = false;
+        for (auto& escapeTag : tagsToSkip) {
+            if (name.str().find(escapeTag) != std::string::npos) {
+                escapeThisBody = true;
+            }
+        }
+        if(escapeThisBody) {
             continue;
         }
 

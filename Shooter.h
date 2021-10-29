@@ -17,15 +17,13 @@
 
 class Shooter final : public Engine {
 private:
-    std::shared_ptr<Player> player;
-    std::shared_ptr<PlayerController> playerController;
-
-    sf::Sound backgroundNoise;
+    std::shared_ptr<Player> player = std::make_shared<Player>(ObjectNameTag("Player"));;
+    std::shared_ptr<PlayerController> playerController = std::make_shared<PlayerController>(player, keyboard, mouse);
 
     Window mainMenu;
 
-    std::shared_ptr<ShooterServer> server;
-    std::shared_ptr<ShooterClient> client;
+    std::shared_ptr<ShooterServer> server = std::make_shared<ShooterServer>();
+    std::shared_ptr<ShooterClient> client = std::make_shared<ShooterClient>(player);
 
     bool inGame = false;
 
