@@ -21,37 +21,41 @@ void ResourceManager::init() {
 }
 
 void ResourceManager::unloadTextures() {
+    int texturesCounter = _instance->_textures.size();
     for (auto & _texture : _instance->_textures) {
         _texture.second.reset();
     }
     _instance->_textures.clear();
 
-    Log::log("ResourceManager::unloadTextures(): all textures was unloaded");
+    Log::log("ResourceManager::unloadTextures(): all " + std::to_string(texturesCounter) + " textures was unloaded");
 
 }
 
 void ResourceManager::unloadSoundBuffers() {
+    int soundBuffersCounter = _instance->_soundBuffers.size();
     for (auto & _soundBuffer : _instance->_soundBuffers) {
         _soundBuffer.second.reset();
     }
     _instance->_soundBuffers.clear();
 
-    Log::log("ResourceManager::unloadSoundBuffers(): all soundBuffers was unloaded");
+    Log::log("ResourceManager::unloadSoundBuffers(): all " + std::to_string(soundBuffersCounter) + " soundBuffers was unloaded");
 }
 
 void ResourceManager::unloadFonts() {
+    int fontsCounter = _instance->_fonts.size();
     for (auto & _font : _instance->_fonts) {
         _font.second.reset();
     }
     _instance->_fonts.clear();
 
-    Log::log("ResourceManager::unloadFonts(): all fonts was unloaded");
+    Log::log("ResourceManager::unloadFonts(): all " + std::to_string(fontsCounter) + " fonts was unloaded");
 }
 
 void ResourceManager::unloadObjects() {
+    int objCounter = _instance->_objects.size();
     _instance->_objects.clear();
 
-    Log::log("ResourceManager::unloadObjects(): all objects was unloaded");
+    Log::log("ResourceManager::unloadObjects(): all " + std::to_string(objCounter) + " objects was unloaded");
 }
 
 void ResourceManager::unloadAllResources() {
