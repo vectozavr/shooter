@@ -72,21 +72,6 @@ void Screen::close() {
     _window->close();
 }
 
-
-void Screen::debugText(const std::string& text) {
-    sf::Text t;
-
-    t.setFont(*ResourceManager::loadFont(Consts::THIN_FONT));
-    t.setString(text);
-    t.setCharacterSize(30);
-    t.setFillColor(sf::Color::Black);
-    t.setPosition(10, 50);
-
-    _window->pushGLStates();
-    _window->draw(t);
-    _window->popGLStates();
-}
-
 void Screen::setMouseCursorVisible(bool visible) {
     _window->setMouseCursorVisible(visible);
 }

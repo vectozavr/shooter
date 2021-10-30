@@ -69,6 +69,10 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
                 _triPerSec = camera->buffSize() * Time::fps();
             }
 
+            if (Consts::SHOW_FPS_COUNTER) {
+                screen->drawText(std::to_string(Time::fps()) + " fps", Vec2D(screen->width() - 100, 10), 25, sf::Color(100,100,100));
+            }
+
             printDebugText();
             gui();
         }
@@ -91,8 +95,9 @@ void Engine::exit() {
 }
 
 void Engine::printDebugText() const {
+
     if (_debugText) {
-        std::string str = _name + "\n\n X: " +
+        std::string text = _name + "\n\n X: " +
                           std::to_string((camera->position().x())) + "\n Y: " +
                           std::to_string((camera->position().y())) + "\n Z: " +
                           std::to_string((camera->position().z())) + "\n\n" +
@@ -100,10 +105,19 @@ void Engine::printDebugText() const {
                           std::to_string(screen->height()) + "\t" +
                           std::to_string(Time::fps()) + " fps";
         if(_useOpenGL) {
-            str += "\n Using OpenGL acceleration";
+            text += "\n Using OpenGL acceleration";
         } else {
-            str += "\n" + std::to_string((int) _triPerSec) + " tris/s";
+            text += "\n" + std::to_string((int) _triPerSec) + " tris/s";
         }
-        screen->debugText(str);
+
+        sf::Text t;
+
+        t.setFont(*ResourceManager::loadFont(Consts::THIN_FONT));
+        t.setString(text);
+        t.setCharacterSize(30);
+        t.setFillColor(sf::Color::Black);
+        t.setPosition(screen->width() - 400, 10);
+
+        screen->drawText(t);
     }
 }

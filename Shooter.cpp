@@ -70,7 +70,6 @@ void Shooter::InitNetwork() {
 
 void Shooter::start() {
     // This code executed once in the beginning:
-    setDebugText(false);
     setUpdateWorld(false);
 
     screen->setMouseCursorVisible(true);

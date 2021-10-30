@@ -48,8 +48,6 @@ public:
 
     void close();
 
-    void debugText(const std::string& text);
-
     void setMouseCursorVisible(bool visible);
 
     // OpenGL functions
