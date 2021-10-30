@@ -12,18 +12,12 @@
 
 class Camera final : public Object{
 private:
-    Matrix4x4 _S; // screen space matrix
-    Matrix4x4 _P; // projections matrix
-    Matrix4x4 _V; // camera matrix
-
-    // To accelerate calculations we can use precalculated matrix that does not chance
-    Matrix4x4 _SP; // screen-space-projections matrix
-
     std::vector<std::shared_ptr<Triangle>> _triangles{};
     std::vector<Plane> _clipPlanes{};
-
     bool _ready = false;
     double _aspect = 0;
+
+    Matrix4x4 _SP;
 
 public:
     Camera() : Object(ObjectNameTag("Camera")) {};

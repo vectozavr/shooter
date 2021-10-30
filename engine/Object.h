@@ -34,12 +34,17 @@ private:
 
     std::map<ObjectNameTag, std::weak_ptr<Object>> _attachedObjects;
 
+    Vec3D _position         {0, 0, 0};
     Vec3D _angle            {0, 0, 0};
     Vec3D _angleLeftUpLookAt{0, 0, 0};
 public:
     explicit Object(ObjectNameTag nameTag) : _nameTag(std::move(nameTag)) {};
     explicit Object(const Object& object) : _nameTag(object.name()), _transformMatrix(object.model()) {};
 
+    // TODO: add transform(const Matrix4x4& t)
+    // TODO: add transformRelativePoint(const Vec3D &point, const Matrix4x4& transform)
+    // TODO: implement every transform method using transform() & transformRelativePoint()
+    // TODO: implement rotations using quaternions
     void translate(const Vec3D& dv);
     void translateToPoint(const Vec3D& point);
     void scale(const Vec3D& s);
@@ -55,7 +60,7 @@ public:
     [[nodiscard]] Vec3D left() const        { return _transformMatrix.x(); }
     [[nodiscard]] Vec3D up() const          { return _transformMatrix.y(); }
     [[nodiscard]] Vec3D lookAt() const      { return _transformMatrix.z(); }
-    [[nodiscard]] Vec3D position() const    { return _transformMatrix.w(); }
+    [[nodiscard]] Vec3D position() const    { return _position; }
 
     [[nodiscard]] Vec3D angle() const { return _angle; }
     [[nodiscard]] Vec3D angleLeftUpLookAt() const { return _angleLeftUpLookAt; }
@@ -66,7 +71,7 @@ public:
 
     [[nodiscard]] ObjectNameTag name() const { return _nameTag; }
 
-    [[nodiscard]] Matrix4x4 model() const { return Matrix4x4::Model(_transformMatrix); }
+    [[nodiscard]] Matrix4x4 model() const { return Matrix4x4::Model(_transformMatrix, _position); }
 
     // OpenGL function
     [[nodiscard]] GLfloat* glModel() const;

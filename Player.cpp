@@ -10,7 +10,7 @@ Player::Player(ObjectNameTag name) : RigidBody(name) {
     loadObj(ShooterConsts::CUBE_OBJ, Vec3D{0.5, 1.9, 0.5});
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
     setCollision(true);
-    //setVisible(false);
+    setVisible(false);
 
     Vec3D randColor = Vec3D::Random();
     setColor({static_cast<sf::Uint8>(randColor.x()*255), static_cast<sf::Uint8>(randColor.y()*255), static_cast<sf::Uint8>(randColor.z()*255)});

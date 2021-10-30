@@ -19,19 +19,23 @@ std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mes
     }
 
     // Model transform matrix: translate _tris in the origin of body.
-    Matrix4x4 M = Matrix4x4::Translation(mesh->position());
-    Matrix4x4 VM = _V * M;
+    Matrix4x4 M = mesh->model();
+    Matrix4x4 V = Matrix4x4::View(left(), up(), lookAt(), position());
 
     // We don't want to waste time re-allocating memory every time
     std::vector<Triangle> clippedTriangles, tempBuffer;
 
     for(auto& t : mesh->triangles()) {
 
-        double dot = t.norm().dot((mesh->position() + Vec3D(t[0]) - position()).normalized());
+        Triangle MTriangle = t * M;
+
+        double dot = MTriangle.norm().dot((Vec3D(MTriangle[0]) - position()).normalized());
 
         if(dot > 0) {
             continue;
         }
+
+        Triangle VMTriangle = MTriangle * V;
 
         // It needs to be cleared because it's reused through iterations. Usually it doesn't free memory.
         clippedTriangles.clear();
@@ -39,7 +43,7 @@ std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mes
 
         // In the beginning we need to to translate triangle from world coordinate to our camera system:
         // After that we apply clipping for all planes from _clipPlanes
-        clippedTriangles.emplace_back(t * VM);
+        clippedTriangles.emplace_back(VMTriangle);
         for(auto& plane : _clipPlanes) {
             while(!clippedTriangles.empty()) {
                 std::vector<Triangle> clipResult = plane.clip(clippedTriangles.back());
@@ -78,10 +82,10 @@ void Camera::init(int width, int height, double fov, double ZNear, double ZFar) 
     // We need to init camera only after creation or changing width, height, fov, ZNear or ZFar.
     // Because here we calculate matrix that does not change during the motion of _objects or camera
     _aspect = (double)width / (double)height;
-    _P = Matrix4x4::Projection(fov, _aspect, ZNear, ZFar);
-    _S = Matrix4x4::ScreenSpace(width, height);
+    Matrix4x4 P = Matrix4x4::Projection(fov, _aspect, ZNear, ZFar);
+    Matrix4x4 S = Matrix4x4::ScreenSpace(width, height);
 
-    _SP = _S * _P; // screen-space-projections matrix
+    _SP = S * P; // screen-space-projections matrix
 
     // This is planes for clipping _tris.
     // Motivation: we are not interest in _tris that we cannot see.
@@ -121,8 +125,5 @@ std::vector<std::shared_ptr<Triangle>> Camera::sorted() {
 
 void Camera::clear() {
     // Cleaning all _tris and recalculation of View matrix
-    // That is like preparation for new camera shot: we need to set
-    // the position of camera and insert new cartridge for photo.
     _triangles.clear();
-    _V = Matrix4x4::View(left(), up(), lookAt(), position());
 }
