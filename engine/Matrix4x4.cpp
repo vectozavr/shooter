@@ -222,3 +222,7 @@ Vec3D Matrix4x4::y() const {
 Vec3D Matrix4x4::z() const {
     return Vec3D(_arr[0][2], _arr[1][2],_arr[2][2]);
 }
+
+Vec3D Matrix4x4::w() const {
+    return Vec3D(_arr[0][3], _arr[1][3],_arr[2][3]);
+}

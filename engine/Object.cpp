@@ -4,7 +4,32 @@
 
 #include "Object.h"
 #include "Matrix4x4.h"
-#include "utils/Log.h"
+
+void Object::transform(const Matrix4x4& t) {
+    _transformMatrix = t * _transformMatrix;
+
+    for(auto &[attachedName, attachedObject] : _attachedObjects) {
+        if(!attachedObject.expired()) {
+            attachedObject.lock()->transformRelativePoint(position(), t);
+        }
+    }
+}
+void Object::transformRelativePoint(const Vec3D &point, const Matrix4x4& transform) {
+
+    // translate object in new coordinate system (connected with point)
+    _transformMatrix = Matrix4x4::Translation(position() - point) * _transformMatrix;
+    // transform object in the new coordinate system
+    _transformMatrix = transform*_transformMatrix;
+    // translate object back in self connected coordinate system
+    _position = _transformMatrix.w() + point;
+    _transformMatrix = Matrix4x4::Translation(-_transformMatrix.w()) * _transformMatrix;
+
+    for(auto &[attachedName, attachedObject] : _attachedObjects) {
+        if(!attachedObject.expired()) {
+            attachedObject.lock()->transformRelativePoint(point, transform);
+        }
+    }
+}
 
 void Object::translate(const Vec3D &dv) {
 
@@ -18,81 +43,26 @@ void Object::translate(const Vec3D &dv) {
 }
 
 void Object::scale(const Vec3D &s) {
-
-    _transformMatrix = Matrix4x4::Scale(s)*_transformMatrix;
-
-    for(auto &[attachedName, attachedObject] : _attachedObjects) {
-        if(!attachedObject.expired()) {
-            attachedObject.lock()->scale(s);
-        }
-    }
+    transform(Matrix4x4::Scale(s));
 }
 
 void Object::rotate(const Vec3D &r) {
     _angle = _angle + r;
 
     Matrix4x4 rotationMatrix = Matrix4x4::RotationZ(r.z())*Matrix4x4::RotationY(r.y())*Matrix4x4::RotationX(r.z());
-
-    _transformMatrix = rotationMatrix*_transformMatrix;
-
-    for(auto &[attachedName, attachedObject] : _attachedObjects) {
-        if(!attachedObject.expired()) {
-            attachedObject.lock()->rotateRelativePoint(position(), r);
-        }
-    }
+    transform(rotationMatrix);
 }
 
 void Object::rotate(const Vec3D &v, double rv) {
-    Matrix4x4 rotationMatrix = Matrix4x4::Rotation(v, rv);
-
-    _transformMatrix = rotationMatrix*_transformMatrix;
-
-    for(auto &[attachedName, attachedObject] : _attachedObjects) {
-        if(!attachedObject.expired()) {
-            attachedObject.lock()->rotateRelativePoint(position(), v, rv);
-        }
-    }
+    transform(Matrix4x4::Rotation(v, rv));
 }
 
 void Object::rotateRelativePoint(const Vec3D &s, const Vec3D &r) {
-    _angle = _angle + r;
-
-    // Translate XYZ by vector r1
-    Vec3D r1(position() - s);
-
-    // In translated coordinate system we rotate body and position
-    Matrix4x4 rotationMatrix = Matrix4x4::Rotation(r);
-    Vec3D r2(rotationMatrix*r1);
-
-    _transformMatrix = rotationMatrix*_transformMatrix;
-
-    // After rotation we translate XYZ by vector -r2 and recalculate position
-    _position = s + r2;
-
-    for(auto &[attachedName, attachedObject] : _attachedObjects) {
-        if(!attachedObject.expired()) {
-            attachedObject.lock()->rotateRelativePoint(s, r);
-        }
-    }
+    transformRelativePoint(s, Matrix4x4::Rotation(r));
 }
 
 void Object::rotateRelativePoint(const Vec3D &s, const Vec3D &v, double r) {
-    // Translate XYZ by vector r1
-    Vec3D r1(position() - s);
-    // In translated coordinate system we rotate body and position
-    Matrix4x4 rotationMatrix = Matrix4x4::Rotation(v, r);
-    Vec3D r2 = rotationMatrix*r1;
-
-    _transformMatrix = rotationMatrix*_transformMatrix;
-
-    // After rotation we translate XYZ by vector -r2 and recalculate position
-    _position = s + r2;
-
-    for(auto &[attachedName, attachedObject] : _attachedObjects) {
-        if(!attachedObject.expired()) {
-            attachedObject.lock()->rotateRelativePoint(s, v, r);
-        }
-    }
+    transformRelativePoint(s, Matrix4x4::Rotation(v, r));
 }
 
 void Object::rotateLeft(double rl) {

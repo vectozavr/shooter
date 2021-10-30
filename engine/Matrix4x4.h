@@ -24,6 +24,8 @@ public:
     [[nodiscard]] Vec3D x() const;
     [[nodiscard]] Vec3D y() const;
     [[nodiscard]] Vec3D z() const;
+    [[nodiscard]] Vec3D w() const;
+
 
     // Any useful matrix (static methods)
     Matrix4x4 static Identity();
