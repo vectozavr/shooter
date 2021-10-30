@@ -174,8 +174,14 @@ void PlayerController::update() {
         _player->reload();
     }
 
-    if ((_inRunning || _player->velocity().sqrAbs() > 3) && _player->inCollision() && SoundController::getStatus(SoundTag("walk")) != sf::Sound::Status::Playing) {
-        int soundNum = (int)((double) rand() / RAND_MAX * 5) + 1;
-        SoundController::playSound(SoundTag("walk"), "sound/stonestep" + std::to_string(soundNum) + ".ogg");
+    bool walkSoundPlayed = false;
+    for(int k = 1; k < 7; k++) {
+        if(SoundController::getStatus(SoundTag("walkSound_" + std::to_string(k))) == sf::Sound::Status::Playing) {
+            walkSoundPlayed = true;
+        }
+    }
+    if ((_inRunning || _player->velocity().sqrAbs() > 3) && _player->inCollision() && !walkSoundPlayed) {
+        int soundNum = (int)((double) rand() / RAND_MAX * 6) + 1;
+        SoundController::playSound(SoundTag("walkSound_" + std::to_string(soundNum)), "sound/stonestep" + std::to_string(soundNum) + ".ogg");
     }
 }

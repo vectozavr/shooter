@@ -40,7 +40,7 @@ FireInformation Weapon::fire(std::function<IntersectionInformation(const Vec3D&,
         reload();
     }
 
-    SoundController::playSound(SoundTag("fire"), _fireSound);
+    SoundController::playSound(SoundTag("fireSound_" + name().str()), _fireSound);
     Log::log("Weapon::fire (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
 
     return FireInformation{processFire(std::move(rayCastFunction), position, direction), true};
@@ -58,7 +58,7 @@ void Weapon::reload() {
         _stockAmmo = 0;
     }
 
-    SoundController::playSound(SoundTag("reload"), _reloadSound);
+    SoundController::playSound(SoundTag("reloadSound_" + name().str()), _reloadSound);
     Log::log("Weapon::reload (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
     _lastReloadTime = Time::time();
 }
