@@ -33,6 +33,7 @@ double Interpolation::Cos(double t) {
 }
 
 double Interpolation::Bezier(const Vec2D &p1, const Vec2D &p2, double t) {
+    // TODO: implement bezier curve without finding the root of equation
     t = Interpolation::Linear(t);
 
     double h = Consts::EPS;

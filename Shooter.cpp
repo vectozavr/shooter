@@ -157,7 +157,7 @@ void Shooter::gui() {
     sprite.setTexture(*ResourceManager::loadTexture(ShooterConsts::MAIN_MENU_GUI));
     sprite.setTextureRect(sf::IntRect(243, 3, 9, 9));
     sprite.scale(3, 3);
-    sprite.setPosition(screen->width() / 2.0f - 27.0f/2.0f, screen->height() / 2.0f - 27.0f/2.0f);
+    sprite.setPosition(static_cast<float>(screen->width()) / 2.0f - 27.0f/2.0f, static_cast<float>(screen->height()) / 2.0f - 27.0f/2.0f);
     sprite.setColor(sf::Color(0, 0, 0, 250));
     screen->drawSprite(sprite);
 
