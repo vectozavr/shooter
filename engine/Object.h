@@ -39,7 +39,7 @@ private:
     Vec3D _angleLeftUpLookAt{0, 0, 0};
 public:
     explicit Object(ObjectNameTag nameTag) : _nameTag(std::move(nameTag)) {};
-    explicit Object(const Object& object) : _nameTag(object.name()), _transformMatrix(object.model()) {};
+    Object(const Object& object) : _nameTag(object.name()), _transformMatrix(object.model()) {};
 
     // TODO: add transform(const Matrix4x4& t)
     // TODO: add transformRelativePoint(const Vec3D &point, const Matrix4x4& transform)
@@ -71,7 +71,7 @@ public:
 
     [[nodiscard]] ObjectNameTag name() const { return _nameTag; }
 
-    [[nodiscard]] Matrix4x4 model() const { return Matrix4x4::Model(_transformMatrix, _position); }
+    [[nodiscard]] Matrix4x4 model() const { return Matrix4x4::Translation(_position) * _transformMatrix; }
 
     // OpenGL function
     [[nodiscard]] GLfloat* glModel() const;

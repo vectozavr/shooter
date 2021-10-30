@@ -188,16 +188,6 @@ Matrix4x4 Matrix4x4::ScreenSpace(int width, int height) {
     return s;
 }
 
-Matrix4x4 Matrix4x4::Model(const Matrix4x4 &transformMatrix, const Vec3D &position) {
-    Matrix4x4 M(transformMatrix);
-
-    M._arr[0][3] = position.x();
-    M._arr[1][3] = position.y();
-    M._arr[2][3] = position.z();
-
-    return M;
-}
-
 Matrix4x4 Matrix4x4::View(const Vec3D &left, const Vec3D &up, const Vec3D &lookAt, const Vec3D &eye) {
     Matrix4x4 V = Zero();
 
