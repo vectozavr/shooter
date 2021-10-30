@@ -165,7 +165,7 @@ void Screen::glDrawMesh(GLfloat* geometry, GLfloat* view, GLfloat* model, size_t
     glLoadIdentity();
 
     glLoadMatrixf(view);
-    glMultMatrixf(model);
+    //glMultMatrixf(model);
 
     // Draw the mesh
     glDrawArrays(GL_TRIANGLES, 0, count);
@@ -178,7 +178,6 @@ GLfloat* Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D& c
     std::vector<Triangle>& triangles = mesh->triangles();
 
     auto* geometry = (GLfloat*)malloc(7*3*triangles.size()*sizeof(GLfloat));
-    Matrix4x4 model = mesh->model();
 
     for(int i = 0; i < triangles.size(); i++) {
 
@@ -187,8 +186,11 @@ GLfloat* Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D& c
         double dot[3];
         sf::Color ambientColor[3];
 
+        Triangle MTriangle = triangles[i]*mesh->model();
+
         for(int k = 0; k < 3; k++) {
-            dot[k] = triangles[i].norm().dot((model*Vec3D(triangles[i][k]) - cameraPosition).normalized());
+
+            dot[k] = MTriangle.norm().dot((Vec3D(MTriangle[k]) - cameraPosition).normalized());
 
             sf::Color color = triangles[i].color();
             ambientColor[k] = sf::Color((sf::Uint8)(color.r * (0.3 * std::abs(dot[k]) + 0.7)),
@@ -196,9 +198,9 @@ GLfloat* Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D& c
                                         (sf::Uint8)(color.b * (0.3 * std::abs(dot[k]) + 0.7)),
                                         (sf::Uint8)color.a);
 
-            geometry[stride + 7*k + 0] = (GLfloat)triangles[i][k].x();
-            geometry[stride + 7*k + 1] = (GLfloat)triangles[i][k].y();
-            geometry[stride + 7*k + 2] = (GLfloat)triangles[i][k].z();
+            geometry[stride + 7*k + 0] = (GLfloat)MTriangle[k].x();
+            geometry[stride + 7*k + 1] = (GLfloat)MTriangle[k].y();
+            geometry[stride + 7*k + 2] = (GLfloat)MTriangle[k].z();
 
             geometry[stride + 7*k + 3] = (GLfloat)ambientColor[k].r/255.0f;
             geometry[stride + 7*k + 4] = (GLfloat)ambientColor[k].g/255.0f;
