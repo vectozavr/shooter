@@ -70,11 +70,12 @@ sf::Sound::Status SoundController::getStatus(const SoundTag& soundTag) {
 void SoundController::free() {
     if(_validInstance) {
         for(auto& [soundTag, sound] : _instance->_sounds) {
-            stopSound(soundTag);
+            _instance->_sounds[soundTag].stop();
+            Log::log("SoundController::stopSound(): sound '" + soundTag.str() + "' was stopped");
         }
+        _instance->_sounds.clear();
     }
 
-    _instance->_sounds.clear();
     _validInstance = false;
     delete _instance;
 
