@@ -21,8 +21,7 @@ public:
 
 class Timeline {
 private:
-    // TODO: replace Animation* with shared_ptr<Animation> & check for possible memory leaks
-    std::map<AnimationListTag, std::list<Animation*>> _animations;
+    std::map<AnimationListTag, std::list<std::shared_ptr<Animation>>> _animations;
 
     static Timeline* _instance;
     static bool _validInstance;
@@ -33,7 +32,7 @@ public:
     Timeline& operator=(Timeline&) = delete;
 
     static void update();
-    static void animate(const AnimationListTag& listName, Animation* anim);
+    static void animate(const AnimationListTag& listName, std::shared_ptr<Animation> anim);
 
     static void deleteAllAnimations();
     static void deleteAnimationList(const AnimationListTag& listName);

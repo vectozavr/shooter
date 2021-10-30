@@ -5,6 +5,7 @@
 #include <list>
 #include "Animation.h"
 #include "Timeline.h"
+#include <iostream>
 
 Timeline* Timeline::_instance = nullptr;
 bool Timeline::_validInstance = false;
@@ -14,7 +15,7 @@ void Timeline::init() {
     _validInstance = true;
 }
 
-void Timeline::animate(const AnimationListTag& listName, Animation* anim) {
+void Timeline::animate(const AnimationListTag& listName, std::shared_ptr<Animation> anim) {
     if(!_validInstance) {
         return;
     }
@@ -28,10 +29,6 @@ void Timeline::deleteAllAnimations() {
     }
 
     for (auto& [listName, animationList] : _instance->_animations) {
-        auto it = animationList.begin();
-        while(it != animationList.end()) {
-            delete *(it++);
-        }
         animationList.clear();
     }
     _instance->_animations.clear();
@@ -60,8 +57,8 @@ void Timeline::update() {
     }
 
     for (auto& [listName, animationList] : _instance->_animations) {
-
         if (animationList.empty()) {
+            _instance->_animations.erase(listName);
             continue;
         }
         auto it = animationList.begin();

@@ -263,8 +263,8 @@ void Shooter::addFireTrace(const Vec3D &from, const Vec3D &to) {
     world->addBody(std::make_shared<RigidBody>(Mesh::LineTo(ObjectNameTag(traceName), from, to, 0.05)));
     world->body(ObjectNameTag(traceName))->setCollider(false);
 
-    Timeline::animate(AnimationListTag(traceName + "_fadeOut"), new AColor(world->body(ObjectNameTag(traceName)), {150, 150, 150, 0}));
-    Timeline::animate(AnimationListTag(traceName + "_delete"), new AFunction([this, traceName](){ removeFireTrace(ObjectNameTag(traceName)); }, 1, 2));
+    Timeline::animate(AnimationListTag(traceName + "_fadeOut"), std::make_shared<AColor>(world->body(ObjectNameTag(traceName)), sf::Color{150, 150, 150, 0}));
+    Timeline::animate(AnimationListTag(traceName + "_delete"), std::make_shared<AFunction>([this, traceName](){ removeFireTrace(ObjectNameTag(traceName)); }, 1, 2));
 }
 
 void Shooter::removeFireTrace(const ObjectNameTag& traceName) {
@@ -279,7 +279,7 @@ void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
     world->addBody(std::make_shared<RigidBody>(ObjectNameTag(bonusName), "obj/" + name + ".obj", Vec3D{3, 3, 3}));
     world->body(ObjectNameTag(bonusName))->translateToPoint(position);
     world->body(ObjectNameTag(bonusName))->setCollider(false);
-    Timeline::animate(AnimationListTag(bonusName + "_rotation"), new ARotate(world->body(ObjectNameTag(bonusName)), Vec3D{0, 2*Consts::PI, 0}, 4, Animation::LoopOut::Continue, Animation::InterpolationType::Linear));
+    Timeline::animate(AnimationListTag(bonusName + "_rotation"), std::make_shared<ARotate>(world->body(ObjectNameTag(bonusName)), Vec3D{0, 2*Consts::PI, 0}, 4, Animation::LoopOut::Continue, Animation::InterpolationType::Linear));
 }
 
 void Shooter::removeBonus(const ObjectNameTag &bonusName) {

@@ -44,25 +44,25 @@ void PlayerController::update() {
     std::shared_ptr<Object> camera = _player->attached(ObjectNameTag("Camera"));
     if(camera != nullptr && _inRunning && _player->inCollision()) {
         if (!Timeline::isInAnimList(AnimationListTag("camera_hor_oscil"))) {
-            Timeline::animate(AnimationListTag("camera_hor_oscil"), new ATranslate(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::InterpolationType::Cos));
-            Timeline::animate(AnimationListTag("camera_hor_oscil"), new AWait(0));
-            Timeline::animate(AnimationListTag("camera_hor_oscil"), new ATranslate(camera, camera->left() / 6, 0.3, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_hor_oscil"), std::make_shared<ATranslate>(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_hor_oscil"), std::make_shared<AWait>(0));
+            Timeline::animate(AnimationListTag("camera_hor_oscil"), std::make_shared<ATranslate>(camera, camera->left() / 6, 0.3, Animation::LoopOut::None, Animation::InterpolationType::Cos));
 
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), new AWait(0));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), new AWait(0));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), new AWait(0));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), new ATranslate(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<ATranslate>(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<AWait>(0));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<ATranslate>(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<AWait>(0));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<ATranslate>(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<AWait>(0));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<ATranslate>(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
 
-            Timeline::animate(AnimationListTag("camera_init"), new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.3, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_init"), std::make_shared<ATranslateToPoint>( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.3, Animation::LoopOut::None, Animation::InterpolationType::Cos));
         }
     } else if(camera != nullptr && inRunning_old && !_inRunning) {
         Timeline::deleteAnimationList(AnimationListTag("camera_hor_oscil"));
         Timeline::deleteAnimationList(AnimationListTag("camera_vert_oscil"));
         Timeline::deleteAnimationList(AnimationListTag("camera_init"));
-        Timeline::animate(AnimationListTag("camera_init"), new ATranslateToPoint( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+        Timeline::animate(AnimationListTag("camera_init"), std::make_shared<ATranslateToPoint>( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
     }
 
     // Left and right
