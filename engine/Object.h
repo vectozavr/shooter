@@ -40,8 +40,8 @@ private:
 public:
     explicit Object(ObjectNameTag nameTag) : _nameTag(std::move(nameTag)) {};
     Object(const Object& object) : _nameTag(object.name()), _transformMatrix(object.model()) {};
-    
-    // TODO: implement rotations using quaternions
+
+    // TODO: implement rotations using quaternions (?)
     void transform(const Matrix4x4& t);
     void transformRelativePoint(const Vec3D &point, const Matrix4x4& transform);
     void translate(const Vec3D& dv);

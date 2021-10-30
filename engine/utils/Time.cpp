@@ -4,6 +4,7 @@
 
 #include "Time.h"
 #include "../Consts.h"
+#include "Log.h"
 
 using namespace std::chrono;
 
@@ -13,6 +14,8 @@ bool Time::_validInstance = false;
 void Time::init() {
     _instance = new Time();
     _validInstance = true;
+
+    Log::log("Time::init(): time was initialized");
 }
 
 double Time::time() {
@@ -68,4 +71,6 @@ int Time::fps() {
 void Time::free() {
     _validInstance = false;
     delete _instance;
+
+    Log::log("Time::free(): pointer to 'Time' was freed");
 }

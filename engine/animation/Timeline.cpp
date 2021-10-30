@@ -6,6 +6,7 @@
 #include "Animation.h"
 #include "Timeline.h"
 #include <iostream>
+#include "../utils/Log.h"
 
 Timeline* Timeline::_instance = nullptr;
 bool Timeline::_validInstance = false;
@@ -13,6 +14,8 @@ bool Timeline::_validInstance = false;
 void Timeline::init() {
     _instance = new Timeline();
     _validInstance = true;
+
+    Log::log("Timeline::init(): animation timeline was initialized");
 }
 
 void Timeline::animate(const AnimationListTag& listName, std::shared_ptr<Animation> anim) {
@@ -21,6 +24,8 @@ void Timeline::animate(const AnimationListTag& listName, std::shared_ptr<Animati
     }
 
     _instance->_animations[listName].emplace_back(anim);
+
+    Log::log("Timeline::animate(): add animation in '" + listName.str() + "' list");
 }
 
 void Timeline::deleteAllAnimations() {
@@ -28,10 +33,15 @@ void Timeline::deleteAllAnimations() {
         return;
     }
 
+    int animCounter = 0;
+
     for (auto& [listName, animationList] : _instance->_animations) {
+        animCounter += animationList.size();
         animationList.clear();
     }
     _instance->_animations.clear();
+
+    Log::log("Timeline::deleteAllAnimations(): all " + std::to_string(animCounter) + " animations was deleted" );
 }
 
 void Timeline::deleteAnimationList(const AnimationListTag& listName) {
@@ -39,8 +49,11 @@ void Timeline::deleteAnimationList(const AnimationListTag& listName) {
         return;
     }
 
+    int animCounter = _instance->_animations[listName].size();
     _instance->_animations[listName].clear();
     _instance->_animations.erase(listName);
+
+    Log::log("Timeline::deleteAnimationList(): list '" + listName.str() +"' with " + std::to_string(animCounter) + " animations was deleted" );
 }
 
 [[nodiscard]] bool Timeline::isInAnimList(const AnimationListTag& listName) {
@@ -87,4 +100,6 @@ void Timeline::free() {
     _validInstance = false;
 
     delete _instance;
+
+    Log::log("Timeline::free(): pointer to 'Timeline' was freed");
 }

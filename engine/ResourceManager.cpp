@@ -16,6 +16,8 @@ bool ResourceManager::_validInstance = false;
 void ResourceManager::init() {
     _instance = new ResourceManager();
     _validInstance = true;
+
+    Log::log("ResourceManager::init(): resource manager was initialized");
 }
 
 void ResourceManager::unloadTextures() {
@@ -23,6 +25,9 @@ void ResourceManager::unloadTextures() {
         _texture.second.reset();
     }
     _instance->_textures.clear();
+
+    Log::log("ResourceManager::unloadTextures(): all textures was unloaded");
+
 }
 
 void ResourceManager::unloadSoundBuffers() {
@@ -30,6 +35,8 @@ void ResourceManager::unloadSoundBuffers() {
         _soundBuffer.second.reset();
     }
     _instance->_soundBuffers.clear();
+
+    Log::log("ResourceManager::unloadSoundBuffers(): all soundBuffers was unloaded");
 }
 
 void ResourceManager::unloadFonts() {
@@ -37,10 +44,14 @@ void ResourceManager::unloadFonts() {
         _font.second.reset();
     }
     _instance->_fonts.clear();
+
+    Log::log("ResourceManager::unloadFonts(): all fonts was unloaded");
 }
 
 void ResourceManager::unloadObjects() {
     _instance->_objects.clear();
+
+    Log::log("ResourceManager::unloadObjects(): all objects was unloaded");
 }
 
 void ResourceManager::unloadAllResources() {
@@ -52,12 +63,16 @@ void ResourceManager::unloadAllResources() {
     unloadSoundBuffers();
     unloadFonts();
     unloadObjects();
+
+    Log::log("ResourceManager::unloadAllResources(): all resources was unloaded");
 }
 
 void ResourceManager::free() {
     unloadAllResources();
     _validInstance = false;
     delete _instance;
+
+    Log::log("ResourceManager::free(): pointer to 'ResourceManager' was freed");
 }
 
 std::shared_ptr<sf::Texture> ResourceManager::loadTexture(const std::string& filename) {
@@ -74,8 +89,11 @@ std::shared_ptr<sf::Texture> ResourceManager::loadTexture(const std::string& fil
     // Otherwise - try to load it. If failure - return zero
     std::shared_ptr<sf::Texture> texture(new sf::Texture);
     if (!texture->loadFromFile(filename)) {
+        Log::log("ResourceManager::loadTexture: error with loading texture '" + filename + "'");
         return nullptr;
     }
+
+    Log::log("ResourceManager::loadTexture: texture '" + filename + "' was loaded");
 
     // If success - remember and return texture pointer
     texture->setRepeated(true);
@@ -98,8 +116,11 @@ std::shared_ptr<sf::SoundBuffer> ResourceManager::loadSoundBuffer(const std::str
     // Otherwise - try to load it. If failure - return zero
     std::shared_ptr<sf::SoundBuffer> soundBuffer(new sf::SoundBuffer);
     if (!soundBuffer->loadFromFile(filename)) {
+        Log::log("ResourceManager::loadSoundBuffer: error with loading sound buffer '" + filename + "'");
         return nullptr;
     }
+
+    Log::log("ResourceManager::loadSoundBuffer: sound buffer '" + filename + "' was loaded");
 
     // If success - remember and return sound pointer
     _instance->_soundBuffers.emplace(filename, soundBuffer);
@@ -121,8 +142,11 @@ std::shared_ptr<sf::Font> ResourceManager::loadFont(const std::string& filename)
     // Otherwise - try to load it. If failure - return zero
     std::shared_ptr<sf::Font> font(new sf::Font);
     if (!font->loadFromFile(filename)) {
+        Log::log("ResourceManager::loadFont: error with loading font: '" + filename + "'");
         return nullptr;
     }
+
+    Log::log("ResourceManager::loadFont: font '" + filename + "' was loaded");
 
     // If success - remember and return font pointer
     _instance->_fonts.emplace(filename, font);
@@ -147,7 +171,7 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
 
     std::ifstream file(filename);
     if (!file.is_open()) {
-        Log::log("Mesh::LoadObjects(): cannot load file from " + filename);
+        Log::log("Mesh::LoadObjects(): cannot load file from '" + filename + "'");
         return objects;
     }
 
@@ -203,6 +227,8 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
     tris.clear();
 
     file.close();
+
+    Log::log("Mesh::LoadObjects(): obj '" + filename + "' was loaded");
 
     // If success - remember and return vector of objects pointer
     _instance->_objects.emplace(filename, objects);
