@@ -12,12 +12,11 @@
 #include <memory>
 #include <set>
 
-class ServerUDP
-{
+class ServerUDP {
 protected:
     UDPSocket _socket;
-    double _lastBroadcast;
-    bool _working;
+    double _lastBroadcast = -std::numeric_limits<double>::max();
+    bool _working = false;
 
     bool process();
     bool timeout(sf::Uint16 id);

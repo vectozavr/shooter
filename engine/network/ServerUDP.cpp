@@ -5,11 +5,9 @@
 #include "ServerUDP.h"
 #include "MsgType.h"
 #include "../utils/Log.h"
-#include <cmath>
 
-ServerUDP::ServerUDP() : _lastBroadcast(-std::numeric_limits<double>::max()), _working(false) {
-    // TODO: replace this with lambda:
-    _socket.setTimeoutCallback(std::bind(&ServerUDP::timeout, this, std::placeholders::_1));
+ServerUDP::ServerUDP() {
+    _socket.setTimeoutCallback([this](sf::Uint16 playerId) { return timeout(playerId); });
 }
 
 bool ServerUDP::isWorking() const {
@@ -33,7 +31,7 @@ void ServerUDP::update() {
         return;
     }
 
-    while (process());
+    while (process()) {}
 
     // World state broadcast
     if (Time::time() - _lastBroadcast > 1.0 / Consts::NETWORK_WORLD_UPDATE_RATE) {

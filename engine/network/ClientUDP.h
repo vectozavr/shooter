@@ -9,14 +9,13 @@
 #include "UDPSocket.h"
 #include <memory>
 
-class ClientUDP
-{
+class ClientUDP {
 protected:
     UDPSocket _socket;
-    double _lastBroadcast;
-    bool _working;
-    sf::Uint16 _port;
-    sf::IpAddress _ip;
+    double _lastBroadcast = -std::numeric_limits<double>::max();
+    bool _working = false;
+    sf::Uint16 _port{};
+    sf::IpAddress _ip{};
 
     bool process();
     bool timeout(sf::Uint16 id);

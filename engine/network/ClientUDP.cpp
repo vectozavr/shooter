@@ -10,24 +10,19 @@
 #include "../utils/Log.h"
 #include "../Consts.h"
 
-ClientUDP::ClientUDP() : _lastBroadcast(-std::numeric_limits<double>::max()), _working(false)
-{
-    // TODO: replace this with lambda
-    _socket.setTimeoutCallback(std::bind(&ClientUDP::timeout, this, std::placeholders::_1));
+ClientUDP::ClientUDP() {
+    _socket.setTimeoutCallback([this](sf::Uint16 id) {return ClientUDP::timeout(id); } );
 }
 
-bool ClientUDP::connected() const
-{
+bool ClientUDP::connected() const {
     return _socket.ownId();
 }
 
-bool ClientUDP::isWorking() const
-{
+bool ClientUDP::isWorking() const {
     return _working;
 }
 
-void ClientUDP::connect(sf::IpAddress ip, sf::Uint16 port)
-{
+void ClientUDP::connect(sf::IpAddress ip, sf::Uint16 port) {
     _ip = ip;
     _port = port;
     sf::Packet packet;
@@ -39,12 +34,12 @@ void ClientUDP::connect(sf::IpAddress ip, sf::Uint16 port)
     Log::log("ClientUDP::connect(): connecting to the server...");
 }
 
-void ClientUDP::update()
-{
-    if (!isWorking())
+void ClientUDP::update() {
+    if (!isWorking()) {
         return;
+    }
 
-    while (isWorking() && process());
+    while (isWorking() && process()) {}
 
     // Send new client information to server
     if (Time::time() - _lastBroadcast > 1.0 / Consts::NETWORK_WORLD_UPDATE_RATE && connected()) {
@@ -56,8 +51,7 @@ void ClientUDP::update()
     _socket.update();
 }
 
-void ClientUDP::disconnect()
-{
+void ClientUDP::disconnect() {
     sf::Packet packet;
     packet << MsgType::Disconnect << _socket.ownId();
     _socket.send(packet, _socket.serverId());
@@ -68,30 +62,31 @@ void ClientUDP::disconnect()
     processDisconnected();
 }
 
-bool ClientUDP::timeout(sf::Uint16 id)
-{
+bool ClientUDP::timeout(sf::Uint16 id) {
     Log::log("ClientUDP::timeout(): timeout from the server.");
 
-    if (id != _socket.serverId())
+    if (id != _socket.serverId()) {
         return true;
+    }
     disconnect();
     return false;
 }
 
 // Recive and process message.
 // Returns true, if some message was received.
-bool ClientUDP::process()
-{
+bool ClientUDP::process() {
     sf::Packet packet;
     sf::Uint16 senderId;
     sf::Uint16 targetId;
 
     MsgType type = _socket.receive(packet, senderId);
 
-    if (type == MsgType::Empty)
+    if (type == MsgType::Empty) {
         return false;
-    if (!connected() && type != MsgType::Init)
+    }
+    if (!connected() && type != MsgType::Init) {
         return true;
+    }
 
     switch (type) {
         // here we process any operations based on msg type
@@ -115,8 +110,9 @@ bool ClientUDP::process()
             break;
         case MsgType::Disconnect:
             packet >> targetId;
-            if (targetId == _socket.ownId())
+            if (targetId == _socket.ownId()) {
                 disconnect();
+            }
 
             Log::log("ClientUDP::process(): client Id = " + std::to_string(targetId) + " disconnected from the server");
 
