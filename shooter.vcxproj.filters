@@ -13,15 +13,51 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Исходные файлы\weapon">
+      <UniqueIdentifier>{0882d5d0-3c6b-4bf1-b638-d29f836996c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\engine">
+      <UniqueIdentifier>{9b426b47-01cf-4bcc-a8a0-a99cd596d3f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\engine\animation">
+      <UniqueIdentifier>{a0867a68-434b-4f6e-a462-e10ae78f3457}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\engine\utils">
+      <UniqueIdentifier>{e376bcc3-fc30-45c5-977a-dac4e8805010}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\engine\network">
+      <UniqueIdentifier>{d83e2569-574f-494b-ae1e-cfb8da446856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\engine\physics">
+      <UniqueIdentifier>{ccd70959-35a5-4270-8c85-ee409828e9f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\engine\gui">
+      <UniqueIdentifier>{10343b27-7f9f-4012-8b2e-5ce1218920bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\engine">
+      <UniqueIdentifier>{3f063cbe-7c3d-4778-aec3-5f4686184f07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\weapon">
+      <UniqueIdentifier>{d42a1e65-36fc-4d95-aabd-84437c19fd8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\engine\gui">
+      <UniqueIdentifier>{cf1bc24c-2974-4a9c-9572-009cd13d2050}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\engine\physics">
+      <UniqueIdentifier>{740c71ba-cd6a-4c49-8b29-635c32f22d3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\engine\animation">
+      <UniqueIdentifier>{9fc460cd-0c99-4366-9b43-adc8c1fa0a6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\engine\network">
+      <UniqueIdentifier>{305a3198-17bc-4126-aeff-a600a39cb168}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\engine\utils">
+      <UniqueIdentifier>{2ec2e90f-ff40-460e-b316-975089ed4eb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Bonus.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Client.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
@@ -30,271 +66,277 @@
     <ClCompile Include="PlayerController.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Server.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Shooter.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Camera.cpp">
+    <ClCompile Include="ShooterClient.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Engine.cpp">
+    <ClCompile Include="ShooterServer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Keyboard.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Mesh.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Mouse.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Object.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Plane.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\ResourceManager.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Screen.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\Triangle.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\World.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\utils\Log.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\utils\Time.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\physics\RigidBody.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\network\ClientUDP.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\network\MsgType.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\network\ReliableMsg.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\network\ServerUDP.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\network\UDPConnection.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\network\UDPSocket.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gui\Button.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gui\Window.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\animation\Animation.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\animation\Timeline.cpp">
+    <ClCompile Include="ShooterMsgType.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="weapon\Ak47.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\weapon</Filter>
     </ClCompile>
     <ClCompile Include="weapon\Gun.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\weapon</Filter>
     </ClCompile>
     <ClCompile Include="weapon\Rifle.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\weapon</Filter>
     </ClCompile>
     <ClCompile Include="weapon\Shotgun.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\weapon</Filter>
     </ClCompile>
     <ClCompile Include="weapon\Weapon.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\animation\Animation.cpp">
+      <Filter>Исходные файлы\engine\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\animation\Timeline.cpp">
+      <Filter>Исходные файлы\engine\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\gui\Button.cpp">
+      <Filter>Исходные файлы\engine\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Camera.cpp">
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\network\ClientUDP.cpp">
+      <Filter>Исходные файлы\engine\network</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Engine.cpp">
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Keyboard.cpp">
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\utils\Log.cpp">
+      <Filter>Исходные файлы\engine\utils</Filter>
     </ClCompile>
     <ClCompile Include="engine\Matrix4x4.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\engine</Filter>
     </ClCompile>
-    <ClCompile Include="engine\Point4D.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="engine\Mesh.cpp">
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Mouse.cpp">
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\network\MsgType.cpp">
+      <Filter>Исходные файлы\engine\network</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Object.cpp">
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Plane.cpp">
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\network\ReliableMsg.cpp">
+      <Filter>Исходные файлы\engine\network</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\ResourceManager.cpp">
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\physics\RigidBody.cpp">
+      <Filter>Исходные файлы\engine\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Screen.cpp">
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\network\ServerUDP.cpp">
+      <Filter>Исходные файлы\engine\network</Filter>
     </ClCompile>
     <ClCompile Include="engine\SoundController.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\utils\Time.cpp">
+      <Filter>Исходные файлы\engine\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Triangle.cpp">
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\network\UDPConnection.cpp">
+      <Filter>Исходные файлы\engine\network</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\network\UDPSocket.cpp">
+      <Filter>Исходные файлы\engine\network</Filter>
     </ClCompile>
     <ClCompile Include="engine\Vec2D.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\engine</Filter>
     </ClCompile>
     <ClCompile Include="engine\Vec3D.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Vec4D.cpp">
+      <Filter>Исходные файлы\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\gui\Window.cpp">
+      <Filter>Исходные файлы\engine\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\World.cpp">
+      <Filter>Исходные файлы\engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bonus.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Client.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="PlayerController.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Server.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Shooter.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Camera.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Engine.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Keyboard.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Mesh.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Mouse.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Object.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Plane.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\ResourceManager.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Screen.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\Triangle.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\World.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\utils\Log.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\utils\Time.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\physics\RigidBody.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\physics\Simplex.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\network\ClientUDP.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\network\MsgType.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\network\ReliableMsg.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\network\ServerUDP.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\network\UDPConnection.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\network\UDPSocket.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gui\Button.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gui\Window.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\animation\AColor.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\animation\AFunction.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\animation\Animation.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\animation\ARotate.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\animation\AScale.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\animation\ATranslate.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\animation\ATranslateToPoint.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\animation\AWait.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\animation\Interpolation.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\animation\Timeline.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="weapon\Ak47.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="weapon\Gold_Ak47.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="weapon\Gun.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="weapon\Rifle.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="weapon\Shotgun.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="weapon\Weapon.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="ShooterConsts.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Consts.h">
+    <ClInclude Include="ShooterClient.h">
       <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ShooterServer.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ShooterMsgType.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\animation\AColor.h">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\animation\AFunction.h">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\animation\Animation.h">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\animation\ARotate.h">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\animation\AScale.h">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\animation\ATranslate.h">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\animation\ATranslateToPoint.h">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\animation\AWait.h">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\Ak47.h">
+      <Filter>Файлы заголовков\weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\Gold_Ak47.h">
+      <Filter>Файлы заголовков\weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\Gun.h">
+      <Filter>Файлы заголовков\weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\Rifle.h">
+      <Filter>Файлы заголовков\weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\Shotgun.h">
+      <Filter>Файлы заголовков\weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\gui\Button.h">
+      <Filter>Файлы заголовков\engine\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\gui\Window.h">
+      <Filter>Файлы заголовков\engine\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\animation\Interpolation.h">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\network\ClientUDP.h">
+      <Filter>Файлы заголовков\engine\network</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\network\MsgType.h">
+      <Filter>Файлы заголовков\engine\network</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\network\ReliableMsg.h">
+      <Filter>Файлы заголовков\engine\network</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\network\UDPConnection.h">
+      <Filter>Файлы заголовков\engine\network</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\network\UDPSocket.h">
+      <Filter>Файлы заголовков\engine\network</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\network\ServerUDP.h">
+      <Filter>Файлы заголовков\engine\network</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon\Weapon.h">
+      <Filter>Файлы заголовков\weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Camera.h">
+      <Filter>Файлы заголовков\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Consts.h">
+      <Filter>Файлы заголовков\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Engine.h">
+      <Filter>Файлы заголовков\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Keyboard.h">
+      <Filter>Файлы заголовков\engine</Filter>
     </ClInclude>
     <ClInclude Include="engine\Matrix4x4.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\engine</Filter>
     </ClInclude>
-    <ClInclude Include="engine\Point4D.h">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="engine\Mesh.h">
+      <Filter>Файлы заголовков\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Object.h">
+      <Filter>Файлы заголовков\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Mouse.h">
+      <Filter>Файлы заголовков\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Plane.h">
+      <Filter>Файлы заголовков\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\ResourceManager.h">
+      <Filter>Файлы заголовков\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Screen.h">
+      <Filter>Файлы заголовков\engine</Filter>
     </ClInclude>
     <ClInclude Include="engine\SoundController.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Triangle.h">
+      <Filter>Файлы заголовков\engine</Filter>
     </ClInclude>
     <ClInclude Include="engine\Vec2D.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\engine</Filter>
     </ClInclude>
     <ClInclude Include="engine\Vec3D.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Vec4D.h">
+      <Filter>Файлы заголовков\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utils\Log.h">
+      <Filter>Файлы заголовков\engine\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utils\Time.h">
+      <Filter>Файлы заголовков\engine\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\physics\Simplex.h">
+      <Filter>Файлы заголовков\engine\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\physics\RigidBody.h">
+      <Filter>Файлы заголовков\engine\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\animation\Timeline.h">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\World.h">
+      <Filter>Файлы заголовков\engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

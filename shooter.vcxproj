@@ -159,8 +159,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Bonus.cpp" />
-    <ClCompile Include="Client.cpp" />
     <ClCompile Include="engine\animation\Animation.cpp" />
     <ClCompile Include="engine\animation\Timeline.cpp" />
     <ClCompile Include="engine\Camera.cpp" />
@@ -180,7 +178,6 @@
     <ClCompile Include="engine\Object.cpp" />
     <ClCompile Include="engine\physics\RigidBody.cpp" />
     <ClCompile Include="engine\Plane.cpp" />
-    <ClCompile Include="engine\Point4D.cpp" />
     <ClCompile Include="engine\ResourceManager.cpp" />
     <ClCompile Include="engine\Screen.cpp" />
     <ClCompile Include="engine\SoundController.cpp" />
@@ -189,11 +186,14 @@
     <ClCompile Include="engine\utils\Time.cpp" />
     <ClCompile Include="engine\Vec2D.cpp" />
     <ClCompile Include="engine\Vec3D.cpp" />
+    <ClCompile Include="engine\Vec4D.cpp" />
     <ClCompile Include="engine\World.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerController.cpp" />
-    <ClCompile Include="Server.cpp" />
     <ClCompile Include="Shooter.cpp" />
+    <ClCompile Include="ShooterClient.cpp" />
+    <ClCompile Include="ShooterMsgType.cpp" />
+    <ClCompile Include="ShooterServer.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="weapon\Ak47.cpp" />
     <ClCompile Include="weapon\Gun.cpp" />
@@ -202,8 +202,6 @@
     <ClCompile Include="weapon\Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bonus.h" />
-    <ClInclude Include="Client.h" />
     <ClInclude Include="engine\animation\AColor.h" />
     <ClInclude Include="engine\animation\AFunction.h" />
     <ClInclude Include="engine\animation\Animation.h" />
@@ -233,7 +231,6 @@
     <ClInclude Include="engine\physics\RigidBody.h" />
     <ClInclude Include="engine\physics\Simplex.h" />
     <ClInclude Include="engine\Plane.h" />
-    <ClInclude Include="engine\Point4D.h" />
     <ClInclude Include="engine\ResourceManager.h" />
     <ClInclude Include="engine\Screen.h" />
     <ClInclude Include="engine\SoundController.h" />
@@ -242,12 +239,15 @@
     <ClInclude Include="engine\utils\Time.h" />
     <ClInclude Include="engine\Vec2D.h" />
     <ClInclude Include="engine\Vec3D.h" />
+    <ClInclude Include="engine\Vec4D.h" />
     <ClInclude Include="engine\World.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerController.h" />
-    <ClInclude Include="Server.h" />
     <ClInclude Include="Shooter.h" />
+    <ClInclude Include="ShooterClient.h" />
     <ClInclude Include="ShooterConsts.h" />
+    <ClInclude Include="ShooterMsgType.h" />
+    <ClInclude Include="ShooterServer.h" />
     <ClInclude Include="weapon\Ak47.h" />
     <ClInclude Include="weapon\Gold_Ak47.h" />
     <ClInclude Include="weapon\Gun.h" />

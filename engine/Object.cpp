@@ -2,6 +2,8 @@
 // Created by Иван Ильин on 15.03.2021.
 //
 
+#include <stdexcept>
+
 #include "Object.h"
 #include "Matrix4x4.h"
 
@@ -135,25 +137,25 @@ void Object::unattach(const ObjectNameTag &tag) {
 GLfloat *Object::glView() const {
     auto *v = (GLfloat *) malloc(4 * 4 * sizeof(GLfloat));
 
-    v[0] = -(GLfloat) left().x();
-    v[4] = -(GLfloat) left().y();
-    v[8] = -(GLfloat) left().z();
-    v[12] = (GLfloat) position().dot(left());
+    v[0] = -static_cast<GLfloat>(left().x());
+    v[4] = -static_cast<GLfloat>(left().y());
+    v[8] = -static_cast<GLfloat>(left().z());
+    v[12] = static_cast<GLfloat>(position().dot(left()));
 
-    v[1] = (GLfloat) up().x();
-    v[5] = (GLfloat) up().y();
-    v[9] = (GLfloat) up().z();
-    v[13] = -(GLfloat) position().dot(up());
+    v[1] = static_cast<GLfloat>(up().x());
+    v[5] = static_cast<GLfloat>(up().y());
+    v[9] = static_cast<GLfloat>(up().z());
+    v[13] = -static_cast<GLfloat>(position().dot(up()));
 
-    v[2] = -(GLfloat) lookAt().x();
-    v[6] = -(GLfloat) lookAt().y();
-    v[10] = -(GLfloat) lookAt().z();
-    v[14] = (GLfloat) position().dot(lookAt());
+    v[2] = -static_cast<GLfloat>(lookAt().x());
+    v[6] = -static_cast<GLfloat>(lookAt().y());
+    v[10] = -static_cast<GLfloat>(lookAt().z());
+    v[14] = static_cast<GLfloat>(position().dot(lookAt()));
 
-    v[3] = (GLfloat) 0.0f;
-    v[7] = (GLfloat) 0.0f;
-    v[11] = (GLfloat) 0.0f;
-    v[15] = (GLfloat) 1.0f;
+    v[3] = static_cast<GLfloat>(0.0f);
+    v[7] = static_cast<GLfloat>(0.0f);
+    v[11] = static_cast<GLfloat>(0.0f);
+    v[15] = static_cast<GLfloat>(1.0f);
 
     return v;
 }
@@ -161,25 +163,25 @@ GLfloat *Object::glView() const {
 GLfloat *Object::glModel() const {
     auto *m = (GLfloat *) malloc(4 * 4 * sizeof(GLfloat));
 
-    m[0] = (GLfloat) left().x();
-    m[4] = (GLfloat) up().x();
-    m[8] = (GLfloat) lookAt().x();
-    m[12] = (GLfloat) position().x();
+    m[0] = static_cast<GLfloat>(left().x());
+    m[4] = static_cast<GLfloat>(up().x());
+    m[8] = static_cast<GLfloat>(lookAt().x());
+    m[12] = static_cast<GLfloat>(position().x());
 
-    m[1] = (GLfloat) left().y();
-    m[5] = (GLfloat) up().y();
-    m[9] = (GLfloat) lookAt().y();
-    m[13] = (GLfloat) position().y();
+    m[1] = static_cast<GLfloat>(left().y());
+    m[5] = static_cast<GLfloat>(up().y());
+    m[9] = static_cast<GLfloat>(lookAt().y());
+    m[13] = static_cast<GLfloat>(position().y());
 
-    m[2] = (GLfloat) left().z();
-    m[6] = (GLfloat) up().z();
-    m[10] = (GLfloat) lookAt().z();
-    m[14] = (GLfloat) position().z();
+    m[2] = static_cast<GLfloat>(left().z());
+    m[6] = static_cast<GLfloat>(up().z());
+    m[10] = static_cast<GLfloat>(lookAt().z());
+    m[14] = static_cast<GLfloat>(position().z());
 
-    m[3] = (GLfloat) 0.0f;
-    m[7] = (GLfloat) 0.0f;
-    m[11] = (GLfloat) 0.0f;
-    m[15] = (GLfloat) 1.0f;
+    m[3] = static_cast<GLfloat>(0.0f);
+    m[7] = static_cast<GLfloat>(0.0f);
+    m[11] = static_cast<GLfloat>(0.0f);
+    m[15] = static_cast<GLfloat>(1.0f);
 
     return m;
 }

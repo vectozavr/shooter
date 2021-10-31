@@ -162,7 +162,7 @@ std::pair<bool, Simplex> RigidBody::checkGJKCollision(std::shared_ptr<RigidBody>
     // New direction is towards the origin
     Vec3D direction = -support;
 
-    int iters = 0;
+    size_t iters = 0;
     while (iters++ < size() + obj->size()) {
         support = _support(obj, direction);
 
@@ -210,7 +210,7 @@ CollisionPoint RigidBody::EPA(const Simplex &simplex, std::shared_ptr<RigidBody>
     Vec3D minNormal = normals[minFace].normal;
     double minDistance = std::numeric_limits<double>::max();
 
-    int iters = 0;
+    size_t iters = 0;
     while (minDistance == std::numeric_limits<double>::max() && iters++ < size() + obj->size()) {
         minNormal = normals[minFace].normal;
         minDistance = normals[minFace].distance;

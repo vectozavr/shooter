@@ -73,7 +73,7 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
             }
 
             if (Consts::SHOW_FPS_COUNTER) {
-                screen->drawText(std::to_string(Time::fps()) + " fps", Vec2D(screen->width() - 100, 10), 25,
+                screen->drawText(std::to_string(Time::fps()) + " fps", Vec2D(static_cast<double>(screen->width()) - 100.0, 10.0), 25,
                                  sf::Color(100, 100, 100));
             }
 
@@ -95,7 +95,7 @@ void Engine::exit() {
     Time::free();
 
     Log::log("Engine::exit(): exit engine (" + std::to_string(screen->width()) + "x" +
-            std::to_string(screen->height()) + ") with title '" + screen->title() + "'.");
+             std::to_string(screen->height()) + ") with title '" + screen->title() + "'.");
 }
 
 void Engine::printDebugText() const {
@@ -111,7 +111,7 @@ void Engine::printDebugText() const {
         if (_useOpenGL) {
             text += "\n Using OpenGL acceleration";
         } else {
-            text += "\n" + std::to_string((int) _triPerSec) + " tris/s";
+            text += "\n" + std::to_string( _triPerSec) + " tris/s";
         }
 
         sf::Text t;
@@ -120,7 +120,7 @@ void Engine::printDebugText() const {
         t.setString(text);
         t.setCharacterSize(30);
         t.setFillColor(sf::Color::Black);
-        t.setPosition(screen->width() - 400, 10);
+        t.setPosition(static_cast<float>(screen->width()) - 400.0f, 10.0f);
 
         screen->drawText(t);
     }
