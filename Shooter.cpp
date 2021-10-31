@@ -11,6 +11,10 @@
 #include "engine/animation/Timeline.h"
 #include "ShooterConsts.h"
 #include "engine/SoundController.h"
+#include "engine/animation/AAttractToPoint.h"
+#include "engine/animation/ARotateRelativePoint.h"
+#include "engine/animation/ATranslateToPoint.h"
+#include "engine/animation/AWait.h"
 
 using namespace std;
 

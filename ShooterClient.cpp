@@ -9,6 +9,12 @@
 #include "engine/animation/Timeline.h"
 #include "ShooterMsgType.h"
 
+#include "engine/animation/AAttractToPoint.h"
+#include "engine/animation/ARotateRelativePoint.h"
+#include "engine/animation/ATranslateToPoint.h"
+#include "engine/animation/AWait.h"
+#include "engine/animation/AFunction.h"
+
 void ShooterClient::updatePacket() {
     sf::Packet packet;
     packet << MsgType::ClientUpdate << _player->position().x() << _player->position().y() << _player->position().z()
@@ -109,12 +115,33 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
 
             if (buffId[0] == _socket.ownId()) {
                 _player->addDeath();
-                // respawn
-                _player->translateToPoint(
-                        Vec3D{50.0 * (-1 + 2.0 * (double) rand() / RAND_MAX), 30.0 * (double) rand() / RAND_MAX,
-                              50.0 * (-1 + 2.0 * (double) rand() / RAND_MAX)});
-                _player->reInitWeapons();
-                _player->setFullAbility();
+
+                auto camera = _player->attached(ObjectNameTag("Camera"));
+                _player->unattach(ObjectNameTag("Camera"));
+                _player->translateToPoint(Vec3D{10000});
+                Vec2D cameraOrientation(camera->angleLeftUpLookAt().x(), _player->angle().y());
+                camera->rotateLeft(-cameraOrientation.x());
+                camera->transform(Matrix4x4::Rotation(Vec3D(-_player->angle())));
+
+                Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<ATranslateToPoint>(camera, Vec3D(-20, 30, -100)));
+                Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<ARotateRelativePoint>(camera, Vec3D(0), Vec3D{0, Consts::PI, 0}, 5, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<AWait>(0));
+                Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<AFunction>([this, camera](){
+                    // respawn
+                    _player->translateToPoint(Vec3D{50.0 * (-1 + 2.0 * (double) rand() / RAND_MAX), 30.0 * (double) rand() / RAND_MAX,
+                                                    50.0 * (-1 + 2.0 * (double) rand() / RAND_MAX)});
+                    _player->reInitWeapons();
+                    _player->setFullAbility();
+
+                    camera->rotateToAngle(Vec3D(0));
+                    camera->transform(Matrix4x4::Rotation(Vec3D(_player->angle())));
+                    camera->rotateLeft(_player->headAngle());
+                    camera->translateToPoint(_player->position() + Vec3D{0, 1.8, 0});
+                    _player->attach(camera);
+
+                }, 1, 0.1));
+
+
                 SoundController::playSound(SoundTag("death"), ShooterConsts::DEATH_SOUND);
                 _lastEvent += _player->playerNickName();
             } else {

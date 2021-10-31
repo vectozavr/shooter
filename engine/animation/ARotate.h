@@ -27,7 +27,7 @@ private:
 public:
     ARotate(std::weak_ptr<Object> object, const Vec3D &r, double duration = 1, LoopOut looped = LoopOut::None,
             InterpolationType interpolationType = InterpolationType::Bezier)
-            : Animation(duration, looped, interpolationType), _object(std::move(object)), _rotationValue(r) {
+            : Animation(duration, looped, interpolationType), _object(object), _rotationValue(r) {
     }
 };
 

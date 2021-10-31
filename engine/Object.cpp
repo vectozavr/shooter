@@ -97,6 +97,11 @@ void Object::translateToPoint(const Vec3D &point) {
     translate(point - position());
 }
 
+void Object::attractToPoint(const Vec3D &point, double value) {
+    Vec3D v = (point - position()).normalized();
+    translate(v*value);
+}
+
 void Object::rotateToAngle(const Vec3D &v) {
     rotate(v - _angle);
 }

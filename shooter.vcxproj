@@ -206,6 +206,8 @@
     <ClInclude Include="engine\animation\ATranslate.h" />
     <ClInclude Include="engine\animation\ATranslateToPoint.h" />
     <ClInclude Include="engine\animation\AWait.h" />
+    <ClInclude Include="engine\animation\AAttractToPoint.h" />
+    <ClInclude Include="engine\animation\ARotateRelativePoint.h" />
     <ClInclude Include="engine\animation\Interpolation.h" />
     <ClInclude Include="engine\animation\Timeline.h" />
     <ClInclude Include="engine\Camera.h" />

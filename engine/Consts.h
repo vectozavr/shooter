@@ -16,7 +16,7 @@ namespace Consts {
     const std::string PROJECT_NAME = "engine";
     const bool USE_LOG_FILE = true;
     const bool USE_OPEN_GL = true;
-    const bool SHOW_DEBUG_INFO = false;
+    const bool SHOW_DEBUG_INFO = true;
     const bool SHOW_FPS_COUNTER = true;
 
     const double PI = 3.14159265358979323846264338327950288;
