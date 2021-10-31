@@ -195,10 +195,6 @@
     <ClCompile Include="ShooterMsgType.cpp" />
     <ClCompile Include="ShooterServer.cpp" />
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="weapon\Ak47.cpp" />
-    <ClCompile Include="weapon\Gun.cpp" />
-    <ClCompile Include="weapon\Rifle.cpp" />
-    <ClCompile Include="weapon\Shotgun.cpp" />
     <ClCompile Include="weapon\Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>

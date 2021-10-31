@@ -78,18 +78,6 @@
     <ClCompile Include="ShooterMsgType.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="weapon\Ak47.cpp">
-      <Filter>Исходные файлы\weapon</Filter>
-    </ClCompile>
-    <ClCompile Include="weapon\Gun.cpp">
-      <Filter>Исходные файлы\weapon</Filter>
-    </ClCompile>
-    <ClCompile Include="weapon\Rifle.cpp">
-      <Filter>Исходные файлы\weapon</Filter>
-    </ClCompile>
-    <ClCompile Include="weapon\Shotgun.cpp">
-      <Filter>Исходные файлы\weapon</Filter>
-    </ClCompile>
     <ClCompile Include="weapon\Weapon.cpp">
       <Filter>Исходные файлы\weapon</Filter>
     </ClCompile>
