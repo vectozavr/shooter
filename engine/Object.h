@@ -40,6 +40,13 @@ private:
     std::map<ObjectNameTag, std::weak_ptr<Object>> _attachedObjects;
 
     Vec3D _position{0, 0, 0};
+
+    /*
+     * Take into account when you rotate body,
+     * you change '_angle' only for this particular body,
+     * but not for attached objects! This way during rotation
+     * '_angle' stays the same for all attached objects.
+     */
     Vec3D _angle{0, 0, 0};
     Vec3D _angleLeftUpLookAt{0, 0, 0};
 public:

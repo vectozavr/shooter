@@ -50,7 +50,6 @@ void Object::scale(const Vec3D &s) {
 void Object::rotate(const Vec3D &r) {
     _angle = _angle + r;
 
-    // TODO: when you rotate body _angle is changed only for this body but all attached objects have incorrect _angle
     Matrix4x4 rotationMatrix = Matrix4x4::RotationZ(r.z()) * Matrix4x4::RotationY(r.y()) * Matrix4x4::RotationX(r.z());
     transform(rotationMatrix);
 }
@@ -60,6 +59,8 @@ void Object::rotate(const Vec3D &v, double rv) {
 }
 
 void Object::rotateRelativePoint(const Vec3D &s, const Vec3D &r) {
+    _angle = _angle + r;
+
     transformRelativePoint(s, Matrix4x4::Rotation(r));
 }
 
