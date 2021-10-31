@@ -19,9 +19,6 @@
 
 class Screen final {
 private:
-    int _w{};
-    int _h{};
-
     std::string _title;
 
     sf::Color _background;

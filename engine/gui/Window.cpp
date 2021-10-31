@@ -23,6 +23,7 @@ void Window::update() {
 
     Vec2D mousePos = _mouse->getMousePosition();
     Vec2D dMousePos = mousePos - _prevMousePosition;
+    _prevMousePosition = mousePos;
     _back.setPosition(_back.getPosition() - sf::Vector2f(static_cast<float>(dMousePos.x()) / 30.0f,
                                                          static_cast<float>(dMousePos.y()) / 30.0f));
     bool isPressed = _mouse->isButtonTapped(sf::Mouse::Left);
@@ -44,8 +45,6 @@ void Window::update() {
             _screen->drawText(button.text());
         }
     }
-
-    _prevMousePosition = mousePos;
 }
 
 void Window::setBackgroundTexture(const std::string &texture, double sx, double sy, int w, int h) {

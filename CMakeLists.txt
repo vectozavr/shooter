@@ -16,14 +16,10 @@ add_executable(shooter
         ShooterServer.h
         weapon/Weapon.cpp
         weapon/Weapon.h
-        weapon/Ak47.cpp
         weapon/Ak47.h
-        weapon/Shotgun.cpp
         weapon/Shotgun.h
-        weapon/Gun.cpp
         weapon/Gun.h
         weapon/Gold_Ak47.h
-        weapon/Rifle.cpp
         weapon/Rifle.h
         PlayerController.cpp
         PlayerController.h

@@ -16,6 +16,7 @@ private:
     const std::shared_ptr<Screen> _screen;
 
     std::map<sf::Mouse::Button, double> _tappedButtons;
+
 public:
     explicit Mouse(std::shared_ptr<Screen> screen) : _screen(std::move(screen)) {};
 

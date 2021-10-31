@@ -12,11 +12,11 @@ Vec2D Mouse::getMousePosition() const {
 }
 
 Vec2D Mouse::getMouseDisplacement() const {
-    // TODO: getMouseDisplacement() should return displacement from the previous position but not from the center
     sf::Vector2<int> mousePos = sf::Mouse::getPosition(*_screen->renderWindow());
     sf::Vector2<int> center = sf::Vector2<int>(_screen->width() / 2, _screen->height() / 2);
 
     sf::Vector2<int> displacement = mousePos - center;
+    setMouseInCenter();
     return Vec2D(displacement.x, displacement.y);
 }
 

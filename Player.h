@@ -40,6 +40,8 @@ private:
     std::function<void(std::shared_ptr<Weapon>)> _removeWeaponCallBack;
 
     std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> _rayCastFunction;
+
+    void collisionWithObject(const ObjectNameTag &tag, std::shared_ptr<RigidBody> obj);
 public:
     explicit Player(ObjectNameTag name);
 
@@ -56,23 +58,19 @@ public:
 
     void setFullAbility();
 
-    void initWeapons();
+    void reInitWeapons();
 
     void addWeapon(std::shared_ptr<Weapon> weapon);
 
-    [[nodiscard]] std::pair<double, double> balance() const { return _weapons[_selectedWeapon]->balance(); }
+    void selectNextWeapon();
 
-    void nextWeapon();
-
-    void previousWeapon();
+    void selectPreviousWeapon();
 
     bool fire();
 
     void reload();
 
-    [[nodiscard]] ObjectNameTag weaponName() const { return _weapons[_selectedWeapon]->name(); }
-
-    std::shared_ptr<Weapon> weapon() { return _weapons[_selectedWeapon]; }
+    [[nodiscard]] std::shared_ptr<Weapon> weapon() const { return _weapons[_selectedWeapon]; }
 
     void rotateWeaponsRelativePoint(const Vec3D &point, const Vec3D &v, double val);
 
@@ -116,8 +114,6 @@ public:
     void setHeadAngle(double a) { _headAngle = a; }
 
     [[nodiscard]] double headAngle() const { return _headAngle; };
-
-    void collisionWithObject(const ObjectNameTag &tag, std::shared_ptr<RigidBody> obj);
 
     [[nodiscard]] std::string playerNickName() const { return _nickName; }
 

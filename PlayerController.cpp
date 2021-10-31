@@ -137,7 +137,7 @@ void PlayerController::update() {
         bool shot = _player->fire();
 
         if (shot) {
-            if (_player->weaponName() == ObjectNameTag("shotgun")) {
+            if (_player->weapon()->name() == ObjectNameTag("shotgun")) {
                 _player->addVelocity(-camera->lookAt() * 30 * coeff);
             }
         }
@@ -186,11 +186,11 @@ void PlayerController::update() {
     }
 
     if (_keyboard->isKeyTapped(sf::Keyboard::Right) || _keyboard->isKeyTapped(sf::Keyboard::E)) {
-        _player->nextWeapon();
+        _player->selectNextWeapon();
     }
 
     if (_keyboard->isKeyTapped(sf::Keyboard::Left) || _keyboard->isKeyTapped(sf::Keyboard::Q)) {
-        _player->previousWeapon();
+        _player->selectPreviousWeapon();
     }
 
     if (Keyboard::isKeyPressed(sf::Keyboard::R)) {

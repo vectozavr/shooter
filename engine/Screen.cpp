@@ -15,15 +15,13 @@
 void Screen::open(int screenWidth, int screenHeight, const std::string &name, bool verticalSync, sf::Color background,
                   sf::Uint32 style) {
     _title = name;
-    _w = screenWidth;
-    _h = screenHeight;
     _background = background;
 
     sf::ContextSettings settings;
     settings.depthBits = 24;
     settings.antialiasingLevel = 8;
 
-    _window->create(sf::VideoMode(_w, _h), name, style, settings);
+    _window->create(sf::VideoMode(screenWidth, screenHeight), name, style, settings);
     _window->setVerticalSyncEnabled(verticalSync);
 }
 
@@ -179,7 +177,7 @@ void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t
 }
 
 GLfloat *Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D &cameraPosition) {
-    std::vector<Triangle> &triangles = mesh->triangles();
+    std::vector<Triangle> const &triangles = mesh->triangles();
 
     auto *geometry = (GLfloat *) malloc(7 * 3 * triangles.size() * sizeof(GLfloat));
 

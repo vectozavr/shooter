@@ -28,7 +28,6 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
 
     start();
     camera->init(screenWidth, screenHeight);
-    mouse->setMouseInCenter();
 
     while (screen->isOpen()) {
         screen->clear();

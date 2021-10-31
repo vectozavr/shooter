@@ -32,6 +32,15 @@ struct NextSimplex final {
 
 class RigidBody : public Mesh {
 private:
+    Vec3D _velocity{0, 0, 0};
+    Vec3D _acceleration{0, 0, 0};
+
+    bool _collision = false;
+    bool _isCollider = true;
+
+    bool _inCollision = false;
+    Vec3D _collisionNormal{0, 0, 0};
+
     Vec3D _findFurthestPoint(const Vec3D &direction);
 
     Vec3D _support(std::shared_ptr<RigidBody> obj, const Vec3D &direction);
@@ -52,17 +61,6 @@ private:
     static std::vector<std::pair<size_t, size_t>>
     _addIfUniqueEdge(const std::vector<std::pair<size_t, size_t>> &edges, const std::vector<size_t> &faces, size_t a,
                      size_t b);
-
-protected:
-    Vec3D _velocity{0, 0, 0};
-    Vec3D _acceleration{0, 0, 0};
-
-    bool _collision = false;
-    bool _isCollider = true;
-
-    bool _inCollision = false;
-    Vec3D _collisionNormal{0, 0, 0};
-
 public:
     explicit RigidBody(ObjectNameTag nameTag) : Mesh(std::move(nameTag)) {};
 

@@ -92,7 +92,7 @@ void Shooter::start() {
     player->setAddWeaponCallBack([this](std::shared_ptr<Weapon> weapon) { addWeapon(std::move(weapon)); });
     player->setRemoveWeaponCallBack([this](std::shared_ptr<Weapon> weapon) { removeWeapon(std::move(weapon)); });
 
-    player->initWeapons();
+    player->reInitWeapons();
 
     player->translate(Vec3D{0, 0, 0});
     camera->translateToPoint(player->position() + Vec3D{0, 1.8, 0});
@@ -156,7 +156,6 @@ void Shooter::update() {
     if (inGame) {
         screen->setTitle(ShooterConsts::PROJECT_NAME);
         playerController->update();
-        mouse->setMouseInCenter();
     } else {
         mainMenu.update();
     }
@@ -229,7 +228,7 @@ void Shooter::drawPlayerStats() {
                          Vec2D{xPos, yPos - 15 + height},
                          {255, 168, 168, 100});
 
-    auto balance = player->balance();
+    auto balance = player->weapon()->balance();
 
     screen->drawText(std::to_string((int) balance.first), Vec2D{150, static_cast<double>(screen->height() - 150)}, 100,
                      sf::Color(0, 0, 0, 100));

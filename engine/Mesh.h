@@ -36,8 +36,6 @@ public:
 
     [[nodiscard]] std::vector<Triangle> const &triangles() const { return _tris; }
 
-    [[nodiscard]] std::vector<Triangle> &triangles() { return _tris; }
-
     void setTriangles(const std::vector<Triangle> &t);
 
     [[nodiscard]] size_t size() const { return _tris.size() * 3; }

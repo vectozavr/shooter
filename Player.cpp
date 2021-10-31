@@ -56,7 +56,9 @@ void Player::collisionWithObject(const ObjectNameTag &tag, std::shared_ptr<Rigid
     }
 
     if (tag.str().find("Bonus") != std::string::npos) {
-        _takeBonusCallBack(tag.str());
+        if (_takeBonusCallBack != nullptr) {
+            _takeBonusCallBack(tag.str());
+        }
     }
 }
 
@@ -77,46 +79,62 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, Vec3D{0, 1, 0}, angle().y());
     _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, left(), headAngle());
 
-    _weapons.back()->setAddTraceCallBack(_addTraceCallBack);
+    if (_addTraceCallBack != nullptr) {
+        _weapons.back()->setAddTraceCallBack(_addTraceCallBack);
+    }
 }
 
-void Player::initWeapons() {
+void Player::reInitWeapons() {
 
     if (!_weapons.empty()) {
         for (auto weapon : _weapons) {
             unattach(ObjectNameTag(weapon->name()));
         }
 
-        _removeWeaponCallBack(_weapons[_selectedWeapon]);
+        if (_removeWeaponCallBack != nullptr) {
+            _removeWeaponCallBack(_weapons[_selectedWeapon]);
+        }
         _weapons.clear();
     }
 
     _selectedWeapon = 0;
     addWeapon(std::make_shared<Gun>());
-    _addWeaponCallBack(_weapons[_selectedWeapon]);
+    if (_addWeaponCallBack != nullptr) {
+        _addWeaponCallBack(_weapons[_selectedWeapon]);
+    }
 }
 
-void Player::nextWeapon() {
+void Player::selectNextWeapon() {
     if (_weapons.size() > 1) {
         // change '_selectedWeapon'
-        _removeWeaponCallBack(_weapons[_selectedWeapon]);
+        if (_removeWeaponCallBack != nullptr) {
+            _removeWeaponCallBack(_weapons[_selectedWeapon]);
+        }
+        
         _selectedWeapon = (_selectedWeapon + 1) % _weapons.size();
-        _addWeaponCallBack(_weapons[_selectedWeapon]);
+
+        if (_addWeaponCallBack != nullptr) {
+            _addWeaponCallBack(_weapons[_selectedWeapon]);
+        }
         Log::log("selectedWeapon " + std::to_string(_selectedWeapon));
         SoundController::playSound(SoundTag("changeWeapon"), ShooterConsts::CHANGE_WEAPON_SOUND);
     }
 }
 
-void Player::previousWeapon() {
+void Player::selectPreviousWeapon() {
     if (_weapons.size() > 1) {
         // change '_selectedWeapon'
-        _removeWeaponCallBack(_weapons[_selectedWeapon]);
+        if (_removeWeaponCallBack != nullptr) {
+            _removeWeaponCallBack(_weapons[_selectedWeapon]);
+        }
         if (_selectedWeapon > 0) {
             _selectedWeapon = (_selectedWeapon - 1) % _weapons.size();
         } else {
             _selectedWeapon = _weapons.size() - 1;
         }
-        _addWeaponCallBack(_weapons[_selectedWeapon]);
+        if (_addWeaponCallBack != nullptr) {
+            _addWeaponCallBack(_weapons[_selectedWeapon]);
+        }
         Log::log("selectedWeapon " + std::to_string(_selectedWeapon));
         SoundController::playSound(SoundTag("changeWeapon"), ShooterConsts::CHANGE_WEAPON_SOUND);
     }
@@ -128,7 +146,9 @@ bool Player::fire() {
         auto fireInfo = _weapons[_selectedWeapon]->fire(_rayCastFunction, camera->position(), camera->lookAt());
         for (auto&[damagedPlayerName, damage] : fireInfo.damagedPlayers) {
             sf::Uint16 targetId = std::stoi(damagedPlayerName.str().substr(6));
-            _damagePlayerCallBack(targetId, damage);
+            if (_damagePlayerCallBack != nullptr) {
+                _damagePlayerCallBack(targetId, damage);
+            }
         }
         return fireInfo.shot;
     }

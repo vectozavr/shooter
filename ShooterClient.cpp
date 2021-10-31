@@ -113,7 +113,7 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
                 _player->translateToPoint(
                         Vec3D{50.0 * (-1 + 2.0 * (double) rand() / RAND_MAX), 30.0 * (double) rand() / RAND_MAX,
                               50.0 * (-1 + 2.0 * (double) rand() / RAND_MAX)});
-                _player->initWeapons();
+                _player->reInitWeapons();
                 _player->setFullAbility();
                 SoundController::playSound(SoundTag("death"), ShooterConsts::DEATH_SOUND);
                 _lastEvent += _player->playerNickName();
