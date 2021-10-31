@@ -17,7 +17,7 @@ bool ServerUDP::isWorking() const {
 bool ServerUDP::start(sf::Uint16 port) {
     _working = _socket.bind(port);
 
-    if(_working) {
+    if (_working) {
         Log::log("ServerUDP::start(): the server was successfully started.");
     } else {
         Log::log("ServerUDP::start(): failed to start the server.");

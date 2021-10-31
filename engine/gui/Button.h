@@ -5,9 +5,10 @@
 #ifndef ENGINE_BUTTON_H
 #define ENGINE_BUTTON_H
 
+#include <functional>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include <functional>
 
 struct tPos final {
     const int tx;
@@ -46,22 +47,34 @@ private:
 
 public:
     Button() = default;
-    Button(int x, int y, int width, int height, std::function<void()> click, std::string  text, double sx, double sy, std::string  texture, tPos usualState, tPos selectedState, tPos pressedState, std::string  font, sf::Color textColor);
+
+    Button(int x, int y, int width, int height, std::function<void()> click, std::string text, double sx, double sy,
+           std::string texture, tPos usualState, tPos selectedState, tPos pressedState, std::string font,
+           sf::Color textColor);
 
     void select();
+
     void unSelect();
+
     void press();
 
     void init();
 
     [[nodiscard]] int x() const { return _x; }
+
     [[nodiscard]] int y() const { return _y; }
+
     [[nodiscard]] int w() const { return _w; }
+
     [[nodiscard]] int h() const { return _h; }
+
     [[nodiscard]] double sx() const { return _sx; }
+
     [[nodiscard]] double sy() const { return _sy; }
-    [[nodiscard]] sf::Sprite const& sprite() const { return _button; }
-    [[nodiscard]] sf::Text const& text() const { return _text; }
+
+    [[nodiscard]] sf::Sprite const &sprite() const { return _button; }
+
+    [[nodiscard]] sf::Text const &text() const { return _text; }
 };
 
 

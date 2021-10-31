@@ -2,18 +2,17 @@
 // Created by Иван Ильин on 12.01.2021.
 //
 
-#include "Matrix4x4.h"
-#include <cassert>
-
 #include <cmath>
+
+#include "Matrix4x4.h"
 #include "Consts.h"
 
 Matrix4x4 Matrix4x4::operator*(const Matrix4x4 &matrix4X4) const {
     Matrix4x4 result = Matrix4x4::Zero();
 
-    for(int i = 0; i < 4; i++)
-        for(int j = 0; j < 4; j++)
-            for(int k = 0; k < 4; k++)
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            for (int k = 0; k < 4; k++)
                 result._arr[i][j] += _arr[i][k] * matrix4X4._arr[k][j];
     return result;
 }
@@ -32,13 +31,13 @@ Vec3D Matrix4x4::operator*(const Vec3D &vec) const {
             _arr[0][0] * vec.x() + _arr[0][1] * vec.y() + _arr[0][2] * vec.z(),
             _arr[1][0] * vec.x() + _arr[1][1] * vec.y() + _arr[1][2] * vec.z(),
             _arr[2][0] * vec.x() + _arr[2][1] * vec.y() + _arr[2][2] * vec.z()
-            );
+    );
 }
 
 Matrix4x4 Matrix4x4::Identity() {
     Matrix4x4 result;
 
-    for(int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             if (i == j) {
                 result._arr[j][i] = 1.0;
@@ -54,7 +53,7 @@ Matrix4x4 Matrix4x4::Identity() {
 Matrix4x4 Matrix4x4::Constant(double value) {
     Matrix4x4 result;
 
-    for(int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             result._arr[j][i] = value;
         }
@@ -67,7 +66,7 @@ Matrix4x4 Matrix4x4::Zero() {
     return Matrix4x4::Constant(0);
 }
 
-Matrix4x4 Matrix4x4::Scale(const Vec3D& factor) {
+Matrix4x4 Matrix4x4::Scale(const Vec3D &factor) {
     Matrix4x4 s{};
     s._arr[0][0] = factor.x();
     s._arr[1][1] = factor.y();
@@ -77,7 +76,7 @@ Matrix4x4 Matrix4x4::Scale(const Vec3D& factor) {
     return s;
 }
 
-Matrix4x4 Matrix4x4::Translation(const Vec3D& v) {
+Matrix4x4 Matrix4x4::Translation(const Vec3D &v) {
     Matrix4x4 t{};
 
     t._arr[0][0] = 1.0;
@@ -136,25 +135,25 @@ Matrix4x4 Matrix4x4::RotationZ(double rz) {
     return Rz;
 }
 
-Matrix4x4 Matrix4x4::Rotation(const Vec3D& r) {
+Matrix4x4 Matrix4x4::Rotation(const Vec3D &r) {
     return RotationX(r.x()) * RotationY(r.y()) * RotationZ(r.z());
 }
 
-Matrix4x4 Matrix4x4::Rotation(const Vec3D& v, double rv) {
+Matrix4x4 Matrix4x4::Rotation(const Vec3D &v, double rv) {
     Matrix4x4 Rv{};
     Vec3D nv(v.normalized());
 
-    Rv._arr[0][0] = cos(rv) + (1.0 - cos(rv))*nv.x()*nv.x();
-    Rv._arr[0][1] = (1.0 - cos(rv))*nv.x()*nv.y() - sin(rv)*nv.z();
-    Rv._arr[0][2] = (1.0 - cos(rv))*nv.x()*nv.z() + sin(rv)*nv.y();
+    Rv._arr[0][0] = cos(rv) + (1.0 - cos(rv)) * nv.x() * nv.x();
+    Rv._arr[0][1] = (1.0 - cos(rv)) * nv.x() * nv.y() - sin(rv) * nv.z();
+    Rv._arr[0][2] = (1.0 - cos(rv)) * nv.x() * nv.z() + sin(rv) * nv.y();
 
-    Rv._arr[1][0] = (1.0 - cos(rv))*nv.x()*nv.y() + sin(rv)*nv.z();
-    Rv._arr[1][1] = cos(rv) + (1.0 - cos(rv))*nv.y()*nv.y();
-    Rv._arr[1][2] = (1.0 - cos(rv))*nv.y()*nv.z() - sin(rv)*nv.x();
+    Rv._arr[1][0] = (1.0 - cos(rv)) * nv.x() * nv.y() + sin(rv) * nv.z();
+    Rv._arr[1][1] = cos(rv) + (1.0 - cos(rv)) * nv.y() * nv.y();
+    Rv._arr[1][2] = (1.0 - cos(rv)) * nv.y() * nv.z() - sin(rv) * nv.x();
 
-    Rv._arr[2][0] = (1.0 - cos(rv))*nv.z()*nv.x() - sin(rv)*nv.y();
-    Rv._arr[2][1] = (1.0 - cos(rv))*nv.z()*nv.y() + sin(rv)*nv.x();
-    Rv._arr[2][2] = cos(rv) + (1.0 - cos(rv))*nv.z()*nv.z();
+    Rv._arr[2][0] = (1.0 - cos(rv)) * nv.z() * nv.x() - sin(rv) * nv.y();
+    Rv._arr[2][1] = (1.0 - cos(rv)) * nv.z() * nv.y() + sin(rv) * nv.x();
+    Rv._arr[2][2] = cos(rv) + (1.0 - cos(rv)) * nv.z() * nv.z();
 
     Rv._arr[3][3] = 1.0;
 
@@ -164,10 +163,10 @@ Matrix4x4 Matrix4x4::Rotation(const Vec3D& v, double rv) {
 Matrix4x4 Matrix4x4::Projection(double fov, double aspect, double ZNear, double ZFar) {
     Matrix4x4 p{};
 
-    p._arr[0][0] = 1.0/(tan(Consts::PI*fov*0.5/180.0)*aspect);
-    p._arr[1][1] = 1.0/tan(Consts::PI*fov*0.5/180.0);
-    p._arr[2][2] = ZFar/(ZFar - ZNear);
-    p._arr[2][3] = -ZFar*ZNear/(ZFar - ZNear);
+    p._arr[0][0] = 1.0 / (tan(Consts::PI * fov * 0.5 / 180.0) * aspect);
+    p._arr[1][1] = 1.0 / tan(Consts::PI * fov * 0.5 / 180.0);
+    p._arr[2][2] = ZFar / (ZFar - ZNear);
+    p._arr[2][3] = -ZFar * ZNear / (ZFar - ZNear);
     p._arr[3][2] = 1.0;
 
     return p;
@@ -176,12 +175,12 @@ Matrix4x4 Matrix4x4::Projection(double fov, double aspect, double ZNear, double 
 Matrix4x4 Matrix4x4::ScreenSpace(int width, int height) {
     Matrix4x4 s{};
 
-    s._arr[0][0] = -0.5*width;
-    s._arr[1][1] = -0.5*height;
+    s._arr[0][0] = -0.5 * width;
+    s._arr[1][1] = -0.5 * height;
     s._arr[2][2] = 1.0;
 
-    s._arr[0][3] = 0.5*width;
-    s._arr[1][3] = 0.5*height;
+    s._arr[0][3] = 0.5 * width;
+    s._arr[1][3] = 0.5 * height;
 
     s._arr[3][3] = 1.0;
 
@@ -212,17 +211,17 @@ Matrix4x4 Matrix4x4::View(const Vec3D &left, const Vec3D &up, const Vec3D &lookA
 }
 
 Vec3D Matrix4x4::x() const {
-    return Vec3D(_arr[0][0], _arr[1][0],_arr[2][0]);
+    return Vec3D(_arr[0][0], _arr[1][0], _arr[2][0]);
 }
 
 Vec3D Matrix4x4::y() const {
-    return Vec3D(_arr[0][1], _arr[1][1],_arr[2][1]);
+    return Vec3D(_arr[0][1], _arr[1][1], _arr[2][1]);
 }
 
 Vec3D Matrix4x4::z() const {
-    return Vec3D(_arr[0][2], _arr[1][2],_arr[2][2]);
+    return Vec3D(_arr[0][2], _arr[1][2], _arr[2][2]);
 }
 
 Vec3D Matrix4x4::w() const {
-    return Vec3D(_arr[0][3], _arr[1][3],_arr[2][3]);
+    return Vec3D(_arr[0][3], _arr[1][3], _arr[2][3]);
 }

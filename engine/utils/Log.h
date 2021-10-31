@@ -7,9 +7,8 @@
 
 #include <string>
 
-namespace Log
-{
-    void log(const std::string& message);
+namespace Log {
+    void log(const std::string &message);
 };
 
 

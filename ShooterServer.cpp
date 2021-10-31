@@ -10,11 +10,12 @@ void ShooterServer::broadcast() {
     sf::Packet updatePacket;
     updatePacket << MsgType::ServerUpdate;
 
-    for (auto& [playerId, player] : _players) {
-        updatePacket << playerId << player->position().x() << player->position().y() << player->position().z() << player->health() << player->angle().y() << player->headAngle() << player->playerNickName();
+    for (auto&[playerId, player] : _players) {
+        updatePacket << playerId << player->position().x() << player->position().y() << player->position().z()
+                     << player->health() << player->angle().y() << player->headAngle() << player->playerNickName();
     }
 
-    for (auto& player : _players) {
+    for (auto &player : _players) {
         _socket.send(updatePacket, player.first);
     }
 }
@@ -27,9 +28,10 @@ void ShooterServer::processConnect(sf::Uint16 targetId) {
     // players init
     extraPacket << MsgType::NewClient << targetId;
     sendPacket1 << MsgType::Init << targetId;
-    _players.insert({ targetId, std::make_shared<Player>(ObjectNameTag("Player_" + std::to_string(targetId))) });
-    for (const auto& [playerId, player] : _players) {
-        sendPacket1 << playerId << player->position().x() << player->position().y() << player->position().z() << player->health() << player->kills() << player->deaths();
+    _players.insert({targetId, std::make_shared<Player>(ObjectNameTag("Player_" + std::to_string(targetId)))});
+    for (const auto&[playerId, player] : _players) {
+        sendPacket1 << playerId << player->position().x() << player->position().y() << player->position().z()
+                    << player->health() << player->kills() << player->deaths();
         if (playerId != targetId)
             _socket.sendRely(extraPacket, playerId);
     }
@@ -37,8 +39,8 @@ void ShooterServer::processConnect(sf::Uint16 targetId) {
 
     // bonuses init
     sendPacket2 << MsgType::Custom << ShooterMsgType::InitBonuses;
-    for(auto& [bonusName, bonusInfo] : _bonuses) {
-        if(bonusInfo->onTheMap) {
+    for (auto&[bonusName, bonusInfo] : _bonuses) {
+        if (bonusInfo->onTheMap) {
             sendPacket2 << bonusName << bonusInfo->position.x() << bonusInfo->position.y() << bonusInfo->position.z();
         }
     }
@@ -46,12 +48,12 @@ void ShooterServer::processConnect(sf::Uint16 targetId) {
 
 }
 
-void ShooterServer::processClientUpdate(sf::Uint16 senderId, sf::Packet& packet) {
+void ShooterServer::processClientUpdate(sf::Uint16 senderId, sf::Packet &packet) {
     double buf[5];
     std::string playerName;
 
     packet >> buf[0] >> buf[1] >> buf[2] >> buf[3] >> buf[4] >> playerName;
-    _players.at(senderId)->translateToPoint(Vec3D{ buf[0], buf[1], buf[2] });
+    _players.at(senderId)->translateToPoint(Vec3D{buf[0], buf[1], buf[2]});
     _players.at(senderId)->rotateToAngle(Vec3D{0, buf[3], 0});
     _players.at(senderId)->setHeadAngle(buf[4]);
     _players.at(senderId)->setPlayerNickName(playerName);
@@ -62,13 +64,13 @@ void ShooterServer::processDisconnect(sf::Uint16 senderId) {
 
     sendPacket << MsgType::Disconnect << senderId;
     _players.erase(senderId);
-    for (const auto& player : _players) {
+    for (const auto &player : _players) {
         _socket.sendRely(sendPacket, player.first);
     }
 }
 
 
-void ShooterServer::processCustomPacket(sf::Packet& packet, sf::Uint16 senderId) {
+void ShooterServer::processCustomPacket(sf::Packet &packet, sf::Uint16 senderId) {
     sf::Packet sendPacket;
     double dbuff[10];
     sf::Uint16 targetId;
@@ -83,7 +85,7 @@ void ShooterServer::processCustomPacket(sf::Packet& packet, sf::Uint16 senderId)
         case ShooterMsgType::Damage:
             packet >> targetId >> damage;
             newHealth = _players[targetId]->health() - damage;
-            if(newHealth > 0) {
+            if (newHealth > 0) {
                 _players[targetId]->setHealth(newHealth);
             } else {
                 _players[targetId]->setFullHealth();
@@ -92,15 +94,16 @@ void ShooterServer::processCustomPacket(sf::Packet& packet, sf::Uint16 senderId)
                 _players[senderId]->addKill();
 
                 sendPacket << MsgType::Custom << ShooterMsgType::Kill << targetId << senderId;
-                for (auto& player : _players)
+                for (auto &player : _players)
                     _socket.sendRely(sendPacket, player.first);
             }
             break;
         case ShooterMsgType::FireTrace:
             packet >> dbuff[0] >> dbuff[1] >> dbuff[2] >> dbuff[3] >> dbuff[4] >> dbuff[5];
-            sendPacket << MsgType::Custom << ShooterMsgType::FireTrace << dbuff[0] << dbuff[1] << dbuff[2] << dbuff[3] << dbuff[4] << dbuff[5];
-            for (auto& player : _players) {
-                if(player.first != senderId) {
+            sendPacket << MsgType::Custom << ShooterMsgType::FireTrace << dbuff[0] << dbuff[1] << dbuff[2] << dbuff[3]
+                       << dbuff[4] << dbuff[5];
+            for (auto &player : _players) {
+                if (player.first != senderId) {
                     _socket.send(sendPacket, player.first);
                 }
             }
@@ -109,18 +112,18 @@ void ShooterServer::processCustomPacket(sf::Packet& packet, sf::Uint16 senderId)
         case ShooterMsgType::RemoveBonus:
             packet >> tmp;
 
-            if(tmp.find("Bonus_hill") != std::string::npos) {
+            if (tmp.find("Bonus_hill") != std::string::npos) {
                 _players[senderId]->setFullHealth();
             }
-            if(tmp.find("Bonus_ability") != std::string::npos) {
+            if (tmp.find("Bonus_ability") != std::string::npos) {
                 _players[senderId]->setFullAbility();
             }
 
             _bonuses[tmp] = std::make_shared<BonusInfo>(BonusInfo{_bonuses[tmp]->position, Time::time(), false});
 
             sendPacket << MsgType::Custom << ShooterMsgType::RemoveBonus << tmp;
-            for (auto& player : _players) {
-                if(player.first != senderId) {
+            for (auto &player : _players) {
+                if (player.first != senderId) {
                     _socket.sendRely(sendPacket, player.first);
                 }
             }
@@ -129,15 +132,16 @@ void ShooterServer::processCustomPacket(sf::Packet& packet, sf::Uint16 senderId)
             packet >> tmp;
             sendPacket << MsgType::Custom << ShooterMsgType::ChangeWeapon << senderId << tmp;
 
-            for (auto& player : _players) {
-                if(player.first != senderId) {
+            for (auto &player : _players) {
+                if (player.first != senderId) {
                     _socket.sendRely(sendPacket, player.first);
                 }
             }
 
             break;
         default:
-            Log::log("ShooterServer::processCustomPacket: unknown message type " + std::to_string(static_cast<int>(type)));
+            Log::log("ShooterServer::processCustomPacket: unknown message type " +
+                     std::to_string(static_cast<int>(type)));
             return;
     }
 }
@@ -148,34 +152,49 @@ void ShooterServer::processStop() {
 }
 
 void ShooterServer::generateBonuses() {
-    _bonuses.insert({"Bonus_gun_1", std::make_shared<BonusInfo>(BonusInfo{Vec3D(-10, -2, -15), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
-    _bonuses.insert({"Bonus_gun_2", std::make_shared<BonusInfo>(BonusInfo{Vec3D(10, -2, 15), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_gun_1", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(-10, -2, -15), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_gun_2", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(10, -2, 15), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
 
-    _bonuses.insert({"Bonus_shotgun_1", std::make_shared<BonusInfo>(BonusInfo{Vec3D(-10, 13, -24), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
-    _bonuses.insert({"Bonus_shotgun_2", std::make_shared<BonusInfo>(BonusInfo{Vec3D(10, 13, 24), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_shotgun_1", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(-10, 13, -24), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_shotgun_2", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(10, 13, 24), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
 
-    _bonuses.insert({"Bonus_ak47_1", std::make_shared<BonusInfo>(BonusInfo{Vec3D(-25, 30, 50), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
-    _bonuses.insert({"Bonus_ak47_2", std::make_shared<BonusInfo>(BonusInfo{Vec3D(25, 30, -50), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_ak47_1", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(-25, 30, 50), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_ak47_2", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(25, 30, -50), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
 
-    _bonuses.insert({"Bonus_gold_ak47_1", std::make_shared<BonusInfo>(BonusInfo{Vec3D(-35, 80, 25), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
-    _bonuses.insert({"Bonus_gold_ak47_2", std::make_shared<BonusInfo>(BonusInfo{Vec3D(35, 80, -25), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_gold_ak47_1", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(-35, 80, 25), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_gold_ak47_2", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(35, 80, -25), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
 
-    _bonuses.insert({"Bonus_rifle_1", std::make_shared<BonusInfo>(BonusInfo{Vec3D(40, -2, 45), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
-    _bonuses.insert({"Bonus_rifle_2", std::make_shared<BonusInfo>(BonusInfo{Vec3D(-40, -2, -45), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_rifle_1", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(40, -2, 45), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_rifle_2", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(-40, -2, -45), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
 
-    _bonuses.insert({"Bonus_hill_1", std::make_shared<BonusInfo>(BonusInfo{Vec3D(-40, -2, 45), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
-    _bonuses.insert({"Bonus_hill_2", std::make_shared<BonusInfo>(BonusInfo{Vec3D(40, -2, -45), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_hill_1", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(-40, -2, 45), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_hill_2", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(40, -2, -45), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
 
-    _bonuses.insert({"Bonus_ability_1", std::make_shared<BonusInfo>(BonusInfo{Vec3D(25, 18, -33), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
-    _bonuses.insert({"Bonus_ability_2", std::make_shared<BonusInfo>(BonusInfo{Vec3D(-25, 18, 33), -2*ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_ability_1", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(25, 18, -33), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
+    _bonuses.insert({"Bonus_ability_2", std::make_shared<BonusInfo>(
+            BonusInfo{Vec3D(-25, 18, 33), -2 * ShooterConsts::BONUS_RECHARGE_TIME, true})});
 }
 
 void ShooterServer::updateInfo() {
-    for(auto& [bonusName, bonusInfo] : _bonuses) {
-        if(!bonusInfo->onTheMap && std::abs(Time::time() - bonusInfo->lastTake) > ShooterConsts::BONUS_RECHARGE_TIME) {
+    for (auto&[bonusName, bonusInfo] : _bonuses) {
+        if (!bonusInfo->onTheMap && std::abs(Time::time() - bonusInfo->lastTake) > ShooterConsts::BONUS_RECHARGE_TIME) {
             sf::Packet sendPacket;
-            sendPacket << MsgType::Custom << ShooterMsgType::AddBonus << bonusName << bonusInfo->position.x() << bonusInfo->position.y() << bonusInfo->position.z();
-            for (const auto& player : _players) {
+            sendPacket << MsgType::Custom << ShooterMsgType::AddBonus << bonusName << bonusInfo->position.x()
+                       << bonusInfo->position.y() << bonusInfo->position.z();
+            for (const auto &player : _players) {
                 _socket.sendRely(sendPacket, player.first);
             }
             bonusInfo = std::make_shared<BonusInfo>(BonusInfo{bonusInfo->position, bonusInfo->lastTake, true});

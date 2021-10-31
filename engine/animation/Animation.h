@@ -41,8 +41,10 @@ private:
 
     // You should override this method for your particular animation
     virtual void update() = 0;
+
 public:
     Animation(double duration, LoopOut looped, InterpolationType intType, bool _waitFor = false);
+
     virtual ~Animation() = default;
 
     [[nodiscard]] bool waitFor() const { return _waitFor; }
@@ -50,8 +52,10 @@ public:
     bool updateState();
 
     [[nodiscard]] double progress() const { return _progress; }
+
     [[nodiscard]] double dprogress() const { return _dprogress; }
-    void stop() { _finished = true;}
+
+    void stop() { _finished = true; }
 };
 
 #endif //INC_3DZAVR_ANIMATION_H

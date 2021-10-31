@@ -10,7 +10,10 @@
 class Shotgun final : public Weapon {
 public:
     explicit Shotgun();
-    std::map<ObjectNameTag, double> processFire(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction) override;
+
+    std::map<ObjectNameTag, double>
+    processFire(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction,
+                const Vec3D &position, const Vec3D &direction) override;
 };
 
 

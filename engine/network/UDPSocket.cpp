@@ -2,9 +2,10 @@
 // Created by Neirokan on 30.04.2020
 //
 
+#include <algorithm>
+
 #include "UDPSocket.h"
 #include "../utils/Time.h"
-#include <algorithm>
 #include "../Consts.h"
 
 UDPSocket::UDPSocket() : _ownId(0), _nextRelyMsgId(0) {
@@ -12,7 +13,7 @@ UDPSocket::UDPSocket() : _ownId(0), _nextRelyMsgId(0) {
 }
 
 void UDPSocket::addConnection(sf::Uint16 id, sf::IpAddress ip, sf::Uint16 port) {
-    _connections.insert({ id, UDPConnection(id, ip, port) });
+    _connections.insert({id, UDPConnection(id, ip, port)});
 }
 
 void UDPSocket::removeConnection(sf::Uint16 id) {
@@ -54,28 +55,28 @@ sf::Uint16 UDPSocket::serverId() const {
     return _serverId;
 }
 
-void UDPSocket::sendRely(const sf::Packet& packet, const sf::IpAddress& ip, sf::Uint16 port) {
+void UDPSocket::sendRely(const sf::Packet &packet, const sf::IpAddress &ip, sf::Uint16 port) {
     sf::Packet finalPacket;
     finalPacket << _ownId << true << _nextRelyMsgId;
     finalPacket.append(packet.getData(), packet.getDataSize());
-    _relyPackets.insert({ _nextRelyMsgId++, ReliableMsg(finalPacket, ip, port) });
+    _relyPackets.insert({_nextRelyMsgId++, ReliableMsg(finalPacket, ip, port)});
 }
 
-void UDPSocket::sendRely(const sf::Packet& packet, sf::Uint16 id) {
+void UDPSocket::sendRely(const sf::Packet &packet, sf::Uint16 id) {
     if (!_connections.count(id)) {
         return;
     }
     this->sendRely(packet, _connections.at(id).ip(), _connections.at(id).port());
 }
 
-void UDPSocket::send(const sf::Packet& packet, const sf::IpAddress& ip, sf::Uint16 port) {
+void UDPSocket::send(const sf::Packet &packet, const sf::IpAddress &ip, sf::Uint16 port) {
     sf::Packet finalPacket;
     finalPacket << _ownId << false << _serverId;
     finalPacket.append(packet.getData(), packet.getDataSize());
     _socket.send(finalPacket, ip, port);
 }
 
-void UDPSocket::send(const sf::Packet& packet, sf::Uint16 id) {
+void UDPSocket::send(const sf::Packet &packet, sf::Uint16 id) {
     if (!_connections.count(id)) {
         return;
     }
@@ -111,7 +112,7 @@ void UDPSocket::update() {
     }
 }
 
-MsgType UDPSocket::receive(sf::Packet& packet, sf::Uint16& senderId) {
+MsgType UDPSocket::receive(sf::Packet &packet, sf::Uint16 &senderId) {
     // Receive message
     sf::IpAddress ip;
     sf::Uint16 port;
@@ -155,10 +156,11 @@ MsgType UDPSocket::receive(sf::Packet& packet, sf::Uint16& senderId) {
                 }
             }
         }
-        _connections.insert({ senderId, UDPConnection(senderId, ip, port) });
+        _connections.insert({senderId, UDPConnection(senderId, ip, port)});
     }
 
-    if (!_connections.count(senderId) || !_connections.at(senderId).same(ip, port) || reply && confirmed(msgId, senderId)) {
+    if (!_connections.count(senderId) || !_connections.at(senderId).same(ip, port) ||
+        reply && confirmed(msgId, senderId)) {
         return MsgType::Error;
     }
     return type;

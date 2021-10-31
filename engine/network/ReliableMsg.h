@@ -16,10 +16,11 @@ private:
     double lastTry;
 
 public:
-    ReliableMsg(sf::Packet& packet, sf::IpAddress address, sf::Uint16 port);
-    ReliableMsg(const ReliableMsg& msg);
+    ReliableMsg(sf::Packet &packet, sf::IpAddress address, sf::Uint16 port);
 
-    bool trySend(sf::UdpSocket& socket);
+    ReliableMsg(const ReliableMsg &msg);
+
+    bool trySend(sf::UdpSocket &socket);
 };
 
 

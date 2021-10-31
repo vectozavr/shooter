@@ -19,29 +19,36 @@ protected:
     bool _working = false;
 
     bool process();
+
     bool timeout(sf::Uint16 id);
 
     std::set<sf::Uint16> _clients{};
 public:
     explicit ServerUDP();
+
     [[nodiscard]] bool isWorking() const;
+
     bool start(sf::Uint16 port);
+
     void stop();
+
     void update();
 
-    virtual void updateInfo(){};
+    virtual void updateInfo() {};
 
     // virtual functions
-    virtual void broadcast(){};
+    virtual void broadcast() {};
 
     // here you have to send Init message _back to 'targetId' and send NewClient message to all '_clients'
-    virtual void processConnect(sf::Uint16 senderId){};
-    virtual void processClientUpdate(sf::Uint16 senderId, sf::Packet& packet){};
-    virtual void processDisconnect(sf::Uint16 senderId){};
+    virtual void processConnect(sf::Uint16 senderId) {};
 
-    virtual void processCustomPacket(sf::Packet& packet, sf::Uint16 senderId){};
+    virtual void processClientUpdate(sf::Uint16 senderId, sf::Packet &packet) {};
 
-    virtual void processStop(){};
+    virtual void processDisconnect(sf::Uint16 senderId) {};
+
+    virtual void processCustomPacket(sf::Packet &packet, sf::Uint16 senderId) {};
+
+    virtual void processStop() {};
 
     virtual ~ServerUDP();
 };

@@ -7,8 +7,7 @@
 
 #include <SFML/Network.hpp>
 
-enum class MsgType
-{
+enum class MsgType {
     // internal messages
     Empty,        // Empty message (there are no message)
     Error,        // Error message (something went wrong)
@@ -26,8 +25,9 @@ enum class MsgType
     Custom,
 };
 
-sf::Packet& operator<<(sf::Packet& packet, MsgType type);
-sf::Packet& operator>>(sf::Packet& packet, MsgType& type);
+sf::Packet &operator<<(sf::Packet &packet, MsgType type);
+
+sf::Packet &operator>>(sf::Packet &packet, MsgType &type);
 
 
 #endif //INC_3DZAVR_MSGTYPE_H

@@ -4,19 +4,21 @@
 
 #include "Animation.h"
 
-Animation::Animation(double duration, Animation::LoopOut looped, Animation::InterpolationType intType, bool waitFor) : _duration(duration), _looped(looped), _intType(intType), _waitFor(waitFor) {
+Animation::Animation(double duration, Animation::LoopOut looped, Animation::InterpolationType intType, bool waitFor)
+        : _duration(duration), _looped(looped), _intType(intType), _waitFor(waitFor) {
 }
 
 bool Animation::updateState() {
-    if(_finished || std::abs(_duration) < Consts::EPS) {
+    if (_finished || std::abs(_duration) < Consts::EPS) {
+        _finished = true;
         return false;
     }
 
     // linear normalized time:
-    _dtime = Time::deltaTime()/_duration;
+    _dtime = Time::deltaTime() / _duration;
     _time += _dtime;
 
-    if(_looped == LoopOut::Continue && _time > 0.5) {
+    if (_looped == LoopOut::Continue && _time > 0.5) {
         _time = 0.5;
     }
 
@@ -38,7 +40,8 @@ bool Animation::updateState() {
             _dprogress = Interpolation::dCos(_time, _dtime);
             break;
         default:
-            throw std::logic_error{"Animation::updateState: unknown interpolation type " + std::to_string(static_cast<int>(_intType))};
+            throw std::logic_error{
+                    "Animation::updateState: unknown interpolation type " + std::to_string(static_cast<int>(_intType))};
     }
 
     update();

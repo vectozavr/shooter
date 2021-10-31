@@ -24,8 +24,8 @@ void Shooter::InitNetwork() {
     std::ifstream connectFile("connect.txt", std::ifstream::in);
 
     // If failed to read client settings
-    if (!connectFile.is_open() || !(connectFile >> clientIp >> clientPort >> playerName) || sf::IpAddress(clientIp) == sf::IpAddress::None)
-    {
+    if (!connectFile.is_open() || !(connectFile >> clientIp >> clientPort >> playerName) ||
+        sf::IpAddress(clientIp) == sf::IpAddress::None) {
         connectFile.close();
         // Create file and write default settings
         clientIp = "127.0.0.1";
@@ -39,8 +39,7 @@ void Shooter::InitNetwork() {
 
     // If failed to read server settings
     connectFile.open("server.txt", std::ifstream::in);
-    if (!connectFile.is_open() || !(connectFile >> serverPort))
-    {
+    if (!connectFile.is_open() || !(connectFile >> serverPort)) {
         connectFile.close();
         // Create file and write default settings
         serverPort = 54000;
@@ -52,7 +51,7 @@ void Shooter::InitNetwork() {
 
     if (clientIp == sf::IpAddress::LocalHost) {
         server->start(serverPort);
-        if(server->isWorking())
+        if (server->isWorking())
             server->generateBonuses();
     }
 
@@ -60,12 +59,14 @@ void Shooter::InitNetwork() {
     player->setPlayerNickName(playerName);
 
     // TODO: encapsulate call backs inside ShooterClient
-    client->setSpawnPlayerCallBack([this](sf::Uint16 id){ spawnPlayer(id); });
-    client->setRemovePlayerCallBack([this](sf::Uint16 id){ removePlayer(id); });
-    client->setAddFireTraceCallBack([this](const Vec3D& from, const Vec3D& to){ addFireTrace(from, to); });
-    client->setAddBonusCallBack([this](const std::string& bonusName, const Vec3D& position){ addBonus(bonusName, position); });
-    client->setRemoveBonusCallBack([this](const ObjectNameTag& bonusName){ removeBonus(bonusName); });
-    client->setChangeEnemyWeaponCallBack([this](const std::string& weaponName, sf::Uint16 id){ changeEnemyWeapon(weaponName, id); });
+    client->setSpawnPlayerCallBack([this](sf::Uint16 id) { spawnPlayer(id); });
+    client->setRemovePlayerCallBack([this](sf::Uint16 id) { removePlayer(id); });
+    client->setAddFireTraceCallBack([this](const Vec3D &from, const Vec3D &to) { addFireTrace(from, to); });
+    client->setAddBonusCallBack(
+            [this](const std::string &bonusName, const Vec3D &position) { addBonus(bonusName, position); });
+    client->setRemoveBonusCallBack([this](const ObjectNameTag &bonusName) { removeBonus(bonusName); });
+    client->setChangeEnemyWeaponCallBack(
+            [this](const std::string &weaponName, sf::Uint16 id) { changeEnemyWeapon(weaponName, id); });
 }
 
 void Shooter::start() {
@@ -79,12 +80,17 @@ void Shooter::start() {
     player->scale(Vec3D(3, 1, 3));
 
     // TODO: encapsulate call backs inside Player
-    player->setAddTraceCallBack([this](const Vec3D& from, const Vec3D& to){ client->addTrace(from, to); addFireTrace(from, to); });
-    player->setDamagePlayerCallBack([this] (sf::Uint16 targetId, double damage) { client->damagePlayer(targetId, damage); });
-    player->setRayCastFunction([this](const Vec3D& from, const Vec3D& to) { return world->rayCast(from, to, "Player Weapon"); });
-    player->setTakeBonusCallBack([this] (const string& bonusName) { client->takeBonus(bonusName); });
-    player->setAddWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ addWeapon(std::move(weapon)); });
-    player->setRemoveWeaponCallBack([this](std::shared_ptr<Weapon> weapon){ removeWeapon(std::move(weapon)); });
+    player->setAddTraceCallBack([this](const Vec3D &from, const Vec3D &to) {
+        client->addTrace(from, to);
+        addFireTrace(from, to);
+    });
+    player->setDamagePlayerCallBack(
+            [this](sf::Uint16 targetId, double damage) { client->damagePlayer(targetId, damage); });
+    player->setRayCastFunction(
+            [this](const Vec3D &from, const Vec3D &to) { return world->rayCast(from, to, "Player Weapon"); });
+    player->setTakeBonusCallBack([this](const string &bonusName) { client->takeBonus(bonusName); });
+    player->setAddWeaponCallBack([this](std::shared_ptr<Weapon> weapon) { addWeapon(std::move(weapon)); });
+    player->setRemoveWeaponCallBack([this](std::shared_ptr<Weapon> weapon) { removeWeapon(std::move(weapon)); });
 
     player->initWeapons();
 
@@ -112,10 +118,23 @@ void Shooter::start() {
     mainMenu.setTitle("Main menu");
     mainMenu.setBackgroundTexture(ShooterConsts::MAIN_MENU_BACK, 1.1, 1.1, screen->width(), screen->height());
 
-    mainMenu.addButton(screen->width()/2, 200, 200, 20, [this] () { this->play(); SoundController::playSound(SoundTag("click"), ShooterConsts::CLICK_SOUND);}, "Server: " + client->serverIp().toString(), 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
-    mainMenu.addButton(screen->width()/2, 350, 200, 20, [this] () { this->player->translateToPoint(Vec3D{0, 0, 0}); this->player->setVelocity({}); this->play(); SoundController::playSound(SoundTag("click"), ShooterConsts::CLICK_SOUND);}, "Respawn", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
+    mainMenu.addButton(screen->width() / 2, 200, 200, 20, [this]() {
+                           this->play();
+                           SoundController::playSound(SoundTag("click"), ShooterConsts::CLICK_SOUND);
+                       }, "Server: " + client->serverIp().toString(), 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46},
+                       Consts::MEDIUM_FONT, {255, 255, 255});
+    mainMenu.addButton(screen->width() / 2, 350, 200, 20, [this]() {
+        this->player->translateToPoint(Vec3D{0, 0, 0});
+        this->player->setVelocity({});
+        this->play();
+        SoundController::playSound(SoundTag("click"), ShooterConsts::CLICK_SOUND);
+    }, "Respawn", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
 
-    mainMenu.addButton(screen->width()/2, 500, 200, 20, [this] () { client->disconnect(); server->stop(); this->exit();}, "Exit", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
+    mainMenu.addButton(screen->width() / 2, 500, 200, 20, [this]() {
+        client->disconnect();
+        server->stop();
+        this->exit();
+    }, "Exit", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
 }
 
 void Shooter::update() {
@@ -129,12 +148,12 @@ void Shooter::update() {
         return;
     }
 
-    if(keyboard->isKeyTapped(sf::Keyboard::Escape)) {
+    if (keyboard->isKeyTapped(sf::Keyboard::Escape)) {
         inGame = !inGame;
         screen->setMouseCursorVisible(!inGame);
     }
 
-    if(inGame) {
+    if (inGame) {
         screen->setTitle(ShooterConsts::PROJECT_NAME);
         playerController->update();
         mouse->setMouseInCenter();
@@ -145,7 +164,7 @@ void Shooter::update() {
     setUpdateWorld(inGame);
 
     // background sounds and music control
-    if(SoundController::getStatus(SoundTag("background")) != sf::Sound::Status::Playing) {
+    if (SoundController::getStatus(SoundTag("background")) != sf::Sound::Status::Playing) {
         SoundController::playSound(SoundTag("background"), ShooterConsts::BACK_NOISE);
     }
 }
@@ -156,7 +175,8 @@ void Shooter::gui() {
     sprite.setTexture(*ResourceManager::loadTexture(ShooterConsts::MAIN_MENU_GUI));
     sprite.setTextureRect(sf::IntRect(243, 3, 9, 9));
     sprite.scale(3, 3);
-    sprite.setPosition(static_cast<float>(screen->width()) / 2.0f - 27.0f/2.0f, static_cast<float>(screen->height()) / 2.0f - 27.0f/2.0f);
+    sprite.setPosition(static_cast<float>(screen->width()) / 2.0f - 27.0f / 2.0f,
+                       static_cast<float>(screen->height()) / 2.0f - 27.0f / 2.0f);
     sprite.setColor(sf::Color(0, 0, 0, 250));
     screen->drawSprite(sprite);
 
@@ -168,20 +188,21 @@ void Shooter::gui() {
 void Shooter::drawStatsTable() {
     int i = 1;
 
-    screen->drawText(client->lastEvent(),Vec2D{10, 10},25, sf::Color(0, 0, 0, 100));
+    screen->drawText(client->lastEvent(), Vec2D{10, 10}, 25, sf::Color(0, 0, 0, 100));
 
     vector<shared_ptr<Player>> allPlayers;
     allPlayers.push_back(player);
-    for(auto& [playerId, player] : client->players())
+    for (auto&[playerId, player] : client->players())
         allPlayers.push_back(player);
 
-    std::sort(allPlayers.begin(), allPlayers.end(), [](std::shared_ptr<Player> p1, std::shared_ptr<Player> p2){
+    std::sort(allPlayers.begin(), allPlayers.end(), [](std::shared_ptr<Player> p1, std::shared_ptr<Player> p2) {
         return p1->kills() - p1->deaths() > p2->kills() - p2->deaths();
-    } );
+    });
 
-    for(auto& p : allPlayers) {
-        screen->drawText(std::to_string(i) + "\t" + p->playerNickName() + "\t" + std::to_string(p->kills()) + " / " + std::to_string(p->deaths()),
-                         Vec2D{10, 15 + 35.0*i}, 25, sf::Color(0, 0, 0, 150));
+    for (auto &p : allPlayers) {
+        screen->drawText(std::to_string(i) + "\t" + p->playerNickName() + "\t" + std::to_string(p->kills()) + " / " +
+                         std::to_string(p->deaths()),
+                         Vec2D{10, 15 + 35.0 * i}, 25, sf::Color(0, 0, 0, 150));
         i++;
     }
 }
@@ -191,25 +212,29 @@ void Shooter::drawPlayerStats() {
     double xPos = 10;
     double yPos = screen->height() - 20;
 
-    int width = screen->width()/2 - 20;
+    int width = screen->width() / 2 - 20;
     int height = 10;
 
     screen->drawTetragon(Vec2D{xPos, yPos},
                          Vec2D{xPos + width * player->health() / ShooterConsts::HEALTH_MAX, yPos},
                          Vec2D{xPos + width * player->health() / ShooterConsts::HEALTH_MAX, yPos + height},
                          Vec2D{xPos, yPos + height},
-                         { static_cast<sf::Uint8>((ShooterConsts::HEALTH_MAX - player->health())/ShooterConsts::HEALTH_MAX * 255), static_cast<sf::Uint8>(player->health() * 255 / ShooterConsts::HEALTH_MAX), 0, 100 });
+                         {static_cast<sf::Uint8>((ShooterConsts::HEALTH_MAX - player->health()) /
+                                                 ShooterConsts::HEALTH_MAX * 255),
+                          static_cast<sf::Uint8>(player->health() * 255 / ShooterConsts::HEALTH_MAX), 0, 100});
 
     screen->drawTetragon(Vec2D{xPos, yPos - 15},
                          Vec2D{xPos + width * player->ability() / ShooterConsts::ABILITY_MAX, yPos - 15},
                          Vec2D{xPos + width * player->ability() / ShooterConsts::ABILITY_MAX, yPos - 15 + height},
                          Vec2D{xPos, yPos - 15 + height},
-                         { 255, 168, 168, 100 });
+                         {255, 168, 168, 100});
 
     auto balance = player->balance();
 
-    screen->drawText(std::to_string((int)balance.first), Vec2D{150, static_cast<double>(screen->height() - 150)}, 100, sf::Color(0, 0, 0, 100));
-    screen->drawText(std::to_string((int)balance.second), Vec2D{50, static_cast<double>(screen->height() - 100)}, 50, sf::Color(0, 0, 0, 70));
+    screen->drawText(std::to_string((int) balance.first), Vec2D{150, static_cast<double>(screen->height() - 150)}, 100,
+                     sf::Color(0, 0, 0, 100));
+    screen->drawText(std::to_string((int) balance.second), Vec2D{50, static_cast<double>(screen->height() - 100)}, 50,
+                     sf::Color(0, 0, 0, 70));
 }
 
 void Shooter::play() {
@@ -263,23 +288,28 @@ void Shooter::addFireTrace(const Vec3D &from, const Vec3D &to) {
     world->addBody(std::make_shared<RigidBody>(Mesh::LineTo(ObjectNameTag(traceName), from, to, 0.05)));
     world->body(ObjectNameTag(traceName))->setCollider(false);
 
-    Timeline::animate(AnimationListTag(traceName + "_fadeOut"), std::make_shared<AColor>(world->body(ObjectNameTag(traceName)), sf::Color{150, 150, 150, 0}));
-    Timeline::animate(AnimationListTag(traceName + "_delete"), std::make_shared<AFunction>([this, traceName](){ removeFireTrace(ObjectNameTag(traceName)); }, 1, 2));
+    Timeline::animate(AnimationListTag(traceName + "_fadeOut"),
+                      std::make_shared<AColor>(world->body(ObjectNameTag(traceName)), sf::Color{150, 150, 150, 0}));
+    Timeline::animate(AnimationListTag(traceName + "_delete"),
+                      std::make_shared<AFunction>([this, traceName]() { removeFireTrace(ObjectNameTag(traceName)); }, 1,
+                                                  2));
 }
 
-void Shooter::removeFireTrace(const ObjectNameTag& traceName) {
+void Shooter::removeFireTrace(const ObjectNameTag &traceName) {
     world->removeBody(traceName);
 }
 
 void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
-    std::string name = bonusName.substr(6, bonusName.size()-3-5);
+    std::string name = bonusName.substr(6, bonusName.size() - 3 - 5);
 
     ObjectNameTag nameTag(bonusName);
 
     world->addBody(std::make_shared<RigidBody>(ObjectNameTag(bonusName), "obj/" + name + ".obj", Vec3D{3, 3, 3}));
     world->body(ObjectNameTag(bonusName))->translateToPoint(position);
     world->body(ObjectNameTag(bonusName))->setCollider(false);
-    Timeline::animate(AnimationListTag(bonusName + "_rotation"), std::make_shared<ARotate>(world->body(ObjectNameTag(bonusName)), Vec3D{0, 2*Consts::PI, 0}, 4, Animation::LoopOut::Continue, Animation::InterpolationType::Linear));
+    Timeline::animate(AnimationListTag(bonusName + "_rotation"),
+                      std::make_shared<ARotate>(world->body(ObjectNameTag(bonusName)), Vec3D{0, 2 * Consts::PI, 0}, 4,
+                                                Animation::LoopOut::Continue, Animation::InterpolationType::Linear));
 }
 
 void Shooter::removeBonus(const ObjectNameTag &bonusName) {
@@ -290,12 +320,12 @@ void Shooter::removeBonus(const ObjectNameTag &bonusName) {
 void Shooter::addWeapon(std::shared_ptr<Weapon> weapon) {
     world->addBody(weapon);
 
-    if(client != nullptr) {
+    if (client != nullptr) {
         client->changeWeapon(weapon->name().str());
     }
 }
 
-void Shooter::changeEnemyWeapon(const std::string& weaponName, sf::Uint16 enemyId) {
+void Shooter::changeEnemyWeapon(const std::string &weaponName, sf::Uint16 enemyId) {
     ObjectNameTag weaponTag("Enemy_" + std::to_string(enemyId) + "_weapon");
     auto head = world->body(ObjectNameTag("Enemy_" + std::to_string(enemyId) + "_head"));
     auto enemy = world->body(ObjectNameTag("Enemy_" + std::to_string(enemyId)));
@@ -308,9 +338,9 @@ void Shooter::changeEnemyWeapon(const std::string& weaponName, sf::Uint16 enemyI
     world->body(weaponTag)->setCollider(false);
     world->body(weaponTag)->scale(Vec3D(3, 3, 3));
 
-    world->body(weaponTag)->translateToPoint(head->position() - enemy->left() - enemy->up());
+    world->body(weaponTag)->translateToPoint(head->position() - enemy->left()*2 - enemy->up()*0.5);
 
-    world->body(weaponTag)->rotate(Vec3D(0, Consts::PI + head->angle().y(), 0));
+    world->body(weaponTag)->rotate(Vec3D(0, Consts::PI + enemy->angle().y(), 0));
     world->body(weaponTag)->rotateLeft(-head->angleLeftUpLookAt().x());
     enemy->attach(world->body(weaponTag));
 }

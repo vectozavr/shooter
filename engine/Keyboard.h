@@ -13,8 +13,11 @@ private:
 public:
     Keyboard() = default;
 
-    static bool isKeyPressed(sf::Keyboard::Key key); // returns true if this key is _pressed
-    bool isKeyTapped(sf::Keyboard::Key key); // returns true if this key is tapped and 1/5 sec passed (_button bouncing problem solved)
+    // returns true if this key is _pressed
+    static bool isKeyPressed(sf::Keyboard::Key key);
+
+    // returns true if this key is tapped and 1/5 sec passed (_button bouncing problem solved)
+    bool isKeyTapped(sf::Keyboard::Key key);
 };
 
 

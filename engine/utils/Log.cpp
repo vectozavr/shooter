@@ -4,18 +4,18 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "Log.h"
-#include "Time.h"
 #include <ctime>
 #include <iomanip>
 #include <fstream>
 #include <iostream>
+
+#include "Log.h"
+#include "Time.h"
 #include "../Consts.h"
 
-namespace Log
-{
-    void log(const std::string& message) {
-        if(Consts::USE_LOG_FILE) {
+namespace Log {
+    void log(const std::string &message) {
+        if (Consts::USE_LOG_FILE) {
             std::time_t const now_c = std::time(nullptr);
             auto dt = std::put_time(std::localtime(&now_c), "%F %T");
 

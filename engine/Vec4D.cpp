@@ -2,12 +2,13 @@
 // Created by Иван Ильин on 12.01.2021.
 //
 
-#include "Vec4D.h"
-#include "Consts.h"
 #include <cmath>
 #include <stdexcept>
 
-Vec4D::Vec4D (double x, double y, double z, double w) {
+#include "Vec4D.h"
+#include "Consts.h"
+
+Vec4D::Vec4D(double x, double y, double z, double w) {
     _arr_point[0] = x;
     _arr_point[1] = y;
     _arr_point[2] = z;
@@ -25,20 +26,20 @@ Vec4D::Vec4D(const Vec4D &point4D) {
     return Vec4D(-x(), -y(), -z(), -w());
 }
 
-bool Vec4D::operator==(const Vec4D& point4D) const {
+bool Vec4D::operator==(const Vec4D &point4D) const {
     return (*this - point4D).sqrAbs() < Consts::EPS;
 }
 
-bool Vec4D::operator!=(const Vec4D& point4D) const {
+bool Vec4D::operator!=(const Vec4D &point4D) const {
     return !(*this == point4D);
 }
 
 // Operations with Vec4D
-Vec4D Vec4D::operator+(const Vec4D& point4D) const {
+Vec4D Vec4D::operator+(const Vec4D &point4D) const {
     return Vec4D(x() + point4D.x(), y() + point4D.y(), z() + point4D.z(), w() + point4D.w());
 }
 
-Vec4D Vec4D::operator-(const Vec4D& point4D) const {
+Vec4D Vec4D::operator-(const Vec4D &point4D) const {
     return Vec4D(*this) + -point4D;
 }
 
@@ -47,7 +48,7 @@ Vec4D Vec4D::operator*(double number) const {
 }
 
 Vec4D Vec4D::operator/(double number) const {
-    if(std::abs(number) > Consts::EPS) {
+    if (std::abs(number) > Consts::EPS) {
         return Vec4D(*this) * (1.0 / number);
     } else {
         throw std::domain_error{"Vec4D::operator/(double number): division by zero"};
@@ -56,7 +57,7 @@ Vec4D Vec4D::operator/(double number) const {
 
 // Other useful methods
 double Vec4D::sqrAbs() const {
-    return x()*x() + y()*y() + z()*z();
+    return x() * x() + y() * y() + z() * z();
 }
 
 double Vec4D::abs() const {
@@ -65,7 +66,7 @@ double Vec4D::abs() const {
 
 Vec4D Vec4D::normalized() const {
     double vecAbs = abs();
-    if(vecAbs > Consts::EPS) {
+    if (vecAbs > Consts::EPS) {
         return Vec4D(*this) / abs();
     } else {
         return Vec4D(1);

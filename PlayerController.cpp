@@ -12,22 +12,24 @@
 
 PlayerController::PlayerController(std::shared_ptr<Player> player,
                                    std::shared_ptr<Keyboard> keyboard,
-                                   std::shared_ptr<Mouse> mouse) : _player(player), _keyboard(keyboard), _mouse(mouse) {}
+                                   std::shared_ptr<Mouse> mouse) : _player(player), _keyboard(keyboard),
+                                                                   _mouse(mouse) {}
 
 void PlayerController::update() {
     // friction
-    if(_player->inCollision()) {
+    if (_player->inCollision()) {
         _player->setVelocity(_player->velocity() * (1.0 - Time::deltaTime() * 2));
     }
 
-    if(_isInSlowMo) {
-        if(_player->ability() > 0) {
+    if (_isInSlowMo) {
+        if (_player->ability() > 0) {
             _player->setAbility(_player->ability() - Time::deltaTime());
         } else {
             _player->setAbility(0);
             _isInSlowMo = false;
             _player->setVelocity(_player->velocity() * ShooterConsts::SLOW_MO_COEFFICIENT);
-            _player->setAcceleration(_player->acceleration() * ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT);
+            _player->setAcceleration(
+                    _player->acceleration() * ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT);
             SoundController::stopSound(SoundTag("slowMo"));
             SoundController::playSound(SoundTag("unSlowMo"), ShooterConsts::UN_SLOW_MO_SOUND);
         }
@@ -36,46 +38,64 @@ void PlayerController::update() {
     double coeff = _isInSlowMo ? 1.0 / ShooterConsts::SLOW_MO_COEFFICIENT : 1.0;
 
     bool inRunning_old = _inRunning;
-    _inRunning = (  Keyboard::isKeyPressed(sf::Keyboard::A) ||
-                    Keyboard::isKeyPressed(sf::Keyboard::D) ||
-                    Keyboard::isKeyPressed(sf::Keyboard::W) ||
-                    Keyboard::isKeyPressed(sf::Keyboard::S));
+    _inRunning = (Keyboard::isKeyPressed(sf::Keyboard::A) ||
+                  Keyboard::isKeyPressed(sf::Keyboard::D) ||
+                  Keyboard::isKeyPressed(sf::Keyboard::W) ||
+                  Keyboard::isKeyPressed(sf::Keyboard::S));
 
     std::shared_ptr<Object> camera = _player->attached(ObjectNameTag("Camera"));
-    if(camera != nullptr && _inRunning && _player->inCollision()) {
+    if (camera != nullptr && _inRunning && _player->inCollision()) {
         if (!Timeline::isInAnimList(AnimationListTag("camera_hor_oscil"))) {
-            Timeline::animate(AnimationListTag("camera_hor_oscil"), std::make_shared<ATranslate>(camera, -camera->left() / 6, 0.3,Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_hor_oscil"),
+                              std::make_shared<ATranslate>(camera, -camera->left() / 6, 0.3, Animation::LoopOut::None,
+                                                           Animation::InterpolationType::Cos));
             Timeline::animate(AnimationListTag("camera_hor_oscil"), std::make_shared<AWait>(0));
-            Timeline::animate(AnimationListTag("camera_hor_oscil"), std::make_shared<ATranslate>(camera, camera->left() / 6, 0.3, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_hor_oscil"),
+                              std::make_shared<ATranslate>(camera, camera->left() / 6, 0.3, Animation::LoopOut::None,
+                                                           Animation::InterpolationType::Cos));
 
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<ATranslate>(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"),
+                              std::make_shared<ATranslate>(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None,
+                                                           Animation::InterpolationType::Cos));
             Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<AWait>(0));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<ATranslate>(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"),
+                              std::make_shared<ATranslate>(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None,
+                                                           Animation::InterpolationType::Cos));
             Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<AWait>(0));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<ATranslate>(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"),
+                              std::make_shared<ATranslate>(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None,
+                                                           Animation::InterpolationType::Cos));
             Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<AWait>(0));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<ATranslate>(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_vert_oscil"),
+                              std::make_shared<ATranslate>(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None,
+                                                           Animation::InterpolationType::Cos));
 
-            Timeline::animate(AnimationListTag("camera_init"), std::make_shared<ATranslateToPoint>( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.3, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+            Timeline::animate(AnimationListTag("camera_init"),
+                              std::make_shared<ATranslateToPoint>(camera, _player->position() + Vec3D{0, 1.8, 0}, 0.3,
+                                                                  Animation::LoopOut::None,
+                                                                  Animation::InterpolationType::Cos));
         }
-    } else if(camera != nullptr && inRunning_old && !_inRunning) {
+    } else if (camera != nullptr && inRunning_old && !_inRunning) {
         Timeline::deleteAnimationList(AnimationListTag("camera_hor_oscil"));
         Timeline::deleteAnimationList(AnimationListTag("camera_vert_oscil"));
         Timeline::deleteAnimationList(AnimationListTag("camera_init"));
-        Timeline::animate(AnimationListTag("camera_init"), std::make_shared<ATranslateToPoint>( camera, _player->position() + Vec3D{0, 1.8, 0}, 0.15, Animation::LoopOut::None, Animation::InterpolationType::Cos));
+        Timeline::animate(AnimationListTag("camera_init"),
+                          std::make_shared<ATranslateToPoint>(camera, _player->position() + Vec3D{0, 1.8, 0}, 0.15,
+                                                              Animation::LoopOut::None,
+                                                              Animation::InterpolationType::Cos));
     }
 
     // Left and right
 
     if (Keyboard::isKeyPressed(sf::Keyboard::A)) {
         _player->translate(_player->left() * Time::deltaTime() * ShooterConsts::WALK_SPEED * coeff);
-        if(_player->inCollision()) {
+        if (_player->inCollision()) {
             _player->setVelocity(Vec3D{0, 0, 0});
         }
     }
     if (Keyboard::isKeyPressed(sf::Keyboard::D)) {
         _player->translate(-_player->left() * Time::deltaTime() * ShooterConsts::WALK_SPEED * coeff);
-        if(_player->inCollision()) {
+        if (_player->inCollision()) {
             _player->setVelocity(Vec3D{0, 0, 0});
         }
     }
@@ -83,7 +103,7 @@ void PlayerController::update() {
     // Forward and backward
     if (Keyboard::isKeyPressed(sf::Keyboard::W)) {
         _player->translate(_player->lookAt() * Time::deltaTime() * ShooterConsts::WALK_SPEED * coeff);
-        if(_player->inCollision()) {
+        if (_player->inCollision()) {
             _player->setVelocity(Vec3D{0, 0, 0});
         }
     }
@@ -91,7 +111,7 @@ void PlayerController::update() {
     if (Keyboard::isKeyPressed(sf::Keyboard::S)) {
         _player->translate(-_player->lookAt() * Time::deltaTime() * ShooterConsts::WALK_SPEED * coeff);
 
-        if(_player->inCollision()) {
+        if (_player->inCollision()) {
             _player->setVelocity(Vec3D{0, 0, 0});
         }
     }
@@ -100,7 +120,9 @@ void PlayerController::update() {
         // slow mo
         _isInSlowMo = true;
         _player->setVelocity(_player->velocity() / ShooterConsts::SLOW_MO_COEFFICIENT);
-        _player->setAcceleration(Vec3D(0, -ShooterConsts::GRAVITY / (ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT), 0));
+        _player->setAcceleration(Vec3D(0, -ShooterConsts::GRAVITY /
+                                          (ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT),
+                                       0));
         SoundController::stopSound(SoundTag("unSlowMo"));
         SoundController::playSound(SoundTag("slowMo"), ShooterConsts::SLOW_MO_SOUND);
     } else if (_isInSlowMo && !Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
@@ -114,8 +136,8 @@ void PlayerController::update() {
     if (Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
         bool shot = _player->fire();
 
-        if(shot) {
-            if(_player->weaponName() == ObjectNameTag("shotgun")) {
+        if (shot) {
+            if (_player->weaponName() == ObjectNameTag("shotgun")) {
                 _player->addVelocity(-camera->lookAt() * 30 * coeff);
             }
         }
@@ -133,7 +155,7 @@ void PlayerController::update() {
                                           sqrt(2 * -_player->acceleration().y() * ShooterConsts::JUMP_HEIGHT) * coeff *
                                           Time::deltaTime() * 60, 0});
         }
-        _player->translate(Vec3D{ 0, Time::deltaTime() * ShooterConsts::WALK_SPEED * 2 * coeff, 0 });
+        _player->translate(Vec3D{0, Time::deltaTime() * ShooterConsts::WALK_SPEED * 2 * coeff, 0});
         _isSliding = true;
     } else {
         _isSliding = false;
@@ -143,7 +165,8 @@ void PlayerController::update() {
     Vec2D displacement = _mouse->getMouseDisplacement();
 
     _player->rotate(Vec3D{0, -displacement.x() * ShooterConsts::MOUSE_SENSITIVITY, 0});
-    _player->setVelocity(Matrix4x4::RotationY(-displacement.x() * ShooterConsts::MOUSE_SENSITIVITY) * _player->velocity());
+    _player->setVelocity(
+            Matrix4x4::RotationY(-displacement.x() * ShooterConsts::MOUSE_SENSITIVITY) * _player->velocity());
 
     double rotationLeft = displacement.y() * ShooterConsts::MOUSE_SENSITIVITY;
 
@@ -158,7 +181,7 @@ void PlayerController::update() {
     _player->setHeadAngle(_player->headAngle() + rotationLeft);
     _player->rotateWeaponsRelativePoint(_player->position() + Vec3D{0, 1.8, 0}, _player->left(), rotationLeft);
 
-    if(camera != nullptr) {
+    if (camera != nullptr) {
         camera->rotateLeft(_player->headAngle() - camera->angleLeftUpLookAt().x());
     }
 
@@ -170,18 +193,19 @@ void PlayerController::update() {
         _player->previousWeapon();
     }
 
-    if(Keyboard::isKeyPressed(sf::Keyboard::R)) {
+    if (Keyboard::isKeyPressed(sf::Keyboard::R)) {
         _player->reload();
     }
 
     bool walkSoundPlayed = false;
-    for(int k = 1; k < 7; k++) {
-        if(SoundController::getStatus(SoundTag("walkSound_" + std::to_string(k))) == sf::Sound::Status::Playing) {
+    for (int k = 1; k < 7; k++) {
+        if (SoundController::getStatus(SoundTag("walkSound_" + std::to_string(k))) == sf::Sound::Status::Playing) {
             walkSoundPlayed = true;
         }
     }
     if ((_inRunning || _player->velocity().sqrAbs() > 3) && _player->inCollision() && !walkSoundPlayed) {
-        int soundNum = (int)((double) rand() / RAND_MAX * 6) + 1;
-        SoundController::playSound(SoundTag("walkSound_" + std::to_string(soundNum)), "sound/stonestep" + std::to_string(soundNum) + ".ogg");
+        int soundNum = (int) ((double) rand() / RAND_MAX * 6) + 1;
+        SoundController::playSound(SoundTag("walkSound_" + std::to_string(soundNum)),
+                                   "sound/stonestep" + std::to_string(soundNum) + ".ogg");
     }
 }

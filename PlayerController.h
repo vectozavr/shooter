@@ -21,6 +21,7 @@ private:
 
 public:
     PlayerController(std::shared_ptr<Player> player, std::shared_ptr<Keyboard> keyboard, std::shared_ptr<Mouse> mouse);
+
     void update();
 };
 

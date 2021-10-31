@@ -37,19 +37,29 @@ private:
     double _lastFireTime = std::numeric_limits<double>::min();
     double _lastReloadTime = std::numeric_limits<double>::min();
 
-    std::function<void(const Vec3D&, const Vec3D&)> _addTraceCallBack;
+    std::function<void(const Vec3D &, const Vec3D &)> _addTraceCallBack;
 
 protected:
-    std::map<ObjectNameTag, double> addTrace(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
-    virtual std::map<ObjectNameTag, double> processFire(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
+    std::map<ObjectNameTag, double>
+    addTrace(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction,
+             const Vec3D &position, const Vec3D &direction);
+
+    virtual std::map<ObjectNameTag, double>
+    processFire(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction,
+                const Vec3D &position, const Vec3D &direction);
 
 public:
-    Weapon(int initialPack, int clipCapacity, double reloadTime, double fireDelay, double damage, double spreading, std::string fireSound, std::string reloadSound, ObjectNameTag weaponName, const std::string& objFileName, const Vec3D& s, const Vec3D& t, const Vec3D& r);
+    Weapon(int initialPack, int clipCapacity, double reloadTime, double fireDelay, double damage, double spreading,
+           std::string fireSound, std::string reloadSound, ObjectNameTag weaponName, const std::string &objFileName,
+           const Vec3D &s, const Vec3D &t, const Vec3D &r);
 
-    FireInformation fire(std::function<IntersectionInformation(const Vec3D&, const Vec3D&)> rayCastFunction, const Vec3D& position, const Vec3D& direction);
+    FireInformation
+    fire(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction, const Vec3D &position,
+         const Vec3D &direction);
+
     void reload();
 
-    [[nodiscard]] std::pair<double, double> balance() const{ return std::make_pair(_clipAmmo, _stockAmmo); }
+    [[nodiscard]] std::pair<double, double> balance() const { return std::make_pair(_clipAmmo, _stockAmmo); }
 
     void setAddTraceCallBack(std::function<void(Vec3D, Vec3D)> add) { _addTraceCallBack = std::move(add); }
 

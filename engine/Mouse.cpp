@@ -12,16 +12,17 @@ Vec2D Mouse::getMousePosition() const {
 }
 
 Vec2D Mouse::getMouseDisplacement() const {
+    // TODO: getMouseDisplacement() should return displacement from the previous position but not from the center
     sf::Vector2<int> mousePos = sf::Mouse::getPosition(*_screen->renderWindow());
-    sf::Vector2<int> center = sf::Vector2<int>(_screen->width()/2, _screen->height()/2);
+    sf::Vector2<int> center = sf::Vector2<int>(_screen->width() / 2, _screen->height() / 2);
 
     sf::Vector2<int> displacement = mousePos - center;
-    //setMouseInCenter();
     return Vec2D(displacement.x, displacement.y);
 }
 
 void Mouse::setMouseInCenter() const {
-    sf::Mouse::setPosition({ static_cast<int>(_screen->width() / 2), static_cast<int>(_screen->height() / 2) }, *_screen->renderWindow());
+    sf::Mouse::setPosition({static_cast<int>(_screen->width() / 2), static_cast<int>(_screen->height() / 2)},
+                           *_screen->renderWindow());
 }
 
 bool Mouse::isButtonPressed(sf::Mouse::Button button) {
@@ -33,10 +34,10 @@ bool Mouse::isButtonTapped(sf::Mouse::Button button) {
         return false;
     }
 
-    if(_tappedButtons.count(button) == 0) {
+    if (_tappedButtons.count(button) == 0) {
         _tappedButtons.emplace(button, Time::time());
         return true;
-    } else if((Time::time() - _tappedButtons[button]) > Consts::TAP_DELAY) {
+    } else if ((Time::time() - _tappedButtons[button]) > Consts::TAP_DELAY) {
         _tappedButtons[button] = Time::time();
         return true;
     }

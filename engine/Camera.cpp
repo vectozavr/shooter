@@ -2,19 +2,20 @@
 // Created by Иван Ильин on 14.01.2021.
 //
 
+#include <cmath>
+
 #include "Camera.h"
 #include "utils/Log.h"
 #include "Consts.h"
-#include <cmath>
 
 std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mesh) {
 
-    if(!_ready) {
+    if (!_ready) {
         Log::log("Camera::project(): cannot project _tris without camera initialization ( Camera::init() ) ");
         return _triangles;
     }
 
-    if(!mesh->isVisible()) {
+    if (!mesh->isVisible()) {
         return this->_triangles;
     }
 
@@ -25,13 +26,13 @@ std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mes
     // We don't want to waste time re-allocating memory every time
     std::vector<Triangle> clippedTriangles, tempBuffer;
 
-    for(auto& t : mesh->triangles()) {
+    for (auto &t : mesh->triangles()) {
 
         Triangle MTriangle = t * M;
 
         double dot = MTriangle.norm().dot((Vec3D(MTriangle[0]) - position()).normalized());
 
-        if(dot > 0) {
+        if (dot > 0) {
             continue;
         }
 
@@ -44,23 +45,23 @@ std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mes
         // In the beginning we need to to translate triangle from world coordinate to our camera system:
         // After that we apply clipping for all planes from _clipPlanes
         clippedTriangles.emplace_back(VMTriangle);
-        for(auto& plane : _clipPlanes) {
-            while(!clippedTriangles.empty()) {
+        for (auto &plane : _clipPlanes) {
+            while (!clippedTriangles.empty()) {
                 std::vector<Triangle> clipResult = plane.clip(clippedTriangles.back());
                 clippedTriangles.pop_back();
-                for(auto & i : clipResult) {
+                for (auto &i : clipResult) {
                     tempBuffer.emplace_back(i);
                 }
             }
             clippedTriangles.swap(tempBuffer);
         }
 
-        for(auto& clipped : clippedTriangles) {
+        for (auto &clipped : clippedTriangles) {
             sf::Color color = clipped.color();
-            sf::Color ambientColor = sf::Color((sf::Uint8)(color.r * (0.3 * std::abs(dot) + 0.7)),
-                                               (sf::Uint8)(color.g * (0.3 * std::abs(dot) + 0.7)),
-                                               (sf::Uint8)(color.b * (0.3 * std::abs(dot) + 0.7)),
-                                               (sf::Uint8)color.a);
+            sf::Color ambientColor = sf::Color((sf::Uint8) (color.r * (0.3 * std::abs(dot) + 0.7)),
+                                               (sf::Uint8) (color.g * (0.3 * std::abs(dot) + 0.7)),
+                                               (sf::Uint8) (color.b * (0.3 * std::abs(dot) + 0.7)),
+                                               (sf::Uint8) color.a);
 
             // Finally its time to project our clipped colored drawTriangle from 3D -> 2D
             // and transform it's coordinate to screen space (in pixels):
@@ -81,7 +82,7 @@ std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mes
 void Camera::init(int width, int height, double fov, double ZNear, double ZFar) {
     // We need to init camera only after creation or changing width, height, fov, ZNear or ZFar.
     // Because here we calculate matrix that does not change during the motion of _objects or camera
-    _aspect = (double)width / (double)height;
+    _aspect = (double) width / (double) height;
     Matrix4x4 P = Matrix4x4::Projection(fov, _aspect, ZNear, ZFar);
     Matrix4x4 S = Matrix4x4::ScreenSpace(width, height);
 
@@ -92,7 +93,7 @@ void Camera::init(int width, int height, double fov, double ZNear, double ZFar) 
     _clipPlanes.emplace_back(Plane(Vec3D{0, 0, 1}, Vec3D{0, 0, ZNear})); // near plane
     _clipPlanes.emplace_back(Plane(Vec3D{0, 0, -1}, Vec3D{0, 0, ZFar})); // far plane
 
-    double thetta1 = Consts::PI*fov*0.5/180.0;
+    double thetta1 = Consts::PI * fov * 0.5 / 180.0;
     double thetta2 = atan(_aspect * tan(thetta1));
     _clipPlanes.emplace_back(Plane(Vec3D{-cos(thetta2), 0, sin(thetta2)}, Vec3D{0, 0, 0})); // left plane
     _clipPlanes.emplace_back(Plane(Vec3D{cos(thetta2), 0, sin(thetta2)}, Vec3D{0, 0, 0})); // right plane

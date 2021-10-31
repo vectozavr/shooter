@@ -6,11 +6,13 @@
 #define ENGINE_CAMERA_H
 
 #include <vector>
-#include "Plane.h"
-#include "Mesh.h"
+
 #include <SFML/OpenGL.hpp>
 
-class Camera final : public Object{
+#include "Plane.h"
+#include "Mesh.h"
+
+class Camera final : public Object {
 private:
     std::vector<std::shared_ptr<Triangle>> _triangles{};
     std::vector<Plane> _clipPlanes{};
@@ -18,10 +20,10 @@ private:
     double _aspect = 0;
 
     Matrix4x4 _SP;
-
 public:
     Camera() : Object(ObjectNameTag("Camera")) {};
-    Camera(const Camera& camera) = delete;
+
+    Camera(const Camera &camera) = delete;
 
     void init(int width, int height, double fov = 110.0, double ZNear = 0.1, double ZFar = 5000.0);
 
@@ -30,6 +32,7 @@ public:
     void clear();
 
     [[nodiscard]] int buffSize() const { return _triangles.size(); }
+
     std::vector<std::shared_ptr<Triangle>> sorted();
 
 };

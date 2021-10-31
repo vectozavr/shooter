@@ -9,6 +9,7 @@
 #include <vector>
 #include <memory>
 #include <functional>
+
 #include "../Triangle.h"
 #include "Simplex.h"
 #include "../Mesh.h"
@@ -31,18 +32,26 @@ struct NextSimplex final {
 
 class RigidBody : public Mesh {
 private:
-    Vec3D _findFurthestPoint(const Vec3D& direction);
-    Vec3D _support(std::shared_ptr<RigidBody> obj, const Vec3D& direction);
+    Vec3D _findFurthestPoint(const Vec3D &direction);
 
-    std::function<void(const ObjectNameTag&, std::shared_ptr<RigidBody>)> _collisionCallBack;
+    Vec3D _support(std::shared_ptr<RigidBody> obj, const Vec3D &direction);
 
-    static NextSimplex _nextSimplex(const Simplex& points);
-    static NextSimplex _lineCase(const Simplex& points);
-    static NextSimplex _triangleCase(const Simplex& points);
-    static NextSimplex _tetrahedronCase(const Simplex& points);
+    std::function<void(const ObjectNameTag &, std::shared_ptr<RigidBody>)> _collisionCallBack;
 
-    static std::pair<std::vector<FaceNormal>, size_t> _getFaceNormals(const std::vector<Vec3D>& polytope, const std::vector<size_t>& faces);
-    static std::vector<std::pair<size_t, size_t>> _addIfUniqueEdge(const std::vector<std::pair<size_t, size_t>>& edges, const std::vector<size_t>& faces, size_t a, size_t b);
+    static NextSimplex _nextSimplex(const Simplex &points);
+
+    static NextSimplex _lineCase(const Simplex &points);
+
+    static NextSimplex _triangleCase(const Simplex &points);
+
+    static NextSimplex _tetrahedronCase(const Simplex &points);
+
+    static std::pair<std::vector<FaceNormal>, size_t>
+    _getFaceNormals(const std::vector<Vec3D> &polytope, const std::vector<size_t> &faces);
+
+    static std::vector<std::pair<size_t, size_t>>
+    _addIfUniqueEdge(const std::vector<std::pair<size_t, size_t>> &edges, const std::vector<size_t> &faces, size_t a,
+                     size_t b);
 
 protected:
     Vec3D _velocity{0, 0, 0};
@@ -56,34 +65,50 @@ protected:
 
 public:
     explicit RigidBody(ObjectNameTag nameTag) : Mesh(std::move(nameTag)) {};
-    explicit RigidBody(const RigidBody& rigidBody) = default;
-    explicit RigidBody(const Mesh& mesh);
-    RigidBody(ObjectNameTag nameTag, const std::string& filename, const Vec3D& scale = Vec3D{1, 1, 1});
+
+    RigidBody(const RigidBody &rigidBody) = default;
+
+    explicit RigidBody(const Mesh &mesh);
+
+    RigidBody(ObjectNameTag nameTag, const std::string &filename, const Vec3D &scale = Vec3D{1, 1, 1});
 
     [[nodiscard]] std::pair<bool, Simplex> checkGJKCollision(std::shared_ptr<RigidBody> obj);
-    [[nodiscard]] CollisionPoint EPA(const Simplex& simplex, std::shared_ptr<RigidBody> obj);
-    void solveCollision(const CollisionPoint& collision);
+
+    [[nodiscard]] CollisionPoint EPA(const Simplex &simplex, std::shared_ptr<RigidBody> obj);
+
+    void solveCollision(const CollisionPoint &collision);
 
     [[nodiscard]] Vec3D collisionNormal() const { return _collisionNormal; }
 
     [[nodiscard]] bool isCollision() const { return _collision; }
-    [[nodiscard]] bool inCollision() const {return _inCollision; }
-    [[nodiscard]] bool isCollider() const {return _isCollider; }
+
+    [[nodiscard]] bool inCollision() const { return _inCollision; }
+
+    [[nodiscard]] bool isCollider() const { return _isCollider; }
+
     void setInCollision(bool c) { _inCollision = c; }
-    void setCollision(bool c) { _collision= c; }
+
+    void setCollision(bool c) { _collision = c; }
+
     void setCollider(bool c) { _isCollider = c; }
 
     void updatePhysicsState();
 
-    void setVelocity(const Vec3D& velocity);
-    void addVelocity(const Vec3D& velocity);
-    void setAcceleration(const Vec3D& acceleration);
+    void setVelocity(const Vec3D &velocity);
+
+    void addVelocity(const Vec3D &velocity);
+
+    void setAcceleration(const Vec3D &acceleration);
 
     [[nodiscard]] Vec3D velocity() const { return _velocity; }
+
     [[nodiscard]] Vec3D acceleration() const { return _acceleration; }
 
-    [[nodiscard]] const std::function<void(const ObjectNameTag&, std::shared_ptr<RigidBody>)>& collisionCallBack() const { return _collisionCallBack; }
-    void setCollisionCallBack(const std::function<void(const ObjectNameTag& tag, std::shared_ptr<RigidBody>)>& f) { _collisionCallBack = f; }
+    [[nodiscard]] const std::function<void(const ObjectNameTag &, std::shared_ptr<RigidBody>)> &
+    collisionCallBack() const { return _collisionCallBack; }
+
+    void setCollisionCallBack(const std::function<void(const ObjectNameTag &tag,
+                                                       std::shared_ptr<RigidBody>)> &f) { _collisionCallBack = f; }
 
     ~RigidBody() override = default;
 };

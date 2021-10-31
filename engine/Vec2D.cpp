@@ -3,6 +3,7 @@
 //
 
 #include <cmath>
+
 #include "Vec2D.h"
 #include "Consts.h"
 
@@ -11,7 +12,7 @@ Vec2D::Vec2D(const Vec2D &vec) {
     _arr_point[1] = vec.y();
 }
 
-Vec2D::Vec2D (double x, double y) {
+Vec2D::Vec2D(double x, double y) {
     _arr_point[0] = x;
     _arr_point[1] = y;
 }
@@ -25,26 +26,28 @@ Vec2D Vec2D::operator-() const {
     return Vec2D(-x(), -y());
 }
 
-bool Vec2D::operator==(const Vec2D& vec) const {
+bool Vec2D::operator==(const Vec2D &vec) const {
     return (*this - vec).sqrAbs() < Consts::EPS;
 }
-bool Vec2D::operator!=(const Vec2D& vec) const {
+
+bool Vec2D::operator!=(const Vec2D &vec) const {
     return !(*this == vec);
 }
 
-Vec2D Vec2D::operator+(const Vec2D& vec) const {
-    return Vec2D(x()+vec.x(), y()+vec.y());
+Vec2D Vec2D::operator+(const Vec2D &vec) const {
+    return Vec2D(x() + vec.x(), y() + vec.y());
 }
-Vec2D Vec2D::operator-(const Vec2D& vec) const {
+
+Vec2D Vec2D::operator-(const Vec2D &vec) const {
     return Vec2D(*this) + -vec;
 }
 
 Vec2D Vec2D::operator*(double number) const {
-    return Vec2D(x()*number, y()*number);
+    return Vec2D(x() * number, y() * number);
 }
 
 Vec2D Vec2D::operator/(double number) const {
-    if(std::abs(number) > Consts::EPS) {
+    if (std::abs(number) > Consts::EPS) {
         return Vec2D(*this) * (1.0 / number);
     } else {
         throw std::domain_error{"Vec2D::operator/(double number): division by zero"};
@@ -53,7 +56,7 @@ Vec2D Vec2D::operator/(double number) const {
 
 // Other useful methods
 double Vec2D::sqrAbs() const {
-    return x()*x() + y()*y();
+    return x() * x() + y() * y();
 }
 
 double Vec2D::abs() const {
@@ -62,13 +65,13 @@ double Vec2D::abs() const {
 
 Vec2D Vec2D::normalized() const {
     double vecAbs = abs();
-    if(vecAbs > Consts::EPS) {
+    if (vecAbs > Consts::EPS) {
         return Vec2D(*this) / abs();
     } else {
         return Vec2D(0);
     }
 }
 
-double Vec2D::dot(const Vec2D& vec) const {
+double Vec2D::dot(const Vec2D &vec) const {
     return vec.x() * x() + vec.y() * y();
 }

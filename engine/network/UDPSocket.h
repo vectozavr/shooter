@@ -8,6 +8,7 @@
 #include <memory>
 #include <map>
 #include <functional>
+
 #include "ReliableMsg.h"
 #include "UDPConnection.h"
 #include "MsgType.h"
@@ -28,23 +29,34 @@ private:
 
 public:
     explicit UDPSocket();
+
     bool bind(sf::Uint16 port);
+
     void unbind();
+
     void setTimeoutCallback(std::function<bool(sf::Uint16)> callback);
+
     void addConnection(sf::Uint16 id, sf::IpAddress ip, sf::Uint16 port);
+
     void removeConnection(sf::Uint16 id);
 
     void setId(sf::Uint16 id);
+
     [[nodiscard]] sf::Uint16 ownId() const;
+
     [[nodiscard]] sf::Uint16 serverId() const;
 
-    void send(const sf::Packet& packet, const sf::IpAddress& ip, sf::Uint16 port);
-    void send(const sf::Packet& packet, sf::Uint16 id);
-    void sendRely(const sf::Packet& packet, const sf::IpAddress& ip, sf::Uint16 port);
-    void sendRely(const sf::Packet& packet, sf::Uint16 id);
+    void send(const sf::Packet &packet, const sf::IpAddress &ip, sf::Uint16 port);
+
+    void send(const sf::Packet &packet, sf::Uint16 id);
+
+    void sendRely(const sf::Packet &packet, const sf::IpAddress &ip, sf::Uint16 port);
+
+    void sendRely(const sf::Packet &packet, sf::Uint16 id);
 
     void update();
-    MsgType receive(sf::Packet& packet, sf::Uint16& senderId);
+
+    MsgType receive(sf::Packet &packet, sf::Uint16 &senderId);
 
     ~UDPSocket();
 };

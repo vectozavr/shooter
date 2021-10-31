@@ -6,6 +6,7 @@
 #define SHOOTER_VEC2D_H
 
 #include <array>
+
 #include "Vec4D.h"
 
 class Vec2D final {
@@ -13,11 +14,15 @@ private:
     std::array<double, 2> _arr_point{};
 
 public:
-    Vec2D () = default;
-    Vec2D (const Vec2D& vec);
-    explicit Vec2D (const Vec4D& point4D);
-    explicit Vec2D (double x, double y = 0.0);
-    Vec2D& operator=(const Vec2D&) = default;
+    Vec2D() = default;
+
+    Vec2D(const Vec2D &vec);
+
+    explicit Vec2D(const Vec4D &point4D);
+
+    explicit Vec2D(double x, double y = 0.0);
+
+    Vec2D &operator=(const Vec2D &) = default;
 
     [[nodiscard]] double x() const { return _arr_point[0]; }
     [[nodiscard]] double y() const { return _arr_point[1]; }
@@ -25,13 +30,13 @@ public:
     [[nodiscard]] Vec2D operator-() const;
 
     // Boolean operations
-    bool operator==(const Vec2D& vec) const;
-    bool operator!=(const Vec2D& vec) const;
+    bool operator==(const Vec2D &vec) const;
+    bool operator!=(const Vec2D &vec) const;
 
-    [[nodiscard]] Vec2D operator+(const Vec2D& vec) const;
-    [[nodiscard]] Vec2D operator-(const Vec2D& vec) const;
+    [[nodiscard]] Vec2D operator+(const Vec2D &vec) const;
+    [[nodiscard]] Vec2D operator-(const Vec2D &vec) const;
 
-    [[nodiscard]] double dot(const Vec2D& vec) const; // Returns dot product
+    [[nodiscard]] double dot(const Vec2D &vec) const; // Returns dot product
 
     // Operations with numbers
     [[nodiscard]] Vec2D operator*(double number) const;

@@ -24,10 +24,12 @@ public:
     void broadcast() override;
 
     void processConnect(sf::Uint16 senderId) override;
-    void processClientUpdate(sf::Uint16 senderId, sf::Packet& packet) override;
+
+    void processClientUpdate(sf::Uint16 senderId, sf::Packet &packet) override;
+
     void processDisconnect(sf::Uint16 senderId) override;
 
-    void processCustomPacket(sf::Packet& packet, sf::Uint16 senderId) override;
+    void processCustomPacket(sf::Packet &packet, sf::Uint16 senderId) override;
 
     void processStop() override;
 

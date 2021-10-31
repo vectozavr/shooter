@@ -2,14 +2,15 @@
 // Created by Neirokan on 09.05.2020
 //
 
-#include "ResourceManager.h"
-#include "utils/Log.h"
 #include <map>
 #include <memory>
 #include <sstream>
 #include <fstream>
 
-ResourceManager* ResourceManager::_instance = nullptr;
+#include "ResourceManager.h"
+#include "utils/Log.h"
+
+ResourceManager *ResourceManager::_instance = nullptr;
 bool ResourceManager::_validInstance = false;
 
 
@@ -22,7 +23,7 @@ void ResourceManager::init() {
 
 void ResourceManager::unloadTextures() {
     int texturesCounter = _instance->_textures.size();
-    for (auto & _texture : _instance->_textures) {
+    for (auto &_texture : _instance->_textures) {
         _texture.second.reset();
     }
     _instance->_textures.clear();
@@ -33,17 +34,18 @@ void ResourceManager::unloadTextures() {
 
 void ResourceManager::unloadSoundBuffers() {
     int soundBuffersCounter = _instance->_soundBuffers.size();
-    for (auto & _soundBuffer : _instance->_soundBuffers) {
+    for (auto &_soundBuffer : _instance->_soundBuffers) {
         _soundBuffer.second.reset();
     }
     _instance->_soundBuffers.clear();
 
-    Log::log("ResourceManager::unloadSoundBuffers(): all " + std::to_string(soundBuffersCounter) + " soundBuffers was unloaded");
+    Log::log("ResourceManager::unloadSoundBuffers(): all " + std::to_string(soundBuffersCounter) +
+             " soundBuffers was unloaded");
 }
 
 void ResourceManager::unloadFonts() {
     int fontsCounter = _instance->_fonts.size();
-    for (auto & _font : _instance->_fonts) {
+    for (auto &_font : _instance->_fonts) {
         _font.second.reset();
     }
     _instance->_fonts.clear();
@@ -59,7 +61,7 @@ void ResourceManager::unloadObjects() {
 }
 
 void ResourceManager::unloadAllResources() {
-    if(!_validInstance) {
+    if (!_validInstance) {
         return;
     }
 
@@ -79,8 +81,8 @@ void ResourceManager::free() {
     Log::log("ResourceManager::free(): pointer to 'ResourceManager' was freed");
 }
 
-std::shared_ptr<sf::Texture> ResourceManager::loadTexture(const std::string& filename) {
-    if(!_validInstance) {
+std::shared_ptr<sf::Texture> ResourceManager::loadTexture(const std::string &filename) {
+    if (!_validInstance) {
         return nullptr;
     }
 
@@ -106,8 +108,8 @@ std::shared_ptr<sf::Texture> ResourceManager::loadTexture(const std::string& fil
     return texture;
 }
 
-std::shared_ptr<sf::SoundBuffer> ResourceManager::loadSoundBuffer(const std::string& filename) {
-    if(!_validInstance) {
+std::shared_ptr<sf::SoundBuffer> ResourceManager::loadSoundBuffer(const std::string &filename) {
+    if (!_validInstance) {
         return nullptr;
     }
 
@@ -132,8 +134,8 @@ std::shared_ptr<sf::SoundBuffer> ResourceManager::loadSoundBuffer(const std::str
     return soundBuffer;
 }
 
-std::shared_ptr<sf::Font> ResourceManager::loadFont(const std::string& filename) {
-    if(!_validInstance) {
+std::shared_ptr<sf::Font> ResourceManager::loadFont(const std::string &filename) {
+    if (!_validInstance) {
         return nullptr;
     }
 
@@ -163,7 +165,7 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
     std::vector<std::shared_ptr<Mesh>> objects{};
     std::map<std::string, sf::Color> maters{};
 
-    if(!_validInstance) {
+    if (!_validInstance) {
         return objects;
     }
 
@@ -191,40 +193,39 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
         s << line;
 
         char junk;
-        if(line[0] == 'o') {
-            if(!tris.empty())
-                objects.push_back(std::make_shared<Mesh>(ObjectNameTag(filename + "_temp_obj_" + std::to_string(objects.size())), tris));
+        if (line[0] == 'o') {
+            if (!tris.empty())
+                objects.push_back(
+                        std::make_shared<Mesh>(ObjectNameTag(filename + "_temp_obj_" + std::to_string(objects.size())),
+                                               tris));
             tris.clear();
         }
-        if (line[0] == 'v')
-        {
+        if (line[0] == 'v') {
             double x, y, z;
             s >> junk >> x >> y >> z;
             verts.emplace_back(x, y, z, 1.0);
         }
-        if(line[0] == 'g') {
+        if (line[0] == 'g') {
             std::string matInfo;
             s >> junk >> matInfo;
-            std::string colorName = matInfo.substr(matInfo.size()-3, 3);
-            currentColor = maters[matInfo.substr(matInfo.size()-3, 3)];
+            std::string colorName = matInfo.substr(matInfo.size() - 3, 3);
+            currentColor = maters[matInfo.substr(matInfo.size() - 3, 3)];
         }
-        if (line[0] == 'f')
-        {
+        if (line[0] == 'f') {
             int f[3];
             s >> junk >> f[0] >> f[1] >> f[2];
             tris.emplace_back(verts[f[0] - 1], verts[f[1] - 1], verts[f[2] - 1], currentColor);
         }
-        if(line[0] == 'm')
-        {
+        if (line[0] == 'm') {
             int color[4];
             std::string matName;
 
             s >> junk >> matName >> color[0] >> color[1] >> color[2] >> color[3];
-            maters.insert({matName, sf::Color(color[0],color[1],color[2], color[3])});
+            maters.insert({matName, sf::Color(color[0], color[1], color[2], color[3])});
         }
     }
 
-    if(!tris.empty()) {
+    if (!tris.empty()) {
         objects.push_back(
                 std::make_shared<Mesh>(ObjectNameTag(filename + "_temp_obj_" + std::to_string(objects.size())), tris));
     }

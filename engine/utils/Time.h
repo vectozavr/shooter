@@ -23,21 +23,26 @@ private:
     double _time = 0;
     double _deltaTime = 0;
 
-    static Time* _instance;
+    static Time *_instance;
     static bool _validInstance;
 
     Time() = default;
 
 public:
-    Time(const Time&) = delete;
-    Time& operator=(Time&) = delete;
+    Time(const Time &) = delete;
+
+    Time &operator=(Time &) = delete;
 
     static int fps();
+
     static double time();
+
     static double deltaTime();
+
     static void update();
 
     static void init();
+
     static void free();
 };
 

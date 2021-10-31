@@ -30,6 +30,7 @@ private:
     int fireTraces = 0;
 
     void start() override;
+
     void update() override;
 
     void gui() override;
@@ -37,18 +38,29 @@ private:
     void play();
 
     void drawPlayerStats();
+
     void drawStatsTable();
+
     void InitNetwork();
 
     void spawnPlayer(sf::Uint16 id);
+
     void removePlayer(sf::Uint16 id);
-    void addFireTrace(const Vec3D& from, const Vec3D& to);
-    void removeFireTrace(const ObjectNameTag& traceName);
-    void addBonus(const std::string& bonusName, const Vec3D& position);
-    void removeBonus(const ObjectNameTag& bonusName);
+
+    void addFireTrace(const Vec3D &from, const Vec3D &to);
+
+    void removeFireTrace(const ObjectNameTag &traceName);
+
+    void addBonus(const std::string &bonusName, const Vec3D &position);
+
+    void removeBonus(const ObjectNameTag &bonusName);
+
     void addWeapon(std::shared_ptr<Weapon> weapon);
+
     void removeWeapon(std::shared_ptr<Weapon> weapon);
-    void changeEnemyWeapon(const std::string& weaponName, sf::Uint16 enemyId);
+
+    void changeEnemyWeapon(const std::string &weaponName, sf::Uint16 enemyId);
+
 public:
     Shooter() : mainMenu(screen, mouse) {};
 };

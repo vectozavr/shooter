@@ -3,12 +3,12 @@
 //
 
 #include "Time.h"
-#include "../Consts.h"
 #include "Log.h"
+#include "../Consts.h"
 
 using namespace std::chrono;
 
-Time* Time::_instance = nullptr;
+Time *Time::_instance = nullptr;
 bool Time::_validInstance = false;
 
 void Time::init() {
@@ -19,7 +19,7 @@ void Time::init() {
 }
 
 double Time::time() {
-    if(!_validInstance) {
+    if (!_validInstance) {
         return 0;
     }
 
@@ -27,7 +27,7 @@ double Time::time() {
 }
 
 double Time::deltaTime() {
-    if(!_validInstance) {
+    if (!_validInstance) {
         return 0;
     }
 
@@ -35,7 +35,7 @@ double Time::deltaTime() {
 }
 
 void Time::update() {
-    if(!_validInstance) {
+    if (!_validInstance) {
         return;
     }
 
@@ -44,13 +44,15 @@ void Time::update() {
     _instance->_deltaTime = duration<double>(t - _instance->_last).count();
     _instance->_time = duration<double>(t - _instance->_start).count();
     // in case when fps < 10 it is useful to decrease _deltaTime (to avoid collision problems)
-    if(_instance->_deltaTime > Consts::LARGEST_TIME_STEP)
+    if (_instance->_deltaTime > Consts::LARGEST_TIME_STEP) {
         _instance->_deltaTime = Consts::LARGEST_TIME_STEP;
+    }
 
     _instance->_last = t;
 
-    if(_instance->_deltaTime > 10000)
+    if (_instance->_deltaTime > 10000) {
         return;
+    }
 
     _instance->_fpsCounter++;
     if (t - _instance->_fpsStart > _instance->_fpsCountTime) {
@@ -61,7 +63,7 @@ void Time::update() {
 }
 
 int Time::fps() {
-    if(!_validInstance) {
+    if (!_validInstance) {
         return 0;
     }
     // Cast is faster than floor and has the same behavior for positive numbers

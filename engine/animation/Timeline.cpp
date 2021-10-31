@@ -3,12 +3,12 @@
 //
 
 #include <list>
+
 #include "Animation.h"
 #include "Timeline.h"
-#include <iostream>
 #include "../utils/Log.h"
 
-Timeline* Timeline::_instance = nullptr;
+Timeline *Timeline::_instance = nullptr;
 bool Timeline::_validInstance = false;
 
 void Timeline::init() {
@@ -18,8 +18,8 @@ void Timeline::init() {
     Log::log("Timeline::init(): animation timeline was initialized");
 }
 
-void Timeline::animate(const AnimationListTag& listName, std::shared_ptr<Animation> anim) {
-    if(!_validInstance) {
+void Timeline::animate(const AnimationListTag &listName, std::shared_ptr<Animation> anim) {
+    if (!_validInstance) {
         return;
     }
 
@@ -29,23 +29,23 @@ void Timeline::animate(const AnimationListTag& listName, std::shared_ptr<Animati
 }
 
 void Timeline::deleteAllAnimations() {
-    if(!_validInstance) {
+    if (!_validInstance) {
         return;
     }
 
     int animCounter = 0;
 
-    for (auto& [listName, animationList] : _instance->_animations) {
+    for (auto&[listName, animationList] : _instance->_animations) {
         animCounter += animationList.size();
         animationList.clear();
     }
     _instance->_animations.clear();
 
-    Log::log("Timeline::deleteAllAnimations(): all " + std::to_string(animCounter) + " animations was deleted" );
+    Log::log("Timeline::deleteAllAnimations(): all " + std::to_string(animCounter) + " animations was deleted");
 }
 
-void Timeline::deleteAnimationList(const AnimationListTag& listName) {
-    if(!_validInstance) {
+void Timeline::deleteAnimationList(const AnimationListTag &listName) {
+    if (!_validInstance) {
         return;
     }
 
@@ -53,11 +53,12 @@ void Timeline::deleteAnimationList(const AnimationListTag& listName) {
     _instance->_animations[listName].clear();
     _instance->_animations.erase(listName);
 
-    Log::log("Timeline::deleteAnimationList(): list '" + listName.str() +"' with " + std::to_string(animCounter) + " animations was deleted" );
+    Log::log("Timeline::deleteAnimationList(): list '" + listName.str() + "' with " + std::to_string(animCounter) +
+             " animations was deleted");
 }
 
-[[nodiscard]] bool Timeline::isInAnimList(const AnimationListTag& listName) {
-    if(!_validInstance) {
+[[nodiscard]] bool Timeline::isInAnimList(const AnimationListTag &listName) {
+    if (!_validInstance) {
         return false;
     }
 
@@ -65,11 +66,11 @@ void Timeline::deleteAnimationList(const AnimationListTag& listName) {
 }
 
 void Timeline::update() {
-    if(!_validInstance) {
+    if (!_validInstance) {
         return;
     }
 
-    for (auto& [listName, animationList] : _instance->_animations) {
+    for (auto&[listName, animationList] : _instance->_animations) {
         if (animationList.empty()) {
             _instance->_animations.erase(listName);
             continue;

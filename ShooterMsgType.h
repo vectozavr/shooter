@@ -7,8 +7,7 @@
 
 #include <SFML/Network.hpp>
 
-enum class ShooterMsgType
-{
+enum class ShooterMsgType {
     Damage,
     Kill,
     FireTrace,
@@ -18,7 +17,8 @@ enum class ShooterMsgType
     ChangeWeapon
 };
 
-sf::Packet& operator<<(sf::Packet& packet, ShooterMsgType type);
-sf::Packet& operator>>(sf::Packet& packet, ShooterMsgType& type);
+sf::Packet &operator<<(sf::Packet &packet, ShooterMsgType type);
+
+sf::Packet &operator>>(sf::Packet &packet, ShooterMsgType &type);
 
 #endif //SHOOTER_SHOOTERMSGTYPE_H

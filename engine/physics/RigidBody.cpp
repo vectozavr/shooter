@@ -2,28 +2,29 @@
 // Created by Иван Ильин on 05.02.2021.
 //
 
+#include <cmath>
+#include <utility>
+
 #include "RigidBody.h"
 #include "../utils/Log.h"
 #include "../utils/Time.h"
-#include <iostream>
-#include <cmath>
-#include <fstream>
-#include <utility>
 #include "../Consts.h"
 
-RigidBody::RigidBody(ObjectNameTag nameTag, const std::string &filename, const Vec3D &scale) : Mesh(std::move(nameTag), filename, scale) {
+RigidBody::RigidBody(ObjectNameTag nameTag, const std::string &filename, const Vec3D &scale) : Mesh(std::move(nameTag),
+                                                                                                    filename, scale) {
 }
 
-Vec3D RigidBody::_findFurthestPoint(const Vec3D& direction) {
+Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
     Vec3D maxPoint{0, 0, 0};
     double maxDistance = -std::numeric_limits<double>::max();
 
-    for(auto& tri : triangles()){
-        for(int i = 0; i < 3; i++){
-            Vec3D point(model()*tri[i]);
+    for (auto &tri : triangles()) {
+        for (int i = 0; i < 3; i++) {
+            // TODO: multiplying model() * tri[i] costs too much time to compute
+            Vec3D point(model() * tri[i]);
 
             double distance = point.dot(direction.normalized());
-            if(distance > maxDistance) {
+            if (distance > maxDistance) {
                 maxDistance = distance;
                 maxPoint = point;
             }
@@ -33,7 +34,7 @@ Vec3D RigidBody::_findFurthestPoint(const Vec3D& direction) {
     return maxPoint;
 }
 
-Vec3D RigidBody::_support(std::shared_ptr<RigidBody> obj, const Vec3D& direction) {
+Vec3D RigidBody::_support(std::shared_ptr<RigidBody> obj, const Vec3D &direction) {
     Vec3D p1 = _findFurthestPoint(direction);
     Vec3D p2 = obj->_findFurthestPoint(-direction);
     Vec3D res = p1 - p2;
@@ -43,15 +44,19 @@ Vec3D RigidBody::_support(std::shared_ptr<RigidBody> obj, const Vec3D& direction
 
 NextSimplex RigidBody::_nextSimplex(const Simplex &points) {
     switch (points.type()) {
-        case SimplexType::Line: return _lineCase(points);
-        case SimplexType::Triangle: return _triangleCase(points);
-        case SimplexType::Tetrahedron: return _tetrahedronCase(points);
+        case SimplexType::Line:
+            return _lineCase(points);
+        case SimplexType::Triangle:
+            return _triangleCase(points);
+        case SimplexType::Tetrahedron:
+            return _tetrahedronCase(points);
 
-        default: throw std::logic_error{"RigidBody::_nextSimplex: simplex is not Line, Triangle or Tetrahedron"};
+        default:
+            throw std::logic_error{"RigidBody::_nextSimplex: simplex is not Line, Triangle or Tetrahedron"};
     }
 }
 
-NextSimplex RigidBody::_lineCase(const Simplex& points) {
+NextSimplex RigidBody::_lineCase(const Simplex &points) {
     Simplex newPoints(points);
     Vec3D newDirection;
 
@@ -59,7 +64,7 @@ NextSimplex RigidBody::_lineCase(const Simplex& points) {
     Vec3D b = points[1];
 
     Vec3D ab = b - a;
-    Vec3D ao =   - a;
+    Vec3D ao = -a;
 
     if (ab.dot(ao) > 0) {
         newDirection = ab.cross(ao).cross(ab);
@@ -81,27 +86,25 @@ NextSimplex RigidBody::_triangleCase(const Simplex &points) {
 
     Vec3D ab = b - a;
     Vec3D ac = c - a;
-    Vec3D ao =   - a;
+    Vec3D ao = -a;
 
     Vec3D abc = ab.cross(ac);
 
     if (abc.cross(ac).dot(ao) > 0) {
         if (ac.dot(ao) > 0) {
-            newPoints = Simplex{ a, c };
+            newPoints = Simplex{a, c};
             newDirection = ac.cross(ao).cross(ac);
-        }
-        else {
-            return _lineCase(Simplex { a, b });
+        } else {
+            return _lineCase(Simplex{a, b});
         }
     } else {
         if (ab.cross(abc).dot(ao) > 0) {
-            return _lineCase(Simplex { a, b });
-        }
-        else {
+            return _lineCase(Simplex{a, b});
+        } else {
             if (abc.dot(ao) > 0) {
                 newDirection = abc;
             } else {
-                newPoints = Simplex{ a, c, b };
+                newPoints = Simplex{a, c, b};
                 newDirection = -abc;
             }
         }
@@ -119,22 +122,22 @@ NextSimplex RigidBody::_tetrahedronCase(const Simplex &points) {
     Vec3D ab = b - a;
     Vec3D ac = c - a;
     Vec3D ad = d - a;
-    Vec3D ao =   - a;
+    Vec3D ao = -a;
 
     Vec3D abc = ab.cross(ac);
     Vec3D acd = ac.cross(ad);
     Vec3D adb = ad.cross(ab);
 
     if (abc.dot(ao) > 0) {
-        return _triangleCase(Simplex{ a, b, c });
+        return _triangleCase(Simplex{a, b, c});
     }
 
     if (acd.dot(ao) > 0) {
-        return _triangleCase(Simplex{ a, c, d });
+        return _triangleCase(Simplex{a, c, d});
     }
 
     if (adb.dot(ao) > 0) {
-        return _triangleCase(Simplex{ a, d, b });
+        return _triangleCase(Simplex{a, d, b});
     }
 
     return NextSimplex{points, Vec3D(), true};
@@ -175,7 +178,7 @@ std::pair<bool, Simplex> RigidBody::checkGJKCollision(std::shared_ptr<RigidBody>
         points = nextSimplex.newSimplex;
 
         if (nextSimplex.finishSearching) {
-            if(obj->isCollider()) {
+            if (obj->isCollider()) {
                 _inCollision = true;
             }
             return std::make_pair(true, points);
@@ -184,7 +187,7 @@ std::pair<bool, Simplex> RigidBody::checkGJKCollision(std::shared_ptr<RigidBody>
     return std::make_pair(false, points);
 }
 
-CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody> obj) {
+CollisionPoint RigidBody::EPA(const Simplex &simplex, std::shared_ptr<RigidBody> obj) {
     // This is implementation of EPA algorithm for solving collision.
     // It uses a simplex from GJK around and expand it to the border.
     // The goal is to calculate the nearest normal and the intersection depth.
@@ -193,7 +196,7 @@ CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody>
     // https://blog.winter.dev/2020/epa-algorithm/
 
     std::vector<Vec3D> polytope(simplex.begin(), simplex.end());
-    std::vector<size_t>  faces = {
+    std::vector<size_t> faces = {
             0, 1, 2,
             0, 3, 1,
             0, 2, 3,
@@ -220,7 +223,7 @@ CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody>
             std::vector<std::pair<size_t, size_t>> uniqueEdges;
 
             size_t f = 0;
-            for (auto & normal : normals) {
+            for (auto &normal : normals) {
                 if (normal.normal.dot(support) > 0) {
                     uniqueEdges = _addIfUniqueEdge(uniqueEdges, faces, f + 0, f + 1);
                     uniqueEdges = _addIfUniqueEdge(uniqueEdges, faces, f + 1, f + 2);
@@ -235,7 +238,7 @@ CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody>
             }
 
             std::vector<size_t> newFaces;
-            for (auto [edgeIndex1, edgeIndex2] : uniqueEdges) {
+            for (auto[edgeIndex1, edgeIndex2] : uniqueEdges) {
                 newFaces.push_back(edgeIndex1);
                 newFaces.push_back(edgeIndex2);
                 newFaces.push_back(polytope.size());
@@ -252,14 +255,15 @@ CollisionPoint RigidBody::EPA(const Simplex& simplex, std::shared_ptr<RigidBody>
     }
 
     _collisionNormal = minNormal;
-    if(std::abs(minDistance - std::numeric_limits<double>::max()) < Consts::EPS) {
+    if (std::abs(minDistance - std::numeric_limits<double>::max()) < Consts::EPS) {
         return CollisionPoint{minNormal, 0};
     }
 
     return CollisionPoint{minNormal, minDistance + Consts::EPA_EPS};
 }
 
-std::pair<std::vector<FaceNormal>, size_t> RigidBody::_getFaceNormals(const std::vector<Vec3D>& polytope, const std::vector<size_t>& faces) {
+std::pair<std::vector<FaceNormal>, size_t>
+RigidBody::_getFaceNormals(const std::vector<Vec3D> &polytope, const std::vector<size_t> &faces) {
     std::vector<FaceNormal> normals;
     size_t nearestFaceIndex = 0;
     double minDistance = std::numeric_limits<double>::max();
@@ -289,7 +293,9 @@ std::pair<std::vector<FaceNormal>, size_t> RigidBody::_getFaceNormals(const std:
     return {normals, nearestFaceIndex};
 }
 
-std::vector<std::pair<size_t, size_t>> RigidBody::_addIfUniqueEdge(const std::vector<std::pair<size_t, size_t>>& edges, const std::vector<size_t>& faces, size_t a, size_t b) {
+std::vector<std::pair<size_t, size_t>>
+RigidBody::_addIfUniqueEdge(const std::vector<std::pair<size_t, size_t>> &edges, const std::vector<size_t> &faces,
+                            size_t a, size_t b) {
 
     std::vector<std::pair<size_t, size_t>> newEdges = edges;
 
@@ -309,12 +315,12 @@ std::vector<std::pair<size_t, size_t>> RigidBody::_addIfUniqueEdge(const std::ve
     return newEdges;
 }
 
-void RigidBody::solveCollision(const CollisionPoint& collision) {
+void RigidBody::solveCollision(const CollisionPoint &collision) {
 
     Vec3D velocity_parallel = collision.normal * velocity().dot(collision.normal);
     Vec3D velocity_perpendicular = velocity() - velocity_parallel;
 
-    if(velocity().dot(collision.normal) > 0) {
+    if (velocity().dot(collision.normal) > 0) {
         setVelocity(velocity_perpendicular);
     }
 
@@ -326,7 +332,7 @@ void RigidBody::updatePhysicsState() {
     _velocity = _velocity + _acceleration * Time::deltaTime();
 }
 
-void RigidBody::setVelocity(const Vec3D& velocity) {
+void RigidBody::setVelocity(const Vec3D &velocity) {
     _velocity = velocity;
 }
 
@@ -334,7 +340,7 @@ void RigidBody::addVelocity(const Vec3D &velocity) {
     _velocity = _velocity + velocity;
 }
 
-void RigidBody::setAcceleration(const Vec3D& acceleration) {
+void RigidBody::setAcceleration(const Vec3D &acceleration) {
     _acceleration = acceleration;
 }
 

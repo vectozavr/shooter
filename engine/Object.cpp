@@ -5,27 +5,28 @@
 #include "Object.h"
 #include "Matrix4x4.h"
 
-void Object::transform(const Matrix4x4& t) {
+void Object::transform(const Matrix4x4 &t) {
     _transformMatrix = t * _transformMatrix;
 
-    for(auto &[attachedName, attachedObject] : _attachedObjects) {
-        if(!attachedObject.expired()) {
+    for (auto &[attachedName, attachedObject] : _attachedObjects) {
+        if (!attachedObject.expired()) {
             attachedObject.lock()->transformRelativePoint(position(), t);
         }
     }
 }
-void Object::transformRelativePoint(const Vec3D &point, const Matrix4x4& transform) {
+
+void Object::transformRelativePoint(const Vec3D &point, const Matrix4x4 &transform) {
 
     // translate object in new coordinate system (connected with point)
     _transformMatrix = Matrix4x4::Translation(position() - point) * _transformMatrix;
     // transform object in the new coordinate system
-    _transformMatrix = transform*_transformMatrix;
+    _transformMatrix = transform * _transformMatrix;
     // translate object back in self connected coordinate system
     _position = _transformMatrix.w() + point;
     _transformMatrix = Matrix4x4::Translation(-_transformMatrix.w()) * _transformMatrix;
 
-    for(auto &[attachedName, attachedObject] : _attachedObjects) {
-        if(!attachedObject.expired()) {
+    for (auto &[attachedName, attachedObject] : _attachedObjects) {
+        if (!attachedObject.expired()) {
             attachedObject.lock()->transformRelativePoint(point, transform);
         }
     }
@@ -35,8 +36,8 @@ void Object::translate(const Vec3D &dv) {
 
     _position = _position + dv;
 
-    for(auto &[attachedName, attachedObject] : _attachedObjects) {
-        if(!attachedObject.expired()) {
+    for (auto &[attachedName, attachedObject] : _attachedObjects) {
+        if (!attachedObject.expired()) {
             attachedObject.lock()->translate(dv);
         }
     }
@@ -49,7 +50,8 @@ void Object::scale(const Vec3D &s) {
 void Object::rotate(const Vec3D &r) {
     _angle = _angle + r;
 
-    Matrix4x4 rotationMatrix = Matrix4x4::RotationZ(r.z())*Matrix4x4::RotationY(r.y())*Matrix4x4::RotationX(r.z());
+    // TODO: when you rotate body _angle is changed only for this body but all attached objects have incorrect _angle
+    Matrix4x4 rotationMatrix = Matrix4x4::RotationZ(r.z()) * Matrix4x4::RotationY(r.y()) * Matrix4x4::RotationX(r.z());
     transform(rotationMatrix);
 }
 
@@ -96,15 +98,15 @@ void Object::rotateToAngle(const Vec3D &v) {
     rotate(v - _angle);
 }
 
-std::shared_ptr<Object> Object::attached(const ObjectNameTag& tag) {
-    if(_attachedObjects.count(tag) == 0 || _attachedObjects.find(tag)->second.expired()) {
+std::shared_ptr<Object> Object::attached(const ObjectNameTag &tag) {
+    if (_attachedObjects.count(tag) == 0 || _attachedObjects.find(tag)->second.expired()) {
         return nullptr;
     }
     return _attachedObjects.find(tag)->second.lock();
 }
 
 bool Object::checkIfAttached(Object *obj) {
-    for(const auto& [nameTag, attachedObject] : _attachedObjects) {
+    for (const auto&[nameTag, attachedObject] : _attachedObjects) {
         if (obj == attachedObject.lock().get() || attachedObject.lock()->checkIfAttached(obj)) {
             return true;
         }
@@ -113,8 +115,8 @@ bool Object::checkIfAttached(Object *obj) {
 }
 
 void Object::attach(std::shared_ptr<Object> object) {
-    if(this != object.get()) {
-        if(!object->checkIfAttached(this)) {
+    if (this != object.get()) {
+        if (!object->checkIfAttached(this)) {
             _attachedObjects.emplace(object->name(), object);
         } else {
             throw std::invalid_argument{"Object::attach: You tried to create infinite recursive call chains"};
@@ -124,59 +126,59 @@ void Object::attach(std::shared_ptr<Object> object) {
     }
 }
 
-void Object::unattach(const ObjectNameTag& tag) {
+void Object::unattach(const ObjectNameTag &tag) {
     _attachedObjects.erase(tag);
 }
 
 // OpenGL function
-GLfloat* Object::glView() const {
-    auto* v = (GLfloat*)malloc(4*4*sizeof(GLfloat));
+GLfloat *Object::glView() const {
+    auto *v = (GLfloat *) malloc(4 * 4 * sizeof(GLfloat));
 
-    v[0] = -(GLfloat)left().x();
-    v[4] = -(GLfloat)left().y();
-    v[8] = -(GLfloat)left().z();
-    v[12] = (GLfloat)position().dot(left());
+    v[0] = -(GLfloat) left().x();
+    v[4] = -(GLfloat) left().y();
+    v[8] = -(GLfloat) left().z();
+    v[12] = (GLfloat) position().dot(left());
 
-    v[1] = (GLfloat)up().x();
-    v[5] = (GLfloat)up().y();
-    v[9] = (GLfloat)up().z();
-    v[13] = -(GLfloat)position().dot(up());
+    v[1] = (GLfloat) up().x();
+    v[5] = (GLfloat) up().y();
+    v[9] = (GLfloat) up().z();
+    v[13] = -(GLfloat) position().dot(up());
 
-    v[2] = -(GLfloat)lookAt().x();
-    v[6] = -(GLfloat)lookAt().y();
-    v[10] = -(GLfloat)lookAt().z();
-    v[14] = (GLfloat)position().dot(lookAt());
+    v[2] = -(GLfloat) lookAt().x();
+    v[6] = -(GLfloat) lookAt().y();
+    v[10] = -(GLfloat) lookAt().z();
+    v[14] = (GLfloat) position().dot(lookAt());
 
-    v[3] = (GLfloat)0.0f;
-    v[7] = (GLfloat)0.0f;
-    v[11] = (GLfloat)0.0f;
-    v[15] = (GLfloat)1.0f;
+    v[3] = (GLfloat) 0.0f;
+    v[7] = (GLfloat) 0.0f;
+    v[11] = (GLfloat) 0.0f;
+    v[15] = (GLfloat) 1.0f;
 
     return v;
 }
 
-GLfloat* Object::glModel() const {
-    auto* m = (GLfloat*)malloc(4*4*sizeof(GLfloat));
+GLfloat *Object::glModel() const {
+    auto *m = (GLfloat *) malloc(4 * 4 * sizeof(GLfloat));
 
-    m[0] = (GLfloat)left().x();
-    m[4] = (GLfloat)up().x();
-    m[8] = (GLfloat)lookAt().x();
-    m[12] = (GLfloat)position().x();
+    m[0] = (GLfloat) left().x();
+    m[4] = (GLfloat) up().x();
+    m[8] = (GLfloat) lookAt().x();
+    m[12] = (GLfloat) position().x();
 
-    m[1] = (GLfloat)left().y();
-    m[5] = (GLfloat)up().y();
-    m[9] = (GLfloat)lookAt().y();
-    m[13] = (GLfloat)position().y();
+    m[1] = (GLfloat) left().y();
+    m[5] = (GLfloat) up().y();
+    m[9] = (GLfloat) lookAt().y();
+    m[13] = (GLfloat) position().y();
 
-    m[2] = (GLfloat)left().z();
-    m[6] = (GLfloat)up().z();
-    m[10] =(GLfloat)lookAt().z();
-    m[14] = (GLfloat)position().z();
+    m[2] = (GLfloat) left().z();
+    m[6] = (GLfloat) up().z();
+    m[10] = (GLfloat) lookAt().z();
+    m[14] = (GLfloat) position().z();
 
-    m[3] = (GLfloat)0.0f;
-    m[7] = (GLfloat)0.0f;
-    m[11] = (GLfloat)0.0f;
-    m[15] = (GLfloat)1.0f;
+    m[3] = (GLfloat) 0.0f;
+    m[7] = (GLfloat) 0.0f;
+    m[11] = (GLfloat) 0.0f;
+    m[15] = (GLfloat) 1.0f;
 
     return m;
 }

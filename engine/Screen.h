@@ -7,9 +7,11 @@
 
 
 #include <string>
-#include "Triangle.h"
-#include <SFML/Graphics.hpp>
 #include <map>
+
+#include <SFML/Graphics.hpp>
+
+#include "Triangle.h"
 #include "utils/Time.h"
 #include "Consts.h"
 #include "Mesh.h"
@@ -26,33 +28,44 @@ private:
 
     const std::shared_ptr<sf::RenderWindow> _window = std::make_shared<sf::RenderWindow>();
 public:
-    void open(int screenWidth = Consts::STANDARD_SCREEN_WIDTH, int screenHeight = Consts::STANDARD_SCREEN_HEIGHT, const std::string& name = Consts::PROJECT_NAME, bool verticalSync = true, sf::Color background = Consts::BACKGROUND_COLOR, sf::Uint32 style = sf::Style::Default);
+    void open(int screenWidth = Consts::STANDARD_SCREEN_WIDTH, int screenHeight = Consts::STANDARD_SCREEN_HEIGHT,
+              const std::string &name = Consts::PROJECT_NAME, bool verticalSync = true,
+              sf::Color background = Consts::BACKGROUND_COLOR, sf::Uint32 style = sf::Style::Default);
 
     void display();
+
     void clear();
+
     [[nodiscard]] bool hasFocus() const { return _window->hasFocus(); }
 
-    void drawTriangle(const Triangle& triangle);
-    void drawTetragon(const Vec2D& p1, const Vec2D& p2, const Vec2D& p3, const Vec2D& p4, sf::Color color);
-    void drawText(const std::string& string, const Vec2D& position, int size, sf::Color color);
-    void drawText(const sf::Text& text);
-    void drawSprite(const sf::Sprite& sprite);
+    void drawTriangle(const Triangle &triangle);
 
-    void setTitle(const std::string& title);
+    void drawTetragon(const Vec2D &p1, const Vec2D &p2, const Vec2D &p3, const Vec2D &p4, sf::Color color);
+
+    void drawText(const std::string &string, const Vec2D &position, int size, sf::Color color);
+
+    void drawText(const sf::Text &text);
+
+    void drawSprite(const sf::Sprite &sprite);
+
+    void setTitle(const std::string &title);
+
     [[nodiscard]] std::string title() const { return _title; };
 
     bool isOpen();
 
-    [[nodiscard]] int width() const {return _window->getSize().x;}
-    [[nodiscard]] int height() const {return _window->getSize().y;}
+    [[nodiscard]] int width() const { return _window->getSize().x; }
+
+    [[nodiscard]] int height() const { return _window->getSize().y; }
 
     void close();
 
     void setMouseCursorVisible(bool visible);
 
     // OpenGL functions
-    void glDrawMesh(GLfloat* geometry, GLfloat* view, GLfloat* model, size_t count);
-    static GLfloat* glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D& cameraPosition);
+    void glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t count);
+
+    static GLfloat *glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D &cameraPosition);
 
     [[nodiscard]] std::shared_ptr<sf::RenderWindow> renderWindow() { return _window; }
 };

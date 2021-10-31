@@ -2,16 +2,18 @@
 // Created by Иван Ильин on 14.01.2021.
 //
 
-#include "Screen.h"
-#include "utils/Time.h"
 #include <utility>
-#include "utils/Log.h"
-#include "ResourceManager.h"
-#include <SFML/OpenGL.hpp>
 #include <cmath>
 
+#include <SFML/OpenGL.hpp>
 
-void Screen::open(int screenWidth, int screenHeight, const std::string &name, bool verticalSync, sf::Color background, sf::Uint32 style) {
+#include "Screen.h"
+#include "utils/Time.h"
+#include "utils/Log.h"
+#include "ResourceManager.h"
+
+void Screen::open(int screenWidth, int screenHeight, const std::string &name, bool verticalSync, sf::Color background,
+                  sf::Uint32 style) {
     _title = name;
     _w = screenWidth;
     _h = screenHeight;
@@ -46,13 +48,12 @@ void Screen::clear() {
     _window->clear(_background);
 }
 
-void Screen::drawTriangle(const Triangle& triangle)
-{
+void Screen::drawTriangle(const Triangle &triangle) {
     sf::Vertex tris[3] =
             {
-                    sf::Vertex(sf::Vector2f((float)triangle[0].x(), (float)triangle[0].y()), triangle.color()),
-                    sf::Vertex(sf::Vector2f((float)triangle[1].x(), (float)triangle[1].y()), triangle.color()),
-                    sf::Vertex(sf::Vector2f((float)triangle[2].x(), (float)triangle[2].y()), triangle.color())
+                    sf::Vertex(sf::Vector2f((float) triangle[0].x(), (float) triangle[0].y()), triangle.color()),
+                    sf::Vertex(sf::Vector2f((float) triangle[1].x(), (float) triangle[1].y()), triangle.color()),
+                    sf::Vertex(sf::Vector2f((float) triangle[2].x(), (float) triangle[2].y()), triangle.color())
             };
 
     _window->pushGLStates();
@@ -60,7 +61,7 @@ void Screen::drawTriangle(const Triangle& triangle)
     _window->popGLStates();
 }
 
-void Screen::setTitle(const std::string& title) {
+void Screen::setTitle(const std::string &title) {
     _title = title;
 }
 
@@ -79,10 +80,10 @@ void Screen::setMouseCursorVisible(bool visible) {
 void Screen::drawTetragon(const Vec2D &p1, const Vec2D &p2, const Vec2D &p3, const Vec2D &p4, sf::Color color) {
     sf::ConvexShape polygon;
     polygon.setPointCount(4);
-    polygon.setPoint(0, sf::Vector2f((float)p1.x(), (float)p1.y()));
-    polygon.setPoint(1, sf::Vector2f((float)p2.x(), (float)p2.y()));
-    polygon.setPoint(2, sf::Vector2f((float)p3.x(), (float)p3.y()));
-    polygon.setPoint(3, sf::Vector2f((float)p4.x(), (float)p4.y()));
+    polygon.setPoint(0, sf::Vector2f((float) p1.x(), (float) p1.y()));
+    polygon.setPoint(1, sf::Vector2f((float) p2.x(), (float) p2.y()));
+    polygon.setPoint(2, sf::Vector2f((float) p3.x(), (float) p3.y()));
+    polygon.setPoint(3, sf::Vector2f((float) p4.x(), (float) p4.y()));
     polygon.setFillColor(color);
 
     _window->pushGLStates();
@@ -90,7 +91,7 @@ void Screen::drawTetragon(const Vec2D &p1, const Vec2D &p2, const Vec2D &p3, con
     _window->popGLStates();
 }
 
-void Screen::drawText(const std::string& string, const Vec2D &position, int size, sf::Color color) {
+void Screen::drawText(const std::string &string, const Vec2D &position, int size, sf::Color color) {
     sf::Text text;
 
     text.setFont(*ResourceManager::loadFont(Consts::MEDIUM_FONT));
@@ -98,7 +99,7 @@ void Screen::drawText(const std::string& string, const Vec2D &position, int size
     text.setCharacterSize(size);
     text.setFillColor(color);
     text.setStyle(sf::Text::Italic);
-    text.setPosition((float)position.x(), (float)position.y());
+    text.setPosition((float) position.x(), (float) position.y());
 
     text.setString(string);
 
@@ -120,7 +121,7 @@ void Screen::drawText(const sf::Text &text) {
 }
 
 // OpenGL functions
-void Screen::glDrawMesh(GLfloat* geometry, GLfloat* view, GLfloat* model, size_t count) {
+void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t count) {
     // OpenGL:
     // Make the window the active window for OpenGL calls
     _window->setActive(true);
@@ -174,38 +175,38 @@ void Screen::glDrawMesh(GLfloat* geometry, GLfloat* view, GLfloat* model, size_t
     _window->setActive(false);
 }
 
-GLfloat* Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D& cameraPosition) {
-    std::vector<Triangle>& triangles = mesh->triangles();
+GLfloat *Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D &cameraPosition) {
+    std::vector<Triangle> &triangles = mesh->triangles();
 
-    auto* geometry = (GLfloat*)malloc(7*3*triangles.size()*sizeof(GLfloat));
+    auto *geometry = (GLfloat *) malloc(7 * 3 * triangles.size() * sizeof(GLfloat));
 
-    for(int i = 0; i < triangles.size(); i++) {
+    for (int i = 0; i < triangles.size(); i++) {
 
-        int stride = 21*i;
+        int stride = 21 * i;
 
         double dot[3];
         sf::Color ambientColor[3];
 
-        Triangle MTriangle = triangles[i]*mesh->model();
+        Triangle MTriangle = triangles[i] * mesh->model();
 
-        for(int k = 0; k < 3; k++) {
+        for (int k = 0; k < 3; k++) {
 
             dot[k] = MTriangle.norm().dot((Vec3D(MTriangle[k]) - cameraPosition).normalized());
 
             sf::Color color = triangles[i].color();
-            ambientColor[k] = sf::Color((sf::Uint8)(color.r * (0.3 * std::abs(dot[k]) + 0.7)),
-                                        (sf::Uint8)(color.g * (0.3 * std::abs(dot[k]) + 0.7)),
-                                        (sf::Uint8)(color.b * (0.3 * std::abs(dot[k]) + 0.7)),
-                                        (sf::Uint8)color.a);
+            ambientColor[k] = sf::Color((sf::Uint8) (color.r * (0.3 * std::abs(dot[k]) + 0.7)),
+                                        (sf::Uint8) (color.g * (0.3 * std::abs(dot[k]) + 0.7)),
+                                        (sf::Uint8) (color.b * (0.3 * std::abs(dot[k]) + 0.7)),
+                                        (sf::Uint8) color.a);
 
-            geometry[stride + 7*k + 0] = (GLfloat)MTriangle[k].x();
-            geometry[stride + 7*k + 1] = (GLfloat)MTriangle[k].y();
-            geometry[stride + 7*k + 2] = (GLfloat)MTriangle[k].z();
+            geometry[stride + 7 * k + 0] = (GLfloat) MTriangle[k].x();
+            geometry[stride + 7 * k + 1] = (GLfloat) MTriangle[k].y();
+            geometry[stride + 7 * k + 2] = (GLfloat) MTriangle[k].z();
 
-            geometry[stride + 7*k + 3] = (GLfloat)ambientColor[k].r/255.0f;
-            geometry[stride + 7*k + 4] = (GLfloat)ambientColor[k].g/255.0f;
-            geometry[stride + 7*k + 5] = (GLfloat)ambientColor[k].b/255.0f;
-            geometry[stride + 7*k + 6] = (GLfloat)ambientColor[k].a/255.0f;
+            geometry[stride + 7 * k + 3] = (GLfloat) ambientColor[k].r / 255.0f;
+            geometry[stride + 7 * k + 4] = (GLfloat) ambientColor[k].g / 255.0f;
+            geometry[stride + 7 * k + 5] = (GLfloat) ambientColor[k].b / 255.0f;
+            geometry[stride + 7 * k + 6] = (GLfloat) ambientColor[k].a / 255.0f;
         }
     }
     return geometry;

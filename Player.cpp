@@ -13,47 +13,49 @@ Player::Player(ObjectNameTag name) : RigidBody(name) {
     setVisible(false);
 
     Vec3D randColor = Vec3D::Random();
-    setColor({static_cast<sf::Uint8>(randColor.x()*255), static_cast<sf::Uint8>(randColor.y()*255), static_cast<sf::Uint8>(randColor.z()*255)});
+    setColor({static_cast<sf::Uint8>(randColor.x() * 255), static_cast<sf::Uint8>(randColor.y() * 255),
+              static_cast<sf::Uint8>(randColor.z() * 255)});
 
-    setCollisionCallBack([this](const ObjectNameTag& tag, std::shared_ptr<RigidBody> obj) {collisionWithObject(tag, obj);});
+    setCollisionCallBack(
+            [this](const ObjectNameTag &tag, std::shared_ptr<RigidBody> obj) { collisionWithObject(tag, obj); });
 }
 
-void Player::rotateWeaponsRelativePoint(const Vec3D& point4D, const Vec3D& v, double val) {
-    for(auto& weapon : _weapons) {
+void Player::rotateWeaponsRelativePoint(const Vec3D &point4D, const Vec3D &v, double val) {
+    for (auto &weapon : _weapons) {
         weapon->rotateRelativePoint(point4D, v, val);
     }
 }
 
-void Player::collisionWithObject(const ObjectNameTag& tag, std::shared_ptr<RigidBody> obj) {
-    if(tag.str().find("Bonus_gun") != std::string::npos) {
+void Player::collisionWithObject(const ObjectNameTag &tag, std::shared_ptr<RigidBody> obj) {
+    if (tag.str().find("Bonus_gun") != std::string::npos) {
         addWeapon(std::make_shared<Gun>());
     }
 
-    if(tag.str().find("Bonus_shotgun") != std::string::npos) {
+    if (tag.str().find("Bonus_shotgun") != std::string::npos) {
         addWeapon(std::make_shared<Shotgun>());
     }
 
-    if(tag.str().find("Bonus_ak47") != std::string::npos) {
+    if (tag.str().find("Bonus_ak47") != std::string::npos) {
         addWeapon(std::make_shared<Ak47>());
     }
 
-    if(tag.str().find("Bonus_gold_ak47") != std::string::npos) {
+    if (tag.str().find("Bonus_gold_ak47") != std::string::npos) {
         addWeapon(std::make_shared<Gold_Ak47>());
     }
 
-    if(tag.str().find("Bonus_rifle") != std::string::npos) {
+    if (tag.str().find("Bonus_rifle") != std::string::npos) {
         addWeapon(std::make_shared<Rifle>());
     }
 
-    if(tag.str().find("Bonus_hill") != std::string::npos) {
+    if (tag.str().find("Bonus_hill") != std::string::npos) {
         setFullHealth();
     }
 
-    if(tag.str().find("Bonus_ability") != std::string::npos) {
+    if (tag.str().find("Bonus_ability") != std::string::npos) {
         setFullAbility();
     }
 
-    if(tag.str().find("Bonus") != std::string::npos) {
+    if (tag.str().find("Bonus") != std::string::npos) {
         _takeBonusCallBack(tag.str());
     }
 }
@@ -61,7 +63,7 @@ void Player::collisionWithObject(const ObjectNameTag& tag, std::shared_ptr<Rigid
 void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     SoundController::playSound(SoundTag("changeWeapon"), ShooterConsts::CHANGE_WEAPON_SOUND);
 
-    for(auto& w : _weapons) {
+    for (auto &w : _weapons) {
         if (w->name() == weapon->name()) {
             w->addAmmo(w->initialPack());
             return;
@@ -80,8 +82,8 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
 
 void Player::initWeapons() {
 
-    if(!_weapons.empty()) {
-        for(auto weapon : _weapons) {
+    if (!_weapons.empty()) {
+        for (auto weapon : _weapons) {
             unattach(ObjectNameTag(weapon->name()));
         }
 
@@ -95,7 +97,7 @@ void Player::initWeapons() {
 }
 
 void Player::nextWeapon() {
-    if(_weapons.size() > 1) {
+    if (_weapons.size() > 1) {
         // change '_selectedWeapon'
         _removeWeaponCallBack(_weapons[_selectedWeapon]);
         _selectedWeapon = (_selectedWeapon + 1) % _weapons.size();
@@ -106,7 +108,7 @@ void Player::nextWeapon() {
 }
 
 void Player::previousWeapon() {
-    if(_weapons.size() > 1) {
+    if (_weapons.size() > 1) {
         // change '_selectedWeapon'
         _removeWeaponCallBack(_weapons[_selectedWeapon]);
         if (_selectedWeapon > 0) {
@@ -122,9 +124,9 @@ void Player::previousWeapon() {
 
 bool Player::fire() {
     auto camera = attached(ObjectNameTag("Camera"));
-    if(camera != nullptr) {
+    if (camera != nullptr) {
         auto fireInfo = _weapons[_selectedWeapon]->fire(_rayCastFunction, camera->position(), camera->lookAt());
-        for(auto& [damagedPlayerName, damage] : fireInfo.damagedPlayers) {
+        for (auto&[damagedPlayerName, damage] : fireInfo.damagedPlayers) {
             sf::Uint16 targetId = std::stoi(damagedPlayerName.str().substr(6));
             _damagePlayerCallBack(targetId, damage);
         }

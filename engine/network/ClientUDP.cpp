@@ -4,14 +4,12 @@
 
 #include "ClientUDP.h"
 #include "MsgType.h"
-#include <thread>
 #include "../utils/Time.h"
-#include <cmath>
 #include "../utils/Log.h"
 #include "../Consts.h"
 
 ClientUDP::ClientUDP() {
-    _socket.setTimeoutCallback([this](sf::Uint16 id) {return ClientUDP::timeout(id); } );
+    _socket.setTimeoutCallback([this](sf::Uint16 id) { return ClientUDP::timeout(id); });
 }
 
 bool ClientUDP::connected() const {

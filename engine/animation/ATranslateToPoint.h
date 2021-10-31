@@ -19,19 +19,22 @@ private:
     bool _started = false;
 
     void update() override {
-        if(_object.expired()) {
+        if (_object.expired()) {
             stop();
             return;
         }
 
-        if(!_started) {
+        if (!_started) {
             _started = true;
             _translationValue = _targetPoint - _object.lock()->position();
         }
         _object.lock()->translate(_translationValue * dprogress());
     }
+
 public:
-    ATranslateToPoint(std::weak_ptr<Object> object, const Vec3D& p, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::Bezier) : Animation(duration, looped, interpolationType), _targetPoint(p), _object(object) {
+    ATranslateToPoint(std::weak_ptr<Object> object, const Vec3D &p, double duration = 1, LoopOut looped = LoopOut::None,
+                      InterpolationType interpolationType = InterpolationType::Bezier)
+                      : Animation(duration, looped, interpolationType), _targetPoint(p), _object(object) {
     }
 };
 

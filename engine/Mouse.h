@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <utility>
+
 #include "Screen.h"
 #include "Vec2D.h"
 
@@ -18,11 +19,16 @@ private:
 public:
     explicit Mouse(std::shared_ptr<Screen> screen) : _screen(std::move(screen)) {};
 
-    static bool isButtonPressed(sf::Mouse::Button button); // returns true if this _button is _pressed
-    bool isButtonTapped(sf::Mouse::Button button); // returns true if this _button is tapped and 1/5 sec passed (_button bouncing problem solved)
+    // returns true if this _button is _pressed
+    static bool isButtonPressed(sf::Mouse::Button button);
+
+    // returns true if this _button is tapped and 1/5 sec passed (_button bouncing problem solved)
+    bool isButtonTapped(sf::Mouse::Button button);
 
     [[nodiscard]] Vec2D getMousePosition() const;
+
     [[nodiscard]] Vec2D getMouseDisplacement() const;
+
     void setMouseInCenter() const;
 };
 

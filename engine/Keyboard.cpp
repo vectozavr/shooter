@@ -15,10 +15,10 @@ bool Keyboard::isKeyTapped(sf::Keyboard::Key key) {
         return false;
     }
 
-    if(_tappedKeys.count(key) == 0) {
+    if (_tappedKeys.count(key) == 0) {
         _tappedKeys.emplace(key, Time::time());
         return true;
-    } else if((Time::time() - _tappedKeys[key]) > Consts::TAP_DELAY) {
+    } else if ((Time::time() - _tappedKeys[key]) > Consts::TAP_DELAY) {
         _tappedKeys[key] = Time::time();
         return true;
     }

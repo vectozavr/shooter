@@ -5,8 +5,9 @@
 #ifndef ENGINE_SIMPLEX_H
 #define ENGINE_SIMPLEX_H
 
-#include "../Vec3D.h"
 #include <list>
+
+#include "../Vec3D.h"
 
 enum class SimplexType {
     Zero,
@@ -24,30 +25,35 @@ public:
     Simplex() = default;
 
     Simplex(std::initializer_list<Vec3D> list) {
-        for (const auto & v : list) {
+        for (const auto &v : list) {
             _points.push_back(v);
-            if(_points.size() > 4)
+            if (_points.size() > 4) {
                 _points.pop_front();
+            }
         }
     }
 
-    void push_front(const Vec3D& point) {
+    void push_front(const Vec3D &point) {
         _points.push_front(point);
-        if(_points.size() > 4)
+        if (_points.size() > 4) {
             _points.pop_back();
+        }
     }
 
     Vec3D operator[](unsigned i) const {
         auto it = _points.begin();
-        for(unsigned k=0; k<i; k++)
+        for (unsigned k = 0; k < i; k++) {
             ++it;
+        }
         return *it;
 
     }
+
     [[nodiscard]] unsigned size() const { return _points.size(); }
 
     [[nodiscard]] auto begin() const { return _points.begin(); }
-    [[nodiscard]] auto end()   const { return _points.end(); }
+
+    [[nodiscard]] auto end() const { return _points.end(); }
 
     [[nodiscard]] SimplexType type() const { return static_cast<SimplexType>(_points.size()); }
 };

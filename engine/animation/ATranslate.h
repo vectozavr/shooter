@@ -16,15 +16,20 @@ private:
     const Vec3D _translationValue;
 
     void update() override {
-        if(_object.expired()) {
+        if (_object.expired()) {
             stop();
             return;
         }
 
         _object.lock()->translate(_translationValue * dprogress());
     }
+
 public:
-    ATranslate(std::weak_ptr<Object> object, const Vec3D& t, double duration = 1, LoopOut looped = LoopOut::None, InterpolationType interpolationType = InterpolationType::Bezier) : Animation(duration, looped, interpolationType), _object(std::move(object)), _translationValue(t){
+    ATranslate(std::weak_ptr<Object> object, const Vec3D &t, double duration = 1, LoopOut looped = LoopOut::None,
+               InterpolationType interpolationType = InterpolationType::Bezier) : Animation(duration, looped,
+                                                                                            interpolationType),
+                                                                                  _object(std::move(object)),
+                                                                                  _translationValue(t) {
     }
 };
 

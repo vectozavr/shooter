@@ -4,7 +4,9 @@
 
 #ifndef SHOOTER_CONSTS_H
 #define SHOOTER_CONSTS_H
+
 #include <SFML/Graphics.hpp>
+
 #include "Vec2D.h"
 
 namespace Consts {
@@ -27,7 +29,7 @@ namespace Consts {
     const std::string THIN_FONT = "engine/fonts/Roboto-Thin.ttf";
     const std::string MEDIUM_FONT = "engine/fonts/Roboto-Medium.ttf";
 
-    const double LARGEST_TIME_STEP = 1.0/15.0;
+    const double LARGEST_TIME_STEP = 1.0 / 15.0;
     const double TAP_DELAY = 0.2;
 
     const Vec2D BEZIER[2] = {Vec2D{0.8, 0}, Vec2D{0.2, 1}};
@@ -35,10 +37,8 @@ namespace Consts {
     const unsigned NETWORK_VERSION = 3U;
     const int NETWORK_TIMEOUT = 5U;
     const int NETWORK_WORLD_UPDATE_RATE = 30;
-    const double NETWORK_RELIABLE_RETRY_TIME = 1.0/20;
+    const double NETWORK_RELIABLE_RETRY_TIME = 1.0 / 20;
     const uint16_t NETWORK_MAX_CLIENTS = 64;
-
-
 }
 
 #endif //SHOOTER_CONSTS_H
