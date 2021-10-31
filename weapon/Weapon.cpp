@@ -32,7 +32,7 @@ FireInformation Weapon::fire(std::function<IntersectionInformation(const Vec3D &
                              const Vec3D &position, const Vec3D &direction) {
     if (_clipAmmo == 0) {
         reload();
-        if (_clipAmmo == 0) {
+        if (_clipAmmo == 0 && SoundController::getStatus(SoundTag("noAmmo")) != sf::Sound::Status::Playing) {
             SoundController::playSound(SoundTag("noAmmo"), ShooterConsts::NO_AMMO_SOUND);
         }
     }
