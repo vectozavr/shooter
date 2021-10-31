@@ -51,9 +51,12 @@ void Screen::clear() {
 void Screen::drawTriangle(const Triangle &triangle) {
     sf::Vertex tris[3] =
             {
-                    sf::Vertex(sf::Vector2f((float) triangle[0].x(), (float) triangle[0].y()), triangle.color()),
-                    sf::Vertex(sf::Vector2f((float) triangle[1].x(), (float) triangle[1].y()), triangle.color()),
-                    sf::Vertex(sf::Vector2f((float) triangle[2].x(), (float) triangle[2].y()), triangle.color())
+                    sf::Vertex(sf::Vector2f(static_cast<float>(triangle[0].x()), static_cast<float>(triangle[0].y())),
+                               triangle.color()),
+                    sf::Vertex(sf::Vector2f(static_cast<float>(triangle[1].x()), static_cast<float>(triangle[1].y())),
+                               triangle.color()),
+                    sf::Vertex(sf::Vector2f(static_cast<float>(triangle[2].x()), static_cast<float>(triangle[2].y())),
+                               triangle.color())
             };
 
     _window->pushGLStates();
@@ -80,10 +83,10 @@ void Screen::setMouseCursorVisible(bool visible) {
 void Screen::drawTetragon(const Vec2D &p1, const Vec2D &p2, const Vec2D &p3, const Vec2D &p4, sf::Color color) {
     sf::ConvexShape polygon;
     polygon.setPointCount(4);
-    polygon.setPoint(0, sf::Vector2f((float) p1.x(), (float) p1.y()));
-    polygon.setPoint(1, sf::Vector2f((float) p2.x(), (float) p2.y()));
-    polygon.setPoint(2, sf::Vector2f((float) p3.x(), (float) p3.y()));
-    polygon.setPoint(3, sf::Vector2f((float) p4.x(), (float) p4.y()));
+    polygon.setPoint(0, sf::Vector2f(static_cast<float>(p1.x()), static_cast<float>(p1.y())));
+    polygon.setPoint(1, sf::Vector2f(static_cast<float>(p2.x()), static_cast<float>(p2.y())));
+    polygon.setPoint(2, sf::Vector2f(static_cast<float>(p3.x()), static_cast<float>(p3.y())));
+    polygon.setPoint(3, sf::Vector2f(static_cast<float>(p4.x()), static_cast<float>(p4.y())));
     polygon.setFillColor(color);
 
     _window->pushGLStates();
@@ -99,7 +102,7 @@ void Screen::drawText(const std::string &string, const Vec2D &position, int size
     text.setCharacterSize(size);
     text.setFillColor(color);
     text.setStyle(sf::Text::Italic);
-    text.setPosition((float) position.x(), (float) position.y());
+    text.setPosition(static_cast<float>(position.x()), static_cast<float>(position.y()));
 
     text.setString(string);
 
@@ -194,19 +197,19 @@ GLfloat *Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D &c
             dot[k] = MTriangle.norm().dot((Vec3D(MTriangle[k]) - cameraPosition).normalized());
 
             sf::Color color = triangles[i].color();
-            ambientColor[k] = sf::Color((sf::Uint8) (color.r * (0.3 * std::abs(dot[k]) + 0.7)),
-                                        (sf::Uint8) (color.g * (0.3 * std::abs(dot[k]) + 0.7)),
-                                        (sf::Uint8) (color.b * (0.3 * std::abs(dot[k]) + 0.7)),
-                                        (sf::Uint8) color.a);
+            ambientColor[k] = sf::Color(static_cast<sf::Uint8>(color.r * (0.3 * std::abs(dot[k]) + 0.7)),
+                                        static_cast<sf::Uint8>(color.g * (0.3 * std::abs(dot[k]) + 0.7)),
+                                        static_cast<sf::Uint8>(color.b * (0.3 * std::abs(dot[k]) + 0.7)),
+                                        static_cast<sf::Uint8>(color.a));
 
-            geometry[stride + 7 * k + 0] = (GLfloat) MTriangle[k].x();
-            geometry[stride + 7 * k + 1] = (GLfloat) MTriangle[k].y();
-            geometry[stride + 7 * k + 2] = (GLfloat) MTriangle[k].z();
+            geometry[stride + 7 * k + 0] = static_cast<GLfloat>(MTriangle[k].x());
+            geometry[stride + 7 * k + 1] = static_cast<GLfloat>(MTriangle[k].y());
+            geometry[stride + 7 * k + 2] = static_cast<GLfloat>(MTriangle[k].z());
 
-            geometry[stride + 7 * k + 3] = (GLfloat) ambientColor[k].r / 255.0f;
-            geometry[stride + 7 * k + 4] = (GLfloat) ambientColor[k].g / 255.0f;
-            geometry[stride + 7 * k + 5] = (GLfloat) ambientColor[k].b / 255.0f;
-            geometry[stride + 7 * k + 6] = (GLfloat) ambientColor[k].a / 255.0f;
+            geometry[stride + 7 * k + 3] = static_cast<GLfloat>(ambientColor[k].r) / 255.0f;
+            geometry[stride + 7 * k + 4] = static_cast<GLfloat>(ambientColor[k].g) / 255.0f;
+            geometry[stride + 7 * k + 5] = static_cast<GLfloat>(ambientColor[k].b) / 255.0f;
+            geometry[stride + 7 * k + 6] = static_cast<GLfloat>(ambientColor[k].a) / 255.0f;
         }
     }
     return geometry;

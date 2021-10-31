@@ -58,10 +58,10 @@ std::vector<std::shared_ptr<Triangle>> Camera::project(std::shared_ptr<Mesh> mes
 
         for (auto &clipped : clippedTriangles) {
             sf::Color color = clipped.color();
-            sf::Color ambientColor = sf::Color((sf::Uint8) (color.r * (0.3 * std::abs(dot) + 0.7)),
-                                               (sf::Uint8) (color.g * (0.3 * std::abs(dot) + 0.7)),
-                                               (sf::Uint8) (color.b * (0.3 * std::abs(dot) + 0.7)),
-                                               (sf::Uint8) color.a);
+            sf::Color ambientColor = sf::Color(static_cast<sf::Uint8>(color.r * (0.3 * std::abs(dot) + 0.7)),
+                                               static_cast<sf::Uint8>(color.g * (0.3 * std::abs(dot) + 0.7)),
+                                               static_cast<sf::Uint8>(color.b * (0.3 * std::abs(dot) + 0.7)),
+                                               static_cast<sf::Uint8>(color.a));
 
             // Finally its time to project our clipped colored drawTriangle from 3D -> 2D
             // and transform it's coordinate to screen space (in pixels):
