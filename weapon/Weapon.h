@@ -38,6 +38,7 @@ private:
     double _lastReloadTime = std::numeric_limits<double>::min();
 
     std::function<void(const Vec3D &, const Vec3D &)> _addTraceCallBack;
+    std::function<void()> _reloadCallBack;
 
 protected:
     std::map<ObjectNameTag, double>
@@ -58,10 +59,13 @@ public:
          const Vec3D &direction);
 
     void reload();
+    [[nodiscard]] double reloadTime() const { return _reloadTime; }
 
     [[nodiscard]] std::pair<double, double> balance() const { return std::make_pair(_clipAmmo, _stockAmmo); }
 
     void setAddTraceCallBack(std::function<void(Vec3D, Vec3D)> add) { _addTraceCallBack = std::move(add); }
+    void setReloadCallBack(std::function<void()> reload) { _reloadCallBack = std::move(reload); }
+
 
     void addAmmo(int ammoAdd) { _stockAmmo += ammoAdd; }
 

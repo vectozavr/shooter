@@ -6,6 +6,9 @@
 #include "engine/Screen.h"
 #include "engine/utils/Log.h"
 
+#include "engine/animation/Timeline.h"
+#include "engine/animation/ARotateLeft.h"
+
 Player::Player(ObjectNameTag name) : RigidBody(name) {
     loadObj(ShooterConsts::CUBE_OBJ, Vec3D{0.5, 1.9, 0.5});
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
@@ -79,6 +82,15 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, Vec3D{0, 1, 0}, angle().y());
     _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, left(), headAngle());
 
+    // add animation of reloading
+    _weapons.back()->setReloadCallBack([this]() {
+        Timeline::animate(AnimationListTag("reload_weapon"),
+                          std::make_shared<ARotateLeft>(_weapons[_selectedWeapon],
+                                                        2 * Consts::PI,
+                                                        _weapons[_selectedWeapon]->reloadTime() / 2));
+    });
+
+    // add call back function to create fire traces
     if (_addTraceCallBack != nullptr) {
         _weapons.back()->setAddTraceCallBack(_addTraceCallBack);
     }
@@ -110,7 +122,7 @@ void Player::selectNextWeapon() {
         if (_removeWeaponCallBack != nullptr) {
             _removeWeaponCallBack(_weapons[_selectedWeapon]);
         }
-        
+
         _selectedWeapon = (_selectedWeapon + 1) % _weapons.size();
 
         if (_addWeaponCallBack != nullptr) {

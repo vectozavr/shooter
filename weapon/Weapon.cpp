@@ -3,6 +3,7 @@
 //
 
 #include <utility>
+
 #include "Weapon.h"
 #include "../engine/ResourceManager.h"
 #include "../engine/utils/Log.h"
@@ -70,6 +71,10 @@ void Weapon::reload() {
     SoundController::playSound(SoundTag("reloadSound_" + name().str()), _reloadSound);
     Log::log("Weapon::reload (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
     _lastReloadTime = Time::time();
+
+    if(_reloadCallBack != nullptr) {
+        _reloadCallBack();
+    }
 }
 
 std::map<ObjectNameTag, double>
