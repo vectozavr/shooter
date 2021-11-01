@@ -17,18 +17,6 @@ bool Animation::updateState() {
     // linear normalized time:
     _dtime = Time::deltaTime() / _duration;
 
-    if(_time + _dtime < 1.0) {
-        _time += _dtime;
-    } else {
-        _dtime = 1.0 - _time;
-        _time = 1.0 - _dtime;
-        _finished = true;
-    }
-
-    if (_looped == LoopOut::Continue && _time > 0.5) {
-        _time = 0.5;
-    }
-
     switch (_intType) {
         case InterpolationType::Bezier:
             _progress = Interpolation::Bezier(Consts::BEZIER[0], Consts::BEZIER[1], _time);
@@ -49,6 +37,22 @@ bool Animation::updateState() {
         default:
             throw std::logic_error{
                     "Animation::updateState: unknown interpolation type " + std::to_string(static_cast<int>(_intType))};
+    }
+
+    if(_time + _dtime < 1.0) {
+        _time += _dtime;
+    } else {
+        _dtime = 1.0 - _time;
+        _time = 1.0;
+        _dprogress = 1 - _progress;
+        _progress = 1.0;
+        update();
+        _finished = true;
+        return false;
+    }
+
+    if (_looped == LoopOut::Continue && _time > 0.5) {
+        _time = 0.5;
     }
 
     update();

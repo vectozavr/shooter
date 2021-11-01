@@ -20,7 +20,6 @@ public:
     };
     enum class LoopOut {
         None,
-        Cycle,
         Continue
     };
 private:

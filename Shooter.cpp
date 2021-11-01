@@ -15,6 +15,7 @@
 #include "engine/animation/ARotateRelativePoint.h"
 #include "engine/animation/ATranslateToPoint.h"
 #include "engine/animation/AWait.h"
+#include "engine/animation/ATranslate.h"
 
 using namespace std;
 
