@@ -86,8 +86,10 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     _weapons.back()->setReloadCallBack([this]() {
         Timeline::animate(AnimationListTag("reload_weapon"),
                           std::make_shared<ARotateLeft>(_weapons[_selectedWeapon],
-                                                        2 * Consts::PI,
-                                                        _weapons[_selectedWeapon]->reloadTime() / 2));
+                                                        10 * Consts::PI,
+                                                        _weapons[_selectedWeapon]->reloadTime() / 2,
+                                                        Animation::LoopOut::None,
+                                                        Animation::InterpolationType::Linear));
     });
 
     // add call back function to create fire traces

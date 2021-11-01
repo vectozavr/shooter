@@ -29,9 +29,12 @@ namespace Interpolation {
 };
 
 double Interpolation::Linear(double t) {
-    if (t < 0)
+    if (t < 0) {
         t = -t;
-    return ((int) trunc(t) % 2) ? 1.0 - (t - trunc(t)) : (t - trunc(t));
+    }
+    int integer = static_cast<int>(t);
+
+    return (integer % 2) ? 1.0 - (t - integer) : (t - integer);
 }
 
 double Interpolation::Cos(double t) {
