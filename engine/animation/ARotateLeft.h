@@ -21,8 +21,7 @@ private:
             return;
         }
 
-        _object.lock()->rotateLeft(-_object.lock()->angleLeftUpLookAt().x());
-        _object.lock()->rotateLeft(_rotationValue*(progress()));
+        _object.lock()->rotateLeft(_rotationValue*dprogress());
     }
 
 public:

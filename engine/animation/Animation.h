@@ -55,6 +55,8 @@ public:
     [[nodiscard]] double dprogress() const { return _dprogress; }
 
     void stop() { _finished = true; }
+
+    [[nodiscard]] bool isFinished() const { return _finished; }
 };
 
 #endif //INC_3DZAVR_ANIMATION_H
