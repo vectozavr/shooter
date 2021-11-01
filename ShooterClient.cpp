@@ -117,6 +117,10 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
                 _player->addDeath();
 
                 auto camera = _player->attached(ObjectNameTag("Camera"));
+                if(camera == nullptr) {
+                    break;
+                }
+
                 _player->unattach(ObjectNameTag("Camera"));
                 _player->translateToPoint(Vec3D{10000});
                 Vec2D cameraOrientation(camera->angleLeftUpLookAt().x(), _player->angle().y());
