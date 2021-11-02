@@ -74,15 +74,10 @@ Matrix4x4 Matrix4x4::inversed() const {
 Matrix4x4 Matrix4x4::Identity() {
     Matrix4x4 result;
 
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (i == j) {
-                result._arr[j][i] = 1.0;
-            } else {
-                result._arr[j][i] = 0.0;
-            }
-        }
-    }
+    result._arr[0][0] = 1.0;
+    result._arr[1][1] = 1.0;
+    result._arr[2][2] = 1.0;
+    result._arr[3][3] = 1.0;
 
     return result;
 }
@@ -130,12 +125,15 @@ Matrix4x4 Matrix4x4::Translation(const Vec3D &v) {
 
 Matrix4x4 Matrix4x4::RotationX(double rx) {
     Matrix4x4 Rx{};
+
+    double c = cos(rx), s = sin(rx);
+
     Rx._arr[0][0] = 1.0;
 
-    Rx._arr[1][1] = cos(rx);
-    Rx._arr[1][2] = -sin(rx);
-    Rx._arr[2][1] = sin(rx);
-    Rx._arr[2][2] = cos(rx);
+    Rx._arr[1][1] = c;
+    Rx._arr[1][2] = -s;
+    Rx._arr[2][1] = s;
+    Rx._arr[2][2] = c;
 
     Rx._arr[3][3] = 1.0;
 
@@ -145,12 +143,14 @@ Matrix4x4 Matrix4x4::RotationX(double rx) {
 Matrix4x4 Matrix4x4::RotationY(double ry) {
     Matrix4x4 Ry{};
 
+    double c = cos(ry), s = sin(ry);
+
     Ry._arr[1][1] = 1.0;
 
-    Ry._arr[0][0] = cos(ry);
-    Ry._arr[0][2] = sin(ry);
-    Ry._arr[2][0] = -sin(ry);
-    Ry._arr[2][2] = cos(ry);
+    Ry._arr[0][0] = c;
+    Ry._arr[0][2] = s;
+    Ry._arr[2][0] = -s;
+    Ry._arr[2][2] = c;
 
     Ry._arr[3][3] = 1.0;
 
@@ -160,12 +160,14 @@ Matrix4x4 Matrix4x4::RotationY(double ry) {
 Matrix4x4 Matrix4x4::RotationZ(double rz) {
     Matrix4x4 Rz{};
 
+    double c = cos(rz), s = sin(rz);
+
     Rz._arr[2][2] = 1.0;
 
-    Rz._arr[0][0] = cos(rz);
-    Rz._arr[0][1] = -sin(rz);
-    Rz._arr[1][0] = sin(rz);
-    Rz._arr[1][1] = cos(rz);
+    Rz._arr[0][0] = c;
+    Rz._arr[0][1] = -s;
+    Rz._arr[1][0] = s;
+    Rz._arr[1][1] = c;
 
     Rz._arr[3][3] = 1.0;
 
@@ -180,17 +182,19 @@ Matrix4x4 Matrix4x4::Rotation(const Vec3D &v, double rv) {
     Matrix4x4 Rv{};
     Vec3D nv(v.normalized());
 
-    Rv._arr[0][0] = cos(rv) + (1.0 - cos(rv)) * nv.x() * nv.x();
-    Rv._arr[0][1] = (1.0 - cos(rv)) * nv.x() * nv.y() - sin(rv) * nv.z();
-    Rv._arr[0][2] = (1.0 - cos(rv)) * nv.x() * nv.z() + sin(rv) * nv.y();
+    double c = cos(rv), s = sin(rv);
 
-    Rv._arr[1][0] = (1.0 - cos(rv)) * nv.x() * nv.y() + sin(rv) * nv.z();
-    Rv._arr[1][1] = cos(rv) + (1.0 - cos(rv)) * nv.y() * nv.y();
-    Rv._arr[1][2] = (1.0 - cos(rv)) * nv.y() * nv.z() - sin(rv) * nv.x();
+    Rv._arr[0][0] = c + (1.0 - c) * nv.x() * nv.x();
+    Rv._arr[0][1] = (1.0 - c) * nv.x() * nv.y() - s * nv.z();
+    Rv._arr[0][2] = (1.0 - c) * nv.x() * nv.z() + s * nv.y();
 
-    Rv._arr[2][0] = (1.0 - cos(rv)) * nv.z() * nv.x() - sin(rv) * nv.y();
-    Rv._arr[2][1] = (1.0 - cos(rv)) * nv.z() * nv.y() + sin(rv) * nv.x();
-    Rv._arr[2][2] = cos(rv) + (1.0 - cos(rv)) * nv.z() * nv.z();
+    Rv._arr[1][0] = (1.0 - c) * nv.x() * nv.y() + s * nv.z();
+    Rv._arr[1][1] = c + (1.0 - c) * nv.y() * nv.y();
+    Rv._arr[1][2] = (1.0 - c) * nv.y() * nv.z() - s * nv.x();
+
+    Rv._arr[2][0] = (1.0 - c) * nv.z() * nv.x() - s * nv.y();
+    Rv._arr[2][1] = (1.0 - c) * nv.z() * nv.y() + s * nv.x();
+    Rv._arr[2][2] = c + (1.0 - c) * nv.z() * nv.z();
 
     Rv._arr[3][3] = 1.0;
 
