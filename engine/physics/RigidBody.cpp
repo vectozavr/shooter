@@ -15,23 +15,28 @@ RigidBody::RigidBody(ObjectNameTag nameTag, const std::string &filename, const V
 }
 
 Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
-    Vec3D maxPoint{0, 0, 0};
+    const Vec4D* maxPoint = nullptr;
     double maxDistance = -std::numeric_limits<double>::max();
+
+    // Matrix doesn't contain offset & non-zero scale will not affect result
+    Vec3D localDirection = inversedTransformMatrix() * direction;
 
     for (auto &tri : triangles()) {
         for (int i = 0; i < 3; i++) {
-            // TODO: multiplying model() * tri[i] costs too much time to compute
-            Vec3D point(model() * tri[i]);
+            const Vec4D& point = tri[i];
 
-            double distance = point.dot(direction.normalized());
+            double distance = Vec3D(point).dot(localDirection);
             if (distance > maxDistance) {
                 maxDistance = distance;
-                maxPoint = point;
+                maxPoint = &point;
             }
         }
     }
 
-    return maxPoint;
+    if (maxPoint == nullptr)
+        return Vec3D();
+    else
+        return Vec3D(model() * *maxPoint);
 }
 
 Vec3D RigidBody::_support(std::shared_ptr<RigidBody> obj, const Vec3D &direction) {
@@ -164,7 +169,7 @@ std::pair<bool, Simplex> RigidBody::checkGJKCollision(std::shared_ptr<RigidBody>
 
     size_t iters = 0;
     while (iters++ < size() + obj->size()) {
-        support = _support(obj, direction);
+        support = _support(obj, direction.normalized());
 
         if (support.dot(direction) <= 0) {
             return std::make_pair(false, points); // no collision
@@ -215,7 +220,7 @@ CollisionPoint RigidBody::EPA(const Simplex &simplex, std::shared_ptr<RigidBody>
         minNormal = normals[minFace].normal;
         minDistance = normals[minFace].distance;
 
-        Vec3D support = _support(obj, minNormal);
+        Vec3D support = _support(obj, minNormal.normalized());
         double sDistance = minNormal.dot(support);
 
         if (std::abs(sDistance - minDistance) > Consts::EPA_EPS) {

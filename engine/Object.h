@@ -37,6 +37,10 @@ private:
 
     Matrix4x4 _transformMatrix = Matrix4x4::Identity();
 
+    mutable Matrix4x4 _inversedMatrix = Matrix4x4::Identity();
+
+    mutable bool _updateInversedMatrix = false;
+
     std::map<ObjectNameTag, std::weak_ptr<Object>> _attachedObjects;
 
     Vec3D _position{0, 0, 0};
@@ -52,7 +56,7 @@ private:
 public:
     explicit Object(ObjectNameTag nameTag) : _nameTag(std::move(nameTag)) {};
 
-    Object(const Object &object) : _nameTag(object.name()), _transformMatrix(object.model()) {};
+    Object(const Object &object);
 
     // TODO: implement rotations using quaternions (?)
     void transform(const Matrix4x4 &t);
@@ -104,6 +108,10 @@ public:
     [[nodiscard]] ObjectNameTag name() const { return _nameTag; }
 
     [[nodiscard]] Matrix4x4 model() const { return Matrix4x4::Translation(_position) * _transformMatrix; }
+
+    [[nodiscard]] const Matrix4x4& transformMatrix() const;
+
+    [[nodiscard]] const Matrix4x4& inversedTransformMatrix() const;
 
     // OpenGL function
     [[nodiscard]] GLfloat *glModel() const;

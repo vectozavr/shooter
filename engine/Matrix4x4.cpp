@@ -34,6 +34,43 @@ Vec3D Matrix4x4::operator*(const Vec3D &vec) const {
     );
 }
 
+// TODO: please, separate rotation and scale. Zero scale can mess up inverse matrix
+Matrix4x4 Matrix4x4::inversed() const {
+    Matrix4x4 result = Matrix4x4::Identity();
+    Matrix4x4 temp(*this);
+
+    for (size_t k = 0; k < _arr.size(); k++) {
+        double mult = temp._arr[k][k];
+
+        for (size_t j = 0; j < _arr.size(); j++) {
+            temp._arr[k][j] /= mult;
+            result._arr[k][j] /= mult;
+        }
+
+        for (size_t i = k + 1; i < _arr.size(); i++) {
+            mult = temp._arr[i][k];
+
+            for (size_t j = 0; j < _arr.size(); j++) {
+                temp._arr[i][j] -= temp._arr[k][j] * mult;
+                result._arr[i][j] -= result._arr[k][j] * mult;
+            }
+        }
+    }
+
+    for (size_t k = _arr.size() - 1; k > 0; k--) {
+        for (size_t i = 0; i < k; i++) {
+            double mult = temp._arr[i][k];
+
+            for (size_t j = 0; j < _arr.size(); j++) {
+                temp._arr[i][j] -= temp._arr[k][j] * mult;
+                result._arr[i][j] -= result._arr[k][j] * mult;
+            }
+        }
+    }
+
+    return result;
+}
+
 Matrix4x4 Matrix4x4::Identity() {
     Matrix4x4 result;
 

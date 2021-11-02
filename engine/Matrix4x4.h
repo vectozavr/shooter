@@ -33,6 +33,8 @@ public:
 
     [[nodiscard]] Vec3D w() const;
 
+    [[nodiscard]] Matrix4x4 inversed() const;
+
 
     // Any useful matrix (static methods)
     Matrix4x4 static Identity();

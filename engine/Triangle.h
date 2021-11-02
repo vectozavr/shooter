@@ -24,7 +24,7 @@ public:
 
     Triangle &operator=(const Triangle &) = default;
 
-    [[nodiscard]] Vec4D operator[](int i) const;
+    [[nodiscard]] const Vec4D& operator[](int i) const;
 
     [[nodiscard]] Vec3D norm() const;
 

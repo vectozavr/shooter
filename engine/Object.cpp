@@ -7,8 +7,16 @@
 #include "Object.h"
 #include "Matrix4x4.h"
 
+Object::Object(const Object &object) :
+    _nameTag(object.name()),
+    _position(object._position),
+    _transformMatrix(object._transformMatrix),
+    _inversedMatrix(object._inversedMatrix) {
+}
+
 void Object::transform(const Matrix4x4 &t) {
     _transformMatrix = t * _transformMatrix;
+    _updateInversedMatrix = true;
 
     for (auto &[attachedName, attachedObject] : _attachedObjects) {
         if (!attachedObject.expired()) {
@@ -26,6 +34,8 @@ void Object::transformRelativePoint(const Vec3D &point, const Matrix4x4 &transfo
     // translate object back in self connected coordinate system
     _position = _transformMatrix.w() + point;
     _transformMatrix = Matrix4x4::Translation(-_transformMatrix.w()) * _transformMatrix;
+
+    _updateInversedMatrix = true;
 
     for (auto &[attachedName, attachedObject] : _attachedObjects) {
         if (!attachedObject.expired()) {
@@ -136,6 +146,18 @@ void Object::attach(std::shared_ptr<Object> object) {
 
 void Object::unattach(const ObjectNameTag &tag) {
     _attachedObjects.erase(tag);
+}
+
+const Matrix4x4& Object::transformMatrix() const {
+    return _transformMatrix;
+}
+
+const Matrix4x4& Object::inversedTransformMatrix() const {
+    if (_updateInversedMatrix) {
+        _inversedMatrix = _transformMatrix.inversed();
+        _updateInversedMatrix = false;
+    }
+    return _inversedMatrix;
 }
 
 // OpenGL function
