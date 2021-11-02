@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 #include "Vec4D.h"
+#include "Vec3D.h"
 #include "Consts.h"
 
 Vec4D::Vec4D(double x, double y, double z, double w) {
@@ -20,6 +21,10 @@ Vec4D::Vec4D(const Vec4D &point4D) {
     _arr_point[1] = point4D.y();
     _arr_point[2] = point4D.z();
     _arr_point[3] = point4D.w();
+}
+
+double Vec4D::dot(const Vec3D& p) const {
+    return x() * p.x() + y() * p.y() + z() * p.z();
 }
 
 [[nodiscard]] Vec4D Vec4D::operator-() const {

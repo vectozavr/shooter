@@ -7,6 +7,8 @@
 
 #include <array>
 
+class Vec3D;
+
 class Vec4D final {
 private:
     std::array<double, 4> _arr_point{};
@@ -19,6 +21,8 @@ public:
     explicit Vec4D(double x, double y = 0.0, double z = 0.0, double w = 0.0);
 
     Vec4D &operator=(const Vec4D &point4D) = default;
+
+    [[nodiscard]] double dot(const Vec3D & p) const;
 
     [[nodiscard]] double x() const { return _arr_point[0]; }
     [[nodiscard]] double y() const { return _arr_point[1]; }
