@@ -38,6 +38,8 @@ public:
 
     void setTriangles(const std::vector<Triangle> &t);
 
+    void setTriangles(std::vector<Triangle>&& t);
+
     [[nodiscard]] size_t size() const { return _tris.size() * 3; }
 
     [[nodiscard]] sf::Color color() const { return _color; }

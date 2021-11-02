@@ -11,10 +11,11 @@ using namespace std;
 
 Mesh &Mesh::operator*=(const Matrix4x4 &matrix4X4) {
     std::vector<Triangle> newTriangles;
+    newTriangles.reserve(_tris.size());
     for (auto &t : _tris) {
         newTriangles.emplace_back(t * matrix4X4);
     }
-    setTriangles(newTriangles);
+    setTriangles(std::move(newTriangles));
 
     return *this;
 }
@@ -46,10 +47,11 @@ void Mesh::setColor(const sf::Color &c) {
 
     // change color of all mesh triangles:
     std::vector<Triangle> newTriangles;
+    newTriangles.reserve(_tris.size());
     for (auto &t : _tris) {
         newTriangles.emplace_back(Triangle(t[0], t[1], t[2], c));
     }
-    setTriangles(newTriangles);
+    setTriangles(std::move(newTriangles));
 }
 
 Mesh
@@ -97,6 +99,10 @@ void Mesh::setTriangles(const vector<Triangle> &t) {
     for (auto &tri : t) {
         _tris.push_back(tri);
     }
+}
+
+void Mesh::setTriangles(vector<Triangle>&& t) {
+    _tris = t;
 }
 
 Mesh::~Mesh() {
