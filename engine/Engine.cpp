@@ -51,11 +51,11 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
                         GLfloat *model = it.second->glModel();
                         GLfloat *geometry = Screen::glMeshToGLfloatArray(it.second, camera->position());
                         screen->glDrawMesh(geometry, view, model, 3 * it.second->triangles().size());
-                        free(geometry);
-                        free(model);
+                        delete[] geometry;
+                        delete[] model;
                     }
                 }
-                free(view);
+                delete[] view;
             } else {
                 // clear triangles from previous frame
                 camera->clear();

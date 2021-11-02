@@ -162,7 +162,7 @@ const Matrix4x4& Object::inversedTransformMatrix() const {
 
 // OpenGL function
 GLfloat *Object::glView() const {
-    auto *v = (GLfloat *) malloc(4 * 4 * sizeof(GLfloat));
+    auto *v = new GLfloat[4 * 4];
 
     v[0] = -static_cast<GLfloat>(left().x());
     v[4] = -static_cast<GLfloat>(left().y());
@@ -188,7 +188,7 @@ GLfloat *Object::glView() const {
 }
 
 GLfloat *Object::glModel() const {
-    auto *m = (GLfloat *) malloc(4 * 4 * sizeof(GLfloat));
+    auto *m = new GLfloat[4 * 4];
 
     m[0] = static_cast<GLfloat>(left().x());
     m[4] = static_cast<GLfloat>(up().x());

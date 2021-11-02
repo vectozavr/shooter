@@ -122,11 +122,12 @@ void Screen::drawText(const sf::Text &text) {
 }
 
 // OpenGL functions
+void Screen::setWindowActive(bool active) {
+    _window->setActive(active);
+}
+
 void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t count) {
     // OpenGL:
-    // Make the window the active window for OpenGL calls
-    _window->setActive(true);
-
     glEnable(GL_CULL_FACE); // enable culling face
     glCullFace(GL_BACK); // cull faces from back
     glFrontFace(GL_CCW); // vertex order (counter clock wise)
@@ -171,15 +172,12 @@ void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t
 
     // Draw the mesh
     glDrawArrays(GL_TRIANGLES, 0, count);
-
-    // Make the window no longer the active window for OpenGL calls
-    _window->setActive(false);
 }
 
 GLfloat *Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D &cameraPosition) {
     std::vector<Triangle> const &triangles = mesh->triangles();
 
-    auto *geometry = (GLfloat *) malloc(7 * 3 * triangles.size() * sizeof(GLfloat));
+    auto *geometry = new GLfloat[7 * 3 * triangles.size()];
 
     for (size_t i = 0; i < triangles.size(); i++) {
 

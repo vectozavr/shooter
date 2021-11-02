@@ -60,6 +60,8 @@ public:
     void setMouseCursorVisible(bool visible);
 
     // OpenGL functions
+    void setWindowActive(bool active = true);
+
     void glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t count);
 
     static GLfloat *glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D &cameraPosition);
