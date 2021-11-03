@@ -7,19 +7,22 @@
 
 #include "../Mesh.h"
 
-class HitBox {
+class HitBox final {
 private:
     std::vector<Vec3D> _hitBox;
 
-    void _addIfUnique(const Vec3D& point);
+    void _addIfUnique(const Vec3D &point);
+
 public:
     HitBox() = default;
-    explicit HitBox(const Mesh& mesh);
 
-    std::vector<Vec3D>::iterator begin() { return _hitBox.begin(); }
-    std::vector<Vec3D>::iterator end() { return _hitBox.end(); }
+    explicit HitBox(const Mesh &mesh);
 
-    HitBox static Box(const Mesh& mesh);
+    [[nodiscard]] std::vector<Vec3D>::iterator begin() { return _hitBox.begin(); }
+
+    [[nodiscard]] std::vector<Vec3D>::iterator end() { return _hitBox.end(); }
+
+    HitBox static Box(const Mesh &mesh);
 };
 
 
