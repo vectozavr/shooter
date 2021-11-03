@@ -26,6 +26,8 @@ add_executable(shooter
         Shooter.cpp
         Shooter.h
         ShooterConsts.h
+        ShooterMsgType.h
+        ShooterMsgType.cpp
         # 3d engine:
         engine/Consts.h
         engine/Vec4D.h
@@ -46,6 +48,8 @@ add_executable(shooter
         engine/utils/Log.cpp
         engine/utils/Time.h
         engine/utils/Time.cpp
+        engine/utils/Timer.cpp
+        engine/utils/Timer.h
         engine/ResourceManager.h
         engine/ResourceManager.cpp
         engine/World.h
@@ -73,6 +77,8 @@ add_executable(shooter
         engine/physics/RigidBody.cpp
         engine/physics/RigidBody.h
         engine/physics/Simplex.h
+        engine/physics/HitBox.cpp
+        engine/physics/HitBox.h
         engine/Object.cpp
         engine/Object.h
         engine/gui/Button.cpp
@@ -91,7 +97,12 @@ add_executable(shooter
         engine/network/UDPConnection.h
         engine/network/UDPSocket.cpp
         engine/network/UDPSocket.h
-        engine/SoundController.cpp engine/SoundController.h ShooterMsgType.h ShooterMsgType.cpp engine/animation/AAttractToPoint.h engine/animation/ARotateRelativePoint.h engine/animation/ARotateLeft.h engine/utils/Timer.cpp engine/utils/Timer.h engine/physics/HitBox.cpp engine/physics/HitBox.h)
+        engine/SoundController.cpp
+        engine/SoundController.h
+        engine/animation/AAttractToPoint.h
+        engine/animation/ARotateRelativePoint.h
+        engine/animation/ARotateLeft.h
+        )
 
 if(APPLE OR UNIX)
     include_directories(/usr/local/include)

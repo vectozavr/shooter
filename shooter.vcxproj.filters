@@ -138,6 +138,9 @@
     <ClCompile Include="engine\physics\RigidBody.cpp">
       <Filter>Исходные файлы\engine\physics</Filter>
     </ClCompile>
+    <ClCompile Include="engine\physics\HitBox.cpp">
+      <Filter>Исходные файлы\engine\physics</Filter>
+    </ClCompile>
     <ClCompile Include="engine\Screen.cpp">
       <Filter>Исходные файлы\engine</Filter>
     </ClCompile>
@@ -333,6 +336,9 @@
       <Filter>Файлы заголовков\engine\physics</Filter>
     </ClInclude>
     <ClInclude Include="engine\physics\RigidBody.h">
+      <Filter>Файлы заголовков\engine\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\physics\HitBox.h">
       <Filter>Файлы заголовков\engine\physics</Filter>
     </ClInclude>
     <ClInclude Include="engine\animation\Timeline.h">

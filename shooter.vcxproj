@@ -177,6 +177,7 @@
     <ClCompile Include="engine\network\UDPSocket.cpp" />
     <ClCompile Include="engine\Object.cpp" />
     <ClCompile Include="engine\physics\RigidBody.cpp" />
+    <ClCompile Include="engine\physics\HitBox.cpp" />
     <ClCompile Include="engine\Plane.cpp" />
     <ClCompile Include="engine\ResourceManager.cpp" />
     <ClCompile Include="engine\Screen.cpp" />
@@ -230,6 +231,7 @@
     <ClInclude Include="engine\Object.h" />
     <ClInclude Include="engine\physics\RigidBody.h" />
     <ClInclude Include="engine\physics\Simplex.h" />
+    <ClInclude Include="engine\physics\HitBox.h" />
     <ClInclude Include="engine\Plane.h" />
     <ClInclude Include="engine\ResourceManager.h" />
     <ClInclude Include="engine\Screen.h" />
