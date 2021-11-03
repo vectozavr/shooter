@@ -158,6 +158,10 @@ void Shooter::update() {
         screen->setMouseCursorVisible(!inGame);
     }
 
+    if (keyboard->isKeyTapped(sf::Keyboard::Tab)) {
+        setDebugInfo(!showDebugInfo());
+    }
+
     if (inGame) {
         screen->setTitle(ShooterConsts::PROJECT_NAME);
         playerController->update();

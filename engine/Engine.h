@@ -35,7 +35,8 @@ protected:
 
     virtual void update() {};
 
-    void setDebugText(bool value) { _showDebugInfo = value; }
+    [[nodiscard]] bool showDebugInfo() const { return _showDebugInfo; }
+    void setDebugInfo(bool value) { _showDebugInfo = value; }
 
     void setUpdateWorld(bool value) { _updateWorld = value; }
 
