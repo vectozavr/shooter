@@ -18,10 +18,10 @@ private:
 
     int _triPerSec = 0;
     bool _updateWorld = true;
-    bool _debugText = Consts::SHOW_DEBUG_INFO;
+    bool _showDebugInfo = Consts::SHOW_DEBUG_INFO;
     bool _useOpenGL = Consts::USE_OPEN_GL;
 
-    void printDebugText() const;
+    void printDebugInfo() const;
 
 protected:
     const std::shared_ptr<Screen> screen = std::make_shared<Screen>();
@@ -35,7 +35,7 @@ protected:
 
     virtual void update() {};
 
-    void setDebugText(bool value) { _debugText = value; }
+    void setDebugText(bool value) { _showDebugInfo = value; }
 
     void setUpdateWorld(bool value) { _updateWorld = value; }
 

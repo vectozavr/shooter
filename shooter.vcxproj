@@ -184,6 +184,7 @@
     <ClCompile Include="engine\Triangle.cpp" />
     <ClCompile Include="engine\utils\Log.cpp" />
     <ClCompile Include="engine\utils\Time.cpp" />
+    <ClInclude Include="engine\utils\Timer.cpp" />
     <ClCompile Include="engine\Vec2D.cpp" />
     <ClCompile Include="engine\Vec3D.cpp" />
     <ClCompile Include="engine\Vec4D.cpp" />
@@ -236,6 +237,7 @@
     <ClInclude Include="engine\Triangle.h" />
     <ClInclude Include="engine\utils\Log.h" />
     <ClInclude Include="engine\utils\Time.h" />
+    <ClInclude Include="engine\utils\Timer.h" />
     <ClInclude Include="engine\Vec2D.h" />
     <ClInclude Include="engine\Vec3D.h" />
     <ClInclude Include="engine\Vec4D.h" />

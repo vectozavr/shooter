@@ -105,6 +105,12 @@
     <ClCompile Include="engine\utils\Log.cpp">
       <Filter>Исходные файлы\engine\utils</Filter>
     </ClCompile>
+    <ClCompile Include="engine\utils\Time.cpp">
+      <Filter>Исходные файлы\engine\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\utils\Timer.cpp">
+      <Filter>Исходные файлы\engine\utils</Filter>
+    </ClCompile>
     <ClCompile Include="engine\Matrix4x4.cpp">
       <Filter>Исходные файлы\engine</Filter>
     </ClCompile>
@@ -140,9 +146,6 @@
     </ClCompile>
     <ClCompile Include="engine\SoundController.cpp">
       <Filter>Исходные файлы\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\utils\Time.cpp">
-      <Filter>Исходные файлы\engine\utils</Filter>
     </ClCompile>
     <ClCompile Include="engine\Triangle.cpp">
       <Filter>Исходные файлы\engine</Filter>
@@ -321,6 +324,9 @@
       <Filter>Файлы заголовков\engine\utils</Filter>
     </ClInclude>
     <ClInclude Include="engine\utils\Time.h">
+      <Filter>Файлы заголовков\engine\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utils\Timer.h">
       <Filter>Файлы заголовков\engine\utils</Filter>
     </ClInclude>
     <ClInclude Include="engine\physics\Simplex.h">

@@ -70,6 +70,44 @@ int Time::fps() {
     return static_cast<int>(_instance->_lastFps);
 }
 
+void Time::startTimer(const std::string &timerName) {
+    if (!_validInstance) {
+        return;
+    }
+    _instance->_timers.insert({timerName, Timer()});
+    _instance->_timers[timerName].start();
+}
+
+void Time::stopTimer(const std::string &timerName) {
+    if (!_validInstance) {
+        return;
+    }
+    if(_instance->_timers.count(timerName) > 0) {
+        _instance->_timers[timerName].stop();
+    }
+}
+
+double Time::elapsedTimerMilliseconds(const std::string &timerName) {
+    if (!_validInstance) {
+        return 0;
+    }
+    if(_instance->_timers.count(timerName) > 0) {
+        return _instance->_timers[timerName].elapsedMilliseconds();
+    }
+    return 0;
+}
+
+double Time::elapsedTimerSeconds(const std::string &timerName) {
+    if (!_validInstance) {
+        return 0;
+    }
+    if(_instance->_timers.count(timerName) > 0) {
+        return _instance->_timers[timerName].elapsedSeconds();
+    }
+    return 0;
+}
+
+
 void Time::free() {
     _validInstance = false;
     delete _instance;

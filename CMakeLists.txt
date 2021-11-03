@@ -91,7 +91,7 @@ add_executable(shooter
         engine/network/UDPConnection.h
         engine/network/UDPSocket.cpp
         engine/network/UDPSocket.h
-        engine/SoundController.cpp engine/SoundController.h ShooterMsgType.h ShooterMsgType.cpp engine/animation/AAttractToPoint.h engine/animation/ARotateRelativePoint.h engine/animation/ARotateLeft.h)
+        engine/SoundController.cpp engine/SoundController.h ShooterMsgType.h ShooterMsgType.cpp engine/animation/AAttractToPoint.h engine/animation/ARotateRelativePoint.h engine/animation/ARotateLeft.h engine/utils/Timer.cpp engine/utils/Timer.h)
 
 if(APPLE OR UNIX)
     include_directories(/usr/local/include)
