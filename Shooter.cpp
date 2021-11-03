@@ -300,7 +300,7 @@ void Shooter::addFireTrace(const Vec3D &from, const Vec3D &to) {
                       std::make_shared<AColor>(world->body(ObjectNameTag(traceName)), sf::Color{150, 150, 150, 0}));
     Timeline::animate(AnimationListTag(traceName + "_delete"),
                       std::make_shared<AFunction>([this, traceName]() { removeFireTrace(ObjectNameTag(traceName)); }, 1,
-                                                  2));
+                                                  1));
 }
 
 void Shooter::removeFireTrace(const ObjectNameTag &traceName) {
@@ -315,6 +315,8 @@ void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
     world->addBody(std::make_shared<RigidBody>(ObjectNameTag(bonusName), "obj/" + name + ".obj", Vec3D{3, 3, 3}));
     world->body(ObjectNameTag(bonusName))->translateToPoint(position);
     world->body(ObjectNameTag(bonusName))->setCollider(false);
+    world->body(ObjectNameTag(bonusName))->setSimpleHitBox(true);
+    world->body(ObjectNameTag(bonusName))->setTrigger(true);
     Timeline::animate(AnimationListTag(bonusName + "_rotation"),
                       std::make_shared<ARotate>(world->body(ObjectNameTag(bonusName)), Vec3D{0, 2 * Consts::PI, 0}, 4,
                                                 Animation::LoopOut::Continue, Animation::InterpolationType::Linear));
@@ -346,7 +348,7 @@ void Shooter::changeEnemyWeapon(const std::string &weaponName, sf::Uint16 enemyI
     world->body(weaponTag)->setCollider(false);
     world->body(weaponTag)->scale(Vec3D(3, 3, 3));
 
-    world->body(weaponTag)->translateToPoint(head->position() - enemy->left()*2 - enemy->up()*0.5);
+    world->body(weaponTag)->translateToPoint(head->position() - enemy->left() * 2 - enemy->up() * 0.5);
 
     world->body(weaponTag)->rotate(Vec3D(0, Consts::PI + enemy->angle().y(), 0));
     world->body(weaponTag)->rotateLeft(-head->angleLeftUpLookAt().x());

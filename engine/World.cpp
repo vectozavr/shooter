@@ -93,7 +93,7 @@ void World::removeBody(const ObjectNameTag &tag) {
 }
 
 void World::checkCollision(const ObjectNameTag &tag) {
-    if (_objects[tag]->isCollision()) {
+    if (_objects[tag]->hasCollision()) {
 
         _objects[tag]->setInCollision(false);
 
@@ -102,18 +102,21 @@ void World::checkCollision(const ObjectNameTag &tag) {
             ObjectNameTag name = it->first;
             it++;
 
-            if (name != tag) {
-                std::pair<bool, Simplex> gjk = _objects[tag]->checkGJKCollision(obj);
-                if (gjk.first) {
-                    if (obj->isCollider()) {
-                        CollisionPoint epa = _objects[tag]->EPA(gjk.second, obj);
-                        _objects[tag]->solveCollision(epa);
-                    }
-                    if (_objects[tag]->collisionCallBack() != nullptr) {
-                        _objects[tag]->collisionCallBack()(name, obj);
-                    }
+            if ((name == tag) || !(obj->isCollider() || obj->isTrigger())) {
+                continue;
+            }
+
+            std::pair<bool, Simplex> gjk = _objects[tag]->checkGJKCollision(obj);
+            if (gjk.first) {
+                if (obj->isCollider()) {
+                    CollisionPoint epa = _objects[tag]->EPA(gjk.second, obj);
+                    _objects[tag]->solveCollision(epa);
+                }
+                if (_objects[tag]->collisionCallBack() != nullptr) {
+                    _objects[tag]->collisionCallBack()(name, obj);
                 }
             }
+
         }
     }
 }

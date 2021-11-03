@@ -3,17 +3,19 @@
 //
 
 #include "Player.h"
+
+#include <utility>
 #include "engine/Screen.h"
 #include "engine/utils/Log.h"
 
 #include "engine/animation/Timeline.h"
 #include "engine/animation/ARotateLeft.h"
 
-Player::Player(ObjectNameTag name) : RigidBody(name) {
-    loadObj(ShooterConsts::CUBE_OBJ, Vec3D{0.5, 1.9, 0.5});
+Player::Player(ObjectNameTag name) : RigidBody(std::move(name), ShooterConsts::CUBE_OBJ,Vec3D{0.5, 1.9, 0.5}) {
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
     setCollision(true);
     setVisible(false);
+    setSimpleHitBox(true);
 
     Vec3D randColor = Vec3D::Random();
     setColor({static_cast<sf::Uint8>(randColor.x() * 255), static_cast<sf::Uint8>(randColor.y() * 255),

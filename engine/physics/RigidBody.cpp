@@ -11,7 +11,8 @@
 #include "../Consts.h"
 
 RigidBody::RigidBody(ObjectNameTag nameTag, const std::string &filename, const Vec3D &scale) : Mesh(std::move(nameTag),
-                                                                                                    filename, scale) {
+                                                                                                    filename, scale),
+                                                                                               _hitBox(*this) {
 }
 
 Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
@@ -21,6 +22,7 @@ Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
 
     Vec3D transformedDirection = (view() * direction).normalized();
 
+    /*
     for (auto &tri : triangles()) {
         for (int i = 0; i < 3; i++) {
             Vec3D point = Vec3D(tri[i]);
@@ -32,8 +34,19 @@ Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
             }
         }
     }
+     */
 
-    return model()*maxPoint + position();
+    for(auto & it : _hitBox) {
+        auto point = Vec3D(it);
+        double distance = point.dot(transformedDirection);
+
+        if (distance > maxDistance) {
+            maxDistance = distance;
+            maxPoint = point;
+        }
+    }
+
+    return model() * maxPoint + position();
 }
 
 Vec3D RigidBody::_support(std::shared_ptr<RigidBody> obj, const Vec3D &direction) {
@@ -346,5 +359,14 @@ void RigidBody::setAcceleration(const Vec3D &acceleration) {
     _acceleration = acceleration;
 }
 
-RigidBody::RigidBody(const Mesh &mesh) : Mesh(mesh) {
+RigidBody::RigidBody(const Mesh &mesh) : Mesh(mesh), _hitBox(mesh) {
+}
+
+void RigidBody::setSimpleHitBox(bool b) {
+    _simpleHitBox = b;
+    if (_simpleHitBox) {
+        _hitBox = HitBox::Box(*this);
+    } else {
+        _hitBox = HitBox(*this);
+    }
 }

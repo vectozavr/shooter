@@ -17,7 +17,7 @@
 
 class Shooter final : public Engine {
 private:
-    std::shared_ptr<Player> player = std::make_shared<Player>(ObjectNameTag("Player"));;
+    std::shared_ptr<Player> player = std::make_shared<Player>(ObjectNameTag("Player"));
     std::shared_ptr<PlayerController> playerController = std::make_shared<PlayerController>(player, keyboard, mouse);
 
     Window mainMenu;

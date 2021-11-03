@@ -13,6 +13,7 @@
 #include "../Triangle.h"
 #include "Simplex.h"
 #include "../Mesh.h"
+#include "HitBox.h"
 
 struct CollisionPoint final {
     const Vec3D normal;
@@ -35,8 +36,12 @@ private:
     Vec3D _velocity{0, 0, 0};
     Vec3D _acceleration{0, 0, 0};
 
-    bool _collision = false;
+    bool _hasCollision = false;
     bool _isCollider = true;
+    bool _isTrigger = false;
+
+    HitBox _hitBox{};
+    bool _simpleHitBox = false;
 
     bool _inCollision = false;
     Vec3D _collisionNormal{0, 0, 0};
@@ -78,17 +83,23 @@ public:
 
     [[nodiscard]] Vec3D collisionNormal() const { return _collisionNormal; }
 
-    [[nodiscard]] bool isCollision() const { return _collision; }
+    [[nodiscard]] bool hasCollision() const { return _hasCollision; }
 
     [[nodiscard]] bool inCollision() const { return _inCollision; }
 
     [[nodiscard]] bool isCollider() const { return _isCollider; }
 
+    [[nodiscard]] bool isTrigger() const { return _isTrigger; }
+
     void setInCollision(bool c) { _inCollision = c; }
 
-    void setCollision(bool c) { _collision = c; }
+    void setCollision(bool c) { _hasCollision = c; }
 
     void setCollider(bool c) { _isCollider = c; }
+
+    void setSimpleHitBox(bool b);
+
+    void setTrigger(bool t) { _isTrigger = t; }
 
     void updatePhysicsState();
 
