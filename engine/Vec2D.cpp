@@ -66,7 +66,7 @@ double Vec2D::abs() const {
 Vec2D Vec2D::normalized() const {
     double vecAbs = abs();
     if (vecAbs > Consts::EPS) {
-        return Vec2D(*this) / abs();
+        return Vec2D(*this) / vecAbs;
     } else {
         return Vec2D(0);
     }

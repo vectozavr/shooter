@@ -67,7 +67,7 @@ double Vec4D::abs() const {
 Vec4D Vec4D::normalized() const {
     double vecAbs = abs();
     if (vecAbs > Consts::EPS) {
-        return Vec4D(*this) / abs();
+        return Vec4D(*this) / vecAbs;
     } else {
         return Vec4D(1);
     }

@@ -21,7 +21,7 @@ namespace ShooterConsts {
 
     const std::string ABILITY_OBJ = "obj/ability.obj";
     const std::string HILL_OBJ = "obj/hill.obj";
-    const std::string GUN_OBJ = "obj/gun.obj";
+    const std::string GUN_OBJ = "obj/weapon.obj";
     const std::string GUN_FIRE_SOUND = "sound/weapons/gun.ogg";
     const std::string GUN_RELOAD_SOUND = "sound/weapons/reload_gun.ogg";
     const std::string AK47_OBJ = "obj/ak47.obj";

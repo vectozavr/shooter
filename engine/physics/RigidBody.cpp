@@ -16,14 +16,16 @@ RigidBody::RigidBody(ObjectNameTag nameTag, const std::string &filename, const V
 
 Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
     Vec3D maxPoint{0, 0, 0};
+
     double maxDistance = -std::numeric_limits<double>::max();
+
+    Vec3D transformedDirection = (view() * direction).normalized();
 
     for (auto &tri : triangles()) {
         for (int i = 0; i < 3; i++) {
-            // TODO: multiplying model() * tri[i] costs too much time to compute
-            Vec3D point(model() * tri[i]);
+            Vec3D point = Vec3D(tri[i]);
+            double distance = point.dot(transformedDirection);
 
-            double distance = point.dot(direction.normalized());
             if (distance > maxDistance) {
                 maxDistance = distance;
                 maxPoint = point;
@@ -31,7 +33,7 @@ Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
         }
     }
 
-    return maxPoint;
+    return model()*maxPoint + position();
 }
 
 Vec3D RigidBody::_support(std::shared_ptr<RigidBody> obj, const Vec3D &direction) {
