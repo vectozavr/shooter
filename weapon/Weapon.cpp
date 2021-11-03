@@ -103,8 +103,7 @@ Weapon::addTrace(std::function<IntersectionInformation(const Vec3D &, const Vec3
 
     // add trace line
     Vec3D lineFrom = position() + model() * Vec3D(triangles().back()[0]);
-    Vec3D lineTo = rayCast.intersected ? rayCast.pointOfIntersection : position() +
-                                                                       -lookAt() * ShooterConsts::FIRE_DISTANCE + randV;
+    Vec3D lineTo = rayCast.intersected ? rayCast.pointOfIntersection : position() + directionTo * ShooterConsts::FIRE_DISTANCE + randV;
     _addTraceCallBack(lineFrom, lineTo);
 
     return damagedPlayers;
