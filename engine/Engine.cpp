@@ -166,7 +166,9 @@ void Engine::printDebugInfo() const {
 
 
             screen->drawText(
-                    timerName.substr(2, timerName.size()) + " (" + std::to_string((int) (100 * timer.elapsedMilliseconds() / totalTime)) + "%)",
+                    timerName.substr(2, timerName.size()) + ":\t" +
+                    std::to_string((int) (1.0 / timer.elapsedMilliseconds())) + " / s \t (" +
+                    std::to_string((int) (100 * timer.elapsedMilliseconds() / totalTime)) + "%)",
                     Vec2D{xPos + 10, yPos + height * i + 5}, 30,
                     sf::Color(0, 0, 0, 100));
 
@@ -184,7 +186,8 @@ void Engine::printDebugInfo() const {
                               0, 100});
 
 
-        screen->drawText("other (" + std::to_string((int) (100 * (totalTime - timeSum) / totalTime)) + "%)",
+        screen->drawText("other:\t" + std::to_string((int) (1.0 / (totalTime - timeSum))) + " / s \t (" +
+                         std::to_string((int) (100 * (totalTime - timeSum) / totalTime)) + "%)",
                          Vec2D{xPos + 10, yPos + height * i + 5}, 30,
                          sf::Color(0, 0, 0, 100));
 

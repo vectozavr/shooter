@@ -27,7 +27,6 @@ private:
                     t * Matrix4x4::Scale(Vec3D{1, 1, 1} + (_scalingValue - Vec3D{1, 1, 1}) * progress()));
         }
         _object.lock()->setTriangles(newTriangles);
-        return updateState();
     }
 
 public:

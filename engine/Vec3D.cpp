@@ -71,7 +71,7 @@ double Vec3D::abs() const {
 Vec3D Vec3D::normalized() const {
     double vecAbs = abs();
     if (vecAbs > Consts::EPS) {
-        return Vec3D(*this) / abs();
+        return Vec3D(*this) / vecAbs;
     } else {
         return Vec3D(1);
     }
