@@ -16,7 +16,7 @@ private:
     const std::function<void()> _callBack;
 
     void update() override {
-        if (_allCalls != 0 && progress() >= (double) (_callsCounter + 1) / (_allCalls + 1)) {
+        if (_allCalls != 0 && progress() > (double) _callsCounter / _allCalls) {
             _callsCounter++;
             _callBack();
         }

@@ -38,7 +38,7 @@ namespace ShooterConsts {
     const std::string SHOTGUN_RELOAD_SOUND = "sound/weapons/reload_shotgun.ogg";
 
     const std::string CUBE_OBJ = "obj/cube.obj";
-    const std::string MAP_OBJ = "maps/map.obj";
+    const std::string MAP_OBJ = "maps/map2.obj";
     const std::string MAIN_MENU_BACK = "textures/back.png";
     const std::string MAIN_MENU_GUI = "textures/gui.png";
 
