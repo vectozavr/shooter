@@ -173,7 +173,7 @@ void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t
 GLfloat *Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D &cameraPosition) {
     std::vector<Triangle> const &triangles = mesh->triangles();
 
-    auto *geometry = (GLfloat *) malloc(7 * 3 * triangles.size() * sizeof(GLfloat));
+    auto *geometry = new GLfloat[7 * 3 * triangles.size()];
 
     auto model = mesh->model();
 
