@@ -123,9 +123,6 @@ void Screen::drawText(const sf::Text &text) {
 
 // OpenGL functions
 void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t count) {
-    // OpenGL:
-    // Make the window the active window for OpenGL calls
-    _window->setActive(true);
 
     glEnable(GL_CULL_FACE); // enable culling face
     glCullFace(GL_BACK); // cull faces from back
@@ -171,43 +168,43 @@ void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t
 
     // Draw the mesh
     glDrawArrays(GL_TRIANGLES, 0, count);
-
-    // Make the window no longer the active window for OpenGL calls
-    _window->setActive(false);
 }
 
 GLfloat *Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D &cameraPosition) {
     std::vector<Triangle> const &triangles = mesh->triangles();
 
-    auto *geometry = (GLfloat *) malloc(7 * 3 * triangles.size() * sizeof(GLfloat));
+    auto *geometry = new GLfloat[7 * 3 * triangles.size()];
+
+    auto model = mesh->model();
 
     for (size_t i = 0; i < triangles.size(); i++) {
 
         int stride = 21 * i;
 
-        double dot[3];
-        sf::Color ambientColor[3];
-
-        Triangle MTriangle = triangles[i] * mesh->model();
+        Triangle MTriangle = triangles[i] * model;
+        Vec3D norm = MTriangle.norm();
 
         for (int k = 0; k < 3; k++) {
 
-            dot[k] = MTriangle.norm().dot((Vec3D(MTriangle[k]) - cameraPosition).normalized());
+            auto& tris = MTriangle[k];
+            float dot = norm.dot((Vec3D(tris) - cameraPosition).normalized());
 
-            sf::Color color = triangles[i].color();
-            ambientColor[k] = sf::Color(static_cast<sf::Uint8>(color.r * (0.3 * std::abs(dot[k]) + 0.7)),
-                                        static_cast<sf::Uint8>(color.g * (0.3 * std::abs(dot[k]) + 0.7)),
-                                        static_cast<sf::Uint8>(color.b * (0.3 * std::abs(dot[k]) + 0.7)),
-                                        static_cast<sf::Uint8>(color.a));
+            sf::Color color = MTriangle.color();
+            GLfloat ambientColor[4] = {
+                color.r * (0.3f * std::fabs(dot) + 0.7f) / 255.0f,
+                color.g * (0.3f * std::fabs(dot) + 0.7f) / 255.0f,
+                color.b * (0.3f * std::fabs(dot) + 0.7f) / 255.0f,
+                color.a / 255.0f
+            };
 
-            geometry[stride + 7 * k + 0] = static_cast<GLfloat>(MTriangle[k].x());
-            geometry[stride + 7 * k + 1] = static_cast<GLfloat>(MTriangle[k].y());
-            geometry[stride + 7 * k + 2] = static_cast<GLfloat>(MTriangle[k].z());
+            geometry[stride + 7 * k + 0] = static_cast<GLfloat>(tris.x());
+            geometry[stride + 7 * k + 1] = static_cast<GLfloat>(tris.y());
+            geometry[stride + 7 * k + 2] = static_cast<GLfloat>(tris.z());
 
-            geometry[stride + 7 * k + 3] = static_cast<GLfloat>(ambientColor[k].r) / 255.0f;
-            geometry[stride + 7 * k + 4] = static_cast<GLfloat>(ambientColor[k].g) / 255.0f;
-            geometry[stride + 7 * k + 5] = static_cast<GLfloat>(ambientColor[k].b) / 255.0f;
-            geometry[stride + 7 * k + 6] = static_cast<GLfloat>(ambientColor[k].a) / 255.0f;
+            geometry[stride + 7 * k + 3] = ambientColor[0];
+            geometry[stride + 7 * k + 4] = ambientColor[1];
+            geometry[stride + 7 * k + 5] = ambientColor[2];
+            geometry[stride + 7 * k + 6] = ambientColor[3];
         }
     }
     return geometry;

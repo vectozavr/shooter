@@ -40,7 +40,7 @@ Vec4D Vec4D::operator+(const Vec4D &point4D) const {
 }
 
 Vec4D Vec4D::operator-(const Vec4D &point4D) const {
-    return Vec4D(*this) + -point4D;
+    return *this + -point4D;
 }
 
 Vec4D Vec4D::operator*(double number) const {
@@ -49,7 +49,7 @@ Vec4D Vec4D::operator*(double number) const {
 
 Vec4D Vec4D::operator/(double number) const {
     if (std::abs(number) > Consts::EPS) {
-        return Vec4D(*this) * (1.0 / number);
+        return *this * (1.0 / number);
     } else {
         throw std::domain_error{"Vec4D::operator/(double number): division by zero"};
     }
@@ -65,9 +65,9 @@ double Vec4D::abs() const {
 }
 
 Vec4D Vec4D::normalized() const {
-    double vecAbs = abs();
+    double vecAbs = sqrAbs();
     if (vecAbs > Consts::EPS) {
-        return Vec4D(*this) / vecAbs;
+        return *this / sqrt(vecAbs);
     } else {
         return Vec4D(1);
     }

@@ -30,7 +30,7 @@ Vec3D Triangle::norm() const {
     }
 }
 
-Vec4D Triangle::operator[](int i) const {
+const Vec4D& Triangle::operator[](int i) const {
     return _points[i];
 }
 

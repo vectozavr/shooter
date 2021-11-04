@@ -44,7 +44,7 @@ Vec3D Vec3D::operator+(const Vec3D &vec) const {
 }
 
 Vec3D Vec3D::operator-(const Vec3D &vec) const {
-    return Vec3D(*this) + -vec;
+    return *this + -vec;
 }
 
 Vec3D Vec3D::operator*(double number) const {
@@ -53,7 +53,7 @@ Vec3D Vec3D::operator*(double number) const {
 
 Vec3D Vec3D::operator/(double number) const {
     if (std::abs(number) > Consts::EPS) {
-        return Vec3D(*this) * (1.0 / number);
+        return *this * (1.0 / number);
     } else {
         throw std::domain_error{"Vec3D::operator/(double number): division by zero"};
     }
@@ -69,9 +69,9 @@ double Vec3D::abs() const {
 }
 
 Vec3D Vec3D::normalized() const {
-    double vecAbs = abs();
+    double vecAbs = sqrAbs();
     if (vecAbs > Consts::EPS) {
-        return Vec3D(*this) / vecAbs;
+        return *this / sqrt(vecAbs);
     } else {
         return Vec3D(1);
     }

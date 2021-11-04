@@ -2,26 +2,28 @@
 // Created by Иван Ильин on 04.11.2021.
 //
 
+#include <algorithm>
+#include <execution>
+
 #include "HitBox.h"
 #include "../Consts.h"
 
 HitBox::HitBox(const Mesh &mesh) {
+    _hitBox.reserve(mesh.triangles().size() * 3);
     for(const auto& t : mesh.triangles()) {
         for(int i = 0; i < 3; i++) {
             // we dont need to add the same points in hit box
             _addIfUnique(Vec3D(t[i]));
         }
     }
+    _hitBox.shrink_to_fit();
 }
 
-void HitBox::_addIfUnique(const Vec3D &point) {
-    bool addPoint = true;
-    for(const auto& p : _hitBox) {
-        if(p == point) {
-            addPoint = false;
-        }
-    }
-    if(addPoint) {
+void HitBox::_addIfUnique(Vec3D &&point) {
+
+    auto check = [&point](const auto& p) { return p == point; };
+
+    if (std::find_if(std::execution::par, _hitBox.rbegin(), _hitBox.rend(), check) == _hitBox.rend()) {
         _hitBox.push_back(point);
     }
 }

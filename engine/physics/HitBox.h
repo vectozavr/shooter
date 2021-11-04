@@ -11,7 +11,7 @@ class HitBox final {
 private:
     std::vector<Vec3D> _hitBox;
 
-    void _addIfUnique(const Vec3D &point);
+    void _addIfUnique(Vec3D &&point);
 
 public:
     HitBox() = default;

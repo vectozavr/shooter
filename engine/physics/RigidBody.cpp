@@ -37,12 +37,11 @@ Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
      */
 
     for(auto & it : _hitBox) {
-        auto point = Vec3D(it);
-        double distance = point.dot(transformedDirection);
+        double distance = it.dot(transformedDirection);
 
         if (distance > maxDistance) {
             maxDistance = distance;
-            maxPoint = point;
+            maxPoint = it;
         }
     }
 
@@ -253,6 +252,7 @@ CollisionPoint RigidBody::EPA(const Simplex &simplex, std::shared_ptr<RigidBody>
             }
 
             std::vector<size_t> newFaces;
+            newFaces.reserve(uniqueEdges.size() * 3);
             for (auto[edgeIndex1, edgeIndex2] : uniqueEdges) {
                 newFaces.push_back(edgeIndex1);
                 newFaces.push_back(edgeIndex2);
@@ -280,6 +280,7 @@ CollisionPoint RigidBody::EPA(const Simplex &simplex, std::shared_ptr<RigidBody>
 std::pair<std::vector<FaceNormal>, size_t>
 RigidBody::_getFaceNormals(const std::vector<Vec3D> &polytope, const std::vector<size_t> &faces) {
     std::vector<FaceNormal> normals;
+    normals.reserve(faces.size() / 3);
     size_t nearestFaceIndex = 0;
     double minDistance = std::numeric_limits<double>::max();
 
