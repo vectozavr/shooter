@@ -37,12 +37,11 @@ Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
      */
 
     for(auto & it : _hitBox) {
-        auto point = Vec3D(it);
-        double distance = point.dot(transformedDirection);
+        double distance = it.dot(transformedDirection);
 
         if (distance > maxDistance) {
             maxDistance = distance;
-            maxPoint = point;
+            maxPoint = it;
         }
     }
 

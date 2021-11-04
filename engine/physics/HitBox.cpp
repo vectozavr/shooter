@@ -2,6 +2,9 @@
 // Created by Иван Ильин on 04.11.2021.
 //
 
+#include <algorithm>
+#include <execution>
+
 #include "HitBox.h"
 #include "../Consts.h"
 
@@ -16,16 +19,12 @@ HitBox::HitBox(const Mesh &mesh) {
     _hitBox.shrink_to_fit();
 }
 
-void HitBox::_addIfUnique(const Vec3D &point) {
+void HitBox::_addIfUnique(Vec3D &&point) {
     bool addPoint = true;
-    for(const auto& p : _hitBox) {
-        if((p - point).sqrAbs() < Consts::EPS) {
-            addPoint = false;
-        }
-    }
-    if(addPoint) {
+    auto check = [&point](const auto& p) { return (p - point).sqrAbs() < Consts::EPS; };
+
+    if (std::find_if(std::execution::par, _hitBox.rbegin(), _hitBox.rend(), check) == _hitBox.rend())
         _hitBox.push_back(point);
-    }
 }
 
 HitBox HitBox::Box(const Mesh &mesh) {
