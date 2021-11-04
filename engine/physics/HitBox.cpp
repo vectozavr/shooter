@@ -20,11 +20,12 @@ HitBox::HitBox(const Mesh &mesh) {
 }
 
 void HitBox::_addIfUnique(Vec3D &&point) {
-    bool addPoint = true;
-    auto check = [&point](const auto& p) { return (p - point).sqrAbs() < Consts::EPS; };
 
-    if (std::find_if(std::execution::par, _hitBox.rbegin(), _hitBox.rend(), check) == _hitBox.rend())
+    auto check = [&point](const auto& p) { return p == point; };
+
+    if (std::find_if(std::execution::par, _hitBox.rbegin(), _hitBox.rend(), check) == _hitBox.rend()) {
         _hitBox.push_back(point);
+    }
 }
 
 HitBox HitBox::Box(const Mesh &mesh) {
