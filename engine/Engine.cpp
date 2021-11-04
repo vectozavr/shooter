@@ -162,7 +162,7 @@ void Engine::printDebugInfo() const {
                                  Vec2D{xPos, yPos + height + height * i},
                                  {static_cast<sf::Uint8>(255 * width / timerWidth),
                                   static_cast<sf::Uint8>(255 * (1 - width / timerWidth)),
-                                  0, 100});
+                                  0, 150});
 
 
             screen->drawText(
@@ -170,7 +170,7 @@ void Engine::printDebugInfo() const {
                     std::to_string((int) (1.0 / timer.elapsedMilliseconds())) + " / s \t (" +
                     std::to_string((int) (100 * timer.elapsedMilliseconds() / totalTime)) + "%)",
                     Vec2D{xPos + 10, yPos + height * i + 5}, 30,
-                    sf::Color(0, 0, 0, 100));
+                    sf::Color(0, 0, 0, 200));
 
             i++;
             timeSum += timer.elapsedMilliseconds();
@@ -183,13 +183,13 @@ void Engine::printDebugInfo() const {
                              Vec2D{xPos, yPos + height + height * i},
                              {static_cast<sf::Uint8>(255 * width / timerWidth),
                               static_cast<sf::Uint8>(255 * (1 - width / timerWidth)),
-                              0, 100});
+                              0, 150});
 
 
         screen->drawText("other:\t" + std::to_string((int) (1.0 / (totalTime - timeSum))) + " / s \t (" +
                          std::to_string((int) (100 * (totalTime - timeSum) / totalTime)) + "%)",
                          Vec2D{xPos + 10, yPos + height * i + 5}, 30,
-                         sf::Color(0, 0, 0, 100));
+                         sf::Color(0, 0, 0, 200));
 
     }
 }

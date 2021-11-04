@@ -17,7 +17,7 @@ HitBox::HitBox(const Mesh &mesh) {
 void HitBox::_addIfUnique(const Vec3D &point) {
     bool addPoint = true;
     for(const auto& p : _hitBox) {
-        if((p - point).sqrAbs() < Consts::EPS) {
+        if(p == point) {
             addPoint = false;
         }
     }
