@@ -6,12 +6,14 @@
 #include "../Consts.h"
 
 HitBox::HitBox(const Mesh &mesh) {
+    _hitBox.reserve(mesh.triangles().size() * 3);
     for(const auto& t : mesh.triangles()) {
         for(int i = 0; i < 3; i++) {
             // we dont need to add the same points in hit box
             _addIfUnique(Vec3D(t[i]));
         }
     }
+    _hitBox.shrink_to_fit();
 }
 
 void HitBox::_addIfUnique(const Vec3D &point) {

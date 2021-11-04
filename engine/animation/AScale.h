@@ -21,12 +21,14 @@ private:
             return;
         }
 
+        auto object = _object.lock();
         std::vector<Triangle> newTriangles;
-        for (auto &t : _object->triangles()) {
+        newTriangles.reserve(object->triangles().size());
+        for (auto &t : object->triangles()) {
             newTriangles.emplace_back(
                     t * Matrix4x4::Scale(Vec3D{1, 1, 1} + (_scalingValue - Vec3D{1, 1, 1}) * progress()));
         }
-        _object.lock()->setTriangles(newTriangles);
+        object.lock()->setTriangles(std::move(newTriangles));
     }
 
 public:
