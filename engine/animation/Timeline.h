@@ -5,6 +5,7 @@
 #ifndef SHOOTER_TIMELINE_H
 #define SHOOTER_TIMELINE_H
 #include <memory>
+
 #include "Animation.h"
 
 class AnimationListTag final {

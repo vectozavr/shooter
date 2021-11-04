@@ -62,7 +62,7 @@ public:
     // OpenGL functions
     void glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t count);
 
-    static GLfloat *glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D &cameraPosition);
+    static GLfloat *glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh);
 
     [[nodiscard]] std::shared_ptr<sf::RenderWindow> renderWindow() { return _window; }
 };

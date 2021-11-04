@@ -18,8 +18,8 @@ void Screen::open(int screenWidth, int screenHeight, const std::string &name, bo
     _background = background;
 
     sf::ContextSettings settings;
-    settings.depthBits = 24;
-    settings.antialiasingLevel = 8;
+    settings.depthBits = 12;
+    settings.antialiasingLevel = 1;
 
     _window->create(sf::VideoMode(screenWidth, screenHeight), name, style, settings);
     _window->setVerticalSyncEnabled(verticalSync);
@@ -124,6 +124,11 @@ void Screen::drawText(const sf::Text &text) {
 // OpenGL functions
 void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t count) {
 
+    if (!sf::Shader::isAvailable())
+    {
+        Log::log("Shaders are not available!");
+    }
+
     glEnable(GL_CULL_FACE); // enable culling face
     glCullFace(GL_BACK); // cull faces from back
     glFrontFace(GL_CCW); // vertex order (counter clock wise)
@@ -164,32 +169,29 @@ void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t
     glLoadIdentity();
 
     glLoadMatrixf(view);
-    //glMultMatrixf(model);
+    glMultMatrixf(model);
 
     // Draw the mesh
     glDrawArrays(GL_TRIANGLES, 0, count);
+
+    sf::Shader::bind(NULL);
 }
 
-GLfloat *Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D &cameraPosition) {
+GLfloat *Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh) {
     std::vector<Triangle> const &triangles = mesh->triangles();
 
     auto *geometry = new GLfloat[7 * 3 * triangles.size()];
-
-    auto model = mesh->model();
 
     for (size_t i = 0; i < triangles.size(); i++) {
 
         int stride = 21 * i;
 
-        Triangle MTriangle = triangles[i] * model;
-        Vec3D norm = MTriangle.norm();
+        Triangle triangle = triangles[i];
 
         for (int k = 0; k < 3; k++) {
+            float dot = 0.5;
 
-            auto& tris = MTriangle[k];
-            float dot = norm.dot((Vec3D(tris) - cameraPosition).normalized());
-
-            sf::Color color = MTriangle.color();
+            sf::Color color = triangle.color();
             GLfloat ambientColor[4] = {
                 color.r * (0.3f * std::fabs(dot) + 0.7f) / 255.0f,
                 color.g * (0.3f * std::fabs(dot) + 0.7f) / 255.0f,
@@ -197,9 +199,9 @@ GLfloat *Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh, const Vec3D &c
                 color.a / 255.0f
             };
 
-            geometry[stride + 7 * k + 0] = static_cast<GLfloat>(tris.x());
-            geometry[stride + 7 * k + 1] = static_cast<GLfloat>(tris.y());
-            geometry[stride + 7 * k + 2] = static_cast<GLfloat>(tris.z());
+            geometry[stride + 7 * k + 0] = static_cast<GLfloat>(triangle[k].x());
+            geometry[stride + 7 * k + 1] = static_cast<GLfloat>(triangle[k].y());
+            geometry[stride + 7 * k + 2] = static_cast<GLfloat>(triangle[k].z());
 
             geometry[stride + 7 * k + 3] = ambientColor[0];
             geometry[stride + 7 * k + 4] = ambientColor[1];

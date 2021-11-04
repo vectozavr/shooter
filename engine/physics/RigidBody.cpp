@@ -15,26 +15,16 @@ RigidBody::RigidBody(ObjectNameTag nameTag, const std::string &filename, const V
                                                                                                _hitBox(*this) {
 }
 
+RigidBody::RigidBody(const Mesh &mesh) : Mesh(mesh), _hitBox(mesh) {
+}
+
+
 Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
     Vec3D maxPoint{0, 0, 0};
 
     double maxDistance = -std::numeric_limits<double>::max();
 
     Vec3D transformedDirection = (view() * direction).normalized();
-
-    /*
-    for (auto &tri : triangles()) {
-        for (int i = 0; i < 3; i++) {
-            Vec3D point = Vec3D(tri[i]);
-            double distance = point.dot(transformedDirection);
-
-            if (distance > maxDistance) {
-                maxDistance = distance;
-                maxPoint = point;
-            }
-        }
-    }
-     */
 
     for(auto & it : _hitBox) {
         double distance = it.dot(transformedDirection);
@@ -358,9 +348,6 @@ void RigidBody::addVelocity(const Vec3D &velocity) {
 
 void RigidBody::setAcceleration(const Vec3D &acceleration) {
     _acceleration = acceleration;
-}
-
-RigidBody::RigidBody(const Mesh &mesh) : Mesh(mesh), _hitBox(mesh) {
 }
 
 void RigidBody::setSimpleHitBox(bool b) {

@@ -15,6 +15,7 @@ private:
 
 public:
     HitBox() = default;
+    HitBox(const HitBox &hitBox) = default;
 
     explicit HitBox(const Mesh &mesh);
 

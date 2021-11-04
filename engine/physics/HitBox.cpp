@@ -3,10 +3,8 @@
 //
 
 #include <algorithm>
-#include <execution>
 
 #include "HitBox.h"
-#include "../Consts.h"
 
 HitBox::HitBox(const Mesh &mesh) {
     _hitBox.reserve(mesh.triangles().size() * 3);
@@ -23,7 +21,7 @@ void HitBox::_addIfUnique(Vec3D &&point) {
 
     auto check = [&point](const auto& p) { return p == point; };
 
-    if (std::find_if(std::execution::par, _hitBox.rbegin(), _hitBox.rend(), check) == _hitBox.rend()) {
+    if (std::find_if(_hitBox.rbegin(), _hitBox.rend(), check) == _hitBox.rend()) {
         _hitBox.push_back(point);
     }
 }
@@ -41,7 +39,7 @@ HitBox HitBox::Box(const Mesh &mesh) {
 
     for(const auto& t : mesh.triangles()) {
         for(int i = 0; i < 3; i++) {
-            Vec3D point = Vec3D(t[i]);
+            auto point = Vec3D(t[i]);
             if(point.x() > maxX) {
                 maxX = point.x();
             }
