@@ -61,9 +61,8 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
                 for (auto &it : *world) {
                     if (it.second->isVisible()) {
                         GLfloat *model = it.second->glModel();
-                        GLfloat *geometry = Screen::glMeshToGLfloatArray(it.second);
+                        GLfloat *geometry = it.second->glFloatArray();
                         screen->glDrawMesh(geometry, view, model, 3 * it.second->triangles().size());
-                        delete[] geometry;
                         delete[] model;
                     }
                 }

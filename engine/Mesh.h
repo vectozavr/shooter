@@ -21,6 +21,8 @@ private:
 
     Mesh &operator*=(const Matrix4x4 &matrix4X4);
 
+    // OpenGL
+    mutable GLfloat* _geometry = nullptr;
 public:
     explicit Mesh(ObjectNameTag nameTag) : Object(std::move(nameTag)) {};
 
@@ -56,6 +58,9 @@ public:
 
     Mesh static LineTo(ObjectNameTag nameTag, const Vec3D &from, const Vec3D &to, double line_width = 0.1,
                        const sf::Color &color = {150, 150, 150, 100});
+
+    // OpenGL functions
+    GLfloat *glFloatArray() const;
 };
 
 #endif //INC_3DZAVR_MESH_H

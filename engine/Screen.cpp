@@ -166,37 +166,3 @@ void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t
 
     sf::Shader::bind(NULL);
 }
-
-GLfloat *Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh) {
-    std::vector<Triangle> const &triangles = mesh->triangles();
-
-    auto *geometry = new GLfloat[7 * 3 * triangles.size()];
-
-    for (size_t i = 0; i < triangles.size(); i++) {
-
-        int stride = 21 * i;
-
-        Triangle triangle = triangles[i];
-        float dot = static_cast<float>(triangle.norm().dot(Vec3D(0, 0.5, 1)));
-
-        for (int k = 0; k < 3; k++) {
-            sf::Color color = triangle.color();
-            GLfloat ambientColor[4] = {
-                color.r * (0.3f * std::fabs(dot) + 0.7f) / 255.0f,
-                color.g * (0.3f * std::fabs(dot) + 0.7f) / 255.0f,
-                color.b * (0.3f * std::fabs(dot) + 0.7f) / 255.0f,
-                color.a / 255.0f
-            };
-
-            geometry[stride + 7 * k + 0] = static_cast<GLfloat>(triangle[k].x());
-            geometry[stride + 7 * k + 1] = static_cast<GLfloat>(triangle[k].y());
-            geometry[stride + 7 * k + 2] = static_cast<GLfloat>(triangle[k].z());
-
-            geometry[stride + 7 * k + 3] = ambientColor[0];
-            geometry[stride + 7 * k + 4] = ambientColor[1];
-            geometry[stride + 7 * k + 5] = ambientColor[2];
-            geometry[stride + 7 * k + 6] = ambientColor[3];
-        }
-    }
-    return geometry;
-}

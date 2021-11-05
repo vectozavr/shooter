@@ -6,6 +6,7 @@
 
 #include "Mesh.h"
 #include "ResourceManager.h"
+#include "Screen.h"
 
 using namespace std;
 
@@ -107,4 +108,42 @@ void Mesh::setTriangles(vector<Triangle>&& t) {
 
 Mesh::~Mesh() {
     _tris.clear();
+    delete[] _geometry;
+}
+
+GLfloat *Mesh::glFloatArray() const {
+    if(_geometry != nullptr) {
+        return _geometry;
+    }
+    _geometry = new GLfloat[7 * 3 * _tris.size()];
+
+    for (size_t i = 0; i < _tris.size(); i++) {
+
+        unsigned stride = 21 * i;
+
+        Triangle triangle = _tris[i];
+        Vec3D norm = (model()*triangle.norm()).normalized();
+        float dot = static_cast<float>(norm.dot(Vec3D(0, 1, 2).normalized()));
+
+        for (int k = 0; k < 3; k++) {
+            sf::Color color = triangle.color();
+            GLfloat ambientColor[4] = {
+                    static_cast<float>(color.r) * (0.3f * std::fabs(dot) + 0.7f) / 255.0f,
+                    static_cast<float>(color.g) * (0.3f * std::fabs(dot) + 0.7f) / 255.0f,
+                    static_cast<float>(color.b) * (0.3f * std::fabs(dot) + 0.7f) / 255.0f,
+                    static_cast<float>(color.a) / 255.0f
+            };
+
+            _geometry[stride + 7 * k + 0] = static_cast<GLfloat>(triangle[k].x());
+            _geometry[stride + 7 * k + 1] = static_cast<GLfloat>(triangle[k].y());
+            _geometry[stride + 7 * k + 2] = static_cast<GLfloat>(triangle[k].z());
+
+            _geometry[stride + 7 * k + 3] = ambientColor[0];
+            _geometry[stride + 7 * k + 4] = ambientColor[1];
+            _geometry[stride + 7 * k + 5] = ambientColor[2];
+            _geometry[stride + 7 * k + 6] = ambientColor[3];
+        }
+    }
+
+    return _geometry;
 }
