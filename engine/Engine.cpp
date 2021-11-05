@@ -57,7 +57,7 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
 
             Time::startTimer("d projections");
             if (_useOpenGL) {
-                GLfloat *view = camera->glView();
+                GLfloat *view = camera->glInvModel();
                 for (auto &it : *world) {
                     if (it.second->isVisible()) {
                         GLfloat *model = it.second->glModel();

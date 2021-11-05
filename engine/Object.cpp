@@ -139,7 +139,7 @@ void Object::unattach(const ObjectNameTag &tag) {
 }
 
 // OpenGL function
-GLfloat *Object::glView() const {
+GLfloat *Object::glInvModel() const {
     auto *v = new GLfloat[4 * 4];
 
     v[0] = -static_cast<GLfloat>(left().x());

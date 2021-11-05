@@ -26,7 +26,7 @@ private:
     std::shared_ptr<Mouse> _mouse;
 public:
     explicit Window(std::shared_ptr<Screen> screen, std::shared_ptr<Mouse> mouse, std::string name = "Menu",
-                    std::string backTexture = "") : _screen(std::move(screen)), _mouse(std::move(mouse)),
+                    std::string backTexture = "") : _screen(screen), _mouse(mouse),
                                                     _name(std::move(name)), _backTexture(std::move(backTexture)) {}
 
     void addButton(int x, int y, int w, int h,

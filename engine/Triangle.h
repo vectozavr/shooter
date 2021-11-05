@@ -15,8 +15,11 @@ class Triangle final {
 private:
     sf::Color _color;
     Vec4D _points[3];
+    Vec3D _normal;
+
+    void calculateNormal();
 public:
-    Triangle() : _points{Vec4D{}, Vec4D{}, Vec4D{}} {};
+    Triangle() = default;
 
     Triangle(const Triangle &triangle);
 

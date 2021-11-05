@@ -169,6 +169,7 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
         return objects;
     }
 
+
     // If objects is already loaded - return pointer to it
     auto it = _instance->_objects.find(filename);
     if (it != _instance->_objects.end()) {

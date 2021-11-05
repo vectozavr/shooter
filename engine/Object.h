@@ -105,12 +105,12 @@ public:
 
     [[nodiscard]] Matrix4x4 model() const { return Matrix4x4::Translation(_position) * _transformMatrix; }
 
-    [[nodiscard]] Matrix4x4 view() const { return Matrix4x4::View(left(), up(), lookAt(), position()); }
+    [[nodiscard]] Matrix4x4 invModel() const { return Matrix4x4::View(left(), up(), lookAt(), position()); }
 
     // OpenGL function
     [[nodiscard]] GLfloat *glModel() const;
 
-    [[nodiscard]] GLfloat *glView() const;
+    [[nodiscard]] GLfloat *glInvModel() const;
 
     virtual ~Object();
 };
