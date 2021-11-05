@@ -160,8 +160,8 @@ void Engine::printDebugInfo() const {
                                  Vec2D{xPos + width, yPos + height * i},
                                  Vec2D{xPos + width, yPos + height + height * i},
                                  Vec2D{xPos, yPos + height + height * i},
-                                 {static_cast<sf::Uint8>(255 * width / timerWidth),
-                                  static_cast<sf::Uint8>(255 * (1 - width / timerWidth)),
+                                 {static_cast<sf::Uint8>(255.0 * static_cast<double>(width) / timerWidth),
+                                  static_cast<sf::Uint8>(255.0 * (1.0 - static_cast<double>(width) / timerWidth)),
                                   0, 150});
 
 
@@ -181,8 +181,8 @@ void Engine::printDebugInfo() const {
                              Vec2D{xPos + width, yPos + height * i},
                              Vec2D{xPos + width, yPos + height + height * i},
                              Vec2D{xPos, yPos + height + height * i},
-                             {static_cast<sf::Uint8>(255 * width / timerWidth),
-                              static_cast<sf::Uint8>(255 * (1 - width / timerWidth)),
+                             {static_cast<sf::Uint8>(255.0 * static_cast<double>(width) / timerWidth),
+                              static_cast<sf::Uint8>(255.0 * (1.0 - static_cast<double>(width) / timerWidth)),
                               0, 150});
 
 
