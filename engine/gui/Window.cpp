@@ -18,6 +18,7 @@ void Window::addButton(int x, int y, int w, int h, std::function<void()> click, 
 
 void Window::update() {
 
+    _screen->pushGLStates();
     _screen->setTitle(_name);
     _screen->drawSprite(_back);
 
@@ -45,6 +46,7 @@ void Window::update() {
             _screen->drawText(button.text());
         }
     }
+    _screen->popGLStates();
 }
 
 void Window::setBackgroundTexture(const std::string &texture, double sx, double sy, int w, int h) {
