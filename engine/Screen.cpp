@@ -177,8 +177,7 @@ GLfloat *Screen::glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh) {
         int stride = 21 * i;
 
         Triangle triangle = triangles[i];
-        Vec3D norm = triangles[i].norm();
-        float dot = norm.dot(Vec3D(2, 1, 0).normalized());
+        float dot = static_cast<float>(triangle.norm().dot(Vec3D(0, 0.5, 1)));
 
         for (int k = 0; k < 3; k++) {
             sf::Color color = triangle.color();
