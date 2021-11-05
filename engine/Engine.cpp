@@ -84,14 +84,15 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
             }
             Time::stopTimer("d projections");
 
+            screen->pushGLStates();
             if (Consts::SHOW_FPS_COUNTER) {
                 screen->drawText(std::to_string(Time::fps()) + " fps",
                                  Vec2D(static_cast<double>(screen->width()) - 100.0, 10.0), 25,
                                  sf::Color(100, 100, 100));
             }
-
             printDebugInfo();
             gui();
+            screen->popGLStates();
         }
 
         screen->display();
@@ -162,7 +163,7 @@ void Engine::printDebugInfo() const {
                                  Vec2D{xPos, yPos + height + height * i},
                                  {static_cast<sf::Uint8>(255.0 * static_cast<double>(width) / timerWidth),
                                   static_cast<sf::Uint8>(255.0 * (1.0 - static_cast<double>(width) / timerWidth)),
-                                  0, 150});
+                                  0, 100});
 
 
             screen->drawText(
@@ -170,7 +171,7 @@ void Engine::printDebugInfo() const {
                     std::to_string((int) (1.0 / timer.elapsedMilliseconds())) + " / s \t (" +
                     std::to_string((int) (100 * timer.elapsedMilliseconds() / totalTime)) + "%)",
                     Vec2D{xPos + 10, yPos + height * i + 5}, 30,
-                    sf::Color(0, 0, 0, 200));
+                    sf::Color(0, 0, 0, 150));
 
             i++;
             timeSum += timer.elapsedMilliseconds();
@@ -183,13 +184,13 @@ void Engine::printDebugInfo() const {
                              Vec2D{xPos, yPos + height + height * i},
                              {static_cast<sf::Uint8>(255.0 * static_cast<double>(width) / timerWidth),
                               static_cast<sf::Uint8>(255.0 * (1.0 - static_cast<double>(width) / timerWidth)),
-                              0, 150});
+                              0, 100});
 
 
         screen->drawText("other:\t" + std::to_string((int) (1.0 / (totalTime - timeSum))) + " / s \t (" +
                          std::to_string((int) (100 * (totalTime - timeSum) / totalTime)) + "%)",
                          Vec2D{xPos + 10, yPos + height * i + 5}, 30,
-                         sf::Color(0, 0, 0, 200));
+                         sf::Color(0, 0, 0, 150));
 
     }
 }

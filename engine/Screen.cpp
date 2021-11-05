@@ -57,9 +57,7 @@ void Screen::drawTriangle(const Triangle &triangle) {
                                triangle.color())
             };
 
-    _window->pushGLStates();
     _window->draw(tris, 3, sf::Triangles);
-    _window->popGLStates();
 }
 
 void Screen::setTitle(const std::string &title) {
@@ -87,9 +85,7 @@ void Screen::drawTetragon(const Vec2D &p1, const Vec2D &p2, const Vec2D &p3, con
     polygon.setPoint(3, sf::Vector2f(static_cast<float>(p4.x()), static_cast<float>(p4.y())));
     polygon.setFillColor(color);
 
-    _window->pushGLStates();
     _window->draw(polygon);
-    _window->popGLStates();
 }
 
 void Screen::drawText(const std::string &string, const Vec2D &position, int size, sf::Color color) {
@@ -104,21 +100,15 @@ void Screen::drawText(const std::string &string, const Vec2D &position, int size
 
     text.setString(string);
 
-    _window->pushGLStates();
     _window->draw(text);
-    _window->popGLStates();
 }
 
 void Screen::drawSprite(const sf::Sprite &sprite) {
-    _window->pushGLStates();
     _window->draw(sprite);
-    _window->popGLStates();
 }
 
 void Screen::drawText(const sf::Text &text) {
-    _window->pushGLStates();
     _window->draw(text);
-    _window->popGLStates();
 }
 
 // OpenGL functions

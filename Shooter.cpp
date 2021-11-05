@@ -182,7 +182,6 @@ void Shooter::update() {
 }
 
 void Shooter::gui() {
-
     sf::Sprite sprite;
     sprite.setTexture(*ResourceManager::loadTexture(ShooterConsts::MAIN_MENU_GUI));
     sprite.setTextureRect(sf::IntRect(243, 3, 9, 9));

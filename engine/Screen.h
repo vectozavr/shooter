@@ -65,6 +65,9 @@ public:
     static GLfloat *glMeshToGLfloatArray(std::shared_ptr<Mesh> mesh);
 
     [[nodiscard]] std::shared_ptr<sf::RenderWindow> renderWindow() { return _window; }
+
+    void pushGLStates() { _window->pushGLStates(); };
+    void popGLStates() { _window->popGLStates(); };
 };
 
 
