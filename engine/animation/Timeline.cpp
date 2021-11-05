@@ -70,8 +70,13 @@ void Timeline::update() {
         return;
     }
 
+    // TODO: sometimes I catch an exception here: EXC_BAD_ACCESS (code=EXC_I386_GPFLT)
     for (auto&[listName, animationList] : _instance->_animations) {
         if (animationList.empty()) {
+            /*
+             * TODO If you delete this line you will not catch an exception.
+             * Maybe something wrong with std::map::erase()
+             */
             _instance->_animations.erase(listName);
             continue;
         }

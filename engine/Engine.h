@@ -41,6 +41,7 @@ protected:
     void setUpdateWorld(bool value) { _updateWorld = value; }
 
     void setGlEnable(bool value) { _useOpenGL = value; }
+    [[nodiscard]] bool glEnable() const { return _useOpenGL; }
 
     virtual void gui() {}
 
