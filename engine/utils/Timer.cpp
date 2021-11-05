@@ -17,6 +17,10 @@ void Timer::stop() {
 }
 
 double Timer::elapsedMilliseconds() const {
+    return elapsedSeconds()*1000;
+}
+
+double Timer::elapsedSeconds() const {
     high_resolution_clock::time_point endTime;
 
     if(_isRunning) {
@@ -26,8 +30,4 @@ double Timer::elapsedMilliseconds() const {
     }
 
     return duration<double>(endTime - _startTime).count();
-}
-
-double Timer::elapsedSeconds() const {
-    return elapsedMilliseconds() / 1000.0;
 }

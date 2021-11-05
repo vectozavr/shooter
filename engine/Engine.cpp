@@ -69,6 +69,7 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
                 }
                 delete[] view;
             } else {
+                screen->pushGLStates();
                 // clear triangles from previous frame
                 camera->clear();
                 // project triangles to the camera plane
@@ -81,6 +82,7 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
                 }
 
                 _triPerSec = camera->buffSize() * Time::fps();
+                screen->popGLStates();
             }
             Time::stopTimer("d projections");
 
@@ -147,11 +149,11 @@ void Engine::printDebugInfo() const {
         float yPos = 300;
         int height = 50;
 
-        double totalTime = Time::elapsedTimerMilliseconds("d all");
+        double totalTime = Time::elapsedTimerSeconds("d all");
         double timeSum = 0;
         int i = 0;
         for (auto &[timerName, timer] : Time::timers()) {
-            int width = timerWidth * timer.elapsedMilliseconds() / totalTime;
+            int width = timerWidth * timer.elapsedSeconds() / totalTime;
 
             if (timerName == "d all" || timerName[0] != 'd') {
                 continue;
@@ -168,13 +170,13 @@ void Engine::printDebugInfo() const {
 
             screen->drawText(
                     timerName.substr(2, timerName.size()) + ":\t" +
-                    std::to_string((int) (1.0 / timer.elapsedMilliseconds())) + " / s \t (" +
-                    std::to_string((int) (100 * timer.elapsedMilliseconds() / totalTime)) + "%)",
+                    std::to_string((int) (1.0 / timer.elapsedSeconds())) + " / s \t (" +
+                    std::to_string((int) (100 * timer.elapsedSeconds() / totalTime)) + "%)",
                     Vec2D{xPos + 10, yPos + height * i + 5}, 30,
                     sf::Color(0, 0, 0, 150));
 
             i++;
-            timeSum += timer.elapsedMilliseconds();
+            timeSum += timer.elapsedSeconds();
         }
 
         int width = timerWidth * (totalTime - timeSum) / totalTime;
