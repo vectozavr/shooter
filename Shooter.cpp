@@ -82,8 +82,6 @@ void Shooter::start() {
 
     world->loadMap(ShooterConsts::MAP_OBJ, Vec3D{5, 5, 5});
 
-    player->scale(Vec3D(3, 1, 3));
-
     // TODO: encapsulate call backs inside Player
     player->setAddTraceCallBack([this](const Vec3D &from, const Vec3D &to) {
         client->addTrace(from, to);
@@ -256,31 +254,39 @@ void Shooter::play() {
 void Shooter::spawnPlayer(sf::Uint16 id) {
     std::string name = "Enemy_" + std::to_string(id);
 
-    std::shared_ptr<Player> newPlayer = std::make_shared<Player>(ObjectNameTag(name));
-    newPlayer->setCollision(false);
+    std::shared_ptr<Player> newPlayer = std::make_shared<Player>(ObjectNameTag(name), ShooterConsts::BODY_OBJ,
+                                                                 Vec3D{0.4, 0.4, 0.4});
 
     client->addPlayer(id, newPlayer);
     world->addBody(newPlayer);
     newPlayer->setVisible(true);
+    newPlayer->setCollision(false);
     newPlayer->setAcceleration(Vec3D{0, 0, 0});
 
     // add head and other stuff:
-    world->loadBody(ObjectNameTag(name + "_head"), ShooterConsts::CUBE_OBJ, Vec3D{0.7, 0.7, 0.7});
-    world->body(ObjectNameTag(name + "_head"))->translate(Vec3D{0, 2, 0});
-    world->body(ObjectNameTag(name + "_head"))->setCollider(false);
+    world->loadBody(ObjectNameTag(name + "_head"), ShooterConsts::HEAD_OBJ, Vec3D{0.4, 0.4, 0.4});
+    world->body(ObjectNameTag(name + "_head"))->translate(Vec3D{0, 2.2, 0});
     newPlayer->attach(world->body(ObjectNameTag(name + "_head")));
 
-    world->loadBody(ObjectNameTag(name + "_eye1"), ShooterConsts::CUBE_OBJ, Vec3D{0.2, 0.2, 0.05});
-    world->body(ObjectNameTag(name + "_eye1"))->translate(Vec3D{0.3, 2.1, 0.7});
-    world->body(ObjectNameTag(name + "_eye1"))->setCollider(false);
-    world->body(ObjectNameTag(name + "_eye1"))->setColor({147, 159, 255});
-    world->body(ObjectNameTag(name + "_head"))->attach(world->body(ObjectNameTag(name + "_eye1")));
+    world->loadBody(ObjectNameTag(name + "_foot_1"), ShooterConsts::FOOT_OBJ, Vec3D{0.4, 0.4, 0.4});
+    world->body(ObjectNameTag(name + "_foot_1"))->translate(Vec3D{-0.25, 0, 0});
+    newPlayer->attach(world->body(ObjectNameTag(name + "_foot_1")));
 
-    world->loadBody(ObjectNameTag(name + "_eye2"), ShooterConsts::CUBE_OBJ, Vec3D{0.2, 0.2, 0.05});
-    world->body(ObjectNameTag(name + "_eye2"))->translate(Vec3D{-0.3, 2.1, 0.7});
-    world->body(ObjectNameTag(name + "_eye2"))->setCollider(false);
-    world->body(ObjectNameTag(name + "_eye2"))->setColor({147, 159, 255});
-    world->body(ObjectNameTag(name + "_head"))->attach(world->body(ObjectNameTag(name + "_eye2")));
+    world->loadBody(ObjectNameTag(name + "_foot_2"), ShooterConsts::FOOT_OBJ, Vec3D{0.4, 0.4, 0.4});
+    world->body(ObjectNameTag(name + "_foot_2"))->translate(Vec3D{0.25, 0, 0});
+    newPlayer->attach(world->body(ObjectNameTag(name + "_foot_2")));
+
+    Vec3D randColor1 = Vec3D::Random();
+    Vec3D randColor2 = Vec3D::Random();
+
+    newPlayer->setColor({static_cast<sf::Uint8>(randColor1.x() * 255), static_cast<sf::Uint8>(randColor1.y() * 255),
+                         static_cast<sf::Uint8>(randColor1.z() * 255)});
+    world->body(ObjectNameTag(name + "_foot_1"))->setColor(
+            {static_cast<sf::Uint8>(randColor2.x() * 255), static_cast<sf::Uint8>(randColor2.y() * 255),
+             static_cast<sf::Uint8>(randColor2.z() * 255)});
+    world->body(ObjectNameTag(name + "_foot_2"))->setColor(
+            {static_cast<sf::Uint8>(randColor2.x() * 255), static_cast<sf::Uint8>(randColor2.y() * 255),
+             static_cast<sf::Uint8>(randColor2.z() * 255)});
 
     changeEnemyWeapon("gun", id);
 }
@@ -289,9 +295,10 @@ void Shooter::removePlayer(sf::Uint16 id) {
     std::string name = "Enemy_" + std::to_string(id);
     world->removeBody(ObjectNameTag(name));
     world->removeBody(ObjectNameTag(name + "_head"));
-    world->removeBody(ObjectNameTag(name + "_eye1"));
-    world->removeBody(ObjectNameTag(name + "_eye2"));
-    world->removeBody(ObjectNameTag("Enemy_" + std::to_string(id) + "_weapon"));
+    world->removeBody(ObjectNameTag(name + "_weapon"));
+    world->removeBody(ObjectNameTag(name + "_foot_1"));
+    world->removeBody(ObjectNameTag(name + "_foot_2"));
+
 }
 
 void Shooter::addFireTrace(const Vec3D &from, const Vec3D &to) {
@@ -351,10 +358,11 @@ void Shooter::changeEnemyWeapon(const std::string &weaponName, sf::Uint16 enemyI
     world->body(weaponTag)->setCollider(false);
     world->body(weaponTag)->scale(Vec3D(3, 3, 3));
 
-    world->body(weaponTag)->translateToPoint(head->position() - enemy->left() * 2 - enemy->up() * 0.5);
+    world->body(weaponTag)->translateToPoint(
+            head->position() - enemy->left() * 2.5 - enemy->up() * 2.5 + enemy->lookAt());
 
-    world->body(weaponTag)->rotate(Vec3D(0, Consts::PI + enemy->angle().y(), 0));
-    world->body(weaponTag)->rotateLeft(-head->angleLeftUpLookAt().x());
+    world->body(weaponTag)->rotate(Vec3D(0, enemy->angle().y(), 0));
+    world->body(weaponTag)->rotateLeft(head->angleLeftUpLookAt().x());
     enemy->attach(world->body(weaponTag));
 }
 

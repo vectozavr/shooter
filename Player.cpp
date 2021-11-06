@@ -11,15 +11,11 @@
 #include "engine/animation/Timeline.h"
 #include "engine/animation/ARotateLeft.h"
 
-Player::Player(ObjectNameTag name) : RigidBody(std::move(name), ShooterConsts::CUBE_OBJ,Vec3D{0.5, 1.9, 0.5}) {
+Player::Player(ObjectNameTag name, const std::string &filename, const Vec3D &scale) : RigidBody(std::move(name), filename,scale) {
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
     setCollision(true);
     setVisible(false);
     setSimpleHitBox(true);
-
-    Vec3D randColor = Vec3D::Random();
-    setColor({static_cast<sf::Uint8>(randColor.x() * 255), static_cast<sf::Uint8>(randColor.y() * 255),
-              static_cast<sf::Uint8>(randColor.z() * 255)});
 
     setCollisionCallBack(
             [this](const ObjectNameTag &tag, std::shared_ptr<RigidBody> obj) { collisionWithObject(tag, obj); });

@@ -43,7 +43,7 @@ private:
 
     void collisionWithObject(const ObjectNameTag &tag, std::shared_ptr<RigidBody> obj);
 public:
-    explicit Player(ObjectNameTag name);
+    explicit Player(ObjectNameTag name, const std::string &filename = ShooterConsts::CUBE_OBJ, const Vec3D &scale = Vec3D{1, 1, 1});
 
     void setHealth(double h) { _health = h; }
 

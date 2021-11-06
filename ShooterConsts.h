@@ -42,6 +42,11 @@ namespace ShooterConsts {
     const std::string MAIN_MENU_BACK = "textures/back.png";
     const std::string MAIN_MENU_GUI = "textures/gui.png";
 
+    const std::string HEAD_OBJ = "obj/man/head.obj";
+    const std::string BODY_OBJ = "obj/man/body.obj";
+    const std::string FOOT_OBJ = "obj/man/foot.obj";
+    const std::string MAN_OBJ = "obj/man/man.obj";
+
     const std::string CLICK_SOUND = "sound/click.ogg";
     const std::string BACK_NOISE = "sound/backNoise.ogg";
     const std::string CHANGE_WEAPON_SOUND = "sound/weapons/change_weapon.ogg";

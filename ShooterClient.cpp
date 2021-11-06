@@ -14,6 +14,7 @@
 #include "engine/animation/ATranslateToPoint.h"
 #include "engine/animation/AWait.h"
 #include "engine/animation/AFunction.h"
+#include "engine/animation/ARotateLeft.h"
 
 void ShooterClient::updatePacket() {
     sf::Packet packet;
@@ -50,7 +51,11 @@ void ShooterClient::processUpdate(sf::Packet &packet) {
         if (_players.count(targetId)) {
             std::string name = "Enemy_" + std::to_string(targetId);
 
-            _players[targetId]->translateToPoint(Vec3D{buf[0], buf[1], buf[2]});
+            Vec3D newPosition = Vec3D{buf[0], buf[1], buf[2]};
+
+            bool isAnimate = (_players[targetId]->position() - newPosition).sqrAbs() > 0.2;
+
+            _players[targetId]->translateToPoint(newPosition);
 
             _players[targetId]->setHealth(buf[3]);
             _players[targetId]->rotateToAngle(Vec3D{0, buf[4], 0});
@@ -59,11 +64,30 @@ void ShooterClient::processUpdate(sf::Packet &packet) {
             auto head = _players[targetId]->attached(ObjectNameTag(name + "_head"));
             auto weapon = _players[targetId]->attached(ObjectNameTag("Enemy_" + std::to_string(targetId) + "_weapon"));
 
+            auto foot1 = _players[targetId]->attached(ObjectNameTag(name + "_foot_1"));
+            auto foot2 = _players[targetId]->attached(ObjectNameTag(name + "_foot_2"));
+
             if (head != nullptr) {
                 head->rotateLeft(buf[5] - _players[targetId]->headAngle());
             }
             if (weapon != nullptr) {
-                weapon->rotateLeft(-(buf[5] - _players[targetId]->headAngle()));
+                weapon->rotateLeft(buf[5] - _players[targetId]->headAngle());
+            }
+
+            if(isAnimate) {
+                if(foot1 != nullptr && foot2 != nullptr && !Timeline::isInAnimList(AnimationListTag(name + "_foot1_rotation"))) {
+                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<ARotateLeft>(foot1, 0.4, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<AWait>(0));
+                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<ARotateLeft>(foot1, -0.8, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<AWait>(0));
+                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<ARotateLeft>(foot1, 0.4, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+
+                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<ARotateLeft>(foot2, -0.4, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<AWait>(0));
+                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<ARotateLeft>(foot2, 0.8, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<AWait>(0));
+                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<ARotateLeft>(foot2, -0.4, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                }
             }
 
             _players[targetId]->setHeadAngle(buf[5]);

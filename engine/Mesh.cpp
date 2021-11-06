@@ -22,7 +22,7 @@ Mesh &Mesh::operator*=(const Matrix4x4 &matrix4X4) {
 }
 
 void Mesh::loadObj(const std::string &filename, const Vec3D &scale) {
-
+    _tris.clear();
     auto objects = ResourceManager::loadObjects(filename);
     for (auto &obj : objects) {
         for (auto &tri : obj->triangles()) {
