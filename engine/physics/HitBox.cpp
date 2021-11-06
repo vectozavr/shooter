@@ -3,6 +3,7 @@
 //
 
 #include <set>
+#include <cmath>
 
 #include "HitBox.h"
 #include "../Consts.h"
