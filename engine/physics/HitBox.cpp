@@ -2,28 +2,34 @@
 // Created by Иван Ильин on 04.11.2021.
 //
 
-#include <algorithm>
+#include <set>
 
 #include "HitBox.h"
+#include "../Consts.h"
 
-HitBox::HitBox(const Mesh &mesh) {
-    _hitBox.reserve(mesh.triangles().size() * 3);
-    for(const auto& t : mesh.triangles()) {
-        for(int i = 0; i < 3; i++) {
-            // we dont need to add the same points in hit box
-            _addIfUnique(Vec3D(t[i]));
-        }
-    }
-    _hitBox.shrink_to_fit();
+bool HitBox::Vec3DLess::operator()(const Vec3D& lhs, const Vec3D& rhs) const noexcept {
+    if (fabs(lhs.x() - rhs.x()) >= Consts::EPS)
+        return lhs.x() < rhs.x();
+    else if (fabs(lhs.y() - rhs.y()) >= Consts::EPS)
+        return lhs.y() < rhs.y();
+    else if (fabs(lhs.z() - rhs.z()) >= Consts::EPS)
+        return lhs.z() < rhs.z();
+    else
+        return false;
 }
 
-void HitBox::_addIfUnique(Vec3D &&point) {
+HitBox::HitBox(const Mesh& mesh) {
+    // we dont need to add the same points in hit box
+    std::set<Vec3D, HitBox::Vec3DLess> points;
 
-    auto check = [&point](const auto& p) { return p == point; };
+    for (const auto& t : mesh.triangles())
+        for (int i = 0; i < 3; i++)
+            points.insert(Vec3D(t[i]));
 
-    if (std::find_if(_hitBox.rbegin(), _hitBox.rend(), check) == _hitBox.rend()) {
-        _hitBox.push_back(point);
-    }
+    _hitBox.reserve(points.size());
+    for (const auto& it : points)
+        _hitBox.push_back(it);
+    _hitBox.shrink_to_fit();
 }
 
 HitBox HitBox::Box(const Mesh &mesh) {

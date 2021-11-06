@@ -70,16 +70,12 @@ void Timeline::update() {
         return;
     }
 
-    // TODO: sometimes I catch an exception here: EXC_BAD_ACCESS (code=EXC_I386_GPFLT)
-    for (auto&[listName, animationList] : _instance->_animations) {
-        if (animationList.empty()) {
-            /*
-             * TODO If you delete this line you will not catch an exception.
-             * Maybe something wrong with std::map::erase()
-             */
-            _instance->_animations.erase(listName);
+    for (auto iter = _instance->_animations.begin(); iter != _instance->_animations.end(); ) {
+        if (iter->second.empty()) {
+            _instance->_animations.erase(iter++);
             continue;
         }
+        auto& animationList = iter->second;
         auto it = animationList.begin();
         // If it the front animation is 'a_wait()' we should wait until waiting time is over
 
@@ -98,6 +94,7 @@ void Timeline::update() {
                 it++;
             }
         }
+        iter++;
     }
 }
 

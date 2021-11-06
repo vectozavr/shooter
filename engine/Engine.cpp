@@ -58,6 +58,8 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
             Time::startTimer("d projections");
             if (_useOpenGL) {
                 GLfloat *view = camera->glInvModel();
+                screen->pushGLStates();
+                screen->prepareToGlDrawMesh();
                 for (auto &it : *world) {
                     if (it.second->isVisible()) {
                         GLfloat *model = it.second->glModel();
@@ -66,9 +68,9 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
                         delete[] model;
                     }
                 }
+                screen->popGLStates();
                 delete[] view;
             } else {
-                screen->pushGLStates();
                 // clear triangles from previous frame
                 camera->clear();
                 // project triangles to the camera plane
@@ -81,11 +83,9 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
                 }
 
                 _triPerSec = camera->buffSize() * Time::fps();
-                screen->popGLStates();
             }
             Time::stopTimer("d projections");
 
-            screen->pushGLStates();
             if (Consts::SHOW_FPS_COUNTER) {
                 screen->drawText(std::to_string(Time::fps()) + " fps",
                                  Vec2D(static_cast<double>(screen->width()) - 100.0, 10.0), 25,
@@ -93,7 +93,6 @@ void Engine::create(int screenWidth, int screenHeight, const std::string &name, 
             }
             printDebugInfo();
             gui();
-            screen->popGLStates();
         }
 
         screen->display();

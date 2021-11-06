@@ -9,9 +9,11 @@
 
 class HitBox final {
 private:
-    std::vector<Vec3D> _hitBox;
+    struct Vec3DLess {
+        bool operator()(const Vec3D& lhs, const Vec3D& rhs) const noexcept;
+    };
 
-    void _addIfUnique(Vec3D &&point);
+    std::vector<Vec3D> _hitBox;
 
 public:
     HitBox() = default;

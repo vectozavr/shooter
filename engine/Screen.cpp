@@ -112,12 +112,13 @@ void Screen::drawText(const sf::Text &text) {
 }
 
 // OpenGL functions
-void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t count) {
-
+void Screen::prepareToGlDrawMesh() {
     if (!sf::Shader::isAvailable())
     {
         Log::log("Shaders are not available!");
     }
+
+    sf::Shader::bind(NULL);
 
     glEnable(GL_CULL_FACE); // enable culling face
     glCullFace(GL_BACK); // cull faces from back
@@ -147,15 +148,20 @@ void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t
     // Enable position and texture coordinates vertex components
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 7 * sizeof(GLfloat), geometry);
-    glColorPointer(4, GL_FLOAT, 7 * sizeof(GLfloat), geometry + 3);
 
     // Disable normal and color vertex components
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    // Apply some transformations
+    // Prepare to apply some transformations
     glMatrixMode(GL_MODELVIEW);
+}
+
+// OpenGL functions
+void Screen::glDrawMesh(GLfloat* geometry, GLfloat* view, GLfloat* model, size_t count) {
+    glVertexPointer(3, GL_FLOAT, 7 * sizeof(GLfloat), geometry);
+    glColorPointer(4, GL_FLOAT, 7 * sizeof(GLfloat), geometry + 3);
+
     glLoadIdentity();
 
     glLoadMatrixf(view);
@@ -163,6 +169,4 @@ void Screen::glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t
 
     // Draw the mesh
     glDrawArrays(GL_TRIANGLES, 0, count);
-
-    sf::Shader::bind(NULL);
 }

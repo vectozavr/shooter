@@ -60,6 +60,8 @@ public:
     void setMouseCursorVisible(bool visible);
 
     // OpenGL functions
+    void prepareToGlDrawMesh();
+    
     void glDrawMesh(GLfloat *geometry, GLfloat *view, GLfloat *model, size_t count);
 
     [[nodiscard]] std::shared_ptr<sf::RenderWindow> renderWindow() { return _window; }
