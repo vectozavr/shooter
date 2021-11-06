@@ -11,9 +11,10 @@
 
 class Shotgun final : public Weapon {
 public:
-    explicit Shotgun(): Weapon(15, 1, 1.0, 1.0, 400, 5.0, ShooterConsts::SHOTGUN_FIRE_SOUND,
-                               ShooterConsts::SHOTGUN_RELOAD_SOUND, ObjectNameTag("shotgun"), ShooterConsts::SHOTGUN_OBJ,
-                               Vec3D{3, 3, 3}, Vec3D{-1.95, 0.8, 1.5}, Vec3D{0, Consts::PI, 0}) {}
+    explicit Shotgun() : Weapon(15, 1, 1.0, 1.0, 400, 5.0, ShooterConsts::SHOTGUN_FIRE_SOUND,
+                                ShooterConsts::SHOTGUN_RELOAD_SOUND, ObjectNameTag("shotgun"),
+                                ShooterConsts::SHOTGUN_OBJ,
+                                Vec3D{3, 3, 3}, Vec3D{-2.1, 0.8, 1.9}, Vec3D{0, 0, 0}) {}
 
     std::map<ObjectNameTag, double>
     processFire(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction,

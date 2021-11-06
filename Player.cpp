@@ -88,7 +88,7 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     _weapons.back()->setReloadCallBack([this]() {
         Timeline::animate(AnimationListTag("reload_weapon"),
                           std::make_shared<ARotateLeft>(_weapons[_selectedWeapon],
-                                                        4 * Consts::PI,
+                                                        -4 * Consts::PI,
                                                         _weapons[_selectedWeapon]->reloadTime()/2,
                                                         Animation::LoopOut::None,
                                                         Animation::InterpolationType::Cos));

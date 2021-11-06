@@ -13,8 +13,8 @@ public:
     explicit Gold_Ak47() : Weapon(200, 60, 1.5, 0.05, 600, 1.0,
                                   ShooterConsts::GOLD_AK47_FIRE_SOUND,
                                   ShooterConsts::GOLD_AK47_RELOAD_SOUND, ObjectNameTag("gold_ak47"),
-                                  ShooterConsts::GOLD_AK47_OBJ, Vec3D{3, 3, 3}, Vec3D{-2.2, 1.0, 1.3},
-                                  Vec3D{0, Consts::PI, 0}) {
+                                  ShooterConsts::GOLD_AK47_OBJ, Vec3D{3, 3, 3}, Vec3D{-2.3, 0.8, 1.8},
+                                  Vec3D{0, 0, 0}) {
     }
 };
 

@@ -14,7 +14,7 @@ public:
     explicit Ak47() : Weapon(100, 30, 3.0, 0.1, 300, 2.0,
                             ShooterConsts::AK47_FIRE_SOUND, ShooterConsts::AK47_RELOAD_SOUND,
                             ObjectNameTag("ak47"), ShooterConsts::AK47_OBJ,
-                            Vec3D{3, 3, 3}, Vec3D{-2.2, 1.0, 1.3},Vec3D{0, Consts::PI, 0}) {}
+                            Vec3D{3, 3, 3}, Vec3D{-2.3, 0.8, 1.8},Vec3D{0, 0, 0}) {}
 };
 
 
