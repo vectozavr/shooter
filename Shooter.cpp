@@ -279,14 +279,12 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     Vec3D randColor1 = Vec3D::Random();
     Vec3D randColor2 = Vec3D::Random();
 
-    newPlayer->setColor({static_cast<sf::Uint8>(randColor1.x() * 255), static_cast<sf::Uint8>(randColor1.y() * 255),
-                         static_cast<sf::Uint8>(randColor1.z() * 255)});
-    world->body(ObjectNameTag(name + "_foot_1"))->setColor(
-            {static_cast<sf::Uint8>(randColor2.x() * 255), static_cast<sf::Uint8>(randColor2.y() * 255),
-             static_cast<sf::Uint8>(randColor2.z() * 255)});
-    world->body(ObjectNameTag(name + "_foot_2"))->setColor(
-            {static_cast<sf::Uint8>(randColor2.x() * 255), static_cast<sf::Uint8>(randColor2.y() * 255),
-             static_cast<sf::Uint8>(randColor2.z() * 255)});
+    int colorBodyNum = (int) ((double) (rand()-1) / RAND_MAX * 5);
+    int colorFootNum = (int) ((double) (rand()-1) / RAND_MAX * 5);
+
+    newPlayer->setColor(ShooterConsts::WHITE_COLORS[colorBodyNum]);
+    world->body(ObjectNameTag(name + "_foot_1"))->setColor(ShooterConsts::DARK_COLORS[colorFootNum]);
+    world->body(ObjectNameTag(name + "_foot_2"))->setColor(ShooterConsts::DARK_COLORS[colorFootNum]);
 
     changeEnemyWeapon("gun", id);
 }

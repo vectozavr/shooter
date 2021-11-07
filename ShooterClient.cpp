@@ -76,17 +76,17 @@ void ShooterClient::processUpdate(sf::Packet &packet) {
 
             if(isAnimate) {
                 if(foot1 != nullptr && foot2 != nullptr && !Timeline::isInAnimList(AnimationListTag(name + "_foot1_rotation"))) {
-                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<ARotateLeft>(foot1, 0.4, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<ARotateLeft>(foot1, 0.6, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
                     Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<AWait>(0));
-                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<ARotateLeft>(foot1, -0.8, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<ARotateLeft>(foot1, -1.2, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
                     Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<AWait>(0));
-                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<ARotateLeft>(foot1, 0.4, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<ARotateLeft>(foot1, 0.6, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
 
-                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<ARotateLeft>(foot2, -0.4, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<ARotateLeft>(foot2, -0.6, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
                     Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<AWait>(0));
-                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<ARotateLeft>(foot2, 0.8, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<ARotateLeft>(foot2, 1.2, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
                     Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<AWait>(0));
-                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<ARotateLeft>(foot2, -0.4, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<ARotateLeft>(foot2, -0.6, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
                 }
             }
 
