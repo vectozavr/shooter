@@ -276,8 +276,8 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     world->body(ObjectNameTag(name + "_foot_2"))->translate(Vec3D{0.25, 0, 0});
     newPlayer->attach(world->body(ObjectNameTag(name + "_foot_2")));
 
-    int colorBodyNum = (int) ((double) (rand()-1) / RAND_MAX * 5);
-    int colorFootNum = (int) ((double) (rand()-1) / RAND_MAX * 5);
+    int colorBodyNum = static_cast<int> (static_cast<double>((rand()-1)) / RAND_MAX * 5.0);
+    int colorFootNum = static_cast<int> (static_cast<double>((rand()-1)) / RAND_MAX * 5.0);
 
     newPlayer->setColor(ShooterConsts::WHITE_COLORS[colorBodyNum]);
     world->body(ObjectNameTag(name + "_foot_1"))->setColor(ShooterConsts::DARK_COLORS[colorFootNum]);
