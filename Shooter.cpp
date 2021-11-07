@@ -276,9 +276,6 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     world->body(ObjectNameTag(name + "_foot_2"))->translate(Vec3D{0.25, 0, 0});
     newPlayer->attach(world->body(ObjectNameTag(name + "_foot_2")));
 
-    Vec3D randColor1 = Vec3D::Random();
-    Vec3D randColor2 = Vec3D::Random();
-
     int colorBodyNum = (int) ((double) (rand()-1) / RAND_MAX * 5);
     int colorFootNum = (int) ((double) (rand()-1) / RAND_MAX * 5);
 
