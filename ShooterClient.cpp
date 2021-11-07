@@ -150,7 +150,8 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
                 camera->rotateLeft(-camera->angleLeftUpLookAt().x());
                 camera->transform(Matrix4x4::Rotation(-_player->angle()));
 
-                Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<ATranslateToPoint>(camera, Vec3D(-20, 30, -100)));
+                Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<ATranslateToPoint>(camera, Vec3D(0, 30, -100)));
+                Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<AWait>(0));
                 Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<ARotateRelativePoint>(camera, Vec3D(0), Vec3D{0, Consts::PI, 0}, 5, Animation::LoopOut::None, Animation::InterpolationType::Linear));
                 Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<AWait>(0));
                 Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<AFunction>([this, camera](){

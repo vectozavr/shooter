@@ -72,7 +72,7 @@ void Weapon::reload() {
     Log::log("Weapon::reload (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
     _lastReloadTime = Time::time();
 
-    if(_reloadCallBack != nullptr) {
+    if (_reloadCallBack != nullptr) {
         _reloadCallBack();
     }
 }
@@ -99,11 +99,22 @@ Weapon::addTrace(std::function<IntersectionInformation(const Vec3D &, const Vec3
     auto rayCast = rayCastFunction(from, from + directionTo * ShooterConsts::FIRE_DISTANCE + randV);
     if (rayCast.objectName.str().find("Enemy") != std::string::npos) {
         damagedPlayers[rayCast.objectName] += _damage / (1.0 + rayCast.distanceToObject);
+
+        // If you hit the head the damage will be doubled
+        if (rayCast.objectName.str().find("_head") != std::string::npos) {
+            damagedPlayers[rayCast.objectName] += _damage / (1.0 + rayCast.distanceToObject);
+        }
+        // If you hit the foot the damage will be divided by 2
+        if (rayCast.objectName.str().find("_foot_") != std::string::npos) {
+            damagedPlayers[rayCast.objectName] -= 0.5 * _damage / (1.0 + rayCast.distanceToObject);
+        }
     }
 
     // add trace line
     Vec3D lineFrom = position() + model() * Vec3D(triangles().back()[0]);
-    Vec3D lineTo = rayCast.intersected ? rayCast.pointOfIntersection : position() + directionTo * ShooterConsts::FIRE_DISTANCE + randV;
+    Vec3D lineTo = rayCast.intersected ? rayCast.pointOfIntersection : position() +
+                                                                       directionTo * ShooterConsts::FIRE_DISTANCE +
+                                                                       randV;
     _addTraceCallBack(lineFrom, lineTo);
 
     return damagedPlayers;
