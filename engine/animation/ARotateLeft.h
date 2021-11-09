@@ -5,8 +5,6 @@
 #ifndef SHOOTER_AROTATELEFT_H
 #define SHOOTER_AROTATELEFT_H
 
-#include <utility>
-
 #include "Animation.h"
 #include "../Object.h"
 
@@ -16,12 +14,14 @@ private:
     const double _rotationValue;
 
     void update() override {
-        if (_object.expired()) {
+        auto obj = _object.lock();
+
+        if (obj == nullptr) {
             stop();
             return;
         }
 
-        _object.lock()->rotateLeft(_rotationValue*dprogress());
+        obj->rotateLeft(_rotationValue*dprogress());
     }
 
 public:

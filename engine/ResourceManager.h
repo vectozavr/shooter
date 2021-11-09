@@ -20,7 +20,6 @@ private:
     std::map<std::string, std::vector<std::shared_ptr<Mesh>>> _objects;
 
     static ResourceManager *_instance;
-    static bool _validInstance;
 
     ResourceManager() = default;
 

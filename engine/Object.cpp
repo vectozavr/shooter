@@ -7,6 +7,13 @@
 #include "Object.h"
 #include "Matrix4x4.h"
 
+bool ObjectNameTag::contains(const ObjectNameTag &nameTag) const {
+    if(_name.find(nameTag.str()) != std::string::npos) {
+        return true;
+    }
+    return false;
+}
+
 void Object::transform(const Matrix4x4 &t) {
     _transformMatrix = t * _transformMatrix;
 

@@ -102,7 +102,7 @@ add_executable(shooter
         engine/animation/AAttractToPoint.h
         engine/animation/ARotateRelativePoint.h
         engine/animation/ARotateLeft.h
-        )
+        engine/animation/Interpolation.cpp engine/animation/Animations.h)
 
 if(APPLE OR UNIX)
     include_directories(/usr/local/include)

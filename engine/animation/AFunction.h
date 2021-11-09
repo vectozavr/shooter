@@ -5,8 +5,6 @@
 #ifndef ENGINE_AFUNCTION_H
 #define ENGINE_AFUNCTION_H
 
-#include <utility>
-
 #include "Animation.h"
 
 class AFunction final : public Animation {

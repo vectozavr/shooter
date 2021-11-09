@@ -23,28 +23,23 @@ struct IntersectionInformation final {
 class World final {
 private:
     std::map<ObjectNameTag, std::shared_ptr<RigidBody>> _objects;
-public:
-    World() = default;
 
     void checkCollision(const ObjectNameTag &tag);
+public:
+    World() = default;
 
     void update();
 
     void addBody(std::shared_ptr<RigidBody> mesh);
-
     std::shared_ptr<RigidBody> body(const ObjectNameTag &tag);
-
     void removeBody(const ObjectNameTag &tag);
-
     void loadBody(const ObjectNameTag &tag, const std::string &filename, const Vec3D &scale = Vec3D{1, 1, 1});
+    void loadMap(const std::string &filename, const Vec3D &scale = Vec3D{1, 1, 1});
 
     // std::string skipTags is a string that consist of all objects we want to skip in ray casting
     IntersectionInformation rayCast(const Vec3D &from, const Vec3D &to, const std::string &skipTags = "");
 
-    void loadMap(const std::string &filename, const Vec3D &scale = Vec3D{1, 1, 1});
-
     std::map<ObjectNameTag, std::shared_ptr<RigidBody>>::iterator begin() { return _objects.begin(); }
-
     std::map<ObjectNameTag, std::shared_ptr<RigidBody>>::iterator end() { return _objects.end(); }
 };
 

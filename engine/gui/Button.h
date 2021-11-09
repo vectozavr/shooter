@@ -5,10 +5,7 @@
 #ifndef ENGINE_BUTTON_H
 #define ENGINE_BUTTON_H
 
-#include <functional>
-
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
 
 struct tPos final {
     const int tx;

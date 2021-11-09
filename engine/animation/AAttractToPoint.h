@@ -15,12 +15,14 @@ private:
     const double _valueToAttract;
 
     void update() override {
-        if (_object.expired()) {
+        auto obj = _object.lock();
+
+        if (obj == nullptr) {
             stop();
             return;
         }
 
-        _object.lock()->attractToPoint(_targetPoint, _valueToAttract * dprogress());
+        obj->attractToPoint(_targetPoint, _valueToAttract * dprogress());
     }
 
 public:

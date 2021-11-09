@@ -5,8 +5,6 @@
 #ifndef ENGINE_ATRANSLATETOPOINT_H
 #define ENGINE_ATRANSLATETOPOINT_H
 
-#include <utility>
-
 #include "Animation.h"
 #include "../Object.h"
 
@@ -19,7 +17,9 @@ private:
     bool _started = false;
 
     void update() override {
-        if (_object.expired()) {
+        auto obj = _object.lock();
+
+        if (obj == nullptr) {
             stop();
             return;
         }
@@ -28,7 +28,7 @@ private:
             _started = true;
             _translationValue = _targetPoint - _object.lock()->position();
         }
-        _object.lock()->translate(_translationValue * dprogress());
+        obj->translate(_translationValue * dprogress());
     }
 
 public:

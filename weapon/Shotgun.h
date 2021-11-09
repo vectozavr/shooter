@@ -18,14 +18,14 @@ public:
 
     std::map<ObjectNameTag, double>
     processFire(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction,
-                const Vec3D &position, const Vec3D &direction) override {
+                const Vec3D &position, const Vec3D &direction) const override {
 
         std::map<ObjectNameTag, double> damagedPlayers;
 
         for (int i = 0; i < 15; i++) {
-            std::map<ObjectNameTag, double> damaged = addTrace(rayCastFunction, position, direction);
-            for (auto &player : damaged) {
-                damagedPlayers[player.first] += player.second;
+            std::map<ObjectNameTag, double> damaged = fireABullet(rayCastFunction, position, direction);
+            for (auto &[playerName, damage] : damaged) {
+                damagedPlayers[playerName] += damage;
             }
         }
 

@@ -10,14 +10,13 @@
 #include "../utils/Time.h"
 #include "../Consts.h"
 
-RigidBody::RigidBody(ObjectNameTag nameTag, const std::string &filename, const Vec3D &scale) : Mesh(std::move(nameTag),
+RigidBody::RigidBody(ObjectNameTag nameTag, const std::string &filename, const Vec3D &scale, bool useSimpleBox) : Mesh(std::move(nameTag),
                                                                                                     filename, scale),
-                                                                                               _hitBox(*this) {
+                                                                                               _hitBox(*this, useSimpleBox) {
 }
 
-RigidBody::RigidBody(const Mesh &mesh) : Mesh(mesh), _hitBox(mesh) {
+RigidBody::RigidBody(const Mesh &mesh, bool useSimpleBox) : Mesh(mesh), _hitBox(mesh, useSimpleBox) {
 }
-
 
 Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
     Vec3D maxPoint{0, 0, 0};
@@ -41,7 +40,6 @@ Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
 Vec3D RigidBody::_support(std::shared_ptr<RigidBody> obj, const Vec3D &direction) {
     Vec3D p1 = _findFurthestPoint(direction);
     Vec3D p2 = obj->_findFurthestPoint(-direction);
-    Vec3D res = p1 - p2;
 
     return p1 - p2;
 }
@@ -348,13 +346,4 @@ void RigidBody::addVelocity(const Vec3D &velocity) {
 
 void RigidBody::setAcceleration(const Vec3D &acceleration) {
     _acceleration = acceleration;
-}
-
-void RigidBody::setSimpleHitBox(bool b) {
-    _simpleHitBox = b;
-    if (_simpleHitBox) {
-        _hitBox = HitBox::Box(*this);
-    } else {
-        _hitBox = HitBox(*this);
-    }
 }

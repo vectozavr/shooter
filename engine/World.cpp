@@ -19,7 +19,7 @@ void World::addBody(std::shared_ptr<RigidBody> body) {
 }
 
 void World::loadBody(const ObjectNameTag &tag, const string &filename, const Vec3D &scale) {
-    _objects.emplace(tag, std::make_shared<RigidBody>(Mesh(tag, filename, scale)));
+    _objects.emplace(tag, std::make_shared<RigidBody>(tag, filename, scale));
     Log::log("World::loadBody(): inserted body from " + filename + " with title '" + tag.str() + "' with " +
              std::to_string(_objects[tag]->triangles().size()) + " tris.");
 }
@@ -45,7 +45,7 @@ IntersectionInformation World::rayCast(const Vec3D &from, const Vec3D &to, const
 
         bool escapeThisBody = false;
         for (auto &escapeTag : tagsToSkip) {
-            if (name.str().find(escapeTag) != std::string::npos) {
+            if (name.contains(ObjectNameTag(escapeTag))) {
                 escapeThisBody = true;
                 break;
             }
@@ -78,7 +78,7 @@ IntersectionInformation World::rayCast(const Vec3D &from, const Vec3D &to, const
 void World::loadMap(const std::string &filename, const Vec3D &scale) {
     auto objs = ResourceManager::loadObjects(filename);
     for (auto &i : objs) {
-        std::shared_ptr<RigidBody> obj = std::make_shared<RigidBody>(*i);
+        std::shared_ptr<RigidBody> obj = std::make_shared<RigidBody>(*i, false);
         addBody(obj);
         obj->scale(scale);
     }
@@ -122,9 +122,9 @@ void World::checkCollision(const ObjectNameTag &tag) {
 }
 
 void World::update() {
-    for (auto &m : _objects) {
-        m.second->updatePhysicsState();
-        checkCollision(m.first);
+    for (auto &[nameTag, obj] : _objects) {
+        obj->updatePhysicsState();
+        checkCollision(nameTag);
     }
 }
 

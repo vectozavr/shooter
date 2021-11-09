@@ -11,78 +11,16 @@
 #include "utils/Log.h"
 
 ResourceManager *ResourceManager::_instance = nullptr;
-bool ResourceManager::_validInstance = false;
-
 
 void ResourceManager::init() {
+    delete _instance;
     _instance = new ResourceManager();
-    _validInstance = true;
 
     Log::log("ResourceManager::init(): resource manager was initialized");
 }
 
-void ResourceManager::unloadTextures() {
-    int texturesCounter = _instance->_textures.size();
-    for (auto &_texture : _instance->_textures) {
-        _texture.second.reset();
-    }
-    _instance->_textures.clear();
-
-    Log::log("ResourceManager::unloadTextures(): all " + std::to_string(texturesCounter) + " textures was unloaded");
-
-}
-
-void ResourceManager::unloadSoundBuffers() {
-    int soundBuffersCounter = _instance->_soundBuffers.size();
-    for (auto &_soundBuffer : _instance->_soundBuffers) {
-        _soundBuffer.second.reset();
-    }
-    _instance->_soundBuffers.clear();
-
-    Log::log("ResourceManager::unloadSoundBuffers(): all " + std::to_string(soundBuffersCounter) +
-             " soundBuffers was unloaded");
-}
-
-void ResourceManager::unloadFonts() {
-    int fontsCounter = _instance->_fonts.size();
-    for (auto &_font : _instance->_fonts) {
-        _font.second.reset();
-    }
-    _instance->_fonts.clear();
-
-    Log::log("ResourceManager::unloadFonts(): all " + std::to_string(fontsCounter) + " fonts was unloaded");
-}
-
-void ResourceManager::unloadObjects() {
-    int objCounter = _instance->_objects.size();
-    _instance->_objects.clear();
-
-    Log::log("ResourceManager::unloadObjects(): all " + std::to_string(objCounter) + " objects was unloaded");
-}
-
-void ResourceManager::unloadAllResources() {
-    if (!_validInstance) {
-        return;
-    }
-
-    unloadTextures();
-    unloadSoundBuffers();
-    unloadFonts();
-    unloadObjects();
-
-    Log::log("ResourceManager::unloadAllResources(): all resources was unloaded");
-}
-
-void ResourceManager::free() {
-    unloadAllResources();
-    _validInstance = false;
-    delete _instance;
-
-    Log::log("ResourceManager::free(): pointer to 'ResourceManager' was freed");
-}
-
 std::shared_ptr<sf::Texture> ResourceManager::loadTexture(const std::string &filename) {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return nullptr;
     }
 
@@ -109,7 +47,7 @@ std::shared_ptr<sf::Texture> ResourceManager::loadTexture(const std::string &fil
 }
 
 std::shared_ptr<sf::SoundBuffer> ResourceManager::loadSoundBuffer(const std::string &filename) {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return nullptr;
     }
 
@@ -135,7 +73,7 @@ std::shared_ptr<sf::SoundBuffer> ResourceManager::loadSoundBuffer(const std::str
 }
 
 std::shared_ptr<sf::Font> ResourceManager::loadFont(const std::string &filename) {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return nullptr;
     }
 
@@ -165,7 +103,7 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
     std::vector<std::shared_ptr<Mesh>> objects{};
     std::map<std::string, sf::Color> maters{};
 
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return objects;
     }
 
@@ -240,4 +178,76 @@ std::vector<std::shared_ptr<Mesh>> ResourceManager::loadObjects(const std::strin
     _instance->_objects.emplace(filename, objects);
 
     return objects;
+}
+
+void ResourceManager::unloadTextures() {
+    if (_instance == nullptr) {
+        return;
+    }
+
+    int texturesCounter = _instance->_textures.size();
+    for (auto &_texture : _instance->_textures) {
+        _texture.second.reset();
+    }
+    _instance->_textures.clear();
+
+    Log::log("ResourceManager::unloadTextures(): all " + std::to_string(texturesCounter) + " textures was unloaded");
+}
+
+void ResourceManager::unloadSoundBuffers() {
+    if (_instance == nullptr) {
+        return;
+    }
+
+    int soundBuffersCounter = _instance->_soundBuffers.size();
+    for (auto &_soundBuffer : _instance->_soundBuffers) {
+        _soundBuffer.second.reset();
+    }
+    _instance->_soundBuffers.clear();
+
+    Log::log("ResourceManager::unloadSoundBuffers(): all " + std::to_string(soundBuffersCounter) +
+             " soundBuffers was unloaded");
+}
+
+void ResourceManager::unloadFonts() {
+    if (_instance == nullptr) {
+        return;
+    }
+
+    int fontsCounter = _instance->_fonts.size();
+    for (auto &_font : _instance->_fonts) {
+        _font.second.reset();
+    }
+    _instance->_fonts.clear();
+
+    Log::log("ResourceManager::unloadFonts(): all " + std::to_string(fontsCounter) + " fonts was unloaded");
+}
+
+void ResourceManager::unloadObjects() {
+    if (_instance == nullptr) {
+        return;
+    }
+
+    int objCounter = _instance->_objects.size();
+    _instance->_objects.clear();
+
+    Log::log("ResourceManager::unloadObjects(): all " + std::to_string(objCounter) + " objects was unloaded");
+}
+
+void ResourceManager::unloadAllResources() {
+    unloadTextures();
+    unloadSoundBuffers();
+    unloadFonts();
+    unloadObjects();
+
+    Log::log("ResourceManager::unloadAllResources(): all resources was unloaded");
+}
+
+void ResourceManager::free() {
+    unloadAllResources();
+
+    delete _instance;
+    _instance = nullptr;
+
+    Log::log("ResourceManager::free(): pointer to 'ResourceManager' was freed");
 }

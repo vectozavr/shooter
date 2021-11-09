@@ -4,11 +4,8 @@
 
 #include "PlayerController.h"
 #include "engine/utils/Log.h"
-#include "engine/animation/AWait.h"
-#include "engine/animation/ATranslate.h"
-#include "engine/animation/ATranslateToPoint.h"
-#include "engine/animation/Timeline.h"
 #include "ShooterConsts.h"
+#include "engine/animation/Animations.h"
 
 PlayerController::PlayerController(std::shared_ptr<Player> player,
                                    std::shared_ptr<Keyboard> keyboard,
@@ -46,43 +43,50 @@ void PlayerController::update() {
     std::shared_ptr<Object> camera = _player->attached(ObjectNameTag("Camera"));
     if (camera != nullptr && _inRunning && _player->inCollision()) {
         if (!Timeline::isInAnimList(AnimationListTag("camera_hor_oscil"))) {
-            Timeline::animate(AnimationListTag("camera_hor_oscil"),
-                              std::make_shared<ATranslate>(camera, -camera->left() / 6, 0.3, Animation::LoopOut::None,
-                                                           Animation::InterpolationType::Cos));
-            Timeline::animate(AnimationListTag("camera_hor_oscil"), std::make_shared<AWait>(0));
-            Timeline::animate(AnimationListTag("camera_hor_oscil"),
-                              std::make_shared<ATranslate>(camera, camera->left() / 6, 0.3, Animation::LoopOut::None,
-                                                           Animation::InterpolationType::Cos));
+            Timeline::addAnimation<ATranslate>(AnimationListTag("camera_hor_oscil"),
+                                               camera, -camera->left() / 6, 0.3,
+                                               Animation::LoopOut::None,
+                                               Animation::InterpolationType::Cos);
+            Timeline::addAnimation<AWait>(AnimationListTag("camera_hor_oscil"), 0);
+            Timeline::addAnimation<ATranslate>(AnimationListTag("camera_hor_oscil"),
+                                               camera, camera->left() / 6, 0.3,
+                                               Animation::LoopOut::None,
+                                               Animation::InterpolationType::Cos);
 
-            Timeline::animate(AnimationListTag("camera_vert_oscil"),
-                              std::make_shared<ATranslate>(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None,
-                                                           Animation::InterpolationType::Cos));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<AWait>(0));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"),
-                              std::make_shared<ATranslate>(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None,
-                                                           Animation::InterpolationType::Cos));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<AWait>(0));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"),
-                              std::make_shared<ATranslate>(camera, -Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None,
-                                                           Animation::InterpolationType::Cos));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"), std::make_shared<AWait>(0));
-            Timeline::animate(AnimationListTag("camera_vert_oscil"),
-                              std::make_shared<ATranslate>(camera, Vec3D{0, 1, 0} / 12, 0.15, Animation::LoopOut::None,
-                                                           Animation::InterpolationType::Cos));
+            Timeline::addAnimation<ATranslate>(AnimationListTag("camera_vert_oscil"),
+                                               camera, -Vec3D{0, 1, 0} / 12, 0.15,
+                                               Animation::LoopOut::None,
+                                               Animation::InterpolationType::Cos);
+            Timeline::addAnimation<AWait>(AnimationListTag("camera_vert_oscil"), 0);
+            Timeline::addAnimation<ATranslate>(AnimationListTag("camera_vert_oscil"),
+                                               camera, Vec3D{0, 1, 0} / 12, 0.15,
+                                               Animation::LoopOut::None,
+                                               Animation::InterpolationType::Cos);
+            Timeline::addAnimation<AWait>(AnimationListTag("camera_vert_oscil"), 0);
+            Timeline::addAnimation<ATranslate>(AnimationListTag("camera_vert_oscil"),
+                                               camera, -Vec3D{0, 1, 0} / 12, 0.15,
+                                               Animation::LoopOut::None,
+                                               Animation::InterpolationType::Cos);
+            Timeline::addAnimation<AWait>(AnimationListTag("camera_vert_oscil"), 0);
+            Timeline::addAnimation<ATranslate>(AnimationListTag("camera_vert_oscil"),
+                                               camera, Vec3D{0, 1, 0} / 12, 0.15,
+                                               Animation::LoopOut::None,
+                                               Animation::InterpolationType::Cos);
 
-            Timeline::animate(AnimationListTag("camera_init"),
-                              std::make_shared<ATranslateToPoint>(camera, _player->position() + Vec3D{0, 1.8, 0}, 0.3,
-                                                                  Animation::LoopOut::None,
-                                                                  Animation::InterpolationType::Cos));
+            Timeline::addAnimation<ATranslateToPoint>(AnimationListTag("camera_init"),
+                                                      camera, _player->position() + Vec3D{0, 1.8, 0},
+                                                      0.3,
+                                                      Animation::LoopOut::None,
+                                                      Animation::InterpolationType::Cos);
         }
     } else if (camera != nullptr && inRunning_old && !_inRunning) {
         Timeline::deleteAnimationList(AnimationListTag("camera_hor_oscil"));
         Timeline::deleteAnimationList(AnimationListTag("camera_vert_oscil"));
         Timeline::deleteAnimationList(AnimationListTag("camera_init"));
-        Timeline::animate(AnimationListTag("camera_init"),
-                          std::make_shared<ATranslateToPoint>(camera, _player->position() + Vec3D{0, 1.8, 0}, 0.15,
-                                                              Animation::LoopOut::None,
-                                                              Animation::InterpolationType::Cos));
+        Timeline::addAnimation<ATranslateToPoint>(AnimationListTag("camera_init"),
+                               camera, _player->position() + Vec3D{0, 1.8, 0}, 0.15,
+                               Animation::LoopOut::None,
+                               Animation::InterpolationType::Cos);
     }
 
     // Left and right

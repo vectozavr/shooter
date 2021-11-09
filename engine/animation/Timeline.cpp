@@ -9,64 +9,52 @@
 #include "../utils/Log.h"
 
 Timeline *Timeline::_instance = nullptr;
-bool Timeline::_validInstance = false;
 
 void Timeline::init() {
+    delete _instance;
     _instance = new Timeline();
-    _validInstance = true;
 
     Log::log("Timeline::init(): animation timeline was initialized");
 }
 
-void Timeline::animate(const AnimationListTag &listName, std::shared_ptr<Animation> anim) {
-    if (!_validInstance) {
-        return;
-    }
-
-    _instance->_animations[listName].emplace_back(anim);
-
-    Log::log("Timeline::animate(): add animation in '" + listName.str() + "' list");
-}
-
 void Timeline::deleteAllAnimations() {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return;
     }
 
-    int animCounter = 0;
-
-    for (auto&[listName, animationList] : _instance->_animations) {
-        animCounter += animationList.size();
-        animationList.clear();
-    }
+    Log::log("Timeline::deleteAllAnimations(): all " + std::to_string(_instance->_animations.size()) + " list was deleted");
     _instance->_animations.clear();
-
-    Log::log("Timeline::deleteAllAnimations(): all " + std::to_string(animCounter) + " animations was deleted");
 }
 
 void Timeline::deleteAnimationList(const AnimationListTag &listName) {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return;
     }
 
-    int animCounter = _instance->_animations[listName].size();
-    _instance->_animations[listName].clear();
-    _instance->_animations.erase(listName);
+    auto it = _instance->_animations.find(listName);
 
-    Log::log("Timeline::deleteAnimationList(): list '" + listName.str() + "' with " + std::to_string(animCounter) +
-             " animations was deleted");
+    if(it != _instance->_animations.end()) {
+        _instance->_animations.erase(it);
+    } else {
+        Log::log("Timeline::deleteAnimationList(): list '" + listName.str() + "' does not exist");
+    }
 }
 
 [[nodiscard]] bool Timeline::isInAnimList(const AnimationListTag &listName) {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return false;
     }
 
-    return !_instance->_animations[listName].empty();
+    auto it = _instance->_animations.find(listName);
+    if(it != _instance->_animations.end()) {
+        return !it->second.empty();
+    }
+
+    return false;
 }
 
 void Timeline::update() {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return;
     }
 
@@ -77,32 +65,33 @@ void Timeline::update() {
         }
         auto& animationList = iter->second;
         auto it = animationList.begin();
+
         // If it the front animation is 'a_wait()' we should wait until waiting time is over
 
-        if (it.operator*()->waitFor()) {
-            if (!it.operator*()->updateState()) {
+        if ((*it)->isWaitingForFinish()) {
+            if (!(*it)->updateState()) {
                 animationList.erase(it);
             }
             continue;
         }
 
         // Otherwise we iterate over all animation until we meet animations.end() or wait animation
-        while (!animationList.empty() && (it != animationList.end()) && (!it.operator*()->waitFor())) {
-            if (!it.operator*()->updateState()) {
+        while (!animationList.empty() && (it != animationList.end()) && (!(*it)->isWaitingForFinish())) {
+            if (!(*it)->updateState()) {
                 animationList.erase(it++);
             } else {
-                it++;
+                ++it;
             }
         }
-        iter++;
+        ++iter;
     }
 }
 
 void Timeline::free() {
     Timeline::deleteAllAnimations();
-    _validInstance = false;
 
     delete _instance;
+    _instance = nullptr;
 
     Log::log("Timeline::free(): pointer to 'Timeline' was freed");
 }

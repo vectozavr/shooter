@@ -23,10 +23,10 @@ public:
     [[nodiscard]] std::string str() const { return _name; }
 
     bool operator==(const ObjectNameTag &tag) const { return _name == tag._name; }
-
     bool operator!=(const ObjectNameTag &tag) const { return _name != tag._name; }
-
     bool operator<(const ObjectNameTag &tag) const { return _name < tag._name; }
+
+    [[nodiscard]] bool contains(const ObjectNameTag& nameTag) const;
 };
 
 class Object {
@@ -52,7 +52,7 @@ private:
 public:
     explicit Object(ObjectNameTag nameTag) : _nameTag(std::move(nameTag)) {};
 
-    Object(const Object &object) : _nameTag(object.name()), _transformMatrix(object.model()) {};
+    Object(const Object &object) = default;
 
     // TODO: implement rotations using quaternions (?)
     void transform(const Matrix4x4 &t);

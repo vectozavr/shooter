@@ -5,8 +5,6 @@
 #ifndef ENGINE_ATRANSLATE_H
 #define ENGINE_ATRANSLATE_H
 
-#include <utility>
-
 #include "Animation.h"
 #include "../Object.h"
 
@@ -16,19 +14,21 @@ private:
     const Vec3D _translationValue;
 
     void update() override {
-        if (_object.expired()) {
+        auto obj = _object.lock();
+
+        if (obj == nullptr) {
             stop();
             return;
         }
 
-        _object.lock()->translate(_translationValue * dprogress());
+        obj->translate(_translationValue * dprogress());
     }
 
 public:
     ATranslate(std::weak_ptr<Object> object, const Vec3D &t, double duration = 1, LoopOut looped = LoopOut::None,
                InterpolationType interpolationType = InterpolationType::Bezier) : Animation(duration, looped,
                                                                                             interpolationType),
-                                                                                  _object(std::move(object)),
+                                                                                  _object(object),
                                                                                   _translationValue(t) {
     }
 };

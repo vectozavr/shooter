@@ -29,7 +29,6 @@ private:
     double _deltaTime = 0;
 
     static Time *_instance;
-    static bool _validInstance;
 
     Time() = default;
 

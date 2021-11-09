@@ -87,6 +87,9 @@
     <ClCompile Include="engine\animation\Timeline.cpp">
       <Filter>Исходные файлы\engine\animation</Filter>
     </ClCompile>
+    <ClInclude Include="engine\animation\Interpolation.cpp">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
     <ClCompile Include="engine\gui\Button.cpp">
       <Filter>Исходные файлы\engine\gui</Filter>
     </ClCompile>
@@ -252,6 +255,9 @@
       <Filter>Файлы заголовков\engine\gui</Filter>
     </ClInclude>
     <ClInclude Include="engine\animation\Interpolation.h">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\animation\Animations.h">
       <Filter>Файлы заголовков\engine\animation</Filter>
     </ClInclude>
     <ClInclude Include="engine\network\ClientUDP.h">

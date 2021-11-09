@@ -4,7 +4,10 @@
 
 #ifndef SHOOTER_TIMELINE_H
 #define SHOOTER_TIMELINE_H
+
 #include <memory>
+#include <string>
+#include <map>
 
 #include "Animation.h"
 
@@ -28,7 +31,6 @@ private:
     std::map<AnimationListTag, std::list<std::shared_ptr<Animation>>> _animations;
 
     static Timeline *_instance;
-    static bool _validInstance;
 
     Timeline() = default;
 
@@ -39,8 +41,6 @@ public:
 
     static void update();
 
-    static void animate(const AnimationListTag &listName, std::shared_ptr<Animation> anim);
-
     static void deleteAllAnimations();
 
     static void deleteAnimationList(const AnimationListTag &listName);
@@ -50,6 +50,15 @@ public:
     static void init();
 
     static void free();
+
+    template <typename T, typename... Arguments>
+    static void addAnimation(const AnimationListTag &listName, Arguments... args) {
+        if (_instance == nullptr) {
+            return;
+        }
+
+        _instance->_animations[listName].emplace_back(std::make_shared<T>(args...));
+    }
 };
 
 #endif //SHOOTER_TIMELINE_H

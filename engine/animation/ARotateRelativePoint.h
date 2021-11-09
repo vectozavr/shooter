@@ -5,8 +5,6 @@
 #ifndef SHOOTER_AROTATERELATIVEPOINT_H
 #define SHOOTER_AROTATERELATIVEPOINT_H
 
-#include <utility>
-
 #include "Animation.h"
 #include "../Object.h"
 
@@ -17,13 +15,14 @@ private:
     const Vec3D _rotationValue;
 
     void update() override {
+        auto obj = _object.lock();
 
-        if (_object.expired()) {
+        if (obj == nullptr) {
             stop();
             return;
         }
 
-        _object.lock()->rotateRelativePoint(_targetPoint, _rotationValue * dprogress());
+        obj->rotateRelativePoint(_targetPoint, _rotationValue * dprogress());
     }
 
 public:

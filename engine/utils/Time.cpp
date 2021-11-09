@@ -9,17 +9,16 @@
 using namespace std::chrono;
 
 Time *Time::_instance = nullptr;
-bool Time::_validInstance = false;
 
 void Time::init() {
+    delete _instance;
     _instance = new Time();
-    _validInstance = true;
 
     Log::log("Time::init(): time was initialized");
 }
 
 double Time::time() {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return 0;
     }
 
@@ -27,7 +26,7 @@ double Time::time() {
 }
 
 double Time::deltaTime() {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return 0;
     }
 
@@ -35,7 +34,7 @@ double Time::deltaTime() {
 }
 
 void Time::update() {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return;
     }
 
@@ -63,7 +62,7 @@ void Time::update() {
 }
 
 int Time::fps() {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return 0;
     }
     // Cast is faster than floor and has the same behavior for positive numbers
@@ -71,7 +70,7 @@ int Time::fps() {
 }
 
 void Time::startTimer(const std::string &timerName) {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return;
     }
     _instance->_timers.insert({timerName, Timer()});
@@ -79,7 +78,7 @@ void Time::startTimer(const std::string &timerName) {
 }
 
 void Time::stopTimer(const std::string &timerName) {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return;
     }
     if(_instance->_timers.count(timerName) > 0) {
@@ -88,7 +87,7 @@ void Time::stopTimer(const std::string &timerName) {
 }
 
 double Time::elapsedTimerMilliseconds(const std::string &timerName) {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return 0;
     }
     if(_instance->_timers.count(timerName) > 0) {
@@ -98,7 +97,7 @@ double Time::elapsedTimerMilliseconds(const std::string &timerName) {
 }
 
 double Time::elapsedTimerSeconds(const std::string &timerName) {
-    if (!_validInstance) {
+    if (_instance == nullptr) {
         return 0;
     }
     if(_instance->_timers.count(timerName) > 0) {
@@ -109,8 +108,8 @@ double Time::elapsedTimerSeconds(const std::string &timerName) {
 
 
 void Time::free() {
-    _validInstance = false;
     delete _instance;
+    _instance = nullptr;
 
     Log::log("Time::free(): pointer to 'Time' was freed");
 }

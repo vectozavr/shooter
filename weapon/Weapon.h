@@ -42,12 +42,12 @@ private:
 
 protected:
     std::map<ObjectNameTag, double>
-    addTrace(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction,
-             const Vec3D &position, const Vec3D &direction);
+    fireABullet(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction,
+                const Vec3D &position, const Vec3D &direction) const;
 
     virtual std::map<ObjectNameTag, double>
     processFire(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction,
-                const Vec3D &position, const Vec3D &direction);
+                const Vec3D &position, const Vec3D &direction) const;
 
 public:
     Weapon(int initialPack, int clipCapacity, double reloadTime, double fireDelay, double damage, double spreading,
@@ -55,7 +55,7 @@ public:
            const Vec3D &s, const Vec3D &t, const Vec3D &r);
 
     FireInformation
-    fire(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction, const Vec3D &position,
+    fire(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction, const Vec3D &cameraPosition,
          const Vec3D &direction);
 
     void reload();
@@ -67,7 +67,7 @@ public:
     void setReloadCallBack(std::function<void()> reload) { _reloadCallBack = std::move(reload); }
 
 
-    void addAmmo(int ammoAdd) { _stockAmmo += ammoAdd; }
+    void addAPack() { _stockAmmo += initialPack(); }
 
     [[nodiscard]] int initialPack() const { return _initialPack; }
 };

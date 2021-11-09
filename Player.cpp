@@ -7,18 +7,14 @@
 #include <utility>
 #include "engine/Screen.h"
 #include "engine/utils/Log.h"
+#include "engine/animation/Animations.h"
 
-#include "engine/animation/Timeline.h"
-#include "engine/animation/ARotateLeft.h"
-
-Player::Player(ObjectNameTag name, const std::string &filename, const Vec3D &scale) : RigidBody(std::move(name), filename,scale) {
+Player::Player(ObjectNameTag name, const std::string &filename, const Vec3D &scale) : RigidBody(std::move(name), filename, scale) {
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
     setCollision(true);
     setVisible(false);
-    setSimpleHitBox(true);
 
-    setCollisionCallBack(
-            [this](const ObjectNameTag &tag, std::shared_ptr<RigidBody> obj) { collisionWithObject(tag, obj); });
+    setCollisionCallBack([this](const ObjectNameTag &tag, std::shared_ptr<RigidBody> obj) { collisionWithObject(tag, obj); });
 }
 
 void Player::rotateWeaponsRelativePoint(const Vec3D &point4D, const Vec3D &v, double val) {
@@ -68,7 +64,7 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
 
     for (auto &w : _weapons) {
         if (w->name() == weapon->name()) {
-            w->addAmmo(w->initialPack());
+            w->addAPack();
             return;
         }
     }
@@ -82,12 +78,12 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
 
     // add animation of reloading
     _weapons.back()->setReloadCallBack([this]() {
-        Timeline::animate(AnimationListTag("reload_weapon"),
-                          std::make_shared<ARotateLeft>(_weapons[_selectedWeapon],
-                                                        -4 * Consts::PI,
-                                                        _weapons[_selectedWeapon]->reloadTime()/2,
-                                                        Animation::LoopOut::None,
-                                                        Animation::InterpolationType::Cos));
+        Timeline::addAnimation<ARotateLeft>(AnimationListTag("reload_weapon"),
+                                            _weapons[_selectedWeapon],
+                                            -4 * Consts::PI,
+                                            _weapons[_selectedWeapon]->reloadTime() / 2,
+                                            Animation::LoopOut::None,
+                                            Animation::InterpolationType::Cos);
     });
 
     // add call back function to create fire traces

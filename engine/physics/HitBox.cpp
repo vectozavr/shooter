@@ -19,23 +19,15 @@ bool HitBox::Vec3DLess::operator()(const Vec3D& lhs, const Vec3D& rhs) const noe
         return false;
 }
 
-HitBox::HitBox(const Mesh& mesh) {
-    // we dont need to add the same points in hit box
-    std::set<Vec3D, HitBox::Vec3DLess> points;
-
-    for (const auto& t : mesh.triangles())
-        for (int i = 0; i < 3; i++)
-            points.insert(Vec3D(t[i]));
-
-    _hitBox.reserve(points.size());
-    for (const auto& it : points)
-        _hitBox.push_back(it);
-    _hitBox.shrink_to_fit();
+HitBox::HitBox(const Mesh& mesh, bool useSimpleBox) {
+    if (useSimpleBox) {
+        generateSimple(mesh);
+    } else {
+        generateDetailed(mesh);
+    }
 }
 
-HitBox HitBox::Box(const Mesh &mesh) {
-    HitBox result;
-
+void HitBox::generateSimple(const Mesh &mesh) {
     double maxX = -std::numeric_limits<double>::max();
     double maxY = -std::numeric_limits<double>::max();
     double maxZ = -std::numeric_limits<double>::max();
@@ -69,15 +61,27 @@ HitBox HitBox::Box(const Mesh &mesh) {
         }
     }
 
-    result._hitBox.emplace_back(minX, minY, minZ);
-    result._hitBox.emplace_back(minX, maxY, minZ);
-    result._hitBox.emplace_back(maxX, minY, minZ);
-    result._hitBox.emplace_back(maxX, maxY, minZ);
+    _hitBox.emplace_back(minX, minY, minZ);
+    _hitBox.emplace_back(minX, maxY, minZ);
+    _hitBox.emplace_back(maxX, minY, minZ);
+    _hitBox.emplace_back(maxX, maxY, minZ);
 
-    result._hitBox.emplace_back(minX, minY, maxZ);
-    result._hitBox.emplace_back(minX, maxY, maxZ);
-    result._hitBox.emplace_back(maxX, minY, maxZ);
-    result._hitBox.emplace_back(maxX, maxY, maxZ);
+    _hitBox.emplace_back(minX, minY, maxZ);
+    _hitBox.emplace_back(minX, maxY, maxZ);
+    _hitBox.emplace_back(maxX, minY, maxZ);
+    _hitBox.emplace_back(maxX, maxY, maxZ);
+}
 
-    return result;
+void HitBox::generateDetailed(const Mesh &mesh) {
+    // we dont need to add the same points in hit box
+    std::set<Vec3D, HitBox::Vec3DLess> points;
+
+    for (const auto& t : mesh.triangles())
+        for (int i = 0; i < 3; i++)
+            points.insert(Vec3D(t[i]));
+
+    _hitBox.reserve(points.size());
+    for (const auto& it : points)
+        _hitBox.push_back(it);
+    _hitBox.shrink_to_fit();
 }

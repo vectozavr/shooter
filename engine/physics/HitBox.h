@@ -15,17 +15,17 @@ private:
 
     std::vector<Vec3D> _hitBox;
 
+    void generateSimple(const Mesh &mesh);
+    void generateDetailed(const Mesh &mesh);
 public:
     HitBox() = default;
     HitBox(const HitBox &hitBox) = default;
 
-    explicit HitBox(const Mesh &mesh);
+    explicit HitBox(const Mesh &mesh, bool useSimpleBox = true);
 
     [[nodiscard]] std::vector<Vec3D>::iterator begin() { return _hitBox.begin(); }
 
     [[nodiscard]] std::vector<Vec3D>::iterator end() { return _hitBox.end(); }
-
-    HitBox static Box(const Mesh &mesh);
 };
 
 

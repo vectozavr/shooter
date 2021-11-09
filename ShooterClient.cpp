@@ -8,13 +8,7 @@
 #include "engine/utils/Log.h"
 #include "engine/animation/Timeline.h"
 #include "ShooterMsgType.h"
-
-#include "engine/animation/AAttractToPoint.h"
-#include "engine/animation/ARotateRelativePoint.h"
-#include "engine/animation/ATranslateToPoint.h"
-#include "engine/animation/AWait.h"
-#include "engine/animation/AFunction.h"
-#include "engine/animation/ARotateLeft.h"
+#include "engine/animation/Animations.h"
 
 void ShooterClient::updatePacket() {
     sf::Packet packet;
@@ -74,19 +68,32 @@ void ShooterClient::processUpdate(sf::Packet &packet) {
                 weapon->rotateLeft(buf[5] - _players[targetId]->headAngle());
             }
 
-            if(isAnimate) {
-                if(foot1 != nullptr && foot2 != nullptr && !Timeline::isInAnimList(AnimationListTag(name + "_foot1_rotation"))) {
-                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<ARotateLeft>(foot1, 0.6, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
-                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<AWait>(0));
-                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<ARotateLeft>(foot1, -1.2, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
-                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<AWait>(0));
-                    Timeline::animate(AnimationListTag(name + "_foot1_rotation"), std::make_shared<ARotateLeft>(foot1, 0.6, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+            if (isAnimate) {
+                if (foot1 != nullptr && foot2 != nullptr &&
+                    !Timeline::isInAnimList(AnimationListTag(name + "_foot1_rotation"))) {
+                    Timeline::addAnimation<ARotateLeft>(AnimationListTag(name + "_foot1_rotation"),
+                                                        foot1, 0.6, 0.2, Animation::LoopOut::None,
+                                                        Animation::InterpolationType::Linear);
+                    Timeline::addAnimation<AWait>(AnimationListTag(name + "_foot1_rotation"), 0);
+                    Timeline::addAnimation<ARotateLeft>(AnimationListTag(name + "_foot1_rotation"),
+                                                        foot1, -1.2, 0.2, Animation::LoopOut::None,
+                                                        Animation::InterpolationType::Linear);
+                    Timeline::addAnimation<AWait>(AnimationListTag(name + "_foot1_rotation"), 0);
+                    Timeline::addAnimation<ARotateLeft>(AnimationListTag(name + "_foot1_rotation"),
+                                                        foot1, 0.6, 0.2, Animation::LoopOut::None,
+                                                        Animation::InterpolationType::Linear);
 
-                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<ARotateLeft>(foot2, -0.6, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
-                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<AWait>(0));
-                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<ARotateLeft>(foot2, 1.2, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
-                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<AWait>(0));
-                    Timeline::animate(AnimationListTag(name + "_foot2_rotation"), std::make_shared<ARotateLeft>(foot2, -0.6, 0.2, Animation::LoopOut::None, Animation::InterpolationType::Linear));
+                    Timeline::addAnimation<ARotateLeft>(AnimationListTag(name + "_foot2_rotation"),
+                                                        foot2, -0.6, 0.2, Animation::LoopOut::None,
+                                                        Animation::InterpolationType::Linear);
+                    Timeline::addAnimation<AWait>(AnimationListTag(name + "_foot2_rotation"), 0);
+                    Timeline::addAnimation<ARotateLeft>(AnimationListTag(name + "_foot2_rotation"),
+                                                        foot2, 1.2, 0.2, Animation::LoopOut::None,
+                                                        Animation::InterpolationType::Linear);
+                    Timeline::addAnimation<AWait>(AnimationListTag(name + "_foot2_rotation"), 0);
+                    Timeline::addAnimation<ARotateLeft>(AnimationListTag(name + "_foot2_rotation"),
+                                                        foot2, -0.6, 0.2, Animation::LoopOut::None,
+                                                        Animation::InterpolationType::Linear);
                 }
             }
 
@@ -141,7 +148,7 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
                 _player->addDeath();
 
                 auto camera = _player->attached(ObjectNameTag("Camera"));
-                if(camera == nullptr) {
+                if (camera == nullptr) {
                     break;
                 }
 
@@ -150,14 +157,19 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
                 camera->rotateLeft(-camera->angleLeftUpLookAt().x());
                 camera->transform(Matrix4x4::Rotation(-_player->angle()));
 
-                Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<ATranslateToPoint>(camera, Vec3D(0, 30, -100)));
-                Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<AWait>(0));
-                Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<ARotateRelativePoint>(camera, Vec3D(0), Vec3D{0, Consts::PI, 0}, 5, Animation::LoopOut::None, Animation::InterpolationType::Linear));
-                Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<AWait>(0));
-                Timeline::animate(AnimationListTag("camera_anim"), std::make_shared<AFunction>([this, camera](){
+                Timeline::addAnimation<ATranslateToPoint>(AnimationListTag("camera_anim"),
+                                                          camera, Vec3D(0, 30, -100));
+                Timeline::addAnimation<AWait>(AnimationListTag("camera_anim"), 0);
+                Timeline::addAnimation<ARotateRelativePoint>(AnimationListTag("camera_anim"),
+                                                             camera, Vec3D(0), Vec3D{0, Consts::PI, 0},
+                                                             5, Animation::LoopOut::None,
+                                                             Animation::InterpolationType::Linear);
+                Timeline::addAnimation<AWait>(AnimationListTag("camera_anim"), 0);
+                Timeline::addAnimation<AFunction>(AnimationListTag("camera_anim"), [this, camera]() {
                     // respawn
-                    _player->translateToPoint(Vec3D{50.0 * (-1 + 2.0 * (double) rand() / RAND_MAX), 30.0 * (double) rand() / RAND_MAX,
-                                                    50.0 * (-1 + 2.0 * (double) rand() / RAND_MAX)});
+                    _player->translateToPoint(
+                            Vec3D{50.0 * (-1 + 2.0 * (double) rand() / RAND_MAX), 30.0 * (double) rand() / RAND_MAX,
+                                  50.0 * (-1 + 2.0 * (double) rand() / RAND_MAX)});
                     _player->reInitWeapons();
                     _player->setFullAbility();
 
@@ -167,7 +179,7 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
                     camera->translateToPoint(_player->position() + Vec3D{0, 1.8, 0});
                     _player->attach(camera);
 
-                }, 1, 0.1));
+                }, 1, 0.1);
 
 
                 SoundController::playSound(SoundTag("death"), ShooterConsts::DEATH_SOUND);

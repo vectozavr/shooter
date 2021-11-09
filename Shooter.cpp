@@ -5,17 +5,9 @@
 #include "Shooter.h"
 #include <fstream>
 #include <utility>
-#include "engine/animation/AColor.h"
-#include "engine/animation/AFunction.h"
-#include "engine/animation/ARotate.h"
-#include "engine/animation/Timeline.h"
+#include "engine/animation/Animations.h"
 #include "ShooterConsts.h"
 #include "engine/SoundController.h"
-#include "engine/animation/AAttractToPoint.h"
-#include "engine/animation/ARotateRelativePoint.h"
-#include "engine/animation/ATranslateToPoint.h"
-#include "engine/animation/AWait.h"
-#include "engine/animation/ATranslate.h"
 
 using namespace std;
 
@@ -199,7 +191,8 @@ void Shooter::drawStatsTable() {
 
     screen->drawText(client->lastEvent(), Vec2D{10, 10}, 25, sf::Color(0, 0, 0, 100));
 
-    vector<shared_ptr<Player>> allPlayers;
+    vector<shared_ptr < Player>>
+    allPlayers;
     allPlayers.push_back(player);
     for (auto&[playerId, player] : client->players())
         allPlayers.push_back(player);
@@ -276,8 +269,8 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     world->body(ObjectNameTag(name + "_foot_2"))->translate(Vec3D{0.25, 0, 0});
     newPlayer->attach(world->body(ObjectNameTag(name + "_foot_2")));
 
-    int colorBodyNum = static_cast<int> (static_cast<double>((rand()-1)) / RAND_MAX * 5.0);
-    int colorFootNum = static_cast<int> (static_cast<double>((rand()-1)) / RAND_MAX * 5.0);
+    int colorBodyNum = static_cast<int> (static_cast<double>((rand() - 1)) / RAND_MAX * 5.0);
+    int colorFootNum = static_cast<int> (static_cast<double>((rand() - 1)) / RAND_MAX * 5.0);
 
     newPlayer->setColor(ShooterConsts::WHITE_COLORS[colorBodyNum]);
     world->body(ObjectNameTag(name + "_foot_1"))->setColor(ShooterConsts::DARK_COLORS[colorFootNum]);
@@ -301,11 +294,11 @@ void Shooter::addFireTrace(const Vec3D &from, const Vec3D &to) {
     world->addBody(std::make_shared<RigidBody>(Mesh::LineTo(ObjectNameTag(traceName), from, to, 0.05)));
     world->body(ObjectNameTag(traceName))->setCollider(false);
 
-    Timeline::animate(AnimationListTag(traceName + "_fadeOut"),
-                      std::make_shared<AColor>(world->body(ObjectNameTag(traceName)), sf::Color{150, 150, 150, 0}));
-    Timeline::animate(AnimationListTag(traceName + "_delete"),
-                      std::make_shared<AFunction>([this, traceName]() { removeFireTrace(ObjectNameTag(traceName)); }, 1,
-                                                  1));
+    Timeline::addAnimation<AColor>(AnimationListTag(traceName + "_fadeOut"), world->body(ObjectNameTag(traceName)),
+                                   sf::Color{150, 150, 150, 0});
+    Timeline::addAnimation<AFunction>(AnimationListTag(traceName + "_delete"),
+                                      [this, traceName]() { removeFireTrace(ObjectNameTag(traceName)); }, 1,
+                                      1);
 }
 
 void Shooter::removeFireTrace(const ObjectNameTag &traceName) {
@@ -320,11 +313,12 @@ void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
     world->addBody(std::make_shared<RigidBody>(ObjectNameTag(bonusName), "obj/" + name + ".obj", Vec3D{3, 3, 3}));
     world->body(ObjectNameTag(bonusName))->translateToPoint(position);
     world->body(ObjectNameTag(bonusName))->setCollider(false);
-    world->body(ObjectNameTag(bonusName))->setSimpleHitBox(true);
     world->body(ObjectNameTag(bonusName))->setTrigger(true);
-    Timeline::animate(AnimationListTag(bonusName + "_rotation"),
-                      std::make_shared<ARotate>(world->body(ObjectNameTag(bonusName)), Vec3D{0, 2 * Consts::PI, 0}, 4,
-                                                Animation::LoopOut::Continue, Animation::InterpolationType::Linear));
+    Timeline::addAnimation<ARotate>(AnimationListTag(bonusName + "_rotation"),
+                                    world->body(ObjectNameTag(bonusName)),
+                                    Vec3D{0, 2 * Consts::PI, 0}, 4,
+                                    Animation::LoopOut::Continue,
+                                    Animation::InterpolationType::Linear);
 }
 
 void Shooter::removeBonus(const ObjectNameTag &bonusName) {

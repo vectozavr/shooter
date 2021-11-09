@@ -5,10 +5,7 @@
 #ifndef ENGINE_ANIMATION_H
 #define ENGINE_ANIMATION_H
 
-#include "../utils/Time.h"
-#include "../Triangle.h"
 #include "Interpolation.h"
-#include "../Vec2D.h"
 
 class Animation {
 public:
@@ -32,8 +29,9 @@ private:
     double _progress = 0;
     double _dprogress = 0;
 
-    // If '_waitFor' == true then we need to finish all animation before starting this one. (for example for a_wait() or a_scale())
-    const bool _waitFor = false;
+    // If '_waitForFinish' == true then we need to finish all animation before starting this one. (for example AWait)
+    // In addition new animations in particular animation list will be started only after finishing this animation.
+    const bool _waitForFinish = false;
     const double _duration = 0;
     const LoopOut _looped = LoopOut::None;
     const InterpolationType _intType = InterpolationType::Bezier;
@@ -41,22 +39,20 @@ private:
     // You should override this method for your particular animation
     virtual void update() = 0;
 
+protected:
+    [[nodiscard]] double progress() const { return _progress; }
+    [[nodiscard]] double dprogress() const { return _dprogress; }
+
+    void stop() { _finished = true; }
+
 public:
     Animation(double duration, LoopOut looped, InterpolationType intType, bool _waitFor = false);
 
     virtual ~Animation() = default;
 
-    [[nodiscard]] bool waitFor() const { return _waitFor; }
-
     bool updateState();
 
-    [[nodiscard]] double progress() const { return _progress; }
-
-    [[nodiscard]] double dprogress() const { return _dprogress; }
-
-    void stop() { _finished = true; }
-
-    [[nodiscard]] bool isFinished() const { return _finished; }
+    [[nodiscard]] bool isWaitingForFinish() const { return _waitForFinish; }
 };
 
 #endif //INC_3DZAVR_ANIMATION_H

@@ -41,23 +41,17 @@ private:
     bool _isTrigger = false;
 
     HitBox _hitBox{};
-    bool _simpleHitBox = false;
 
     bool _inCollision = false;
     Vec3D _collisionNormal{0, 0, 0};
 
     Vec3D _findFurthestPoint(const Vec3D &direction);
-
     Vec3D _support(std::shared_ptr<RigidBody> obj, const Vec3D &direction);
-
     std::function<void(const ObjectNameTag &, std::shared_ptr<RigidBody>)> _collisionCallBack;
 
     static NextSimplex _nextSimplex(const Simplex &points);
-
     static NextSimplex _lineCase(const Simplex &points);
-
     static NextSimplex _triangleCase(const Simplex &points);
-
     static NextSimplex _tetrahedronCase(const Simplex &points);
 
     static std::pair<std::vector<FaceNormal>, size_t>
@@ -68,49 +62,32 @@ private:
                      size_t b);
 public:
     explicit RigidBody(ObjectNameTag nameTag) : Mesh(std::move(nameTag)) {};
-
     RigidBody(const RigidBody &rigidBody) = default;
-
-    explicit RigidBody(const Mesh &mesh);
-
-    RigidBody(ObjectNameTag nameTag, const std::string &filename, const Vec3D &scale = Vec3D{1, 1, 1});
+    explicit RigidBody(const Mesh &mesh, bool useSimpleBox = true);
+    RigidBody(ObjectNameTag nameTag, const std::string &filename, const Vec3D &scale = Vec3D{1, 1, 1}, bool useSimpleBox = true);
 
     [[nodiscard]] std::pair<bool, Simplex> checkGJKCollision(std::shared_ptr<RigidBody> obj);
-
     [[nodiscard]] CollisionPoint EPA(const Simplex &simplex, std::shared_ptr<RigidBody> obj);
-
     void solveCollision(const CollisionPoint &collision);
 
     [[nodiscard]] Vec3D collisionNormal() const { return _collisionNormal; }
-
     [[nodiscard]] bool hasCollision() const { return _hasCollision; }
-
     [[nodiscard]] bool inCollision() const { return _inCollision; }
-
     [[nodiscard]] bool isCollider() const { return _isCollider; }
-
     [[nodiscard]] bool isTrigger() const { return _isTrigger; }
 
     void setInCollision(bool c) { _inCollision = c; }
-
     void setCollision(bool c) { _hasCollision = c; }
-
     void setCollider(bool c) { _isCollider = c; }
-
-    void setSimpleHitBox(bool b);
-
     void setTrigger(bool t) { _isTrigger = t; }
 
     void updatePhysicsState();
 
     void setVelocity(const Vec3D &velocity);
-
     void addVelocity(const Vec3D &velocity);
-
     void setAcceleration(const Vec3D &acceleration);
 
     [[nodiscard]] Vec3D velocity() const { return _velocity; }
-
     [[nodiscard]] Vec3D acceleration() const { return _acceleration; }
 
     [[nodiscard]] const std::function<void(const ObjectNameTag &, std::shared_ptr<RigidBody>)> &

@@ -2,12 +2,9 @@
 // Created by Иван Ильин on 01.06.2021.
 //
 
-#include <utility>
-
 #include "Weapon.h"
 #include "../engine/ResourceManager.h"
 #include "../engine/utils/Log.h"
-#include "../engine/animation/AColor.h"
 #include "../ShooterConsts.h"
 
 using namespace std;
@@ -79,33 +76,37 @@ void Weapon::reload() {
 
 std::map<ObjectNameTag, double>
 Weapon::processFire(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction,
-                    const Vec3D &position, const Vec3D &direction) {
-    return addTrace(std::move(rayCastFunction), position, direction);
+                    const Vec3D &position, const Vec3D &direction) const {
+    // Standard weapon usually fire one bullet at a time
+    // But some types of weapon can fire several bullet at the same time (for ex. shotgun)
+    // That's why processFire() is s virtual function
+    return fireABullet(std::move(rayCastFunction), position, direction);
 }
 
 std::map<ObjectNameTag, double>
-Weapon::addTrace(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction,
-                 const Vec3D &from, const Vec3D &directionTo) {
+Weapon::fireABullet(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction,
+                    const Vec3D &cameraPosition, const Vec3D &direction) const {
     std::map<ObjectNameTag, double> damagedPlayers;
 
-    double spreading = _spreading * ShooterConsts::FIRE_DISTANCE / 100;
+    double spreading = _spreading * ShooterConsts::FIRE_DISTANCE / 100.0;
 
     //generate random vector
-    Vec3D randV(spreading * (1.0 - 2.0 * (double) rand() / RAND_MAX),
-                spreading * (1.0 - 2.0 * (double) rand() / RAND_MAX),
-                spreading * (1.0 - 2.0 * (double) rand() / RAND_MAX));
+    Vec3D randV(spreading * (1.0 - 2.0 * static_cast<double>(rand()) / RAND_MAX),
+                spreading * (1.0 - 2.0 * static_cast<double>(rand()) / RAND_MAX),
+                spreading * (1.0 - 2.0 * static_cast<double>(rand()) / RAND_MAX));
 
     // damage player
-    auto rayCast = rayCastFunction(from, from + directionTo * ShooterConsts::FIRE_DISTANCE + randV);
-    if (rayCast.objectName.str().find("Enemy") != std::string::npos) {
+    auto rayCast = rayCastFunction(cameraPosition, cameraPosition + direction * ShooterConsts::FIRE_DISTANCE + randV);
+    if (rayCast.objectName.contains(ObjectNameTag("Enemy"))) {
+
         damagedPlayers[rayCast.objectName] += _damage / (1.0 + rayCast.distanceToObject);
 
         // If you hit the head the damage will be doubled
-        if (rayCast.objectName.str().find("_head") != std::string::npos) {
+        if (rayCast.objectName.contains(ObjectNameTag("_head"))) {
             damagedPlayers[rayCast.objectName] += _damage / (1.0 + rayCast.distanceToObject);
         }
         // If you hit the foot the damage will be divided by 2
-        if (rayCast.objectName.str().find("_foot_") != std::string::npos) {
+        if (rayCast.objectName.contains(ObjectNameTag("_foot_"))) {
             damagedPlayers[rayCast.objectName] -= 0.5 * _damage / (1.0 + rayCast.distanceToObject);
         }
     }
@@ -113,7 +114,7 @@ Weapon::addTrace(std::function<IntersectionInformation(const Vec3D &, const Vec3
     // add trace line
     Vec3D lineFrom = position() + model() * Vec3D(triangles().back()[0]);
     Vec3D lineTo = rayCast.intersected ? rayCast.pointOfIntersection : position() +
-                                                                       directionTo * ShooterConsts::FIRE_DISTANCE +
+                                                                       direction * ShooterConsts::FIRE_DISTANCE +
                                                                        randV;
     _addTraceCallBack(lineFrom, lineTo);
 

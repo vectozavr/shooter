@@ -5,8 +5,6 @@
 #ifndef ENGINE_AROTATE_H
 #define ENGINE_AROTATE_H
 
-#include <utility>
-
 #include "Animation.h"
 #include "../Object.h"
 
@@ -16,12 +14,14 @@ private:
     const Vec3D _rotationValue;
 
     void update() override {
-        if (_object.expired()) {
+        auto obj = _object.lock();
+
+        if (obj == nullptr) {
             stop();
             return;
         }
 
-        _object.lock()->rotate(_rotationValue * dprogress());
+        obj->rotate(_rotationValue * dprogress());
     }
 
 public:

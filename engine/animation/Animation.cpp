@@ -3,9 +3,11 @@
 //
 
 #include "Animation.h"
+#include "../Consts.h"
+#include "../utils/Time.h"
 
-Animation::Animation(double duration, Animation::LoopOut looped, Animation::InterpolationType intType, bool waitFor)
-        : _duration(duration), _looped(looped), _intType(intType), _waitFor(waitFor) {
+Animation::Animation(double duration, Animation::LoopOut looped, Animation::InterpolationType intType, bool waitForFinish)
+        : _duration(duration), _looped(looped), _intType(intType), _waitForFinish(waitForFinish) {
 }
 
 bool Animation::updateState() {

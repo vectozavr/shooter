@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="engine\animation\Animation.cpp" />
     <ClCompile Include="engine\animation\Timeline.cpp" />
+    <ClInclude Include="engine\animation\Interpolation.cpp" />
     <ClCompile Include="engine\Camera.cpp" />
     <ClCompile Include="engine\Engine.cpp" />
     <ClCompile Include="engine\gui\Button.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="engine\animation\ARotateLeft.h" />
     <ClInclude Include="engine\animation\Interpolation.h" />
     <ClInclude Include="engine\animation\Timeline.h" />
+    <ClInclude Include="engine\animation\Animations.h" />
     <ClInclude Include="engine\Camera.h" />
     <ClInclude Include="engine\Consts.h" />
     <ClInclude Include="engine\Engine.h" />

@@ -39,10 +39,6 @@ Mesh::Mesh(ObjectNameTag nameTag, const std::string &filename, const Vec3D &scal
 Mesh::Mesh(ObjectNameTag nameTag, const vector<Triangle> &tries) : Object(std::move(nameTag)), _tris(tries) {
 }
 
-Mesh Mesh::Obj(ObjectNameTag nameTag, const std::string &filename) {
-    return Mesh(std::move(nameTag), filename);
-}
-
 void Mesh::setColor(const sf::Color &c) {
     _color = c;
 
@@ -107,7 +103,6 @@ void Mesh::setTriangles(vector<Triangle>&& t) {
 }
 
 Mesh::~Mesh() {
-    _tris.clear();
     delete[] _geometry;
 }
 

@@ -5,8 +5,6 @@
 #ifndef ENGINE_ASCALE_H
 #define ENGINE_ASCALE_H
 
-#include <utility>
-
 #include "Animation.h"
 #include "../physics/RigidBody.h"
 
@@ -16,19 +14,21 @@ private:
     const Vec3D _scalingValue;
 
     void update() override {
-        if (_object.expired()) {
+        auto obj = _object.lock();
+
+        if (obj == nullptr) {
             stop();
             return;
         }
 
-        auto object = _object.lock();
         std::vector<Triangle> newTriangles;
-        newTriangles.reserve(object->triangles().size());
-        for (auto &t : object->triangles()) {
-            newTriangles.emplace_back(
-                    t * Matrix4x4::Scale(Vec3D{1, 1, 1} + (_scalingValue - Vec3D{1, 1, 1}) * progress()));
+        newTriangles.reserve(obj->triangles().size());
+        for (auto &t : obj->triangles()) {
+            newTriangles.emplace_back(t * Matrix4x4::Scale(Vec3D{1, 1, 1} +
+                                    (_scalingValue - Vec3D{1, 1, 1}) * progress())
+                                    );
         }
-        object.lock()->setTriangles(std::move(newTriangles));
+        obj->setTriangles(std::move(newTriangles));
     }
 
 public:
