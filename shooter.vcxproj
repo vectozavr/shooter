@@ -212,6 +212,7 @@
     <ClInclude Include="engine\animation\AAttractToPoint.h" />
     <ClInclude Include="engine\animation\ARotateRelativePoint.h" />
     <ClInclude Include="engine\animation\ARotateLeft.h" />
+    <ClInclude Include="engine\animation\AShowCreation.h" />
     <ClInclude Include="engine\animation\Interpolation.h" />
     <ClInclude Include="engine\animation\Timeline.h" />
     <ClInclude Include="engine\animation\Animations.h" />

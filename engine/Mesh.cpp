@@ -91,19 +91,18 @@ Mesh::LineTo(ObjectNameTag nameTag, const Vec3D &from, const Vec3D &to, double l
     return line;
 }
 
-void Mesh::setTriangles(const vector<Triangle> &t) {
-    _tris.clear();
-    for (auto &tri : t) {
-        _tris.push_back(tri);
-    }
-}
-
 void Mesh::setTriangles(vector<Triangle>&& t) {
     _tris = std::move(t);
 }
 
 Mesh::~Mesh() {
     delete[] _geometry;
+    _geometry = nullptr;
+}
+
+void Mesh::glFreeFloatArray() {
+    delete[] _geometry;
+    _geometry = nullptr;
 }
 
 GLfloat *Mesh::glFloatArray() const {

@@ -277,16 +277,24 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     world->body(ObjectNameTag(name + "_foot_2"))->setColor(ShooterConsts::DARK_COLORS[colorFootNum]);
 
     changeEnemyWeapon("gun", id);
+
+    newPlayer->scale(Vec3D(0.01, 0.01, 0.01));
+    Timeline::addAnimation<AScale>(AnimationListTag(name + "_creation"), newPlayer, Vec3D(100, 100, 100));
 }
 
 void Shooter::removePlayer(sf::Uint16 id) {
     std::string name = "Enemy_" + std::to_string(id);
-    world->removeBody(ObjectNameTag(name));
-    world->removeBody(ObjectNameTag(name + "_head"));
-    world->removeBody(ObjectNameTag(name + "_weapon"));
-    world->removeBody(ObjectNameTag(name + "_foot_1"));
-    world->removeBody(ObjectNameTag(name + "_foot_2"));
 
+    auto playerToRemove = world->body(ObjectNameTag(name));
+
+    Timeline::addAnimation<AScale>(AnimationListTag(name + "_remove"), playerToRemove, Vec3D(0.01, 0.01, 0.01));
+    Timeline::addAnimation<AFunction>(AnimationListTag(name + "_remove"), [this, name](){
+        world->removeBody(ObjectNameTag(name));
+        world->removeBody(ObjectNameTag(name + "_head"));
+        world->removeBody(ObjectNameTag(name + "_weapon"));
+        world->removeBody(ObjectNameTag(name + "_foot_1"));
+        world->removeBody(ObjectNameTag(name + "_foot_2"));
+    });
 }
 
 void Shooter::addFireTrace(const Vec3D &from, const Vec3D &to) {
@@ -311,12 +319,16 @@ void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
     ObjectNameTag nameTag(bonusName);
 
     world->addBody(std::make_shared<RigidBody>(ObjectNameTag(bonusName), "obj/" + name + ".obj", Vec3D{3, 3, 3}));
-    world->body(ObjectNameTag(bonusName))->translateToPoint(position);
-    world->body(ObjectNameTag(bonusName))->setCollider(false);
-    world->body(ObjectNameTag(bonusName))->setTrigger(true);
+
+    auto bonus = world->body(ObjectNameTag(bonusName));
+
+    bonus->translateToPoint(position);
+    bonus->setCollider(false);
+    bonus->setTrigger(true);
+    bonus->scale(Vec3D(0.01, 0.01, 0.01));
+    Timeline::addAnimation<AScale>(AnimationListTag(bonusName + "_creation"), bonus, Vec3D(100, 100, 100));
     Timeline::addAnimation<ARotate>(AnimationListTag(bonusName + "_rotation"),
-                                    world->body(ObjectNameTag(bonusName)),
-                                    Vec3D{0, 2 * Consts::PI, 0}, 4,
+                                    bonus, Vec3D{0, 2 * Consts::PI, 0}, 4,
                                     Animation::LoopOut::Continue,
                                     Animation::InterpolationType::Linear);
 }
@@ -338,6 +350,7 @@ void Shooter::changeEnemyWeapon(const std::string &weaponName, sf::Uint16 enemyI
     ObjectNameTag weaponTag("Enemy_" + std::to_string(enemyId) + "_weapon");
     auto head = world->body(ObjectNameTag("Enemy_" + std::to_string(enemyId) + "_head"));
     auto enemy = world->body(ObjectNameTag("Enemy_" + std::to_string(enemyId)));
+    auto weapon = world->body(weaponTag);
 
     // remove old weapon:
     world->removeBody(weaponTag);

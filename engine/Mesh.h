@@ -38,8 +38,6 @@ public:
 
     [[nodiscard]] std::vector<Triangle> const &triangles() const { return _tris; }
 
-    void setTriangles(const std::vector<Triangle> &t);
-
     void setTriangles(std::vector<Triangle>&& t);
 
     [[nodiscard]] size_t size() const { return _tris.size() * 3; }
@@ -59,6 +57,7 @@ public:
 
     // OpenGL functions
     GLfloat *glFloatArray() const;
+    void glFreeFloatArray();
 };
 
 #endif //INC_3DZAVR_MESH_H

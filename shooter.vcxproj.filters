@@ -260,6 +260,9 @@
     <ClInclude Include="engine\animation\Animations.h">
       <Filter>Файлы заголовков\engine\animation</Filter>
     </ClInclude>
+    <ClInclude Include="engine\animation\AShowCreation.h">
+      <Filter>Файлы заголовков\engine\animation</Filter>
+    </ClInclude>
     <ClInclude Include="engine\network\ClientUDP.h">
       <Filter>Файлы заголовков\engine\network</Filter>
     </ClInclude>

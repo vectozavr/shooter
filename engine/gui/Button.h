@@ -5,6 +5,8 @@
 #ifndef ENGINE_BUTTON_H
 #define ENGINE_BUTTON_H
 
+#include <functional>
+
 #include <SFML/Graphics.hpp>
 
 struct tPos final {
