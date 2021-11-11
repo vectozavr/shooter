@@ -36,7 +36,38 @@ void Screen::display() {
     std::string title = _title + " (" + std::to_string(Time::fps()) + " fps)";
     _window->setTitle(title);
 
+    if(_renderVideo) {
+        sf::Texture copyTexture;
+        copyTexture.create(_window->getSize().x, _window->getSize().y);
+        copyTexture.update(*_window);
+        // most of the time of video rendering is wasting on .png sequence saving
+        // that's why we will save all images in the end
+        // TODO: sometimes we have a huge time delay here for no obvious reason
+        _renderSequence.push_back(copyTexture);
+    }
+
     _window->display();
+}
+
+void Screen::startRender() {
+    stopRender();
+    _renderVideo = true;
+}
+
+void Screen::stopRender() {
+    if(_renderVideo) {
+
+        int i = 0;
+        for(; i < _renderSequence.size(); i++) {
+            _renderSequence[i].copyToImage().saveToFile("film/png/" + std::to_string(i) + ".png");
+        }
+        _renderSequence.clear();
+
+        std::string c = "ffmpeg -stats -r 60 -i film/png/%d.png -vcodec libx264 -crf 1 -pix_fmt yuv420p -frames " + std::to_string(i) + " film/mp4/" + std::to_string(_scene) + "_" + _title + ".mp4";
+        popen(c.c_str(), "w");
+        _scene++;
+        _renderVideo = false;
+    }
 }
 
 void Screen::clear() {

@@ -156,6 +156,13 @@ void Shooter::update() {
         setDebugInfo(!showDebugInfo());
     }
 
+    if (keyboard->isKeyTapped(sf::Keyboard::P)) {
+        screen->startRender();
+    }
+    if (keyboard->isKeyTapped(sf::Keyboard::L)) {
+        screen->stopRender();
+    }
+
     if (inGame) {
         screen->setTitle(ShooterConsts::PROJECT_NAME);
         playerController->update();

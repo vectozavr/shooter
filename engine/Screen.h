@@ -19,6 +19,10 @@
 
 class Screen final {
 private:
+    int _scene = 0;
+    bool _renderVideo = false;
+    std::vector<sf::Texture> _renderSequence;
+
     std::string _title;
 
     sf::Color _background;
@@ -68,6 +72,9 @@ public:
 
     void pushGLStates() { _window->pushGLStates(); };
     void popGLStates() { _window->popGLStates(); };
+
+    void startRender();
+    void stopRender();
 };
 
 
