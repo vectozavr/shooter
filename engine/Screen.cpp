@@ -40,7 +40,7 @@ void Screen::display() {
         sf::Texture copyTexture;
         copyTexture.create(_window->getSize().x, _window->getSize().y);
         copyTexture.update(*_window);
-        // most of the time of video rendering is wasting on .png sequence saving
+        // most of the time of video rendering is wasting on saving .png sequence
         // that's why we will save all images in the end
         // TODO: sometimes we have a huge time delay here for no obvious reason
         _renderSequence.push_back(copyTexture);
@@ -56,13 +56,13 @@ void Screen::startRender() {
 
 void Screen::stopRender() {
     if(_renderVideo) {
-
         int i = 0;
         for(; i < _renderSequence.size(); i++) {
             _renderSequence[i].copyToImage().saveToFile("film/png/" + std::to_string(i) + ".png");
         }
         _renderSequence.clear();
 
+        // TODO: .png sequence looks better than a final video (poor clarity and desaturated colors)
         std::string c = "ffmpeg -stats -r 60 -i film/png/%d.png -vcodec libx264 -crf 1 -pix_fmt yuv420p -frames " + std::to_string(i) + " film/mp4/" + std::to_string(_scene) + "_" + _title + ".mp4";
         popen(c.c_str(), "w");
         _scene++;
