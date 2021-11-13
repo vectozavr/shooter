@@ -13,7 +13,7 @@ using namespace std;
 
 // Read server/client settings and start both.
 // If client doesn't connect to the localhost - server doesn't start.
-void Shooter::InitNetwork() {
+void Shooter::initNetwork() {
     std::string clientIp;
     sf::Uint16 clientPort;
     sf::Uint16 serverPort;
@@ -90,13 +90,13 @@ void Shooter::start() {
     player->reInitWeapons();
 
     player->translate(Vec3D{0, 0, 0});
+
     camera->translateToPoint(player->position() + Vec3D{0, 1.8, 0});
     player->attach(camera);
-
     world->addBody(player);
 
     // connecting to the server
-    InitNetwork();
+    initNetwork();
     // Waiting for connect and updating server if it's same window
     while (client->isWorking() && !client->connected()) {
         client->update();
@@ -179,6 +179,7 @@ void Shooter::update() {
 }
 
 void Shooter::gui() {
+
     sf::Sprite sprite;
     sprite.setTexture(*ResourceManager::loadTexture(ShooterConsts::MAIN_MENU_GUI));
     sprite.setTextureRect(sf::IntRect(243, 3, 9, 9));
@@ -191,9 +192,11 @@ void Shooter::gui() {
     // health player stats
     drawPlayerStats();
     drawStatsTable();
+
 }
 
 void Shooter::drawStatsTable() {
+
     int i = 1;
 
     screen->drawText(client->lastEvent(), Vec2D{10, 10}, 25, sf::Color(0, 0, 0, 100));
@@ -214,6 +217,7 @@ void Shooter::drawStatsTable() {
                          Vec2D{10, 15 + 35.0 * i}, 25, sf::Color(0, 0, 0, 150));
         i++;
     }
+
 }
 
 void Shooter::drawPlayerStats() {
