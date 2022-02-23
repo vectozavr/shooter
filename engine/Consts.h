@@ -39,6 +39,22 @@ namespace Consts {
     const int NETWORK_WORLD_UPDATE_RATE = 30;
     const double NETWORK_RELIABLE_RETRY_TIME = 1.0 / 20;
     const uint16_t NETWORK_MAX_CLIENTS = 64;
+
+    const sf::Color WHITE_COLORS[] = {
+            sf::Color(137, 135, 222), // blue
+            sf::Color(195, 155, 209), // pink
+            sf::Color(201, 137, 137), // red
+            sf::Color(116, 204, 135), // green
+            sf::Color(201, 171, 137), // orange
+    };
+
+    const sf::Color DARK_COLORS[] = {
+            sf::Color(16, 18, 69), // blue
+            sf::Color(77, 0, 62), // pink
+            sf::Color(99, 20, 20), // red
+            sf::Color(12, 46, 9), // green
+            sf::Color(97, 70, 51), // orange
+    };
 }
 
 #endif //SHOOTER_CONSTS_H

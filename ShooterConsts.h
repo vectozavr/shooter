@@ -60,22 +60,6 @@ namespace ShooterConsts {
     const std::string SLOW_MO_SOUND = "sound/slow_mo.ogg";
     const std::string UN_SLOW_MO_SOUND = "sound/unslow_mo.ogg";
     const std::string NO_AMMO_SOUND = "sound/weapons/no_ammo.ogg";
-
-    const sf::Color WHITE_COLORS[] = {
-            sf::Color(137, 135, 222), // blue
-            sf::Color(195, 155, 209), // pink
-            sf::Color(201, 137, 137), // red
-            sf::Color(116, 204, 135), // green
-            sf::Color(201, 171, 137), // orange
-    };
-
-    const sf::Color DARK_COLORS[] = {
-            sf::Color(16, 18, 69), // blue
-            sf::Color(77, 0, 62), // pink
-            sf::Color(99, 20, 20), // red
-            sf::Color(12, 46, 9), // green
-            sf::Color(97, 70, 51), // orange
-    };
 }
 
 #endif //SHOOTER_SHOOTERCONSTS_H

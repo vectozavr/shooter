@@ -49,13 +49,15 @@ void ShooterServer::processConnect(sf::Uint16 targetId) {
 }
 
 void ShooterServer::processClientUpdate(sf::Uint16 senderId, sf::Packet &packet) {
-    double buf[5];
+    double x, y, z, angleBody, headAngle;
+
     std::string playerName;
 
-    packet >> buf[0] >> buf[1] >> buf[2] >> buf[3] >> buf[4] >> playerName;
-    _players.at(senderId)->translateToPoint(Vec3D{buf[0], buf[1], buf[2]});
-    _players.at(senderId)->rotateToAngle(Vec3D{0, buf[3], 0});
-    _players.at(senderId)->setHeadAngle(buf[4]);
+    packet >> x >> y >> z >> angleBody >> headAngle >> playerName;
+
+    _players.at(senderId)->translateToPoint(Vec3D{x, y, z});
+    _players.at(senderId)->rotateToAngle(Vec3D{0, angleBody, 0});
+    _players.at(senderId)->setHeadAngle(headAngle);
     _players.at(senderId)->setPlayerNickName(playerName);
 }
 

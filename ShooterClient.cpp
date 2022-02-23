@@ -19,17 +19,17 @@ void ShooterClient::updatePacket() {
 
 void ShooterClient::processInit(sf::Packet &packet) {
     sf::Uint16 targetId;
-    double buf[4];
+    double x, y, z, health;
     int kills, deaths;
 
-    while (packet >> targetId >> buf[0] >> buf[1] >> buf[2] >> buf[3] >> kills >> deaths) {
+    while (packet >> targetId >> x >> y >> z >> health >> kills >> deaths) {
         if (targetId != _socket.ownId()) {
             if (_spawnPlayerCallBack != nullptr) {
                 _spawnPlayerCallBack(targetId);
             }
 
-            _players[targetId]->translateToPoint(Vec3D{buf[0], buf[1], buf[2]});
-            _players[targetId]->setHealth(buf[3]);
+            _players[targetId]->translateToPoint(Vec3D{x, y, z});
+            _players[targetId]->setHealth(health);
             _players[targetId]->setKills(kills);
             _players[targetId]->setDeaths(deaths);
         }
@@ -38,21 +38,21 @@ void ShooterClient::processInit(sf::Packet &packet) {
 
 void ShooterClient::processUpdate(sf::Packet &packet) {
     sf::Uint16 targetId;
-    double buf[6];
+    double x, y, z, health, bodyAngle, headAngle;
     std::string playerName;
 
-    while (packet >> targetId >> buf[0] >> buf[1] >> buf[2] >> buf[3] >> buf[4] >> buf[5] >> playerName) {
+    while (packet >> targetId >> x >> y >> z >> health >> bodyAngle >> headAngle >> playerName) {
         if (_players.count(targetId)) {
             std::string name = "Enemy_" + std::to_string(targetId);
 
-            Vec3D newPosition = Vec3D{buf[0], buf[1], buf[2]};
+            Vec3D newPosition = Vec3D{x, y, z};
 
             bool isAnimate = (_players[targetId]->position() - newPosition).sqrAbs() > 0.2;
 
             _players[targetId]->translateToPoint(newPosition);
 
-            _players[targetId]->setHealth(buf[3]);
-            _players[targetId]->rotateToAngle(Vec3D{0, buf[4], 0});
+            _players[targetId]->setHealth(health);
+            _players[targetId]->rotateToAngle(Vec3D{0, bodyAngle, 0});
             _players[targetId]->setPlayerNickName(playerName);
 
             auto head = _players[targetId]->attached(ObjectNameTag(name + "_head"));
@@ -62,10 +62,10 @@ void ShooterClient::processUpdate(sf::Packet &packet) {
             auto foot2 = _players[targetId]->attached(ObjectNameTag(name + "_foot_2"));
 
             if (head != nullptr) {
-                head->rotateLeft(buf[5] - _players[targetId]->headAngle());
+                head->rotateLeft(headAngle - _players[targetId]->headAngle());
             }
             if (weapon != nullptr) {
-                weapon->rotateLeft(buf[5] - _players[targetId]->headAngle());
+                weapon->rotateLeft(headAngle - _players[targetId]->headAngle());
             }
 
             if (isAnimate) {
@@ -97,9 +97,9 @@ void ShooterClient::processUpdate(sf::Packet &packet) {
                 }
             }
 
-            _players[targetId]->setHeadAngle(buf[5]);
+            _players[targetId]->setHeadAngle(headAngle);
         } else if (targetId == _socket.ownId()) {
-            _player->setHealth(buf[3]);
+            _player->setHealth(health);
         }
     }
 }
@@ -136,7 +136,7 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
             _lastEvent = "";
             if (buffId[1] == _socket.ownId()) {
                 _player->addKill();
-                SoundController::playSound(SoundTag("kill"), ShooterConsts::KILL_SOUND);
+                SoundController::loadAndPlay(SoundTag("kill"), ShooterConsts::KILL_SOUND);
                 _lastEvent += _player->playerNickName();
             } else {
                 _players[buffId[1]]->addKill();
@@ -182,7 +182,7 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
                 }, 1, 0.1);
 
 
-                SoundController::playSound(SoundTag("death"), ShooterConsts::DEATH_SOUND);
+                SoundController::loadAndPlay(SoundTag("death"), ShooterConsts::DEATH_SOUND);
                 _lastEvent += _player->playerNickName();
             } else {
                 _players[buffId[0]]->addDeath();

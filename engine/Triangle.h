@@ -29,6 +29,8 @@ public:
 
     [[nodiscard]] const Vec4D& operator[](int i) const;
 
+    [[nodiscard]] Vec3D position() const { return Vec3D(_points[0] + _points[1] + _points[2])/3; }
+
     [[nodiscard]] Vec3D norm() const;
 
     // Operations with Matrix4x4

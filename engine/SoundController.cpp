@@ -16,15 +16,27 @@ void SoundController::init() {
     Log::log("SoundController::init(): sound controller was initialized");
 }
 
-void SoundController::playSound(const SoundTag &soundTag, const std::string &filename) {
+void SoundController::loadAndPlay(const SoundTag &soundTag, const std::string& filename) {
+    if (_instance == nullptr) {
+        return;
+    }
+    if (_instance->_sounds.count(soundTag) != 0) {
+        _instance->_sounds[soundTag] = sf::Sound(*ResourceManager::loadSoundBuffer(filename));
+    } else {
+        _instance->_sounds.emplace(soundTag, sf::Sound(*ResourceManager::loadSoundBuffer(filename)));
+    }
+
+    _instance->_sounds[soundTag].play();
+}
+
+void SoundController::playSound(const SoundTag &soundTag) {
     if (_instance == nullptr) {
         return;
     }
 
-    if (_instance->_sounds.count(soundTag) == 0) {
-        _instance->_sounds.emplace(soundTag, sf::Sound(*ResourceManager::loadSoundBuffer(filename)));
+    if (_instance->_sounds.count(soundTag) != 0) {
+        _instance->_sounds[soundTag].play();
     }
-    _instance->_sounds[soundTag].play();
 }
 
 void SoundController::pauseSound(const SoundTag &soundTag) {

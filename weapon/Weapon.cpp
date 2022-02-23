@@ -31,7 +31,7 @@ FireInformation Weapon::fire(std::function<IntersectionInformation(const Vec3D &
     if (_clipAmmo == 0) {
         reload();
         if (_clipAmmo == 0 && SoundController::getStatus(SoundTag("noAmmo")) != sf::Sound::Status::Playing) {
-            SoundController::playSound(SoundTag("noAmmo"), ShooterConsts::NO_AMMO_SOUND);
+            SoundController::loadAndPlay(SoundTag("noAmmo"), ShooterConsts::NO_AMMO_SOUND);
         }
     }
 
@@ -47,7 +47,7 @@ FireInformation Weapon::fire(std::function<IntersectionInformation(const Vec3D &
         reload();
     }
 
-    SoundController::playSound(SoundTag("fireSound_" + name().str()), _fireSound);
+    SoundController::loadAndPlay(SoundTag("fireSound_" + name().str()), _fireSound);
     Log::log("Weapon::fire (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
 
     return FireInformation{processFire(std::move(rayCastFunction), position, direction), true};
@@ -65,7 +65,7 @@ void Weapon::reload() {
         _stockAmmo = 0;
     }
 
-    SoundController::playSound(SoundTag("reloadSound_" + name().str()), _reloadSound);
+    SoundController::loadAndPlay(SoundTag("reloadSound_" + name().str()), _reloadSound);
     Log::log("Weapon::reload (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
     _lastReloadTime = Time::time();
 

@@ -28,7 +28,7 @@ void PlayerController::update() {
             _player->setAcceleration(
                     _player->acceleration() * ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT);
             SoundController::stopSound(SoundTag("slowMo"));
-            SoundController::playSound(SoundTag("unSlowMo"), ShooterConsts::UN_SLOW_MO_SOUND);
+            SoundController::loadAndPlay(SoundTag("unSlowMo"), ShooterConsts::UN_SLOW_MO_SOUND);
         }
     }
 
@@ -128,13 +128,13 @@ void PlayerController::update() {
                                           (ShooterConsts::SLOW_MO_COEFFICIENT * ShooterConsts::SLOW_MO_COEFFICIENT),
                                        0));
         SoundController::stopSound(SoundTag("unSlowMo"));
-        SoundController::playSound(SoundTag("slowMo"), ShooterConsts::SLOW_MO_SOUND);
+        SoundController::loadAndPlay(SoundTag("slowMo"), ShooterConsts::SLOW_MO_SOUND);
     } else if (_isInSlowMo && !Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
         _isInSlowMo = false;
         _player->setVelocity(_player->velocity() * ShooterConsts::SLOW_MO_COEFFICIENT);
         _player->setAcceleration(Vec3D(0, -ShooterConsts::GRAVITY, 0));
         SoundController::stopSound(SoundTag("slowMo"));
-        SoundController::playSound(SoundTag("unSlowMo"), ShooterConsts::UN_SLOW_MO_SOUND);
+        SoundController::loadAndPlay(SoundTag("unSlowMo"), ShooterConsts::UN_SLOW_MO_SOUND);
     }
 
     if (Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
@@ -209,7 +209,7 @@ void PlayerController::update() {
     }
     if ((_inRunning || _player->velocity().sqrAbs() > 3) && _player->inCollision() && !walkSoundPlayed) {
         int soundNum = (int) ((double) rand() / RAND_MAX * 6) + 1;
-        SoundController::playSound(SoundTag("walkSound_" + std::to_string(soundNum)),
+        SoundController::loadAndPlay(SoundTag("walkSound_" + std::to_string(soundNum)),
                                    "sound/stonestep" + std::to_string(soundNum) + ".ogg");
     }
 }

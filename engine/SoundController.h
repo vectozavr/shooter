@@ -38,10 +38,10 @@ public:
 
     SoundController &operator=(SoundController &) = delete;
 
-    static void playSound(const SoundTag &soundTag, const std::string &filename);
+    static void loadAndPlay(const SoundTag &soundTag, const std::string& filename);
 
+    static void playSound(const SoundTag &soundTag);
     static void pauseSound(const SoundTag &soundTag);
-
     static void stopSound(const SoundTag &soundTag);
 
     static sf::Sound::Status getStatus(const SoundTag &soundTag);

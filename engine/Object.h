@@ -73,9 +73,9 @@ public:
     void rotateUp(double ru);
     void rotateLookAt(double rlAt);
 
-    [[nodiscard]] Vec3D left() const { return _transformMatrix.x(); }
-    [[nodiscard]] Vec3D up() const { return _transformMatrix.y(); }
-    [[nodiscard]] Vec3D lookAt() const { return _transformMatrix.z(); }
+    [[nodiscard]] Vec3D left() const { return _transformMatrix.x().normalized(); }
+    [[nodiscard]] Vec3D up() const { return _transformMatrix.y().normalized(); }
+    [[nodiscard]] Vec3D lookAt() const { return _transformMatrix.z().normalized(); }
     [[nodiscard]] Vec3D position() const { return _position; }
     [[nodiscard]] Vec3D angle() const { return _angle; }
     [[nodiscard]] Vec3D angleLeftUpLookAt() const { return _angleLeftUpLookAt; }

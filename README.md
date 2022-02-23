@@ -29,18 +29,19 @@ Source code of simple shooter on [3Dzavr game engine](https://github.com/vectoza
 
 <h4>Control:</h4>
 
-<b>SHIFT</b> - slow motion (this ability is not infinite: its bar is next to hp)
+<b>Mouse</b>, <b>Space</b>, <b>A</b>, <b>S</b>, <b>W</b>, <b>D</b> – player control.
 
-<b>E & Q </b> or keys <b> <- -> </b> - change weapon
+<b>SHIFT</b> – slow motion (this ability is not infinite: its bar is next to hp)
 
-<b>R</b> - recharge
+<b>E & Q </b> or keys <b> <- -> </b> – change weapon
 
-Player control is standard.
+<b>R</b> – recharge
+
+<b>O</b> – turn OpenGL on/off
+
+<b>Tab</b> – turn debug mode on/off
 
 <h4>Playing with a source code:</h4>
-
-Structure:
-![Project demonstration](img/structure.png)
 
 1) [Download and install OpenAL library](https://openal.org/downloads/) for SFML sound support (in current version you can't setup this engine without OpenAL)
 
@@ -56,7 +57,8 @@ Structure:
 
 P/S: <b>SFML for 32-bit OS Windows is already included into this repository.</b> So, you don't need to manually install it to your computer. If you have any problems with SFML, you can try to [download another version or build SFML by yourself.](https://www.sfml-dev.org/download.php) 
 
-Demos:
+Structure:
+![Project demonstration](img/structure.png)
 
 Online:
 ![Project demonstration](img/gamePlay4.png)

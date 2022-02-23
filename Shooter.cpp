@@ -113,14 +113,14 @@ void Shooter::start() {
 
     mainMenu.addButton(screen->width() / 2, 200, 200, 20, [this]() {
                            this->play();
-                           SoundController::playSound(SoundTag("click"), ShooterConsts::CLICK_SOUND);
+                           SoundController::loadAndPlay(SoundTag("click"), ShooterConsts::CLICK_SOUND);
                        }, "Server: " + client->serverIp().toString(), 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46},
                        Consts::MEDIUM_FONT, {255, 255, 255});
     mainMenu.addButton(screen->width() / 2, 350, 200, 20, [this]() {
         this->player->translateToPoint(Vec3D{0, 0, 0});
         this->player->setVelocity({});
         this->play();
-        SoundController::playSound(SoundTag("click"), ShooterConsts::CLICK_SOUND);
+        SoundController::loadAndPlay(SoundTag("click"), ShooterConsts::CLICK_SOUND);
     }, "Respawn", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
 
     mainMenu.addButton(screen->width() / 2, 500, 200, 20, [this]() {
@@ -173,7 +173,7 @@ void Shooter::update() {
 
     // background sounds and music control
     if (SoundController::getStatus(SoundTag("background")) != sf::Sound::Status::Playing) {
-        SoundController::playSound(SoundTag("background"), ShooterConsts::BACK_NOISE);
+        SoundController::loadAndPlay(SoundTag("background"), ShooterConsts::BACK_NOISE);
     }
 }
 
@@ -280,9 +280,9 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     int colorBodyNum = static_cast<int> (static_cast<double>((rand() - 1)) / RAND_MAX * 5.0);
     int colorFootNum = static_cast<int> (static_cast<double>((rand() - 1)) / RAND_MAX * 5.0);
 
-    newPlayer->setColor(ShooterConsts::WHITE_COLORS[colorBodyNum]);
-    world->body(ObjectNameTag(name + "_foot_1"))->setColor(ShooterConsts::DARK_COLORS[colorFootNum]);
-    world->body(ObjectNameTag(name + "_foot_2"))->setColor(ShooterConsts::DARK_COLORS[colorFootNum]);
+    newPlayer->setColor(Consts::WHITE_COLORS[colorBodyNum]);
+    world->body(ObjectNameTag(name + "_foot_1"))->setColor(Consts::DARK_COLORS[colorFootNum]);
+    world->body(ObjectNameTag(name + "_foot_2"))->setColor(Consts::DARK_COLORS[colorFootNum]);
 
     changeEnemyWeapon("gun", id);
 }
