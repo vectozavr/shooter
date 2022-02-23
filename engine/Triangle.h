@@ -38,6 +38,8 @@ public:
 
     [[nodiscard]] sf::Color color() const { return _color; }
 
+    void setColor(sf::Color newColor) { _color = newColor; }
+
     [[nodiscard]] double distance(const Vec3D &vec) const { return norm().dot(Vec3D(_points[0]) - vec); }
 };
 

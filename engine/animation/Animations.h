@@ -18,5 +18,7 @@
 #include "ATranslateToPoint.h"
 #include "AWait.h"
 #include "AShowCreation.h"
+#include "AShowUncreation.h"
+
 
 #endif //SHOOTER_ANIMATIONS_H

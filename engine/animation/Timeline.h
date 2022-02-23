@@ -59,6 +59,15 @@ public:
 
         _instance->_animations[listName].emplace_back(std::make_shared<T>(args...));
     }
+
+    template <typename T, typename... Arguments>
+    static void addAnimation(Arguments... args) {
+        if (_instance == nullptr) {
+            return;
+        }
+
+        _instance->_animations[AnimationListTag("timeline_0")].emplace_back(std::make_shared<T>(args...));
+    }
 };
 
 #endif //SHOOTER_TIMELINE_H

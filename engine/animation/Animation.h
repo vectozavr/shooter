@@ -31,7 +31,7 @@ private:
 
     // If '_waitForFinish' == true then we need to finish all animation before starting this one. (for example AWait)
     // In addition new animations in particular animation list will be started only after finishing this animation.
-    const bool _waitForFinish = false;
+    const bool _waitForFinish;
     const double _duration = 0;
     const LoopOut _looped = LoopOut::None;
     const InterpolationType _intType = InterpolationType::Bezier;
@@ -46,7 +46,7 @@ protected:
     void stop() { _finished = true; }
 
 public:
-    Animation(double duration, LoopOut looped, InterpolationType intType, bool _waitFor = false);
+    Animation(double duration, LoopOut looped, InterpolationType intType, bool waitForFinish = false);
 
     virtual ~Animation() = default;
 

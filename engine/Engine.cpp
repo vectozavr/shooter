@@ -118,13 +118,17 @@ void Engine::printDebugInfo() const {
 
     if (_showDebugInfo) {
         // coordinates & fps:
+
         std::string text = _name + "\n\n X: " +
                            std::to_string((camera->position().x())) + "\n Y: " +
                            std::to_string((camera->position().y())) + "\n Z: " +
-                           std::to_string((camera->position().z())) + "\n\n" +
+                           std::to_string((camera->position().z())) + "\n RY:" +
+                            std::to_string(camera->angle().y()/M_PI) + "PI\n RL: " +
+                            std::to_string(camera->angleLeftUpLookAt().x()/M_PI) + "PI\n\n" +
                            std::to_string(screen->width()) + "x" +
                            std::to_string(screen->height()) + "\t" +
                            std::to_string(Time::fps()) + " fps";
+
         if (_useOpenGL) {
             text += "\n Using OpenGL acceleration";
         } else {

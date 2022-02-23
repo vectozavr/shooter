@@ -21,8 +21,8 @@ Vec2D Mouse::getMouseDisplacement() const {
 }
 
 void Mouse::setMouseInCenter() const {
-    sf::Mouse::setPosition({static_cast<int>(_screen->width() / 2), static_cast<int>(_screen->height() / 2)},
-                           *_screen->renderWindow());
+    sf::Vector2<int> center = sf::Vector2<int>(_screen->width() / 2, _screen->height() / 2);
+    sf::Mouse::setPosition(center,*_screen->renderWindow());
 }
 
 bool Mouse::isButtonPressed(sf::Mouse::Button button) {

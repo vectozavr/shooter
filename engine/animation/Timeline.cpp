@@ -4,7 +4,6 @@
 
 #include <list>
 
-#include "Animation.h"
 #include "Timeline.h"
 #include "../utils/Log.h"
 
@@ -66,12 +65,12 @@ void Timeline::update() {
         auto& animationList = iter->second;
         auto it = animationList.begin();
 
-        // If it the front animation is 'a_wait()' we should wait until waiting time is over
-
-        if ((*it)->isWaitingForFinish()) {
+        // If it the front animation is 'AWait' we should wait until waiting time is over
+        if ((it != animationList.end()) && (*it)->isWaitingForFinish()) {
             if (!(*it)->updateState()) {
                 animationList.erase(it);
             }
+            ++iter;
             continue;
         }
 

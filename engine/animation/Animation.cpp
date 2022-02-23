@@ -34,7 +34,8 @@ bool Animation::updateState() {
             break;
         default:
             throw std::logic_error{
-                    "Animation::updateState: unknown interpolation type " + std::to_string(static_cast<int>(_intType))};
+                    "Animation::updateState: unknown interpolation type " + std::to_string(static_cast<int>(_intType))
+            };
     }
 
     if (_time + _dtime > 1.0) {
@@ -43,6 +44,7 @@ bool Animation::updateState() {
         _dprogress = 1.0 - _progress;
         _progress = 1.0;
         _finished = true;
+
     } else {
         _time += _dtime;
         _progress += _dprogress;

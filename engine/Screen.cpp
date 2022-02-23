@@ -153,13 +153,6 @@ void Screen::drawText(const sf::Text &text) {
 
 // OpenGL functions
 void Screen::prepareToGlDrawMesh() {
-    if (!sf::Shader::isAvailable())
-    {
-        Log::log("Shaders are not available!");
-    }
-
-    sf::Shader::bind(NULL);
-
     glEnable(GL_CULL_FACE); // enable culling face
     glCullFace(GL_BACK); // cull faces from back
     glFrontFace(GL_CCW); // vertex order (counter clock wise)
@@ -173,6 +166,9 @@ void Screen::prepareToGlDrawMesh() {
     glDisable(GL_LIGHTING);
 
     // enable alpha channel:
+    glEnable( GL_ALPHA_TEST );
+    glAlphaFunc(GL_NOTEQUAL, 0.0);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

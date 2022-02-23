@@ -56,7 +56,7 @@ IntersectionInformation World::rayCast(const Vec3D &from, const Vec3D &to, const
 
         for (auto &tri : body->triangles()) {
             Matrix4x4 model = body->model();
-            Triangle tri_translated(model * tri[0], model * tri[1], model * tri[2]);
+            Triangle tri_translated(model * tri[0], model * tri[1], model * tri[2], tri.color());
 
             Plane plane(tri_translated);
             auto intersection = plane.intersection(from, to);

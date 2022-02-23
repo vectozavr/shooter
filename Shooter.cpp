@@ -89,8 +89,6 @@ void Shooter::start() {
 
     player->reInitWeapons();
 
-    player->translate(Vec3D{0, 0, 0});
-
     camera->translateToPoint(player->position() + Vec3D{0, 1.8, 0});
     player->attach(camera);
     world->addBody(player);
@@ -159,6 +157,7 @@ void Shooter::update() {
     if (keyboard->isKeyTapped(sf::Keyboard::P)) {
         screen->startRender();
     }
+
     if (keyboard->isKeyTapped(sf::Keyboard::L)) {
         screen->stopRender();
     }
@@ -179,7 +178,6 @@ void Shooter::update() {
 }
 
 void Shooter::gui() {
-
     sf::Sprite sprite;
     sprite.setTexture(*ResourceManager::loadTexture(ShooterConsts::MAIN_MENU_GUI));
     sprite.setTextureRect(sf::IntRect(243, 3, 9, 9));
@@ -192,7 +190,6 @@ void Shooter::gui() {
     // health player stats
     drawPlayerStats();
     drawStatsTable();
-
 }
 
 void Shooter::drawStatsTable() {
@@ -288,9 +285,6 @@ void Shooter::spawnPlayer(sf::Uint16 id) {
     world->body(ObjectNameTag(name + "_foot_2"))->setColor(ShooterConsts::DARK_COLORS[colorFootNum]);
 
     changeEnemyWeapon("gun", id);
-
-    newPlayer->scale(Vec3D(0.01, 0.01, 0.01));
-    Timeline::addAnimation<AScale>(AnimationListTag(name + "_creation"), newPlayer, Vec3D(100, 100, 100));
 }
 
 void Shooter::removePlayer(sf::Uint16 id) {
@@ -325,6 +319,7 @@ void Shooter::removeFireTrace(const ObjectNameTag &traceName) {
 }
 
 void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
+
     std::string name = bonusName.substr(6, bonusName.size() - 3 - 5);
 
     ObjectNameTag nameTag(bonusName);
@@ -342,6 +337,7 @@ void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
                                     bonus, Vec3D{0, 2 * Consts::PI, 0}, 4,
                                     Animation::LoopOut::Continue,
                                     Animation::InterpolationType::Linear);
+
 }
 
 void Shooter::removeBonus(const ObjectNameTag &bonusName) {

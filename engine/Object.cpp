@@ -59,7 +59,7 @@ void Object::scale(const Vec3D &s) {
 void Object::rotate(const Vec3D &r) {
     _angle = _angle + r;
 
-    Matrix4x4 rotationMatrix = Matrix4x4::RotationZ(r.z()) * Matrix4x4::RotationY(r.y()) * Matrix4x4::RotationX(r.z());
+    Matrix4x4 rotationMatrix = Matrix4x4::RotationX(r.x()) * Matrix4x4::RotationY(r.y()) * Matrix4x4::RotationZ(r.z());
     transform(rotationMatrix);
 }
 

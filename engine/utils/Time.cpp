@@ -49,7 +49,7 @@ void Time::update() {
 
     _instance->_last = t;
 
-    if (_instance->_deltaTime > 10000) {
+    if (_instance->_deltaTime > 10) {
         return;
     }
 
