@@ -57,7 +57,7 @@ Vec4D Vec4D::operator/(double number) const {
 
 // Other useful methods
 double Vec4D::sqrAbs() const {
-    return x() * x() + y() * y() + z() * z();
+    return x() * x() + y() * y() + z() * z() + w() * w();
 }
 
 double Vec4D::abs() const {

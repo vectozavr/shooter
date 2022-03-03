@@ -70,7 +70,7 @@ public:
     [[nodiscard]] CollisionPoint EPA(const Simplex &simplex, std::shared_ptr<RigidBody> obj);
     void solveCollision(const CollisionPoint &collision);
 
-    void regenerateHitBox(bool useSimpleBox = true);
+    void recalculateHitBox(bool useSimpleBox = true);
 
     [[nodiscard]] Vec3D collisionNormal() const { return _collisionNormal; }
     [[nodiscard]] bool hasCollision() const { return _hasCollision; }
