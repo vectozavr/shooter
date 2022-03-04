@@ -19,7 +19,7 @@ class Shooter final : public Engine {
 private:
     std::shared_ptr<Player> player = std::make_shared<Player>(ObjectNameTag("Player"),
                                                               ShooterConsts::CUBE_OBJ,
-                                                              Vec3D{1.5, 1.9, 1.5});
+                                                              Vec3D{1.5, 1.2, 1.5});
     std::shared_ptr<PlayerController> playerController = std::make_shared<PlayerController>(player, keyboard, mouse);
 
     Window mainMenu;
