@@ -38,7 +38,7 @@ void HitBox::generateSimple(const Mesh &mesh) {
 
     for(const auto& t : mesh.triangles()) {
         for(int i = 0; i < 3; i++) {
-            auto point = mesh.model()*Vec3D(t[i]);
+            auto point = Vec3D(t[i]);
             if(point.x() > maxX) {
                 maxX = point.x();
             }
@@ -78,7 +78,7 @@ void HitBox::generateDetailed(const Mesh &mesh) {
 
     for (const auto& t : mesh.triangles())
         for (int i = 0; i < 3; i++)
-            points.insert(mesh.model()*Vec3D(t[i]));
+            points.insert(Vec3D(t[i]));
 
     _hitBox.reserve(points.size());
     for (const auto& it : points)

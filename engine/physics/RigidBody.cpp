@@ -18,10 +18,6 @@ RigidBody::RigidBody(ObjectNameTag nameTag, const std::string &filename, const V
 RigidBody::RigidBody(const Mesh &mesh, bool useSimpleBox) : Mesh(mesh), _hitBox(mesh, useSimpleBox) {
 }
 
-void RigidBody::recalculateHitBox(bool useSimpleBox) {
-    _hitBox = HitBox(*this, useSimpleBox);
-}
-
 Vec3D RigidBody::_findFurthestPoint(const Vec3D &direction) {
     Vec3D maxPoint{0, 0, 0};
 
