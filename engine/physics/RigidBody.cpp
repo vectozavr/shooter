@@ -321,12 +321,10 @@ RigidBody::_addIfUniqueEdge(const std::vector<std::pair<size_t, size_t>> &edges,
 
 void RigidBody::solveCollision(const CollisionPoint &collision) {
 
-    Vec3D velocity_parallel = collision.normal * velocity().dot(collision.normal);
-    Vec3D velocity_perpendicular = velocity() - velocity_parallel;
+    Vec3D velocity_perpendicular = collision.normal * velocity().dot(collision.normal);
+    Vec3D velocity_parallel = velocity() - velocity_perpendicular;
 
-    if (velocity().dot(collision.normal) > 0) {
-        setVelocity(velocity_perpendicular);
-    }
+    setVelocity(velocity_parallel);
 
     translate(-collision.normal * collision.depth);
 }

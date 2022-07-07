@@ -80,8 +80,25 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     _weapons.back()->setReloadCallBack([this]() {
         Timeline::addAnimation<ARotateLeft>(AnimationListTag("reload_weapon"),
                                             _weapons[_selectedWeapon],
-                                            -4 * Consts::PI,
+                                            -2 * Consts::PI,
                                             _weapons[_selectedWeapon]->reloadTime() / 2,
+                                            Animation::LoopOut::None,
+                                            Animation::InterpolationType::Cos);
+    });
+
+    // adding fire animation
+    _weapons.back()->setFireCallBack([this]() {
+        Timeline::addAnimation<ARotateLeft>(AnimationListTag("fire_weapon"),
+                                            _weapons[_selectedWeapon],
+                                            -_weapons[_selectedWeapon]->fireDelay(),
+                                            _weapons[_selectedWeapon]->fireDelay()/3,
+                                            Animation::LoopOut::None,
+                                            Animation::InterpolationType::Cos);
+        Timeline::addAnimation<AWait>(AnimationListTag("fire_weapon"), 0);
+        Timeline::addAnimation<ARotateLeft>(AnimationListTag("fire_weapon"),
+                                            _weapons[_selectedWeapon],
+                                            _weapons[_selectedWeapon]->fireDelay(),
+                                            _weapons[_selectedWeapon]->fireDelay()/3,
                                             Animation::LoopOut::None,
                                             Animation::InterpolationType::Cos);
     });
@@ -126,7 +143,9 @@ void Player::selectNextWeapon() {
         }
         Log::log("selectedWeapon " + std::to_string(_selectedWeapon));
         SoundController::loadAndPlay(SoundTag("changeWeapon"), ShooterConsts::CHANGE_WEAPON_SOUND);
+        rotateWeapon();
     }
+
 }
 
 void Player::selectPreviousWeapon() {
@@ -145,6 +164,7 @@ void Player::selectPreviousWeapon() {
         }
         Log::log("selectedWeapon " + std::to_string(_selectedWeapon));
         SoundController::loadAndPlay(SoundTag("changeWeapon"), ShooterConsts::CHANGE_WEAPON_SOUND);
+        rotateWeapon();
     }
 }
 
@@ -175,4 +195,13 @@ void Player::setFullHealth() {
 void Player::setFullAbility() {
     _ability = ShooterConsts::ABILITY_MAX;
     SoundController::loadAndPlay(SoundTag("addAbility"), ShooterConsts::RESTORE_ABILITY_SOUND);
+}
+
+void Player::rotateWeapon() {
+    Timeline::addAnimation<ARotateLeft>(AnimationListTag("select_weapon"),
+                                        _weapons[_selectedWeapon],
+                                        -2 * Consts::PI,
+                                        0.3,
+                                        Animation::LoopOut::None,
+                                        Animation::InterpolationType::Cos);
 }

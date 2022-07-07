@@ -43,18 +43,18 @@ FireInformation Weapon::fire(std::function<IntersectionInformation(const Vec3D &
     _lastFireTime = Time::time();
     _clipAmmo--;
 
-    if (_clipAmmo == 0) {
-        reload();
-    }
-
     SoundController::loadAndPlay(SoundTag("fireSound_" + name().str()), _fireSound);
     Log::log("Weapon::fire (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
+
+    if (_fireCallBack != nullptr) {
+        _fireCallBack();
+    }
 
     return FireInformation{processFire(std::move(rayCastFunction), position, direction), true};
 }
 
 void Weapon::reload() {
-    if (_stockAmmo == 0 || std::abs(Time::time() - _lastReloadTime) < _reloadTime) {
+    if (_stockAmmo == 0 || std::abs(Time::time() - _lastReloadTime) < _reloadTime || _clipAmmo == _clipCapacity) {
         return;
     }
     if (_clipCapacity - _clipAmmo <= _stockAmmo) {

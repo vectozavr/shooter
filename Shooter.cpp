@@ -82,7 +82,7 @@ void Shooter::start() {
     player->setDamagePlayerCallBack(
             [this](sf::Uint16 targetId, double damage) { client->damagePlayer(targetId, damage); });
     player->setRayCastFunction(
-            [this](const Vec3D &from, const Vec3D &to) { return world->rayCast(from, to, "Player Weapon"); });
+            [this](const Vec3D &from, const Vec3D &to) { return world->rayCast(from, to, "Player Weapon fireTrace bulletHole"); });
     player->setTakeBonusCallBack([this](const string &bonusName) { client->takeBonus(bonusName); });
     player->setAddWeaponCallBack([this](std::shared_ptr<Weapon> weapon) { addWeapon(std::move(weapon)); });
     player->setRemoveWeaponCallBack([this](std::shared_ptr<Weapon> weapon) { removeWeapon(std::move(weapon)); });
@@ -303,7 +303,7 @@ void Shooter::removePlayer(sf::Uint16 id) {
 }
 
 void Shooter::addFireTrace(const Vec3D &from, const Vec3D &to) {
-    std::string traceName = "Client_fireTraces_" + std::to_string(fireTraces++);
+    std::string traceName = "Client_fireTrace_" + std::to_string(fireTraces++);
     world->addBody(std::make_shared<RigidBody>(Mesh::LineTo(ObjectNameTag(traceName), from, to, 0.05)));
     world->body(ObjectNameTag(traceName))->setCollider(false);
 
@@ -312,6 +312,17 @@ void Shooter::addFireTrace(const Vec3D &from, const Vec3D &to) {
     Timeline::addAnimation<AFunction>(AnimationListTag(traceName + "_delete"),
                                       [this, traceName]() { removeFireTrace(ObjectNameTag(traceName)); }, 1,
                                       1);
+
+
+    std::string bulletHoleName = "Client_bulletHole_" + std::to_string(fireTraces++);
+    auto bulletHole = Mesh::Cube(ObjectNameTag(bulletHoleName), 0.2, sf::Color(70, 70, 70));
+    bulletHole.translate(to);
+    world->addBody(std::make_shared<RigidBody>(bulletHole));
+    world->body(ObjectNameTag(bulletHoleName))->setCollider(false);
+
+    Timeline::addAnimation<AFunction>(AnimationListTag(bulletHoleName + "_delete"),
+                                      [this, bulletHoleName]() { removeFireTrace(ObjectNameTag(bulletHoleName)); }, 1,
+                                      7);
 }
 
 void Shooter::removeFireTrace(const ObjectNameTag &traceName) {
@@ -367,12 +378,18 @@ void Shooter::changeEnemyWeapon(const std::string &weaponName, sf::Uint16 enemyI
     world->body(weaponTag)->setCollider(false);
     world->body(weaponTag)->scale(Vec3D(3, 3, 3));
 
-    world->body(weaponTag)->translateToPoint(
-            head->position() - enemy->left() * 2.5 - enemy->up() * 2.5 + enemy->lookAt());
+    world->body(weaponTag)->translateToPoint(head->position() - enemy->left() * 1.0 - enemy->up() * 1.0 + enemy->lookAt());
 
     world->body(weaponTag)->rotate(Vec3D(0, enemy->angle().y(), 0));
     world->body(weaponTag)->rotateLeft(head->angleLeftUpLookAt().x());
     enemy->attach(world->body(weaponTag));
+
+    Timeline::addAnimation<ARotateLeft>(AnimationListTag("select_weapon_" + std::to_string(enemyId)),
+                                        world->body(weaponTag),
+                                        -2 * Consts::PI,
+                                        0.3,
+                                        Animation::LoopOut::None,
+                                        Animation::InterpolationType::Cos);
 }
 
 void Shooter::removeWeapon(std::shared_ptr<Weapon> weapon) {

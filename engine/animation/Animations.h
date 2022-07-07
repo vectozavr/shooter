@@ -19,6 +19,7 @@
 #include "AWait.h"
 #include "AShowCreation.h"
 #include "AShowUncreation.h"
+#include "ARotateLeftUpLookAt.h"
 
 
 #endif //SHOOTER_ANIMATIONS_H

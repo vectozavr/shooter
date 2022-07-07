@@ -56,25 +56,38 @@ IntersectionInformation World::rayCast(const Vec3D &from, const Vec3D &to, const
             continue;
         }
 
-        for (auto &tri : body->triangles()) {
-            Matrix4x4 model = body->model();
-            Triangle tri_translated(model * tri[0], model * tri[1], model * tri[2], tri.color());
+        Matrix4x4 model = body->model();
+        Matrix4x4 invModel = body->invModel();
 
-            Plane plane(tri_translated);
-            auto intersection = plane.intersection(from, to);
-            double distance = (intersection.first - from).sqrAbs();
-            if (intersection.second > 0 && distance < minDistance && tri_translated.isPointInside(intersection.first)) {
+        Vec3D v = (to - from).normalized();
+        Vec3D v_model = invModel*v;
+        Vec3D from_model = invModel*(from - body->position());
+        Vec3D to_model = invModel*(to - body->position());
+
+        for (auto &tri : body->triangles()) {
+
+            if(tri.norm().dot(v_model) > 0) {
+                continue;
+            }
+
+            Plane plane(tri);
+            auto intersection = plane.intersection(from_model, to_model);
+            double distance = (intersection.first - from_model).sqrAbs();
+
+            if (intersection.second > 0 && distance < minDistance && tri.isPointInside(intersection.first)) {
                 minDistance = distance;
-                point = intersection.first;
-                triangle = tri_translated;
+                point = model*intersection.first + body->position();
+                triangle = Triangle(model * tri[0], model * tri[1], model * tri[2], tri.color());
                 bodyName = name.str();
                 intersected = true;
                 intersectedBody = body;
+                //Triangle triangleRED = Triangle(model * tri[0], model * tri[1], model * tri[2], sf::Color(255, 0, 0));
+                //addBody(std::make_shared<RigidBody>(Mesh(ObjectNameTag("Test" + std::to_string(rand())), std::vector<Triangle>({triangleRED}))));
             }
         }
     }
-    return IntersectionInformation{point, sqrt(minDistance), triangle, ObjectNameTag(bodyName), intersectedBody,
-                                   intersected};
+
+    return IntersectionInformation{point, sqrt(minDistance), triangle, ObjectNameTag(bodyName), intersectedBody, intersected};
 }
 
 void World::loadMap(const std::string &filename, const Vec3D &scale) {

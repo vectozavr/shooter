@@ -87,7 +87,7 @@ public:
     [[nodiscard]] ObjectNameTag name() const { return _nameTag; }
 
     [[nodiscard]] Matrix4x4 model() const { return Matrix4x4::Translation(_position) * _transformMatrix; }
-    [[nodiscard]] Matrix4x4 invModel() const { return Matrix4x4::View(left(), up(), lookAt(), position()); }
+    [[nodiscard]] Matrix4x4 invModel() const { return Matrix4x4::View(model()); }
 
     // OpenGL function
     [[nodiscard]] GLfloat *glModel() const;

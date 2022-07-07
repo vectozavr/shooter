@@ -41,6 +41,28 @@ void PlayerController::update() {
                   Keyboard::isKeyPressed(sf::Keyboard::S));
 
     std::shared_ptr<Object> camera = _player->attached(ObjectNameTag("Camera"));
+
+    if(camera != nullptr) {
+        // random motion during high speed
+        if (!Timeline::isInAnimList(AnimationListTag("high_speed_motion"))) {
+            double d_alpha = _player->velocity().abs()/3000*rand()/RAND_MAX;
+            double dt = 0.07;
+
+            Timeline::addAnimation<ARotateLeftUpLookAt>(AnimationListTag("high_speed_motion"),
+                                               camera, Vec3D(0, 0, d_alpha), dt,
+                                               Animation::LoopOut::None,
+                                               Animation::InterpolationType::Cos);
+            Timeline::addAnimation<AWait>(AnimationListTag("high_speed_motion"), 0);
+            Timeline::addAnimation<ARotateLeftUpLookAt>(AnimationListTag("high_speed_motion"),
+                                                        camera, Vec3D(0, 0, -d_alpha), dt,
+                                                        Animation::LoopOut::None,
+                                                        Animation::InterpolationType::Cos);
+            Timeline::addAnimation<AWait>(AnimationListTag("high_speed_motion"), 0);
+
+        }
+    }
+
+
     if (camera != nullptr && _inRunning && _player->inCollision()) {
         if (!Timeline::isInAnimList(AnimationListTag("camera_hor_oscil"))) {
             Timeline::addAnimation<ATranslate>(AnimationListTag("camera_hor_oscil"),
@@ -149,6 +171,7 @@ void PlayerController::update() {
 
     if (Keyboard::isKeyPressed(sf::Keyboard::Space) && _player->inCollision()) {
         // if we just want to jump, we have to add particular speed
+
         if (!_isSliding) {
             _player->addVelocity(Vec3D{0, std::abs(_player->collisionNormal().y()) *
                                           sqrt(2 * -_player->acceleration().y() * ShooterConsts::JUMP_HEIGHT) * coeff,
@@ -160,6 +183,8 @@ void PlayerController::update() {
                                           Time::deltaTime() * 60, 0});
         }
         _player->translate(Vec3D{0, Time::deltaTime() * ShooterConsts::WALK_SPEED * 2 * coeff, 0});
+
+        //_player->setVelocity(Vec3D{_player->velocity().x(), sqrt(2 * -_player->acceleration().y() * ShooterConsts::JUMP_HEIGHT) * coeff,_player->velocity().z()});
         _isSliding = true;
     } else {
         _isSliding = false;
@@ -169,8 +194,7 @@ void PlayerController::update() {
     Vec2D displacement = _mouse->getMouseDisplacement();
 
     _player->rotate(Vec3D{0, -displacement.x() * ShooterConsts::MOUSE_SENSITIVITY, 0});
-    _player->setVelocity(
-            Matrix4x4::RotationY(-displacement.x() * ShooterConsts::MOUSE_SENSITIVITY) * _player->velocity());
+    _player->setVelocity(Matrix4x4::RotationY(-displacement.x() * ShooterConsts::MOUSE_SENSITIVITY) * _player->velocity());
 
     double rotationLeft = displacement.y() * ShooterConsts::MOUSE_SENSITIVITY;
 
@@ -186,7 +210,10 @@ void PlayerController::update() {
     _player->rotateWeaponsRelativePoint(_player->position() + Vec3D{0, 1.8, 0}, _player->left(), rotationLeft);
 
     if (camera != nullptr) {
+        double lookAtAngle = camera->angleLeftUpLookAt().z();
+        camera->rotateLookAt(-lookAtAngle);
         camera->rotateLeft(_player->headAngle() - camera->angleLeftUpLookAt().x());
+        camera->rotateLookAt(lookAtAngle);
     }
 
     if (_keyboard->isKeyTapped(sf::Keyboard::Right) || _keyboard->isKeyTapped(sf::Keyboard::E)) {
