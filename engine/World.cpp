@@ -7,8 +7,8 @@
 
 #include "World.h"
 #include "utils/Log.h"
-#include "Plane.h"
-#include "ResourceManager.h"
+#include "math/Plane.h"
+#include "utils/ResourceManager.h"
 
 using namespace std;
 
@@ -57,6 +57,9 @@ IntersectionInformation World::rayCast(const Vec3D &from, const Vec3D &to, const
         }
 
         Matrix4x4 model = body->model();
+        // It is computationally more efficient not to transform all object's triangles from model to global
+        // coordinate system, but translate 'from' and 'to' vectors inside once and check triangles without performing
+        // many matrix multiplication.
         Matrix4x4 invModel = body->invModel();
 
         Vec3D v = (to - from).normalized();
@@ -64,25 +67,35 @@ IntersectionInformation World::rayCast(const Vec3D &from, const Vec3D &to, const
         Vec3D from_model = invModel*(from - body->position());
         Vec3D to_model = invModel*(to - body->position());
 
+
         for (auto &tri : body->triangles()) {
 
             if(tri.norm().dot(v_model) > 0) {
                 continue;
             }
 
-            Plane plane(tri);
-            auto intersection = plane.intersection(from_model, to_model);
-            double distance = (intersection.first - from_model).sqrAbs();
+            auto intersection = Plane(tri).intersection(from_model, to_model);
 
-            if (intersection.second > 0 && distance < minDistance && tri.isPointInside(intersection.first)) {
-                minDistance = distance;
-                point = model*intersection.first + body->position();
-                triangle = Triangle(model * tri[0], model * tri[1], model * tri[2], tri.color());
-                bodyName = name.str();
-                intersected = true;
-                intersectedBody = body;
-                //Triangle triangleRED = Triangle(model * tri[0], model * tri[1], model * tri[2], sf::Color(255, 0, 0));
-                //addBody(std::make_shared<RigidBody>(Mesh(ObjectNameTag("Test" + std::to_string(rand())), std::vector<Triangle>({triangleRED}))));
+            if (intersection.second > 0 && tri.isPointInside(intersection.first)) {
+
+                // When you change to model coordinate system you also will get distance scaled by invModel.
+                // Due-to this effect if you scale some object in x times you will get distance in x times smaller.
+                // That's why we need to perform distance calculation in the global coordinate system where metric
+                // is the same for all objects.
+                Triangle globalTriangle(model * tri[0], model * tri[1], model * tri[2], tri.color());
+                auto globalIntersection = Plane(globalTriangle).intersection(from, to);
+                double globalDistance = (globalIntersection.first - from).abs();
+
+                if(globalDistance < minDistance) {
+                    minDistance = globalDistance;
+                    point = globalIntersection.first;
+                    triangle = globalTriangle;
+                    bodyName = name.str();
+                    intersected = true;
+                    intersectedBody = body;
+                    //Triangle triangleRED = Triangle(model * tri[0], model * tri[1], model * tri[2], sf::Color(255, 0, 0));
+                    //addBody(std::make_shared<RigidBody>(Mesh(ObjectNameTag("Test" + std::to_string(rand())), std::vector<Triangle>({triangleRED}))));
+                }
             }
         }
     }

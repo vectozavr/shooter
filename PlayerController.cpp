@@ -45,8 +45,8 @@ void PlayerController::update() {
     if(camera != nullptr) {
         // random motion during high speed
         if (!Timeline::isInAnimList(AnimationListTag("high_speed_motion"))) {
-            double d_alpha = _player->velocity().abs()/3000*rand()/RAND_MAX;
-            double dt = 0.07;
+            double d_alpha = _player->velocity().abs()/2000*rand()/RAND_MAX;
+            double dt = 0.12;
 
             Timeline::addAnimation<ARotateLeftUpLookAt>(AnimationListTag("high_speed_motion"),
                                                camera, Vec3D(0, 0, d_alpha), dt,

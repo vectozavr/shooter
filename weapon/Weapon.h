@@ -12,7 +12,7 @@
 #include <SFML/Audio/Sound.hpp>
 #include "../engine/Mesh.h"
 #include "../engine/utils/Time.h"
-#include "../engine/SoundController.h"
+#include "../engine/io/SoundController.h"
 #include "../engine/Consts.h"
 
 struct FireInformation final {

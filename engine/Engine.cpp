@@ -6,9 +6,9 @@
 
 #include "Engine.h"
 #include "utils/Time.h"
-#include "ResourceManager.h"
+#include "utils/ResourceManager.h"
 #include "animation/Timeline.h"
-#include "SoundController.h"
+#include "io/SoundController.h"
 
 Engine::Engine() {
     Time::init();

@@ -3,7 +3,7 @@
 //
 
 #include "Weapon.h"
-#include "../engine/ResourceManager.h"
+#include "../engine/utils/ResourceManager.h"
 #include "../engine/utils/Log.h"
 #include "../ShooterConsts.h"
 
@@ -102,11 +102,11 @@ Weapon::fireABullet(std::function<IntersectionInformation(const Vec3D &, const V
         damagedPlayers[rayCast.objectName] += _damage / (1.0 + rayCast.distanceToObject);
 
         // If you hit the head the damage will be doubled
-        if (rayCast.objectName.contains(ObjectNameTag("_head"))) {
+        if (rayCast.objectName.contains(ObjectNameTag("head"))) {
             damagedPlayers[rayCast.objectName] += _damage / (1.0 + rayCast.distanceToObject);
         }
         // If you hit the foot the damage will be divided by 2
-        if (rayCast.objectName.contains(ObjectNameTag("_foot_"))) {
+        if (rayCast.objectName.contains(ObjectNameTag("foot"))) {
             damagedPlayers[rayCast.objectName] -= 0.5 * _damage / (1.0 + rayCast.distanceToObject);
         }
     }

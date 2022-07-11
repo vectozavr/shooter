@@ -10,8 +10,8 @@
 #include <utility>
 #include <memory>
 
-#include "Vec3D.h"
-#include "Matrix4x4.h"
+#include "math/Vec3D.h"
+#include "math/Matrix4x4.h"
 #include <SFML/OpenGL.hpp>
 
 class ObjectNameTag final {

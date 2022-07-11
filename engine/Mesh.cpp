@@ -5,8 +5,8 @@
 #include <utility>
 
 #include "Mesh.h"
-#include "ResourceManager.h"
-#include "Screen.h"
+#include "utils/ResourceManager.h"
+#include "io/Screen.h"
 
 using namespace std;
 

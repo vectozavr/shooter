@@ -7,7 +7,7 @@
 
 #include <SFML/Audio/Sound.hpp>
 #include <utility>
-#include "engine/ResourceManager.h"
+#include "engine/utils/ResourceManager.h"
 #include "engine/Camera.h"
 #include "engine/World.h"
 #include "weapon/Ak47.h"

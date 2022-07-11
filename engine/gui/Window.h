@@ -9,8 +9,8 @@
 #include <memory>
 
 #include "Button.h"
-#include "../Screen.h"
-#include "../Mouse.h"
+#include "../io/Screen.h"
+#include "../io/Mouse.h"
 
 class Window final {
 private:

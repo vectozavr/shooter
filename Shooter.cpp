@@ -7,7 +7,7 @@
 #include <utility>
 #include "engine/animation/Animations.h"
 #include "ShooterConsts.h"
-#include "engine/SoundController.h"
+#include "engine/io/SoundController.h"
 
 using namespace std;
 
@@ -255,8 +255,7 @@ void Shooter::play() {
 void Shooter::spawnPlayer(sf::Uint16 id) {
     std::string name = "Enemy_" + std::to_string(id);
 
-    std::shared_ptr<Player> newPlayer = std::make_shared<Player>(ObjectNameTag(name), ShooterConsts::BODY_OBJ,
-                                                                 Vec3D{0.4, 0.4, 0.4});
+    std::shared_ptr<Player> newPlayer = std::make_shared<Player>(ObjectNameTag(name), ShooterConsts::BODY_OBJ, Vec3D{0.4, 0.4, 0.4});
 
     client->addPlayer(id, newPlayer);
     world->addBody(newPlayer);
