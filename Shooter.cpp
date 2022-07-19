@@ -373,7 +373,7 @@ void Shooter::changeEnemyWeapon(const std::string &weaponName, sf::Uint16 enemyI
     world->removeBody(weaponTag);
     enemy->unattach(weaponTag);
 
-    world->loadBody(weaponTag, "obj/" + weaponName + ".obj");
+    world->loadBody(weaponTag, "obj/items/" + weaponName + ".obj");
     world->body(weaponTag)->setCollider(false);
     world->body(weaponTag)->scale(Vec3D(3, 3, 3));
 
