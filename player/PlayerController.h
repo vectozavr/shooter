@@ -6,8 +6,8 @@
 #define SHOOTER_PLAYERCONTROLLER_H
 
 #include "Player.h"
-#include "engine/io/Keyboard.h"
-#include "engine/io/Mouse.h"
+#include "../engine/io/Keyboard.h"
+#include "../engine/io/Mouse.h"
 
 class PlayerController final {
 private:

@@ -8,8 +8,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 add_executable(${CMAKE_PROJECT_NAME}
         # game:
         Source.cpp
-        Player.cpp
-        Player.h
+        player/Player.cpp
+        player/Player.h
         network/ShooterClient.cpp
         network/ShooterClient.h
         network/ShooterServer.cpp
@@ -21,8 +21,8 @@ add_executable(${CMAKE_PROJECT_NAME}
         weapon/Gun.h
         weapon/Gold_Ak47.h
         weapon/Rifle.h
-        PlayerController.cpp
-        PlayerController.h
+        player/PlayerController.cpp
+        player/PlayerController.h
         Shooter.cpp
         Shooter.h
         ShooterConsts.h

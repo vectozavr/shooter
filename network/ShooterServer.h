@@ -6,7 +6,7 @@
 #define SHOOTER_SHOOTERSERVER_H
 
 #include "../engine/network/ServerUDP.h"
-#include "../Player.h"
+#include "../player/Player.h"
 
 struct BonusInfo final {
     const Vec3D position{};

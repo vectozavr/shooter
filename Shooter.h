@@ -6,9 +6,9 @@
 #define SHOOTER_SHOOTER_H
 
 #include "engine/Engine.h"
-#include "Player.h"
-#include "PlayerController.h"
-#include "PlayerController.h"
+#include "player/Player.h"
+#include "player/PlayerController.h"
+#include "player/PlayerController.h"
 #include "engine/gui/Window.h"
 
 #include "network/ShooterClient.h"

@@ -6,7 +6,7 @@
 #define SHOOTER_SHOOTERCLIENT_H
 
 #include "../engine/network/ClientUDP.h"
-#include "../Player.h"
+#include "../player/Player.h"
 
 class ShooterClient final : public ClientUDP {
 private:
