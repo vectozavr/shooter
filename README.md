@@ -25,7 +25,7 @@ Source code of simple shooter on [3Dzavr game engine](https://github.com/vectoza
 
 3) Enjoy gaming!
 
-[<h3>How to run the server</h3>](https://github.com/vectozavr/shooter_server)
+[<h5>Click here if you want to run the server</h3>](https://github.com/vectozavr/shooter_server)
 
 <h4>Control:</h4>
 
