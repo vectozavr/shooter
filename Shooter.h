@@ -11,8 +11,8 @@
 #include "PlayerController.h"
 #include "engine/gui/Window.h"
 
-#include "ShooterClient.h"
-#include "ShooterServer.h"
+#include "network/ShooterClient.h"
+#include "network/ShooterServer.h"
 
 
 class Shooter final : public Engine {

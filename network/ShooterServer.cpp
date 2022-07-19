@@ -3,7 +3,7 @@
 //
 
 #include "ShooterServer.h"
-#include "engine/utils/Log.h"
+#include "../engine/utils/Log.h"
 #include "ShooterMsgType.h"
 
 void ShooterServer::broadcast() {

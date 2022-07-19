@@ -10,10 +10,10 @@ add_executable(${CMAKE_PROJECT_NAME}
         Source.cpp
         Player.cpp
         Player.h
-        ShooterClient.cpp
-        ShooterClient.h
-        ShooterServer.cpp
-        ShooterServer.h
+        network/ShooterClient.cpp
+        network/ShooterClient.h
+        network/ShooterServer.cpp
+        network/ShooterServer.h
         weapon/Weapon.cpp
         weapon/Weapon.h
         weapon/Ak47.h
@@ -26,8 +26,8 @@ add_executable(${CMAKE_PROJECT_NAME}
         Shooter.cpp
         Shooter.h
         ShooterConsts.h
-        ShooterMsgType.h
-        ShooterMsgType.cpp
+        network/ShooterMsgType.h
+        network/ShooterMsgType.cpp
         # 3d engine:
         engine/Consts.h
         engine/math/Vec4D.h

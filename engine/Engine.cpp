@@ -169,10 +169,15 @@ void Engine::printDebugInfo() const {
                                   static_cast<sf::Uint8>(255.0 * (1.0 - static_cast<double>(width) / timerWidth)),
                                   0, 100});
 
+            std::string fps;
+            if(timer.elapsedSeconds() > 0) {
+                fps = std::to_string((int) (1.0 / timer.elapsedSeconds()));
+            } else {
+                fps = "inf";
+            }
 
             screen->drawText(
-                    timerName.substr(2, timerName.size()) + ":\t" +
-                    std::to_string((int) (1.0 / timer.elapsedSeconds())) + " / s \t (" +
+                    timerName.substr(2, timerName.size()) + ":\t" + fps + " / s \t (" +
                     std::to_string((int) (100 * timer.elapsedSeconds() / totalTime)) + "%)",
                     Vec2D{xPos + 10, yPos + height * i + 5}, 30,
                     sf::Color(0, 0, 0, 150));
@@ -190,8 +195,14 @@ void Engine::printDebugInfo() const {
                               static_cast<sf::Uint8>(255.0 * (1.0 - static_cast<double>(width) / timerWidth)),
                               0, 100});
 
+        std::string fps;
+        if(totalTime - timeSum > 0) {
+            fps = std::to_string((int) (1.0 / (totalTime - timeSum)));
+        } else {
+            fps = "inf";
+        }
 
-        screen->drawText("other:\t" + std::to_string((int) (1.0 / (totalTime - timeSum))) + " / s \t (" +
+        screen->drawText("other:\t" + fps + " / s \t (" +
                          std::to_string((int) (100 * (totalTime - timeSum) / totalTime)) + "%)",
                          Vec2D{xPos + 10, yPos + height * i + 5}, 30,
                          sf::Color(0, 0, 0, 150));
