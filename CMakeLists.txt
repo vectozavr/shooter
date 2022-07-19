@@ -66,8 +66,8 @@ add_executable(${CMAKE_PROJECT_NAME}
         engine/io/Mouse.h
         engine/io/SoundController.cpp
         engine/io/SoundController.h
-        engine/utils/CameraController.cpp
-        engine/utils/CameraController.h
+        engine/utils/ObjectController.cpp
+        engine/utils/ObjectController.h
         engine/animation/Animation.h
         engine/animation/Timeline.cpp
         engine/animation/Timeline.h
