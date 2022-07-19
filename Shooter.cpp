@@ -334,7 +334,7 @@ void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
 
     ObjectNameTag nameTag(bonusName);
 
-    world->addBody(std::make_shared<RigidBody>(ObjectNameTag(bonusName), "obj/" + name + ".obj", Vec3D{3, 3, 3}));
+    world->addBody(std::make_shared<RigidBody>(ObjectNameTag(bonusName), "obj/items/" + name + ".obj", Vec3D{3, 3, 3}));
 
     auto bonus = world->body(ObjectNameTag(bonusName));
 
