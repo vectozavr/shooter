@@ -86,6 +86,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         engine/animation/AShowCreation.h
         engine/animation/AShowUncreation.h
         engine/animation/ARotateLeftUpLookAt.h
+        engine/animation/ADecompose.h
         engine/physics/RigidBody.cpp
         engine/physics/RigidBody.h
         engine/physics/Simplex.h

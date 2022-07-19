@@ -20,6 +20,7 @@
 #include "AShowCreation.h"
 #include "AShowUncreation.h"
 #include "ARotateLeftUpLookAt.h"
+#include "ADecompose.h"
 
 
 #endif //SHOOTER_ANIMATIONS_H
