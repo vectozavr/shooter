@@ -55,8 +55,6 @@ Source code of simple shooter on [3Dzavr game engine](https://github.com/vectoza
 
 4) Built project and run the game
 
-P/S: <b>SFML for 32-bit OS Windows is already included into this repository.</b> So, you don't need to manually install it to your computer. If you have any problems with SFML, you can try to [download another version or build SFML by yourself.](https://www.sfml-dev.org/download.php) 
-
 Structure:
 ![Project demonstration](img/structure.png)
 
