@@ -10,6 +10,7 @@
 #include "ReliableMsg.h"
 #include "UDPSocket.h"
 #include <memory>
+#include <limits>
 #include <set>
 
 class ServerUDP {
