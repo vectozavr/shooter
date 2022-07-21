@@ -13,8 +13,8 @@ Source code of simple shooter on [3Dzavr game engine](https://github.com/vectoza
 ![Issues](https://img.shields.io/bitbucket/issues-raw/vectozavr/shooter)
 ![Repo size](https://img.shields.io/github/repo-size/vectozavr/shooter)
 
-<h4>Installation (OS Windows):</h4>
-1) [Download and install OpenAL library](https://openal.org/downloads/), [unzip it](https://www.7-zip.org) and run shooter.exe file
+<h4>Installation:</h4>
+1) [Download release](https://github.com/vectozavr/shooter/releases/tag/0.1.0), [unzip it](https://www.7-zip.org) and run shooter.exe file
 
 
 2) Write <b>ip</b> and <b>port</b> of server in <b>connect.txt</b> file.
