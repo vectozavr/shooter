@@ -237,7 +237,7 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
         case ShooterMsgType::newMessage:
             
             packet >> name >> message;
-            newMessage(name, message);
+            newMessage(message, name);
             break;
         default:
             Log::log("ShooterClient::processCustomPacket: unknown message type " +

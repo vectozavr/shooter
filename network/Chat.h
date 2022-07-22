@@ -9,8 +9,8 @@ class ChatManager final {
 private:
 	std::vector<std::string> messages;
 	std::vector<std::string> authors;
-	bool isChatUpdate = false;
-	std::string chatStr = "A: b\nC: D";
+	bool isChatUpdate = true;
+	std::string chatStr = "";
 	double hide = 0.0;
 public:
 	void addNewMessage(std::string author, std::string message);

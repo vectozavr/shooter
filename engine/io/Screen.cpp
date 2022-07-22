@@ -27,9 +27,15 @@ void Screen::open(int screenWidth, int screenHeight, const std::string &name, bo
 
 void Screen::display() {
     sf::Event event{};
+    inputSymbols = "";
     while (_window->pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
             _window->close();
+        }
+        else if (event.type == sf::Event::TextEntered) {
+            if (event.text.unicode < 128) {
+                inputSymbols += static_cast<char>(event.text.unicode);
+            }
         }
     }
 
@@ -61,7 +67,7 @@ void Screen::stopRender() {
         Log::log("Screen::stopRender(): stop recording the screen");
         Log::log("Screen::stopRender(): start saving .png sequence");
         std::string c = "rm film/png/*.png";
-        popen(c.c_str(), "w");
+        _popen(c.c_str(), "w");
         int i = 0;
         for(; i < _renderSequence.size(); i++) {
             _renderSequence[i].copyToImage().saveToFile("film/png/" + std::to_string(i) + ".png");
@@ -72,7 +78,7 @@ void Screen::stopRender() {
         Log::log("Screen::stopRender(): start rendering final video");
         // TODO: .png sequence looks better than a final video (poor clarity and desaturated colors)
         c = "ffmpeg -stats -r 60 -i film/png/%d.png -vcodec libx264 -crf 1 -pix_fmt yuv420p -frames " + std::to_string(i) + " film/mp4/" + std::to_string(_scene) + "_" + _title + "_" + std::to_string(rand()) + ".mp4";
-        popen(c.c_str(), "w");
+        _popen(c.c_str(), "w");
         _scene++;
         _renderVideo = false;
         Log::log("Screen::stopRender(): finish rendering final video");

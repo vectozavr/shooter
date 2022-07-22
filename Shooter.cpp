@@ -140,28 +140,6 @@ void Shooter::update() {
     if (!screen->hasFocus()) {
         return;
     }
-
-    if (keyboard->isKeyTapped(sf::Keyboard::Escape)) {
-        inGame = !inGame;
-        screen->setMouseCursorVisible(!inGame);
-    }
-
-    if (keyboard->isKeyTapped(sf::Keyboard::O)) {
-        setGlEnable(!glEnable());
-    }
-
-    if (keyboard->isKeyTapped(sf::Keyboard::Tab)) {
-        setDebugInfo(!showDebugInfo());
-    }
-
-    if (keyboard->isKeyTapped(sf::Keyboard::P)) {
-        screen->startRender();
-    }
-
-    if (keyboard->isKeyTapped(sf::Keyboard::L)) {
-        screen->stopRender();
-    }
-
     if (keyboard->isKeyTapped(sf::Keyboard::Enter)) {
         if (isTypingMessage) {
             client->sendMessage(message);
@@ -169,19 +147,41 @@ void Shooter::update() {
         }
         isTypingMessage = !isTypingMessage;
     }
+    if (!isTypingMessage) {
+        if (keyboard->isKeyTapped(sf::Keyboard::Escape)) {
+            inGame = !inGame;
+            screen->setMouseCursorVisible(!inGame);
+        }
+
+        if (keyboard->isKeyTapped(sf::Keyboard::O)) {
+            setGlEnable(!glEnable());
+        }
+
+        if (keyboard->isKeyTapped(sf::Keyboard::Tab)) {
+            setDebugInfo(!showDebugInfo());
+        }
+
+        if (keyboard->isKeyTapped(sf::Keyboard::P)) {
+            screen->startRender();
+        }
+
+        if (keyboard->isKeyTapped(sf::Keyboard::L)) {
+            screen->stopRender();
+        }
+    }
 
     if (inGame) {
         screen->setTitle(ShooterConsts::PROJECT_NAME);
         if (isTypingMessage) {
-            string msg;
-            cin >> msg;
-            message += msg;
-
-            client->sendMessage(message);
-            message = "";
-            isTypingMessage = false;
-
-            Log::log(chat->getChat());
+            string symbols = screen->getInputSymbols();
+            for (char s : symbols) {
+                if (s == (char)8) {
+                    message = message.substr(0, message.size() - 1);
+                }
+                else {
+                    message += s;
+                }
+            }
         }
         else {
             playerController->update();
@@ -203,7 +203,10 @@ void Shooter::update() {
 void Shooter::drawChat() {
     sf::Color chatColor = sf::Color(0, 0, 0, chat->update(Time::deltaTime()));
     string chatText = chat->getChat();
-    screen->drawText(chatText, Vec2D{ 0, 0 }, 10, chatColor);
+    screen->drawText(chatText, Vec2D{ 0, (double)screen->height()/2 }, 20, chatColor);
+    if (isTypingMessage) {
+        screen->drawText(message, Vec2D{ (double)screen->width()/4, (double)screen->height() / 1.5 }, 40, sf::Color(0, 0, 0, 255));
+    }
 }
 
 void Shooter::gui() {
