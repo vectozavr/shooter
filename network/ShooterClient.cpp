@@ -27,7 +27,6 @@ void ShooterClient::processInit(sf::Packet &packet) {
             if (_spawnPlayerCallBack != nullptr) {
                 _spawnPlayerCallBack(targetId);
             }
-
             _players[targetId]->translateToPoint(Vec3D{x, y, z});
             _players[targetId]->setHealth(health);
             _players[targetId]->setKills(kills);
@@ -44,7 +43,7 @@ void ShooterClient::processUpdate(sf::Packet &packet) {
     while (packet >> targetId >> x >> y >> z >> health >> bodyAngle >> headAngle >> playerName) {
         if (_players.count(targetId)) {
             std::string name = "Enemy_" + std::to_string(targetId);
-
+            
             Vec3D newPosition = Vec3D{x, y, z};
 
             bool isAnimate = (_players[targetId]->position() - newPosition).sqrAbs() > 0.2;
@@ -121,6 +120,15 @@ void ShooterClient::processDisconnect(sf::Uint16 targetId) {
     }
 }
 
+void ShooterClient::sendMessage(string message){
+    chatManager->addNewMessage(_player->playerNickName(), message);
+    sf::Packet packet;
+    packet << MsgType::Custom << ShooterMsgType::newMessage << message;
+    _socket.send(packet, _socket.serverId());
+}
+void ShooterClient::newMessage(string message, string name) {
+    chatManager->addNewMessage(name, message);
+}
 
 void ShooterClient::processCustomPacket(sf::Packet &packet) {
     sf::Uint16 buffId[2];
@@ -129,6 +137,7 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
 
     ShooterMsgType type;
     packet >> type;
+    string name, message;
 
     switch (type) {
         case ShooterMsgType::Kill:
@@ -224,6 +233,11 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
             if (_changeEnemyWeaponCallBack != nullptr) {
                 _changeEnemyWeaponCallBack(tmp, buffId[0]);
             }
+            break;
+        case ShooterMsgType::newMessage:
+            
+            packet >> name >> message;
+            newMessage(name, message);
             break;
         default:
             Log::log("ShooterClient::processCustomPacket: unknown message type " +

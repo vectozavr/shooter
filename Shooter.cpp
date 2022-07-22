@@ -8,9 +8,8 @@
 #include "engine/animation/Animations.h"
 #include "ShooterConsts.h"
 #include "engine/io/SoundController.h"
-
+#include "network/Chat.h"
 using namespace std;
-
 // Read server/client settings and start both.
 // If client doesn't connect to the localhost - server doesn't start.
 void Shooter::initNetwork() {
@@ -64,6 +63,7 @@ void Shooter::initNetwork() {
     client->setRemoveBonusCallBack([this](const ObjectNameTag &bonusName) { removeBonus(bonusName); });
     client->setChangeEnemyWeaponCallBack(
             [this](const std::string &weaponName, sf::Uint16 id) { changeEnemyWeapon(weaponName, id); });
+    
 }
 
 void Shooter::start() {
@@ -128,11 +128,11 @@ void Shooter::start() {
         server->stop();
         this->exit();
     }, "Exit", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
+    client->setChatManager(chat);
 }
 
 void Shooter::update() {
     // This code executed every time step:
-
     server->update();
     client->update();
 
@@ -162,9 +162,31 @@ void Shooter::update() {
         screen->stopRender();
     }
 
+    if (keyboard->isKeyTapped(sf::Keyboard::Enter)) {
+        if (isTypingMessage) {
+            client->sendMessage(message);
+            message = "";
+        }
+        isTypingMessage = !isTypingMessage;
+    }
+
     if (inGame) {
         screen->setTitle(ShooterConsts::PROJECT_NAME);
-        playerController->update();
+        if (isTypingMessage) {
+            string msg;
+            cin >> msg;
+            message += msg;
+
+            client->sendMessage(message);
+            message = "";
+            isTypingMessage = false;
+
+            Log::log(chat->getChat());
+        }
+        else {
+            playerController->update();
+        }
+        
     } else {
         mainMenu.update();
     }
@@ -175,6 +197,13 @@ void Shooter::update() {
     if (SoundController::getStatus(SoundTag("background")) != sf::Sound::Status::Playing) {
         SoundController::loadAndPlay(SoundTag("background"), ShooterConsts::BACK_NOISE);
     }
+    drawChat();
+}
+
+void Shooter::drawChat() {
+    sf::Color chatColor = sf::Color(0, 0, 0, chat->update(Time::deltaTime()));
+    string chatText = chat->getChat();
+    screen->drawText(chatText, Vec2D{ 0, 0 }, 10, chatColor);
 }
 
 void Shooter::gui() {

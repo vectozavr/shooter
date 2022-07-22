@@ -79,6 +79,7 @@ void ShooterServer::processCustomPacket(sf::Packet &packet, sf::Uint16 senderId)
     double damage;
     std::string tmp;
     double newHealth;
+    std::string message;
 
     ShooterMsgType type;
     packet >> type;
@@ -140,6 +141,16 @@ void ShooterServer::processCustomPacket(sf::Packet &packet, sf::Uint16 senderId)
                 }
             }
 
+            break;
+        case ShooterMsgType::newMessage:
+            
+            packet >> message;
+            sendPacket << MsgType::Custom << ShooterMsgType::ChangeWeapon << _players[senderId]->playerNickName() << message;
+            for (auto& player : _players) {
+                if (player.first != senderId) {
+                    _socket.send(sendPacket, player.first);
+                }
+            }
             break;
         default:
             Log::log("ShooterServer::processCustomPacket: unknown message type " +
