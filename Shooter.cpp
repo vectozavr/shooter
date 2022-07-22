@@ -209,9 +209,19 @@ void Shooter::drawStatsTable() {
     });
 
     for (auto &p : allPlayers) {
-        screen->drawText(std::to_string(i) + "\t" + p->playerNickName() + "\t" + std::to_string(p->kills()) + " / " +
-                         std::to_string(p->deaths()),
-                         Vec2D{10, 15 + 35.0 * i}, 25, sf::Color(0, 0, 0, 150));
+        string name = p->playerNickName();
+        int index = (int)name[1] - '0';
+        if (name[0] == '%' && index >= 0 && index< 8) {
+            screen->drawText(std::to_string(i) + "\t" + name.substr(2, name.length()) + "\t" + std::to_string(p->kills()) + " / " +
+                std::to_string(p->deaths()),
+                Vec2D{ 10, 15 + 35.0 * i }, 25, getColor(index));
+        }
+        else {
+            screen->drawText(std::to_string(i) + "\t" + p->playerNickName() + "\t" + std::to_string(p->kills()) + " / " +
+                std::to_string(p->deaths()),
+                Vec2D{ 10, 15 + 35.0 * i }, 25, sf::Color(0, 0, 0, 150));
+        }
+        
         i++;
     }
 
