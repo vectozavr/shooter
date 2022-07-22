@@ -211,7 +211,7 @@ void Shooter::drawStatsTable() {
     for (auto &p : allPlayers) {
         screen->drawText(std::to_string(i) + "\t" + p->playerNickName() + "\t" + std::to_string(p->kills()) + " / " +
                          std::to_string(p->deaths()),
-                         Vec2D{10, 15 + 35.0 * i}, 25, sf::Color(0, 0, 0, 150));
+                         Vec2D{10, 15 + 35.0 * i}, 25, p->color());
         i++;
     }
 

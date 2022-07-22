@@ -13,6 +13,7 @@ Player::Player(ObjectNameTag name, const std::string &filename, const Vec3D &sca
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
     setCollision(true);
     setVisible(false);
+    setColor(sf::Color(0,0,0));
 
     setCollisionCallBack([this](const ObjectNameTag &tag, std::shared_ptr<RigidBody> obj) { collisionWithObject(tag, obj); });
 }
