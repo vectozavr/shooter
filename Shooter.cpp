@@ -169,7 +169,7 @@ void Shooter::update() {
             screen->stopRender();
         }
     }
-
+    
     if (inGame) {
         screen->setTitle(ShooterConsts::PROJECT_NAME);
         if (isTypingMessage) {
@@ -190,14 +190,15 @@ void Shooter::update() {
     } else {
         mainMenu.update();
     }
-
+    
     setUpdateWorld(inGame);
 
     // background sounds and music control
     if (SoundController::getStatus(SoundTag("background")) != sf::Sound::Status::Playing) {
         SoundController::loadAndPlay(SoundTag("background"), ShooterConsts::BACK_NOISE);
     }
-    drawChat();
+    
+    
 }
 
 void Shooter::drawChat() {
@@ -222,6 +223,7 @@ void Shooter::gui() {
     // health player stats
     drawPlayerStats();
     drawStatsTable();
+    drawChat();
 }
 
 void Shooter::drawStatsTable() {
