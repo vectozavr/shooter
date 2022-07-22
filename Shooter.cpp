@@ -207,11 +207,30 @@ void Shooter::drawStatsTable() {
     std::sort(allPlayers.begin(), allPlayers.end(), [](std::shared_ptr<Player> p1, std::shared_ptr<Player> p2) {
         return p1->kills() - p1->deaths() > p2->kills() - p2->deaths();
     });
-
     for (auto &p : allPlayers) {
-        screen->drawText(std::to_string(i) + "\t" + p->playerNickName() + "\t" + std::to_string(p->kills()) + " / " +
-                         std::to_string(p->deaths()),
-                         Vec2D{10, 15 + 35.0 * i}, 25, p->color());
+        string name = p->playerNickName();
+        try
+        {
+            if (name[0] == '`') {
+                int r = std::min(std::stoi(name.substr(1, 4)), 255); 
+                int g = std::min(std::stoi(name.substr(4, 7)), 255);
+                int b = std::min(std::stoi(name.substr(7, 10)), 255);
+                screen->drawText(std::to_string(i) + "\t" + name.substr(10, name.length()) + "\t" + std::to_string(p->kills()) + " / " +
+                    std::to_string(p->deaths()),
+                    Vec2D{ 10, 15 + 35.0 * i }, 25, sf::Color(r, g, b, 200));
+            }
+            else {
+                throw std::invalid_argument("defoult color");
+            }
+        }
+        catch (const std::invalid_argument&)
+        {
+            screen->drawText(std::to_string(i) + "\t" + name + "\t" + std::to_string(p->kills()) + " / " +
+                std::to_string(p->deaths()),
+                Vec2D{ 10, 15 + 35.0 * i }, 25, sf::Color(0, 0, 0, 150));
+        }
+        
+        
         i++;
     }
 
