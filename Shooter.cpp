@@ -30,7 +30,6 @@ void Shooter::initNetwork() {
         playerName = "PlayerName";
         std::ofstream temp("connect.txt", std::ofstream::out);
         temp << clientIp << std::endl << clientPort << std::endl << playerName;
-        
         temp.close();
     }
     connectFile.close();
@@ -216,7 +215,7 @@ void Shooter::drawStatsTable() {
                 int r = std::min(std::stoi(name.substr(1, 4)), 255); 
                 int g = std::min(std::stoi(name.substr(4, 7)), 255);
                 int b = std::min(std::stoi(name.substr(7, 10)), 255);
-                screen->drawText(std::to_string(i) + "\t" + p->playerNickName() + "\t" + std::to_string(p->kills()) + " / " +
+                screen->drawText(std::to_string(i) + "\t" + name.substr(10, name.length()) + "\t" + std::to_string(p->kills()) + " / " +
                     std::to_string(p->deaths()),
                     Vec2D{ 10, 15 + 35.0 * i }, 25, sf::Color(r, g, b, 200));
             }
@@ -226,7 +225,7 @@ void Shooter::drawStatsTable() {
         }
         catch (const std::invalid_argument&)
         {
-            screen->drawText(std::to_string(i) + "\t" + p->playerNickName() + "\t" + std::to_string(p->kills()) + " / " +
+            screen->drawText(std::to_string(i) + "\t" + name + "\t" + std::to_string(p->kills()) + " / " +
                 std::to_string(p->deaths()),
                 Vec2D{ 10, 15 + 35.0 * i }, 25, sf::Color(0, 0, 0, 150));
         }
