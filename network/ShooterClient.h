@@ -7,6 +7,7 @@
 
 #include "../engine/network/ClientUDP.h"
 #include "../player/Player.h"
+#include <SFML/Config.hpp>
 
 class ShooterClient final : public ClientUDP {
 private:
@@ -59,6 +60,8 @@ public:
     void changeWeapon(const std::string &weaponName);
 
     void addPlayer(sf::Uint16 id, std::shared_ptr<Player> player);
+
+    void requestMap(std::string clientIp, std::string *current_map);
 
     [[nodiscard]] std::map<sf::Uint16, std::shared_ptr<Player>> const &players() const { return _players; }
 
