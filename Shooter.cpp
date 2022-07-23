@@ -52,6 +52,7 @@ void Shooter::initNetwork() {
             server->generateBonuses();
     }
 
+    client->requestMap(clientIp, &current_map);
     client->connect(clientIp, clientPort);
     player->setPlayerNickName(playerName);
 
@@ -67,12 +68,15 @@ void Shooter::initNetwork() {
 }
 
 void Shooter::start() {
+    // connecting to the server
+    initNetwork();
+
     // This code executed once in the beginning:
     setUpdateWorld(false);
 
     screen->setMouseCursorVisible(true);
 
-    world->loadMap(ShooterConsts::MAP_OBJ, Vec3D{5, 5, 5});
+    world->loadMap(current_map, Vec3D{5, 5, 5});
 
     // TODO: encapsulate call backs inside Player
     player->setAddTraceCallBack([this](const Vec3D &from, const Vec3D &to) {
@@ -92,9 +96,7 @@ void Shooter::start() {
     camera->translateToPoint(player->position() + Vec3D{0, 1.8, 0});
     player->attach(camera);
     world->addBody(player);
-
-    // connecting to the server
-    initNetwork();
+ 
     // Waiting for connect and updating server if it's same window
     while (client->isWorking() && !client->connected()) {
         client->update();
