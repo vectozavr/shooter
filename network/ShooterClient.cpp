@@ -121,6 +121,9 @@ void ShooterClient::processDisconnect(sf::Uint16 targetId) {
 }
 
 void ShooterClient::sendMessage(string message){
+    
+    if (message.length() == 0)
+        return;
     chatManager->addNewMessage(_player->playerNickName(), message);
     sf::Packet packet;
     packet << MsgType::Custom << ShooterMsgType::newMessage << message;

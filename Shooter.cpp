@@ -172,13 +172,14 @@ void Shooter::update() {
     
     if (inGame) {
         screen->setTitle(ShooterConsts::PROJECT_NAME);
+
         if (isTypingMessage) {
             string symbols = screen->getInputSymbols();
             for (char s : symbols) {
                 if (s == (char)8) {
                     message = message.substr(0, message.size() - 1);
                 }
-                else {
+                else if (message.length() < ShooterConsts::MAX_MESSAGE_LENGTH && s!=(char)13) {
                     message += s;
                 }
             }
@@ -202,11 +203,15 @@ void Shooter::update() {
 }
 
 void Shooter::drawChat() {
-    sf::Color chatColor = sf::Color(0, 0, 0, chat->update(Time::deltaTime()));
-    string chatText = chat->getChat();
-    screen->drawText(chatText, Vec2D{ 0, (double)screen->height()/2 }, 20, chatColor);
-    if (isTypingMessage) {
-        screen->drawText(message, Vec2D{ (double)screen->width()/4, (double)screen->height() / 1.5 }, 40, sf::Color(0, 0, 0, 255));
+    sf::Color chatColor;
+    string chatText;
+    if (!isTypingMessage) { chatColor = sf::Color(0, 0, 0, chat->update(Time::deltaTime())); chatText = chat->getChatPreview(); }
+    else { chatColor = sf::Color(60, 60, 60, 200); chatText = chat->getChat();}
+
+    screen->drawText(chatText, Vec2D{ 0, (double)screen->height()*0.25 }, 20, chatColor);
+
+    if (isTypingMessage){
+        screen->drawText(message+"_", Vec2D{(double)screen->width() * 0.05, (double)screen->height() / 1.5}, 30, sf::Color(0, 0, 0, 255));
     }
 }
 

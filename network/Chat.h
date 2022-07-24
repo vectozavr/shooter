@@ -11,10 +11,13 @@ private:
 	std::vector<std::string> authors;
 	bool isChatUpdate = true;
 	std::string chatStr = "";
+	std::string chatStrPrev = "";
 	double hide = 0.0;
+	void updateChat();
 public:
 	void addNewMessage(std::string author, std::string message);
 	int update(double delta);
 	std::string getChat();
+	std::string getChatPreview();
 };
 #endif 
