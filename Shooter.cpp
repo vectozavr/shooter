@@ -176,12 +176,16 @@ void Shooter::update() {
         if (isTypingMessage) {
             string symbols = screen->getInputSymbols();
             for (char s : symbols) {
-                if (s == (char)8) {
+                if (s == (char)8) {//backspace
                     message = message.substr(0, message.size() - 1);
                 }
-                else if (message.length() < ShooterConsts::MAX_MESSAGE_LENGTH && s!=(char)13) {
+                else if (s == (char)27) {//escape 
+                    message = "";                //FIXME: неработает потому что isKeyTapped имеют задержку, 
+                    isTypingMessage = false;     //т. е. этот код выполняется после нажатия на ESC,
+                }                                // но при следующем цикле при проверке isKeyTapped(ESC) возвращается TRUE
+                else if (message.length() < ShooterConsts::MAX_MESSAGE_LENGTH && s!=(char)13) {//13=enter
                     message += s;
-                }
+                } 
             }
         }
         else {
@@ -211,7 +215,12 @@ void Shooter::drawChat() {
     screen->drawText(chatText, Vec2D{ 0, (double)screen->height()*0.25 }, 20, chatColor);
 
     if (isTypingMessage){
-        screen->drawText(message+"_", Vec2D{(double)screen->width() * 0.05, (double)screen->height() / 1.5}, 30, sf::Color(0, 0, 0, 255));
+        screen->drawTetragon(
+            Vec2D{ (double)screen->width() * 0.05, (double)screen->height() * 0.7 },
+            Vec2D{ (double)screen->width() * 0.95, (double)screen->height() * 0.7 },
+            Vec2D{ (double)screen->width() * 0.95, (double)screen->height() * 0.7+40 },
+            Vec2D{ (double)screen->width() * 0.05, (double)screen->height() * 0.7+40 }, sf::Color(150, 150, 150, 150));
+        screen->drawText(message, Vec2D{(double)screen->width() * 0.05, (double)screen->height() * 0.7}, 30, sf::Color(0, 0, 0, 255));
     }
 }
 
