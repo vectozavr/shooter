@@ -28,6 +28,8 @@ add_executable(${CMAKE_PROJECT_NAME}
         ShooterConsts.h
         network/ShooterMsgType.h
         network/ShooterMsgType.cpp
+        network/Chat.cpp
+        network/Chat.h
         # 3d engine:
         engine/Consts.h
         engine/math/Vec4D.h
@@ -109,8 +111,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         engine/network/UDPConnection.cpp
         engine/network/UDPConnection.h
         engine/network/UDPSocket.cpp
-        engine/network/UDPSocket.h
-        )
+        engine/network/UDPSocket.h)
 
 if(APPLE OR UNIX)
     include_directories(/usr/local/include)

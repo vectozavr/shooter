@@ -7,6 +7,7 @@
 
 #include "../engine/network/ClientUDP.h"
 #include "../player/Player.h"
+#include "Chat.h"
 
 class ShooterClient final : public ClientUDP {
 private:
@@ -21,8 +22,14 @@ private:
     std::function<void(const std::string &, const Vec3D &)> _addBonusCallBack;
     std::function<void(const ObjectNameTag &)> _removeBonusCallBack;
     std::function<void(const std::string &, sf::Uint16)> _changeEnemyWeaponCallBack;
+
+    std::shared_ptr<ChatManager> chatManager;
 public:
     explicit ShooterClient(std::shared_ptr<Player> player) : _player(player) {};
+
+    void sendMessage(std::string message);
+
+    void newMessage(std::string message, std::string name);
 
     void updatePacket() override;
 
@@ -57,6 +64,8 @@ public:
     void addTrace(const Vec3D &from, const Vec3D &to);
 
     void changeWeapon(const std::string &weaponName);
+
+    void setChatManager(std::shared_ptr<ChatManager> chat) { chatManager = chat; };
 
     void addPlayer(sf::Uint16 id, std::shared_ptr<Player> player);
 

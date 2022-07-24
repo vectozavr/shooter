@@ -26,6 +26,9 @@ private:
 
     std::shared_ptr<ShooterServer> server = std::make_shared<ShooterServer>();
     std::shared_ptr<ShooterClient> client = std::make_shared<ShooterClient>(player);
+    std::shared_ptr<ChatManager> chat = std::make_shared<ChatManager>();
+    bool isTypingMessage = false;
+    string message = "";
 
     bool inGame = false;
     int fireTraces = 0;
@@ -33,6 +36,7 @@ private:
     void start() override;
     void update() override;
     void gui() override;
+    void drawChat();
     void play();
     void drawPlayerStats();
     void drawStatsTable();

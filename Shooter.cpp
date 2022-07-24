@@ -8,9 +8,8 @@
 #include "engine/animation/Animations.h"
 #include "ShooterConsts.h"
 #include "engine/io/SoundController.h"
-
+#include "network/Chat.h"
 using namespace std;
-
 // Read server/client settings and start both.
 // If client doesn't connect to the localhost - server doesn't start.
 void Shooter::initNetwork() {
@@ -64,6 +63,7 @@ void Shooter::initNetwork() {
     client->setRemoveBonusCallBack([this](const ObjectNameTag &bonusName) { removeBonus(bonusName); });
     client->setChangeEnemyWeaponCallBack(
             [this](const std::string &weaponName, sf::Uint16 id) { changeEnemyWeapon(weaponName, id); });
+    
 }
 
 void Shooter::start() {
@@ -128,11 +128,11 @@ void Shooter::start() {
         server->stop();
         this->exit();
     }, "Exit", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
+    client->setChatManager(chat);
 }
 
 void Shooter::update() {
     // This code executed every time step:
-
     server->update();
     client->update();
 
@@ -140,40 +140,85 @@ void Shooter::update() {
     if (!screen->hasFocus()) {
         return;
     }
-
-    if (keyboard->isKeyTapped(sf::Keyboard::Escape)) {
-        inGame = !inGame;
-        screen->setMouseCursorVisible(!inGame);
+    if (keyboard->isKeyTapped(sf::Keyboard::Enter)) {
+        if (isTypingMessage) {
+            client->sendMessage(message);
+            message = "";
+        }
+        isTypingMessage = !isTypingMessage;
     }
+    if (!isTypingMessage) {
+        if (keyboard->isKeyTapped(sf::Keyboard::Escape)) {
+            inGame = !inGame;
+            screen->setMouseCursorVisible(!inGame);
+        }
 
-    if (keyboard->isKeyTapped(sf::Keyboard::O)) {
-        setGlEnable(!glEnable());
+        if (keyboard->isKeyTapped(sf::Keyboard::O)) {
+            setGlEnable(!glEnable());
+        }
+
+        if (keyboard->isKeyTapped(sf::Keyboard::Tab)) {
+            setDebugInfo(!showDebugInfo());
+        }
+
+        if (keyboard->isKeyTapped(sf::Keyboard::P)) {
+            screen->startRender();
+        }
+
+        if (keyboard->isKeyTapped(sf::Keyboard::L)) {
+            screen->stopRender();
+        }
     }
-
-    if (keyboard->isKeyTapped(sf::Keyboard::Tab)) {
-        setDebugInfo(!showDebugInfo());
-    }
-
-    if (keyboard->isKeyTapped(sf::Keyboard::P)) {
-        screen->startRender();
-    }
-
-    if (keyboard->isKeyTapped(sf::Keyboard::L)) {
-        screen->stopRender();
-    }
-
+    
     if (inGame) {
         screen->setTitle(ShooterConsts::PROJECT_NAME);
-        playerController->update();
+
+        if (isTypingMessage) {
+            string symbols = screen->getInputSymbols();
+            for (char s : symbols) {
+                if (s == (char)8) {//backspace
+                    message = message.substr(0, message.size() - 1);
+                }
+                else if (s == (char)27) {//escape 
+                    message = "";                //FIXME: неработает потому что isKeyTapped имеют задержку, 
+                    isTypingMessage = false;     //т. е. этот код выполняется после нажатия на ESC,
+                }                                // но при следующем цикле при проверке isKeyTapped(ESC) возвращается TRUE
+                else if (message.length() < ShooterConsts::MAX_MESSAGE_LENGTH && s!=(char)13) {//13=enter
+                    message += s;
+                } 
+            }
+        }
+        else {
+            playerController->update();
+        }
+        
     } else {
         mainMenu.update();
     }
-
+    
     setUpdateWorld(inGame);
 
     // background sounds and music control
     if (SoundController::getStatus(SoundTag("background")) != sf::Sound::Status::Playing) {
         SoundController::loadAndPlay(SoundTag("background"), ShooterConsts::BACK_NOISE);
+    }
+    
+    
+}
+
+void Shooter::drawChat() {
+    sf::Color chatColor = isTypingMessage?  sf::Color(50, 50, 50, 255) : sf::Color(50, 50, 50, chat->update(Time::deltaTime()));
+    string chatText = isTypingMessage ? chat->getChat() : chat->getChatPreview();
+
+    screen->drawText(chatText, Vec2D{ 0, (double)screen->height()*0.25 }, 20, chatColor);
+
+    if (isTypingMessage){
+        screen->drawTetragon(
+            Vec2D{ (double)screen->width() * 0.05, (double)screen->height() * 0.7 },
+            Vec2D{ (double)screen->width() * 0.95, (double)screen->height() * 0.7 },
+            Vec2D{ (double)screen->width() * 0.95, (double)screen->height() * 0.7+40 },
+            Vec2D{ (double)screen->width() * 0.05, (double)screen->height() * 0.7+40 }, sf::Color(150, 150, 150, 150));
+        screen->drawText(message, Vec2D{(double)screen->width() * 0.05, (double)screen->height() * 0.7}, 30, sf::Color(0, 0, 0, 255));
     }
 }
 
@@ -190,6 +235,7 @@ void Shooter::gui() {
     // health player stats
     drawPlayerStats();
     drawStatsTable();
+    drawChat();
 }
 
 void Shooter::drawStatsTable() {
