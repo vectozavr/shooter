@@ -31,9 +31,9 @@ void ChatManager::updateChat() {
 		for (int messageIndex = size - 1; messageIndex >= 0; messageIndex--)
 		{
 			if (messageIndex > size - 6) {
-				chatStrPrev += authors[messageIndex] + ": " + messages[messageIndex] + ";\n";
+				chatStrPrev += authors[messageIndex] + ": " + messages[messageIndex] + "\n";
 			}
-			chatStr += authors[messageIndex] + ": " + messages[messageIndex] + ";\n";
+			chatStr += authors[messageIndex] + ": " + messages[messageIndex] + "\n";
 		}
 	}
 }

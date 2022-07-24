@@ -207,10 +207,8 @@ void Shooter::update() {
 }
 
 void Shooter::drawChat() {
-    sf::Color chatColor;
-    string chatText;
-    if (!isTypingMessage) { chatColor = sf::Color(0, 0, 0, chat->update(Time::deltaTime())); chatText = chat->getChatPreview(); }
-    else { chatColor = sf::Color(60, 60, 60, 200); chatText = chat->getChat();}
+    sf::Color chatColor = isTypingMessage?  sf::Color(50, 50, 50, 255) : sf::Color(50, 50, 50, chat->update(Time::deltaTime()));
+    string chatText = isTypingMessage ? chat->getChat() : chat->getChatPreview();
 
     screen->drawText(chatText, Vec2D{ 0, (double)screen->height()*0.25 }, 20, chatColor);
 
