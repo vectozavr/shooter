@@ -3,8 +3,8 @@
 //
 
 #include "PlayerController.h"
-#include "../engine/utils/Log.h"
-#include "../engine/animation/Animations.h"
+#include "../3dzavr/engine/utils/Log.h"
+#include "../3dzavr/engine/animation/Animations.h"
 
 PlayerController::PlayerController(std::shared_ptr<Player> player,
                                    std::shared_ptr<Keyboard> keyboard,

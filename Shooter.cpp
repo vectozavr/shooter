@@ -5,9 +5,9 @@
 #include "Shooter.h"
 #include <fstream>
 #include <utility>
-#include "engine/animation/Animations.h"
+#include "3dzavr/engine/animation/Animations.h"
 #include "ShooterConsts.h"
-#include "engine/io/SoundController.h"
+#include "3dzavr/engine/io/SoundController.h"
 
 using namespace std;
 
