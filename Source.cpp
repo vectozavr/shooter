@@ -12,7 +12,7 @@ int main() {
 
     // Optimal for standard monitors:
     //game.create(720, 480, ShooterConsts::PROJECT_NAME, true);
-    game.create(1280, 720, ShooterConsts::PROJECT_NAME, true);
+    game.create(1920, 1080, ShooterConsts::PROJECT_NAME, true);
     //game.create(1920, 1080, ShooterConsts::PROJECT_NAME, true, Consts::BACKGROUND_COLOR, sf::Style::Fullscreen);
 
     // Optimal for MacBook Pro 16 display:

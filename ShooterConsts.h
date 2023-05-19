@@ -39,6 +39,7 @@ namespace ShooterConsts {
 
     const std::string CUBE_OBJ = "obj/other/cube.obj";
     const std::string MAP_OBJ = "obj/maps/map1.obj";
+    const std::string MAR_RAILWAY_OBJ = "obj/maps/railway.obj";
     const std::string BIG_MAP_OBJ = "obj/maps/map2.obj";
     const std::string SIMPLE_MAP_OBJ = "obj/maps/map_simple.obj";
     const std::string PLANE_MAP_OBJ = "obj/maps/plane.obj";
