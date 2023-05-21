@@ -5,10 +5,11 @@
 #include "Shooter.h"
 #include <fstream>
 #include <utility>
-#include "engine/animation/Animations.h"
+#include "3dzavr/engine/animation/Animations.h"
 #include "ShooterConsts.h"
-#include "engine/io/SoundController.h"
+#include "3dzavr/engine/io/SoundController.h"
 #include "network/Chat.h"
+
 using namespace std;
 // Read server/client settings and start both.
 // If client doesn't connect to the localhost - server doesn't start.
@@ -51,6 +52,7 @@ void Shooter::initNetwork() {
             server->generateBonuses();
     }
 
+    client->requestMap(clientIp, &current_map);
     client->connect(clientIp, clientPort);
     player->setPlayerNickName(playerName);
 
@@ -67,12 +69,15 @@ void Shooter::initNetwork() {
 }
 
 void Shooter::start() {
+    // connecting to the server
+    initNetwork();
+
     // This code executed once in the beginning:
     setUpdateWorld(false);
 
     screen->setMouseCursorVisible(true);
 
-    world->loadMap(ShooterConsts::MAP_OBJ, Vec3D{5, 5, 5});
+    world->loadMap(current_map, Vec3D{5, 5, 5});
 
     // TODO: encapsulate call backs inside Player
     player->setAddTraceCallBack([this](const Vec3D &from, const Vec3D &to) {
@@ -93,8 +98,6 @@ void Shooter::start() {
     player->attach(camera);
     world->addBody(player);
 
-    // connecting to the server
-    initNetwork();
     // Waiting for connect and updating server if it's same window
     while (client->isWorking() && !client->connected()) {
         client->update();
@@ -180,7 +183,7 @@ void Shooter::update() {
                     message = message.substr(0, message.size() - 1);
                 }
                 else if (s == (char)27) {//escape 
-                    message = "";                //FIXME: неработает потому что isKeyTapped имеют задержку, 
+                    message = "";                //FIXME: не работает потому что isKeyTapped имеют задержку,
                     isTypingMessage = false;     //т. е. этот код выполняется после нажатия на ESC,
                 }                                // но при следующем цикле при проверке isKeyTapped(ESC) возвращается TRUE
                 else if (message.length() < ShooterConsts::MAX_MESSAGE_LENGTH && s!=(char)13) {//13=enter

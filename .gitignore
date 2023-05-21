@@ -1,3 +1,7 @@
 # Project exclude paths
 /cmake-build-debug/
 /cmake-build-release/
+.idea/
+*.DS_Store
+engine_log.txt
+shooter
