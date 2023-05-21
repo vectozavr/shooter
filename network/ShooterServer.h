@@ -5,7 +5,7 @@
 #ifndef SHOOTER_SHOOTERSERVER_H
 #define SHOOTER_SHOOTERSERVER_H
 
-#include "../engine/network/ServerUDP.h"
+#include "../3dzavr/engine/network/ServerUDP.h"
 #include "../player/Player.h"
 
 struct BonusInfo final {

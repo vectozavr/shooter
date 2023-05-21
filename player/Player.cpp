@@ -5,9 +5,9 @@
 #include "Player.h"
 
 #include <utility>
-#include "../engine/io/Screen.h"
-#include "../engine/utils/Log.h"
-#include "../engine/animation/Animations.h"
+#include "../3dzavr/engine/io/Screen.h"
+#include "../3dzavr/engine/utils/Log.h"
+#include "../3dzavr/engine/animation/Animations.h"
 
 Player::Player(ObjectNameTag name, const std::string &filename, const Vec3D &scale) : RigidBody(std::move(name), filename, scale) {
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});

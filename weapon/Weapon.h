@@ -7,13 +7,13 @@
 
 
 #include <string>
-#include "../engine/World.h"
-#include "../engine/Camera.h"
+#include "../3dzavr/engine/World.h"
+#include "../3dzavr/engine/Camera.h"
 #include <SFML/Audio/Sound.hpp>
-#include "../engine/Mesh.h"
-#include "../engine/utils/Time.h"
-#include "../engine/io/SoundController.h"
-#include "../engine/Consts.h"
+#include "../3dzavr/engine/Mesh.h"
+#include "../3dzavr/engine/utils/Time.h"
+#include "../3dzavr/engine/io/SoundController.h"
+#include "../3dzavr/engine/Consts.h"
 
 struct FireInformation final {
     const std::map<ObjectNameTag, double> damagedPlayers;

@@ -3,8 +3,8 @@
 //
 
 #include "Weapon.h"
-#include "../engine/utils/ResourceManager.h"
-#include "../engine/utils/Log.h"
+#include "../3dzavr/engine/utils/ResourceManager.h"
+#include "../3dzavr/engine/utils/Log.h"
 #include "../ShooterConsts.h"
 
 using namespace std;

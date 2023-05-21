@@ -5,8 +5,9 @@
 #ifndef SHOOTER_SHOOTERCLIENT_H
 #define SHOOTER_SHOOTERCLIENT_H
 
-#include "../engine/network/ClientUDP.h"
+#include "../3dzavr/engine/network/ClientUDP.h"
 #include "../player/Player.h"
+#include <SFML/Config.hpp>
 #include "Chat.h"
 
 class ShooterClient final : public ClientUDP {
@@ -68,6 +69,8 @@ public:
     void setChatManager(std::shared_ptr<ChatManager> chat) { chatManager = chat; };
 
     void addPlayer(sf::Uint16 id, std::shared_ptr<Player> player);
+
+    static void requestMap(const std::string& clientIp, std::string *current_map);
 
     [[nodiscard]] std::map<sf::Uint16, std::shared_ptr<Player>> const &players() const { return _players; }
 

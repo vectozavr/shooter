@@ -4,11 +4,13 @@
 
 #include "ShooterClient.h"
 
+#include <SFML/Network/Ftp.hpp>
+#include <string>
 #include <utility>
-#include "../engine/utils/Log.h"
-#include "../engine/animation/Timeline.h"
+#include "../3dzavr/engine/utils/Log.h"
+#include "../3dzavr/engine/animation/Timeline.h"
 #include "ShooterMsgType.h"
-#include "../engine/animation/Animations.h"
+#include "../3dzavr/engine/animation/Animations.h"
 
 void ShooterClient::updatePacket() {
     sf::Packet packet;
@@ -317,4 +319,41 @@ void ShooterClient::setRemoveBonusCallBack(std::function<void(const ObjectNameTa
 void
 ShooterClient::setChangeEnemyWeaponCallBack(std::function<void(const std::string &, sf::Uint16)> changeEnemyWeapon) {
     _changeEnemyWeaponCallBack = std::move(changeEnemyWeapon);
+}
+
+void ShooterClient::requestMap(const std::string& clientIp, std::string *current_map) {
+    Log::log("---------[FTP server]---------");
+    sf::Ftp ftp;
+    sf::Ftp::Response connectResponse = ftp.connect(clientIp, 21);
+    if (connectResponse.isOk()) {
+        ftp.login();
+
+        sf::Ftp::ListingResponse dirResponse = ftp.getDirectoryListing("current_map/");
+        Log::log("Response code: "+std::to_string(dirResponse.getStatus())+" | Message: "+dirResponse.getMessage());
+        if (dirResponse.isOk()) {
+            const std::vector<std::string>& listing = dirResponse.getListing();
+
+            if (listing.size() != 0) {
+                for (std::vector<std::string>::const_iterator it = listing.begin(); it != listing.end(); ++it)
+                    Log::log("- "+*it);
+
+                sf::Ftp::Response downloadResponse = ftp.download(listing.at(0), "./obj/maps/", sf::Ftp::Ascii);
+                Log::log("Response code: "+std::to_string(downloadResponse.getStatus())+" | Message: "+downloadResponse.getMessage());
+
+                if (downloadResponse.isOk()) {
+                    std::string map_path = listing.at(0);
+                    map_path = "./obj/maps"+map_path.substr(map_path.find("/"));
+                    Log::log("Map set to: "+map_path);
+                    *current_map = map_path;
+                }
+            } else {
+                Log::log("there is no map file");
+            }
+        }
+
+        ftp.disconnect();
+    } else {
+        Log::log("Couldn't connect to FTP server with ip: "+clientIp+" and port: 21");
+    }
+    Log::log("------------------------------");
 }

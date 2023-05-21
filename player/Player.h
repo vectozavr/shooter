@@ -7,15 +7,16 @@
 
 #include <SFML/Audio/Sound.hpp>
 #include <utility>
-#include "../engine/utils/ResourceManager.h"
-#include "../engine/Camera.h"
-#include "../engine/World.h"
+#include "../3dzavr/engine/utils/ResourceManager.h"
+#include "../3dzavr/engine/Camera.h"
+#include "../3dzavr/engine/World.h"
 #include "../weapon/Ak47.h"
 #include "../weapon/Shotgun.h"
 #include "../weapon/Gun.h"
 #include "../weapon/Gold_Ak47.h"
 #include "../weapon/Rifle.h"
 #include "../ShooterConsts.h"
+
 
 class Player final : public RigidBody {
 private:
