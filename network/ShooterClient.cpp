@@ -29,7 +29,6 @@ void ShooterClient::processInit(sf::Packet &packet) {
             if (_spawnPlayerCallBack != nullptr) {
                 _spawnPlayerCallBack(targetId);
             }
-
             _players[targetId]->translateToPoint(Vec3D{x, y, z});
             _players[targetId]->setHealth(health);
             _players[targetId]->setKills(kills);
@@ -46,7 +45,7 @@ void ShooterClient::processUpdate(sf::Packet &packet) {
     while (packet >> targetId >> x >> y >> z >> health >> bodyAngle >> headAngle >> playerName) {
         if (_players.count(targetId)) {
             std::string name = "Enemy_" + std::to_string(targetId);
-
+            
             Vec3D newPosition = Vec3D{x, y, z};
 
             bool isAnimate = (_players[targetId]->position() - newPosition).sqrAbs() > 0.2;
@@ -123,6 +122,18 @@ void ShooterClient::processDisconnect(sf::Uint16 targetId) {
     }
 }
 
+void ShooterClient::sendMessage(string message){
+    
+    if (message.length() == 0)
+        return;
+    chatManager->addNewMessage(_player->playerNickName(), message);
+    sf::Packet packet;
+    packet << MsgType::Custom << ShooterMsgType::newMessage << message;
+    _socket.send(packet, _socket.serverId());
+}
+void ShooterClient::newMessage(string message, string name) {
+    chatManager->addNewMessage(name, message);
+}
 
 void ShooterClient::processCustomPacket(sf::Packet &packet) {
     sf::Uint16 buffId[2];
@@ -131,6 +142,7 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
 
     ShooterMsgType type;
     packet >> type;
+    string name, message;
 
     switch (type) {
         case ShooterMsgType::Kill:
@@ -227,6 +239,11 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
                 _changeEnemyWeaponCallBack(tmp, buffId[0]);
             }
             break;
+        case ShooterMsgType::newMessage:
+            
+            packet >> name >> message;
+            newMessage(message, name);
+            break;
         default:
             Log::log("ShooterClient::processCustomPacket: unknown message type " +
                      std::to_string(static_cast<int>(type)));
@@ -304,7 +321,7 @@ ShooterClient::setChangeEnemyWeaponCallBack(std::function<void(const std::string
     _changeEnemyWeaponCallBack = std::move(changeEnemyWeapon);
 }
 
-void ShooterClient::requestMap(std::string clientIp, std::string *current_map) {
+void ShooterClient::requestMap(const std::string& clientIp, std::string *current_map) {
     Log::log("---------[FTP server]---------");
     sf::Ftp ftp;
     sf::Ftp::Response connectResponse = ftp.connect(clientIp, 21);
@@ -316,7 +333,8 @@ void ShooterClient::requestMap(std::string clientIp, std::string *current_map) {
         if (dirResponse.isOk()) {
             const std::vector<std::string>& listing = dirResponse.getListing();
 
-            if (listing.size()!=0) {
+
+            if (listing.size() != 0) {
                 for (std::vector<std::string>::const_iterator it = listing.begin(); it != listing.end(); ++it)
                     Log::log("- "+*it);
 
@@ -327,12 +345,12 @@ void ShooterClient::requestMap(std::string clientIp, std::string *current_map) {
                     std::string map_path = listing.at(0);
                     map_path = "./obj/maps"+map_path.substr(map_path.find("/"));
                     Log::log("Map set to: "+map_path);
-                    *current_map = map_path;  
+                    *current_map = map_path;
                 }
             } else {
                 Log::log("there is no map file");
             }
-        } 
+        }
 
         ftp.disconnect();
     } else {

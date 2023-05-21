@@ -15,6 +15,7 @@ namespace ShooterConsts {
     const double SLOW_MO_COEFFICIENT = 5;
     const double FIRE_DISTANCE = 1000;
     const double BONUS_RECHARGE_TIME = 30;
+    const int MAX_MESSAGE_LENGTH = 70;
 
     const std::string PLAYER_NAME = "Player";
     const std::string PROJECT_NAME = "Shooter";

@@ -17,6 +17,7 @@
 #include "../weapon/Rifle.h"
 #include "../ShooterConsts.h"
 
+
 class Player final : public RigidBody {
 private:
     double _health = ShooterConsts::HEALTH_MAX;

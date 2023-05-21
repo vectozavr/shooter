@@ -28,6 +28,8 @@ add_executable(${CMAKE_PROJECT_NAME}
         ShooterConsts.h
         network/ShooterMsgType.h
         network/ShooterMsgType.cpp
+        network/Chat.cpp
+        network/Chat.h
         # 3d engine:
         3dzavr/engine/Consts.h
         3dzavr/engine/math/Vec4D.h
