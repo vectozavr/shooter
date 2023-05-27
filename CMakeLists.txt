@@ -112,7 +112,8 @@ add_executable(${CMAKE_PROJECT_NAME}
         3dzavr/engine/network/UDPConnection.h
         3dzavr/engine/network/UDPSocket.cpp
         3dzavr/engine/network/UDPSocket.h
-        )
+        3dzavr/engine/utils/EventHandler.cpp
+        3dzavr/engine/utils/EventHandler.h)
 
 if(APPLE OR UNIX)
     include_directories(/usr/local/include)

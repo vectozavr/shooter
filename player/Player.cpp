@@ -8,6 +8,8 @@
 #include "../3dzavr/engine/io/Screen.h"
 #include "../3dzavr/engine/utils/Log.h"
 #include "../3dzavr/engine/animation/Animations.h"
+#include "../3dzavr/engine/utils/EventHandler.h"
+
 
 Player::Player(ObjectNameTag name, const std::string &filename, const Vec3D &scale) : RigidBody(std::move(name), filename, scale) {
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});
@@ -54,9 +56,7 @@ void Player::collisionWithObject(const ObjectNameTag &tag, std::shared_ptr<Rigid
     }
 
     if (tag.str().find("Bonus") != std::string::npos) {
-        if (_takeBonusCallBack != nullptr) {
-            _takeBonusCallBack(tag.str());
-        }
+        EventHandler::call<void(const std::string&)>(Event("take_bonus"), tag.str());
     }
 }
 
@@ -76,38 +76,6 @@ void Player::addWeapon(std::shared_ptr<Weapon> weapon) {
     _weapons.back()->translate(position());
     _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, Vec3D{0, 1, 0}, angle().y());
     _weapons.back()->rotateRelativePoint(position() + Vec3D{0, 1.8, 0}, left(), headAngle());
-
-    // add animation of reloading
-    _weapons.back()->setReloadCallBack([this]() {
-        Timeline::addAnimation<ARotateLeft>(AnimationListTag("reload_weapon"),
-                                            _weapons[_selectedWeapon],
-                                            -2 * Consts::PI,
-                                            _weapons[_selectedWeapon]->reloadTime() / 2,
-                                            Animation::LoopOut::None,
-                                            Animation::InterpolationType::Cos);
-    });
-
-    // adding fire animation
-    _weapons.back()->setFireCallBack([this]() {
-        Timeline::addAnimation<ARotateLeft>(AnimationListTag("fire_weapon"),
-                                            _weapons[_selectedWeapon],
-                                            -_weapons[_selectedWeapon]->fireDelay(),
-                                            _weapons[_selectedWeapon]->fireDelay()/3,
-                                            Animation::LoopOut::None,
-                                            Animation::InterpolationType::Cos);
-        Timeline::addAnimation<AWait>(AnimationListTag("fire_weapon"), 0);
-        Timeline::addAnimation<ARotateLeft>(AnimationListTag("fire_weapon"),
-                                            _weapons[_selectedWeapon],
-                                            _weapons[_selectedWeapon]->fireDelay(),
-                                            _weapons[_selectedWeapon]->fireDelay()/3,
-                                            Animation::LoopOut::None,
-                                            Animation::InterpolationType::Cos);
-    });
-
-    // add call back function to create fire traces
-    if (_addTraceCallBack != nullptr) {
-        _weapons.back()->setAddTraceCallBack(_addTraceCallBack);
-    }
 }
 
 void Player::reInitWeapons() {
@@ -117,34 +85,33 @@ void Player::reInitWeapons() {
             unattach(ObjectNameTag(weapon->name()));
         }
 
-        if (_removeWeaponCallBack != nullptr) {
-            _removeWeaponCallBack(_weapons[_selectedWeapon]);
-        }
+        EventHandler::call<void(std::shared_ptr<Weapon>)>(Event("remove_weapon"),
+                                                          _weapons[_selectedWeapon]);
+
         _weapons.clear();
     }
 
     _selectedWeapon = 0;
     addWeapon(std::make_shared<Gun>());
-    if (_addWeaponCallBack != nullptr) {
-        _addWeaponCallBack(_weapons[_selectedWeapon]);
-    }
+
+    EventHandler::call<void(std::shared_ptr<Weapon>)>(Event("add_weapon"),
+                                                      _weapons[_selectedWeapon]);
 }
 
 void Player::selectNextWeapon() {
     if (_weapons.size() > 1) {
         // change '_selectedWeapon'
-        if (_removeWeaponCallBack != nullptr) {
-            _removeWeaponCallBack(_weapons[_selectedWeapon]);
-        }
+        EventHandler::call<void(std::shared_ptr<Weapon>)>(Event("remove_weapon"),
+                                                          _weapons[_selectedWeapon]);
 
         _selectedWeapon = (_selectedWeapon + 1) % _weapons.size();
 
-        if (_addWeaponCallBack != nullptr) {
-            _addWeaponCallBack(_weapons[_selectedWeapon]);
-        }
+        EventHandler::call<void(std::shared_ptr<Weapon>)>(Event("add_weapon"),
+                                                          _weapons[_selectedWeapon]);
+
         Log::log("selectedWeapon " + std::to_string(_selectedWeapon));
         SoundController::loadAndPlay(SoundTag("changeWeapon"), ShooterConsts::CHANGE_WEAPON_SOUND);
-        rotateWeapon();
+        selectWeaponAnimation();
     }
 
 }
@@ -152,20 +119,21 @@ void Player::selectNextWeapon() {
 void Player::selectPreviousWeapon() {
     if (_weapons.size() > 1) {
         // change '_selectedWeapon'
-        if (_removeWeaponCallBack != nullptr) {
-            _removeWeaponCallBack(_weapons[_selectedWeapon]);
-        }
+        EventHandler::call<void(std::shared_ptr<Weapon>)>(Event("remove_weapon"),
+                                                          _weapons[_selectedWeapon]);
+
         if (_selectedWeapon > 0) {
             _selectedWeapon = (_selectedWeapon - 1) % _weapons.size();
         } else {
             _selectedWeapon = _weapons.size() - 1;
         }
-        if (_addWeaponCallBack != nullptr) {
-            _addWeaponCallBack(_weapons[_selectedWeapon]);
-        }
+
+        EventHandler::call<void(std::shared_ptr<Weapon>)>(Event("add_weapon"),
+                                                          _weapons[_selectedWeapon]);
+
         Log::log("selectedWeapon " + std::to_string(_selectedWeapon));
         SoundController::loadAndPlay(SoundTag("changeWeapon"), ShooterConsts::CHANGE_WEAPON_SOUND);
-        rotateWeapon();
+        selectWeaponAnimation();
     }
 }
 
@@ -175,9 +143,7 @@ bool Player::fire() {
         auto fireInfo = _weapons[_selectedWeapon]->fire(_rayCastFunction, camera->position(), camera->lookAt());
         for (auto&[damagedPlayerName, damage] : fireInfo.damagedPlayers) {
             sf::Uint16 targetId = std::stoi(damagedPlayerName.str().substr(6));
-            if (_damagePlayerCallBack != nullptr) {
-                _damagePlayerCallBack(targetId, damage);
-            }
+            EventHandler::call<void(sf::Uint16, double)>(Event("damage_player"), targetId, damage);
         }
         return fireInfo.shot;
     }
@@ -198,11 +164,36 @@ void Player::setFullAbility() {
     SoundController::loadAndPlay(SoundTag("addAbility"), ShooterConsts::RESTORE_ABILITY_SOUND);
 }
 
-void Player::rotateWeapon() {
+void Player::selectWeaponAnimation() {
     Timeline::addAnimation<ARotateLeft>(AnimationListTag("select_weapon"),
                                         _weapons[_selectedWeapon],
                                         -2 * Consts::PI,
                                         0.3,
+                                        Animation::LoopOut::None,
+                                        Animation::InterpolationType::Cos);
+}
+
+void Player::fireWeaponAnimation() {
+    Timeline::addAnimation<ARotateLeft>(AnimationListTag("fire_weapon"),
+                                        _weapons[_selectedWeapon],
+                                        -_weapons[_selectedWeapon]->fireDelay(),
+                                        _weapons[_selectedWeapon]->fireDelay()/3,
+                                        Animation::LoopOut::None,
+                                        Animation::InterpolationType::Cos);
+    Timeline::addAnimation<AWait>(AnimationListTag("fire_weapon"), 0);
+    Timeline::addAnimation<ARotateLeft>(AnimationListTag("fire_weapon"),
+                                        _weapons[_selectedWeapon],
+                                        _weapons[_selectedWeapon]->fireDelay(),
+                                        _weapons[_selectedWeapon]->fireDelay()/3,
+                                        Animation::LoopOut::None,
+                                        Animation::InterpolationType::Cos);
+}
+
+void Player::reloadWeaponAnimation() {
+    Timeline::addAnimation<ARotateLeft>(AnimationListTag("reload_weapon"),
+                                        _weapons[_selectedWeapon],
+                                        -2 * Consts::PI,
+                                        _weapons[_selectedWeapon]->reloadTime() / 2,
                                         Animation::LoopOut::None,
                                         Animation::InterpolationType::Cos);
 }

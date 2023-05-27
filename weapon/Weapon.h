@@ -37,10 +37,6 @@ private:
     double _lastFireTime = std::numeric_limits<double>::min();
     double _lastReloadTime = std::numeric_limits<double>::min();
 
-    std::function<void(const Vec3D &, const Vec3D &)> _addTraceCallBack;
-    std::function<void()> _reloadCallBack;
-    std::function<void()> _fireCallBack;
-
 protected:
     std::map<ObjectNameTag, double>
     fireABullet(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction,
@@ -64,11 +60,6 @@ public:
     [[nodiscard]] double fireDelay() const { return _fireDelay; }
 
     [[nodiscard]] std::pair<double, double> balance() const { return std::make_pair(_clipAmmo, _stockAmmo); }
-
-    void setAddTraceCallBack(std::function<void(Vec3D, Vec3D)> add) { _addTraceCallBack = std::move(add); }
-    void setReloadCallBack(std::function<void()> reload) { _reloadCallBack = std::move(reload); }
-    void setFireCallBack(std::function<void()> fire) { _fireCallBack = std::move(fire); }
-
 
     void addAPack() { _stockAmmo += initialPack(); }
 

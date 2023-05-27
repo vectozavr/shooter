@@ -1,6 +1,7 @@
 #include "Chat.h"
 #include <string>
 #include <iostream>
+
 void ChatManager::addNewMessage(std::string author, std::string message) {
 	hide = 7.0;
 	messages.push_back(message);

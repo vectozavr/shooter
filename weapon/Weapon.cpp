@@ -6,6 +6,7 @@
 #include "../3dzavr/engine/utils/ResourceManager.h"
 #include "../3dzavr/engine/utils/Log.h"
 #include "../ShooterConsts.h"
+#include "../3dzavr/engine/utils/EventHandler.h"
 
 using namespace std;
 
@@ -46,9 +47,7 @@ FireInformation Weapon::fire(std::function<IntersectionInformation(const Vec3D &
     SoundController::loadAndPlay(SoundTag("fireSound_" + name().str()), _fireSound);
     Log::log("Weapon::fire (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
 
-    if (_fireCallBack != nullptr) {
-        _fireCallBack();
-    }
+    EventHandler::call<void()>(Event("fire"));
 
     return FireInformation{processFire(std::move(rayCastFunction), position, direction), true};
 }
@@ -69,9 +68,7 @@ void Weapon::reload() {
     Log::log("Weapon::reload (" + std::to_string(_stockAmmo) + " : " + std::to_string(_clipAmmo) + ")");
     _lastReloadTime = Time::time();
 
-    if (_reloadCallBack != nullptr) {
-        _reloadCallBack();
-    }
+    EventHandler::call<void()>(Event("reload_weapon"));
 }
 
 std::map<ObjectNameTag, double>
@@ -116,7 +113,8 @@ Weapon::fireABullet(std::function<IntersectionInformation(const Vec3D &, const V
     Vec3D lineTo = rayCast.intersected ? rayCast.pointOfIntersection : position() +
                                                                        direction * ShooterConsts::FIRE_DISTANCE +
                                                                        randV;
-    _addTraceCallBack(lineFrom, lineTo);
+
+    EventHandler::call<void(const Vec3D&, const Vec3D&)>(Event("your_bullet"), lineFrom, lineTo);
 
     return damagedPlayers;
 }

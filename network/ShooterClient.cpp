@@ -11,6 +11,30 @@
 #include "../3dzavr/engine/animation/Timeline.h"
 #include "ShooterMsgType.h"
 #include "../3dzavr/engine/animation/Animations.h"
+#include "../3dzavr/engine/utils/EventHandler.h"
+
+
+ShooterClient::ShooterClient(std::shared_ptr<Player> player) : _player(player) {
+    EventHandler::listen<void(const std::string&)>(
+            Event("take_bonus"),
+            [this](const std::string& name){ this->takeBonus(name); }
+            );
+
+    EventHandler::listen<void(sf::Uint16, double)>(
+            Event("damage_player"),
+            [this](sf::Uint16 targetId, double damage) { damagePlayer(targetId, damage); } );
+
+    EventHandler::listen<void(const Vec3D&, const Vec3D&)>(
+            Event("your_bullet"),
+            [this](const Vec3D &from, const Vec3D &to) {
+                sendTrace(from, to);
+            });
+
+    EventHandler::listen<void(const std::string&)>(
+            Event("change_weapon"),
+            [this](const std::string &name){ changeWeapon(name); }
+            );
+}
 
 void ShooterClient::updatePacket() {
     sf::Packet packet;
@@ -26,9 +50,8 @@ void ShooterClient::processInit(sf::Packet &packet) {
 
     while (packet >> targetId >> x >> y >> z >> health >> kills >> deaths) {
         if (targetId != _socket.ownId()) {
-            if (_spawnPlayerCallBack != nullptr) {
-                _spawnPlayerCallBack(targetId);
-            }
+            EventHandler::call<void(sf::Uint16)>(Event("spawn_player"), targetId);
+
             _players[targetId]->translateToPoint(Vec3D{x, y, z});
             _players[targetId]->setHealth(health);
             _players[targetId]->setKills(kills);
@@ -110,15 +133,13 @@ void ShooterClient::processNewClient(sf::Packet &packet) {
 
     packet >> targetId;
 
-    if (_spawnPlayerCallBack != nullptr) {
-        _spawnPlayerCallBack(targetId);
-    }
+    EventHandler::call<void(sf::Uint16)>(Event("spawn_player"), targetId);
 }
 
 void ShooterClient::processDisconnect(sf::Uint16 targetId) {
     if (targetId != _socket.ownId() && _players.count(targetId)) {
         _players.erase(targetId);
-        _removePlayerCallBack(targetId);
+        EventHandler::call<void(sf::Uint16)>(Event("remove_player"), targetId);
     }
 }
 
@@ -131,7 +152,8 @@ void ShooterClient::sendMessage(string message){
     packet << MsgType::Custom << ShooterMsgType::newMessage << message;
     _socket.send(packet, _socket.serverId());
 }
-void ShooterClient::newMessage(string message, string name) {
+
+void ShooterClient::sendChatMessage(string message, string name) {
     chatManager->addNewMessage(name, message);
 }
 
@@ -204,45 +226,45 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
             }
             break;
         case ShooterMsgType::FireTrace:
-            packet >> dbuff[0] >> dbuff[1] >> dbuff[2] >> dbuff[3] >> dbuff[4] >> dbuff[5];
 
-            if (_addFireTraceCallBack != nullptr) {
-                _addFireTraceCallBack(Vec3D(dbuff[0], dbuff[1], dbuff[2]), Vec3D(dbuff[3], dbuff[4], dbuff[5]));
+            if (buffId[0] != _socket.ownId()) {
+                packet >> dbuff[0] >> dbuff[1] >> dbuff[2] >> dbuff[3] >> dbuff[4] >> dbuff[5];
+
+                EventHandler::call<void(const Vec3D&, const Vec3D&)>(
+                        Event("enemy_bullet"),
+                        Vec3D(dbuff[0], dbuff[1], dbuff[2]), Vec3D(dbuff[3], dbuff[4], dbuff[5]));
             }
 
             break;
         case ShooterMsgType::InitBonuses:
             while (packet >> tmp >> dbuff[0] >> dbuff[1] >> dbuff[2]) {
-                if (_addBonusCallBack != nullptr) {
-                    _addBonusCallBack(tmp, Vec3D(dbuff[0], dbuff[1], dbuff[2]));
-                }
+                EventHandler::call<void(const string&, const Vec3D&)>(
+                        Event("add_bonus"), tmp, Vec3D(dbuff[0], dbuff[1], dbuff[2]));
             }
             break;
 
         case ShooterMsgType::AddBonus:
             packet >> tmp >> dbuff[0] >> dbuff[1] >> dbuff[2];
-            if (_addBonusCallBack != nullptr) {
-                _addBonusCallBack(tmp, Vec3D(dbuff[0], dbuff[1], dbuff[2]));
-            }
+            EventHandler::call<void(const string&, const Vec3D&)>(
+                    Event("add_bonus"), tmp, Vec3D(dbuff[0], dbuff[1], dbuff[2]));
 
             break;
         case ShooterMsgType::RemoveBonus:
             packet >> tmp;
-            if (_removeBonusCallBack != nullptr) {
-                _removeBonusCallBack(ObjectNameTag(tmp));
-            }
+            EventHandler::call<void(const ObjectNameTag &)>(
+                    Event("remove_bonus"), ObjectNameTag(tmp));
             break;
         case ShooterMsgType::ChangeWeapon:
             packet >> buffId[0] >> tmp;
 
-            if (_changeEnemyWeaponCallBack != nullptr) {
-                _changeEnemyWeaponCallBack(tmp, buffId[0]);
-            }
+            EventHandler::call<void(const std::string&, sf::Uint16)>(
+                    Event("change_enemy_weapon"), tmp, buffId[0]);
+
             break;
         case ShooterMsgType::newMessage:
             
             packet >> name >> message;
-            newMessage(message, name);
+            sendChatMessage(message, name);
             break;
         default:
             Log::log("ShooterClient::processCustomPacket: unknown message type " +
@@ -266,7 +288,7 @@ void ShooterClient::damagePlayer(sf::Uint16 targetId, double damage) {
     Log::log("ShooterClient: damagePlayer " + std::to_string(targetId) + " ( -" + std::to_string(damage) + "hp )");
 }
 
-void ShooterClient::addTrace(const Vec3D &from, const Vec3D &to) {
+void ShooterClient::sendTrace(const Vec3D &from, const Vec3D &to) {
     sf::Packet packet;
 
     packet << MsgType::Custom << ShooterMsgType::FireTrace << from.x() << from.y() << from.z() << to.x() << to.y()
@@ -280,9 +302,8 @@ void ShooterClient::takeBonus(const std::string &bonusName) {
     packet << MsgType::Custom << ShooterMsgType::RemoveBonus << bonusName;
     _socket.sendRely(packet, _socket.serverId());
 
-    if (_removeBonusCallBack != nullptr) {
-        _removeBonusCallBack(ObjectNameTag(bonusName));
-    }
+    EventHandler::call<void(const ObjectNameTag &)>(
+            Event("remove_bonus"), ObjectNameTag(bonusName));
 }
 
 void ShooterClient::changeWeapon(const std::string &weaponName) {
@@ -294,31 +315,6 @@ void ShooterClient::changeWeapon(const std::string &weaponName) {
 
 void ShooterClient::addPlayer(sf::Uint16 id, std::shared_ptr<Player> player) {
     _players.insert({id, player});
-}
-
-void ShooterClient::setSpawnPlayerCallBack(std::function<void(sf::Uint16)> spawn) {
-    _spawnPlayerCallBack = std::move(spawn);
-}
-
-void ShooterClient::setRemovePlayerCallBack(std::function<void(sf::Uint16)> remove) {
-    _removePlayerCallBack = std::move(remove);
-}
-
-void ShooterClient::setAddFireTraceCallBack(std::function<void(const Vec3D &, const Vec3D &)> addTrace) {
-    _addFireTraceCallBack = std::move(addTrace);
-}
-
-void ShooterClient::setAddBonusCallBack(std::function<void(const std::string &, const Vec3D &)> addBonus) {
-    _addBonusCallBack = std::move(addBonus);
-}
-
-void ShooterClient::setRemoveBonusCallBack(std::function<void(const ObjectNameTag &)> removeBonus) {
-    _removeBonusCallBack = std::move(removeBonus);
-}
-
-void
-ShooterClient::setChangeEnemyWeaponCallBack(std::function<void(const std::string &, sf::Uint16)> changeEnemyWeapon) {
-    _changeEnemyWeaponCallBack = std::move(changeEnemyWeapon);
 }
 
 void ShooterClient::requestMap(const std::string& clientIp, std::string *current_map) {

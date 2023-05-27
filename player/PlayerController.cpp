@@ -2,6 +2,8 @@
 // Created by Иван Ильин on 19.09.2021.
 //
 
+#include <cmath>
+
 #include "PlayerController.h"
 #include "../3dzavr/engine/utils/Log.h"
 #include "../3dzavr/engine/animation/Animations.h"

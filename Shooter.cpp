@@ -9,6 +9,8 @@
 #include "ShooterConsts.h"
 #include "3dzavr/engine/io/SoundController.h"
 #include "network/Chat.h"
+#include "3dzavr/engine/utils/EventHandler.h"
+#include <iostream>
 
 using namespace std;
 // Read server/client settings and start both.
@@ -55,17 +57,6 @@ void Shooter::initNetwork() {
     client->requestMap(clientIp, &current_map);
     client->connect(clientIp, clientPort);
     player->setPlayerNickName(playerName);
-
-    // TODO: encapsulate call backs inside ShooterClient
-    client->setSpawnPlayerCallBack([this](sf::Uint16 id) { spawnPlayer(id); });
-    client->setRemovePlayerCallBack([this](sf::Uint16 id) { removePlayer(id); });
-    client->setAddFireTraceCallBack([this](const Vec3D &from, const Vec3D &to) { addFireTrace(from, to); });
-    client->setAddBonusCallBack(
-            [this](const std::string &bonusName, const Vec3D &position) { addBonus(bonusName, position); });
-    client->setRemoveBonusCallBack([this](const ObjectNameTag &bonusName) { removeBonus(bonusName); });
-    client->setChangeEnemyWeaponCallBack(
-            [this](const std::string &weaponName, sf::Uint16 id) { changeEnemyWeapon(weaponName, id); });
-    
 }
 
 void Shooter::start() {
@@ -79,20 +70,54 @@ void Shooter::start() {
 
     world->loadMap(current_map, Vec3D{5, 5, 5});
 
-    // TODO: encapsulate call backs inside Player
-    player->setAddTraceCallBack([this](const Vec3D &from, const Vec3D &to) {
-        client->addTrace(from, to);
-        addFireTrace(from, to);
-    });
-    player->setDamagePlayerCallBack(
-            [this](sf::Uint16 targetId, double damage) { client->damagePlayer(targetId, damage); });
-    player->setRayCastFunction(
-            [this](const Vec3D &from, const Vec3D &to) { return world->rayCast(from, to, "Player Weapon fireTrace bulletHole"); });
-    player->setTakeBonusCallBack([this](const string &bonusName) { client->takeBonus(bonusName); });
-    player->setAddWeaponCallBack([this](std::shared_ptr<Weapon> weapon) { addWeapon(std::move(weapon)); });
-    player->setRemoveWeaponCallBack([this](std::shared_ptr<Weapon> weapon) { removeWeapon(std::move(weapon)); });
+    EventHandler::listen<void(sf::Uint16)>(
+            Event("spawn_player"),
+            [this](sf::Uint16 targetId) {
+                spawnPlayer(targetId);
+            });
+    EventHandler::listen<void(sf::Uint16)>(
+            Event("remove_player"),
+            [this](sf::Uint16 targetId) {
+                removePlayer(targetId);
+            });
+    EventHandler::listen<void()>(Event("fire"), [this](){ player->fireWeaponAnimation(); });
+    EventHandler::listen<void(const Vec3D&, const Vec3D&)>(
+            Event("your_bullet"),
+            [this](const Vec3D &from, const Vec3D &to) {
+                addFireTrace(from, to);
+            });
+    EventHandler::listen<void(const Vec3D&, const Vec3D&)>(
+            Event("enemy_bullet"),
+            [this](const Vec3D &from, const Vec3D &to) {
+                addFireTrace(from, to);
+            });
+    EventHandler::listen<void(std::shared_ptr<Weapon>)>(
+            Event("add_weapon"),
+            [this](std::shared_ptr<Weapon> weapon) {
+                addWeapon(weapon);
+            });
+    EventHandler::listen<void(std::shared_ptr<Weapon>)>(
+            Event("remove_weapon"),
+            [this](std::shared_ptr<Weapon> weapon) {
+                removeWeapon(weapon);
+            });
+    EventHandler::listen<void(const std::string&, sf::Uint16)>(
+            Event("change_enemy_weapon"),
+            [this](const std::string &weaponName, sf::Uint16 enemyId) {
+                changeEnemyWeapon(weaponName, enemyId);
+            });
+    EventHandler::listen<void(const string&, const Vec3D&)>(
+            Event("add_bonus"),
+            [this](const string &bonusName, const Vec3D &position) { addBonus(bonusName, position); }
+            );
+    EventHandler::listen<void(const ObjectNameTag &)>(
+            Event("remove_bonus"),
+            [this](const ObjectNameTag &bonusName) { removeBonus(bonusName); }
+    );
 
-    player->reInitWeapons();
+    EventHandler::listen<void()>(Event("reload_weapon"), [this](){ player->reloadWeaponAnimation(); });
+
+    player->setRayCastFunction([this](const Vec3D &from, const Vec3D &to) { return world->rayCast(from, to, "Player Weapon fireTrace bulletHole"); });
 
     camera->translateToPoint(player->position() + Vec3D{0, 1.8, 0});
     player->attach(camera);
@@ -109,6 +134,8 @@ void Shooter::start() {
         inGame = false;
         server->stop();
     }
+
+    player->reInitWeapons();
 
     // windows init:
     mainMenu.setTitle("Main menu");
@@ -131,6 +158,7 @@ void Shooter::start() {
         server->stop();
         this->exit();
     }, "Exit", 5, 5, ShooterConsts::MAIN_MENU_GUI, {0, 66}, {0, 86}, {0, 46}, Consts::MEDIUM_FONT, {255, 255, 255});
+
     client->setChatManager(chat);
 }
 
@@ -179,10 +207,10 @@ void Shooter::update() {
         if (isTypingMessage) {
             string symbols = screen->getInputSymbols();
             for (char s : symbols) {
-                if (s == (char)8) {//backspace
+                if (s == (char)8) { //backspace
                     message = message.substr(0, message.size() - 1);
                 }
-                else if (s == (char)27) {//escape 
+                else if (s == (char)27) { //escape
                     message = "";                //FIXME: не работает потому что isKeyTapped имеют задержку,
                     isTypingMessage = false;     //т. е. этот код выполняется после нажатия на ESC,
                 }                                // но при следующем цикле при проверке isKeyTapped(ESC) возвращается TRUE
@@ -213,15 +241,16 @@ void Shooter::drawChat() {
     sf::Color chatColor = isTypingMessage?  sf::Color(50, 50, 50, 255) : sf::Color(50, 50, 50, chat->update(Time::deltaTime()));
     string chatText = isTypingMessage ? chat->getChat() : chat->getChatPreview();
 
-    screen->drawText(chatText, Vec2D{ 0, (double)screen->height()*0.25 }, 20, chatColor);
+    screen->drawText(chatText, Vec2D{ 10, (double)screen->height()*0.25 }, 20, chatColor);
 
     if (isTypingMessage){
         screen->drawTetragon(
-            Vec2D{ (double)screen->width() * 0.05, (double)screen->height() * 0.7 },
-            Vec2D{ (double)screen->width() * 0.95, (double)screen->height() * 0.7 },
-            Vec2D{ (double)screen->width() * 0.95, (double)screen->height() * 0.7+40 },
-            Vec2D{ (double)screen->width() * 0.05, (double)screen->height() * 0.7+40 }, sf::Color(150, 150, 150, 150));
-        screen->drawText(message, Vec2D{(double)screen->width() * 0.05, (double)screen->height() * 0.7}, 30, sf::Color(0, 0, 0, 255));
+            Vec2D{ (double)screen->width() * 0.05, (double)screen->height() * 0.7},
+            Vec2D{ (double)screen->width() * 0.95, (double)screen->height() * 0.7},
+            Vec2D{ (double)screen->width() * 0.95, (double)screen->height() * 0.7+50 },
+            Vec2D{ (double)screen->width() * 0.05, (double)screen->height() * 0.7+50 }, sf::Color(150, 150, 150, 150));
+
+        screen->drawText(message, Vec2D{(double)screen->width() * 0.05 + 10, (double)screen->height() * 0.7 - 30}, 30, sf::Color(0, 0, 0, 255));
     }
 }
 
@@ -407,9 +436,7 @@ void Shooter::removeBonus(const ObjectNameTag &bonusName) {
 void Shooter::addWeapon(std::shared_ptr<Weapon> weapon) {
     world->addBody(weapon);
 
-    if (client != nullptr) {
-        client->changeWeapon(weapon->name().str());
-    }
+    EventHandler::call<void(const std::string&)>(Event("change_weapon"), weapon->name().str());
 }
 
 void Shooter::changeEnemyWeapon(const std::string &weaponName, sf::Uint16 enemyId) {

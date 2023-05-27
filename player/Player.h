@@ -33,17 +33,10 @@ private:
 
     std::string _nickName = ShooterConsts::PLAYER_NAME;
 
-    std::function<void(sf::Uint16 targetId, double)> _damagePlayerCallBack;
-    std::function<void(const Vec3D &, const Vec3D &)> _addTraceCallBack;
-    std::function<void(const std::string &)> _takeBonusCallBack;
-
-    std::function<void(std::shared_ptr<Weapon>)> _addWeaponCallBack;
-    std::function<void(std::shared_ptr<Weapon>)> _removeWeaponCallBack;
-
     std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> _rayCastFunction;
 
     void collisionWithObject(const ObjectNameTag &tag, std::shared_ptr<RigidBody> obj);
-    void rotateWeapon();
+
 public:
     explicit Player(ObjectNameTag name, const std::string &filename = ShooterConsts::CUBE_OBJ, const Vec3D &scale = Vec3D{1, 1, 1});
 
@@ -54,7 +47,6 @@ public:
     [[nodiscard]] double health() const { return _health; }
 
     [[nodiscard]] double ability() const { return _ability; }
-
 
     void setFullHealth();
 
@@ -88,26 +80,6 @@ public:
 
     void setDeaths(int deaths) { _deaths = deaths; }
 
-    void setDamagePlayerCallBack(std::function<void(sf::Uint16 targetId, double)> hit) {
-        _damagePlayerCallBack = std::move(hit);
-    }
-
-    void setAddTraceCallBack(std::function<void(const Vec3D &, const Vec3D &)> add) {
-        _addTraceCallBack = std::move(add);
-    }
-
-    void setTakeBonusCallBack(std::function<void(const std::string &)> take) {
-        _takeBonusCallBack = std::move(take);
-    }
-
-    void setAddWeaponCallBack(std::function<void(std::shared_ptr<Weapon>)> addWeapon) {
-        _addWeaponCallBack = std::move(addWeapon);
-    }
-
-    void setRemoveWeaponCallBack(std::function<void(std::shared_ptr<Weapon>)> removeWeapon) {
-        _removeWeaponCallBack = std::move(removeWeapon);
-    }
-
     void setRayCastFunction(std::function<IntersectionInformation(const Vec3D &, const Vec3D &)> rayCastFunction) {
         _rayCastFunction = std::move(rayCastFunction);
     }
@@ -120,6 +92,12 @@ public:
     [[nodiscard]] std::string playerNickName() const { return _nickName; }
 
     void setPlayerNickName(const std::string &name) { _nickName = name; }
+
+    void selectWeaponAnimation();
+
+    void fireWeaponAnimation();
+
+    void reloadWeaponAnimation();
 };
 
 
