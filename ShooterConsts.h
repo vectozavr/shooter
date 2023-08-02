@@ -6,6 +6,8 @@
 #define SHOOTER_SHOOTERCONSTS_H
 
 namespace ShooterConsts {
+
+    // Numeric constants
     const double GRAVITY = 35;
     const double HEALTH_MAX = 100;
     const double ABILITY_MAX = 10;
@@ -17,6 +19,7 @@ namespace ShooterConsts {
     const double BONUS_RECHARGE_TIME = 30;
     const int MAX_MESSAGE_LENGTH = 70;
 
+    // String constants
     const std::string PLAYER_NAME = "Player";
     const std::string PROJECT_NAME = "Shooter";
 

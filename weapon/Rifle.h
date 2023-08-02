@@ -6,7 +6,6 @@
 #define SHOOTER_RIFLE_H
 
 #include "Weapon.h"
-#include "../3dzavr/engine/utils/ResourceManager.h"
 #include "../ShooterConsts.h"
 
 class Rifle final : public Weapon {

@@ -2,17 +2,17 @@
 // Created by Иван Ильин on 22.09.2021.
 //
 
-#include "Shooter.h"
-#include <fstream>
-#include <utility>
-#include "3dzavr/engine/animation/Animations.h"
-#include "ShooterConsts.h"
-#include "3dzavr/engine/io/SoundController.h"
-#include "network/Chat.h"
-#include "3dzavr/engine/utils/EventHandler.h"
 #include <iostream>
+#include <fstream>
 
-using namespace std;
+#include <animation/Animations.h>
+#include <io/SoundController.h>
+#include <utils/EventHandler.h>
+
+#include "Shooter.h"
+#include "ShooterConsts.h"
+#include "network/Chat.h"
+
 // Read server/client settings and start both.
 // If client doesn't connect to the localhost - server doesn't start.
 void Shooter::initNetwork() {
@@ -106,9 +106,9 @@ void Shooter::start() {
             [this](const std::string &weaponName, sf::Uint16 enemyId) {
                 changeEnemyWeapon(weaponName, enemyId);
             });
-    EventHandler::listen<void(const string&, const Vec3D&)>(
+    EventHandler::listen<void(const std::string&, const Vec3D&)>(
             Event("add_bonus"),
-            [this](const string &bonusName, const Vec3D &position) { addBonus(bonusName, position); }
+            [this](const std::string &bonusName, const Vec3D &position) { addBonus(bonusName, position); }
             );
     EventHandler::listen<void(const ObjectNameTag &)>(
             Event("remove_bonus"),
@@ -205,7 +205,7 @@ void Shooter::update() {
         screen->setTitle(ShooterConsts::PROJECT_NAME);
 
         if (isTypingMessage) {
-            string symbols = screen->getInputSymbols();
+            std::string symbols = screen->getInputSymbols();
             for (char s : symbols) {
                 if (s == (char)8) { //backspace
                     message = message.substr(0, message.size() - 1);
@@ -239,7 +239,7 @@ void Shooter::update() {
 
 void Shooter::drawChat() {
     sf::Color chatColor = isTypingMessage?  sf::Color(50, 50, 50, 255) : sf::Color(50, 50, 50, chat->update(Time::deltaTime()));
-    string chatText = isTypingMessage ? chat->getChat() : chat->getChatPreview();
+    std::string chatText = isTypingMessage ? chat->getChat() : chat->getChatPreview();
 
     screen->drawText(chatText, Vec2D{ 10, (double)screen->height()*0.25 }, 20, chatColor);
 
@@ -276,7 +276,7 @@ void Shooter::drawStatsTable() {
 
     screen->drawText(client->lastEvent(), Vec2D{10, 10}, 25, sf::Color(0, 0, 0, 100));
 
-    vector<shared_ptr < Player>>
+    std::vector<std::shared_ptr<Player>>
     allPlayers;
     allPlayers.push_back(player);
     for (auto&[playerId, player] : client->players())
@@ -406,7 +406,7 @@ void Shooter::removeFireTrace(const ObjectNameTag &traceName) {
     world->removeBody(traceName);
 }
 
-void Shooter::addBonus(const string &bonusName, const Vec3D &position) {
+void Shooter::addBonus(const std::string &bonusName, const Vec3D &position) {
 
     std::string name = bonusName.substr(6, bonusName.size() - 3 - 5);
 

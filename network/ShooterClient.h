@@ -5,9 +5,11 @@
 #ifndef SHOOTER_SHOOTERCLIENT_H
 #define SHOOTER_SHOOTERCLIENT_H
 
-#include "../3dzavr/engine/network/ClientUDP.h"
-#include "../player/Player.h"
 #include <SFML/Config.hpp>
+
+#include <network/ClientUDP.h>
+
+#include "../player/Player.h"
 #include "Chat.h"
 
 class ShooterClient final : public ClientUDP {
@@ -30,9 +32,9 @@ private:
 public:
     explicit ShooterClient(std::shared_ptr<Player> player);
 
-    void sendMessage(std::string message);
+    void sendMessage(const std::string& message);
 
-    void sendChatMessage(std::string message, std::string name);
+    void sendChatMessage(const std::string& message, const std::string& name);
 
     void updatePacket() override;
 

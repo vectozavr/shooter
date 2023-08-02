@@ -2,16 +2,19 @@
 // Created by Иван Ильин on 25.05.2021.
 //
 
-#include "ShooterClient.h"
-
-#include <SFML/Network/Ftp.hpp>
 #include <string>
 #include <utility>
-#include "../3dzavr/engine/utils/Log.h"
-#include "../3dzavr/engine/animation/Timeline.h"
+
+#include <SFML/Network/Ftp.hpp>
+
+#include <animation/Animations.h>
+#include <animation/Timeline.h>
+#include <utils/EventHandler.h>
+#include <utils/Log.h>
+
+#include "ShooterClient.h"
 #include "ShooterMsgType.h"
-#include "../3dzavr/engine/animation/Animations.h"
-#include "../3dzavr/engine/utils/EventHandler.h"
+
 
 
 ShooterClient::ShooterClient(std::shared_ptr<Player> player) : _player(player) {
@@ -143,7 +146,7 @@ void ShooterClient::processDisconnect(sf::Uint16 targetId) {
     }
 }
 
-void ShooterClient::sendMessage(string message){
+void ShooterClient::sendMessage(const std::string& message){
     
     if (message.length() == 0)
         return;
@@ -153,7 +156,7 @@ void ShooterClient::sendMessage(string message){
     _socket.send(packet, _socket.serverId());
 }
 
-void ShooterClient::sendChatMessage(string message, string name) {
+void ShooterClient::sendChatMessage(const std::string& message, const std::string& name) {
     chatManager->addNewMessage(name, message);
 }
 
@@ -164,7 +167,7 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
 
     ShooterMsgType type;
     packet >> type;
-    string name, message;
+    std::string name, message;
 
     switch (type) {
         case ShooterMsgType::Kill:
@@ -238,14 +241,14 @@ void ShooterClient::processCustomPacket(sf::Packet &packet) {
             break;
         case ShooterMsgType::InitBonuses:
             while (packet >> tmp >> dbuff[0] >> dbuff[1] >> dbuff[2]) {
-                EventHandler::call<void(const string&, const Vec3D&)>(
+                EventHandler::call<void(const std::string&, const Vec3D&)>(
                         Event("add_bonus"), tmp, Vec3D(dbuff[0], dbuff[1], dbuff[2]));
             }
             break;
 
         case ShooterMsgType::AddBonus:
             packet >> tmp >> dbuff[0] >> dbuff[1] >> dbuff[2];
-            EventHandler::call<void(const string&, const Vec3D&)>(
+            EventHandler::call<void(const std::string&, const Vec3D&)>(
                     Event("add_bonus"), tmp, Vec3D(dbuff[0], dbuff[1], dbuff[2]));
 
             break;

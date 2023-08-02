@@ -2,11 +2,11 @@
 // Created by Иван Ильин on 01.06.2021.
 //
 
+#include <utils/EventHandler.h>
+#include <utils/Log.h>
+
 #include "Weapon.h"
-#include "../3dzavr/engine/utils/ResourceManager.h"
-#include "../3dzavr/engine/utils/Log.h"
 #include "../ShooterConsts.h"
-#include "../3dzavr/engine/utils/EventHandler.h"
 
 using namespace std;
 

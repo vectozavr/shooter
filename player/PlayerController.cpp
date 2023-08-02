@@ -4,9 +4,10 @@
 
 #include <cmath>
 
+#include <animation/Animations.h>
+#include <utils/Log.h>
+
 #include "PlayerController.h"
-#include "../3dzavr/engine/utils/Log.h"
-#include "../3dzavr/engine/animation/Animations.h"
 
 PlayerController::PlayerController(std::shared_ptr<Player> player,
                                    std::shared_ptr<Keyboard> keyboard,

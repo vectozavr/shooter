@@ -5,11 +5,14 @@
 #ifndef SHOOTER_PLAYER_H
 #define SHOOTER_PLAYER_H
 
-#include <SFML/Audio/Sound.hpp>
 #include <utility>
-#include "../3dzavr/engine/utils/ResourceManager.h"
-#include "../3dzavr/engine/Camera.h"
-#include "../3dzavr/engine/World.h"
+
+#include <SFML/Audio/Sound.hpp>
+
+#include <utils/ResourceManager.h>
+#include <Camera.h>
+#include <World.h>
+
 #include "../weapon/Ak47.h"
 #include "../weapon/Shotgun.h"
 #include "../weapon/Gun.h"

@@ -2,14 +2,14 @@
 // Created by Иван Ильин on 14.03.2021.
 //
 
-#include "Player.h"
-
 #include <utility>
-#include "../3dzavr/engine/io/Screen.h"
-#include "../3dzavr/engine/utils/Log.h"
-#include "../3dzavr/engine/animation/Animations.h"
-#include "../3dzavr/engine/utils/EventHandler.h"
 
+#include <animation/Animations.h>
+#include <utils/EventHandler.h>
+#include <utils/Log.h>
+#include <io/Screen.h>
+
+#include "Player.h"
 
 Player::Player(ObjectNameTag name, const std::string &filename, const Vec3D &scale) : RigidBody(std::move(name), filename, scale) {
     setAcceleration(Vec3D{0, -ShooterConsts::GRAVITY, 0});

@@ -2,8 +2,9 @@
 // Created by Иван Ильин on 25.05.2021.
 //
 
+#include <utils/Log.h>
+
 #include "ShooterServer.h"
-#include "../3dzavr/engine/utils/Log.h"
 #include "ShooterMsgType.h"
 
 void ShooterServer::broadcast() {

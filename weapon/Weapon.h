@@ -5,15 +5,16 @@
 #ifndef SHOOTER_WEAPON_H
 #define SHOOTER_WEAPON_H
 
-
 #include <string>
-#include "../3dzavr/engine/World.h"
-#include "../3dzavr/engine/Camera.h"
+
 #include <SFML/Audio/Sound.hpp>
-#include "../3dzavr/engine/Mesh.h"
-#include "../3dzavr/engine/utils/Time.h"
-#include "../3dzavr/engine/io/SoundController.h"
-#include "../3dzavr/engine/Consts.h"
+
+#include <io/SoundController.h>
+#include <geometry/Mesh.h>
+#include <utils/Time.h>
+#include <Camera.h>
+#include <Consts.h>
+#include <World.h>
 
 struct FireInformation final {
     const std::map<ObjectNameTag, double> damagedPlayers;

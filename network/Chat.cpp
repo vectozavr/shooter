@@ -1,8 +1,8 @@
-#include "Chat.h"
 #include <string>
-#include <iostream>
 
-void ChatManager::addNewMessage(std::string author, std::string message) {
+#include "Chat.h"
+
+void ChatManager::addNewMessage(const std::string& author, const std::string& message) {
 	hide = 7.0;
 	messages.push_back(message);
 	authors.push_back(author);
@@ -17,16 +17,18 @@ int ChatManager::update(double delta) {
 
 }
 std::string ChatManager::getChat() {
-	updateChat(); return chatStr;
+	updateChat();
+    return chatStr;
 }
 std::string ChatManager::getChatPreview() {
-	updateChat(); return chatStrPrev;
+	updateChat();
+    return chatStrPrev;
 }
 
 void ChatManager::updateChat() {
 	if (isChatUpdate) {
 		isChatUpdate = false;
-		int size = messages.size();
+        size_t size = messages.size();
 		chatStr = "";
 		chatStrPrev = "";
 		for (int messageIndex = size - 1; messageIndex >= 0; messageIndex--)

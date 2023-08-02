@@ -5,15 +5,14 @@
 #ifndef SHOOTER_SHOOTER_H
 #define SHOOTER_SHOOTER_H
 
-#include "3dzavr/engine/Engine.h"
+#include <Engine.h>
+#include <gui/Window.h>
+
 #include "player/Player.h"
 #include "player/PlayerController.h"
 #include "player/PlayerController.h"
-#include "3dzavr/engine/gui/Window.h"
-
 #include "network/ShooterClient.h"
 #include "network/ShooterServer.h"
-
 
 class Shooter final : public Engine {
 private:
@@ -28,7 +27,7 @@ private:
     std::shared_ptr<ShooterClient> client = std::make_shared<ShooterClient>(player);
     std::shared_ptr<ChatManager> chat = std::make_shared<ChatManager>();
     bool isTypingMessage = false;
-    string message = "";
+    std::string message;
 
     bool inGame = false;
     int fireTraces = 0;
