@@ -38,3 +38,24 @@ shooter
 .Trashes
 ehthumbs.db
 Thumbs.db
+=======
+# Build folders
+out/
+build/
+cmake-build-*/
+
+# IDE
+.vscode/
+.idea/
+.vs/
+CMakeSettings.json
+
+# CMake
+CMakeUserPresets.json
+
+# MacOS
+.DS_Store
+
+# Project exclude paths
+engine.log
+shooter
