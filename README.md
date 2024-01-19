@@ -1,8 +1,8 @@
-# Shooter on self-written 3D engine
+# Shooter 3Dzavr SFML version
 
 <h4>About:</h4>
 
-Source code of simple shooter on [3Dzavr game engine](https://github.com/vectozavr/3dzavr)
+Source code of simple shooter on [3Dzavr SFML game engine](https://github.com/vectozavr/3dzavr/tree/sfml_version)
 
 ![Project demonstration](img/gamePlay2.png)
 
