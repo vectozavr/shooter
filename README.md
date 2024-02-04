@@ -7,10 +7,10 @@ Source code of simple shooter on [3Dzavr game engine](https://github.com/vectoza
 ![Project demonstration](img/gamePlay2.png)
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://choosealicense.com/licenses/mit/)
+![downloads](https://img.shields.io/github/downloads/vectozavr/shooter/total)
 [![Community Discord](https://img.shields.io/discord/788056426324426782.svg?label=discord&logo=discord)](https://discord.gg/NzSf5tyS)
 ![Commits](https://img.shields.io/github/last-commit/vectozavr/shooter)
 [![TODOs](https://badgen.net/https/api.tickgit.com/badgen/github.com/vectozavr/shooter)](https://www.tickgit.com/browse?repo=github.com/vectozavr/shooter)
-![Issues](https://img.shields.io/bitbucket/issues-raw/vectozavr/shooter)
 ![Repo size](https://img.shields.io/github/repo-size/vectozavr/shooter)
 
 <h4>Installation:</h4>
